@@ -1,0 +1,281 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore">
+      <UniqueIdentifier>{e07f87e9-517c-4b2c-86be-3947bc3b1281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLDefine">
+      <UniqueIdentifier>{37286770-0554-469f-820d-be6d9a1b501c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLGraphics">
+      <UniqueIdentifier>{2d413d2e-5ab5-4f96-beaf-caceda3ebc38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework">
+      <UniqueIdentifier>{1ab20cc6-be71-4f97-93f1-a7b8611e72d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\PSAGameSystemFiles">
+      <UniqueIdentifier>{0632d17b-3d59-4929-9187-7d150bd76d3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL">
+      <UniqueIdentifier>{af959d05-f985-4df2-9b07-618846309bc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsResource">
+      <UniqueIdentifier>{8633bcbd-87e4-4cce-a842-0249f57a3359}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLFilesys">
+      <UniqueIdentifier>{64f7f53c-df86-431f-b0e1-2df4d34338d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLSound">
+      <UniqueIdentifier>{85fe641c-c0dd-4f4a-bf33-8825e40a0537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLThread">
+      <UniqueIdentifier>{91bf14bb-7889-4664-b17f-b97065bd7826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLWindowGui">
+      <UniqueIdentifier>{8e5b8da3-97d5-4767-8608-782a933a0fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLLogger">
+      <UniqueIdentifier>{fad26808-6b84-407e-9dda-ba80dc40c8e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\ImGui">
+      <UniqueIdentifier>{e10cb3d9-3fea-4966-b786-a7551eb9066f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\Base64">
+      <UniqueIdentifier>{f862cddc-a2c4-427d-9e62-89a2b45f13c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\A-Config-Reg">
+      <UniqueIdentifier>{43b8c5eb-d94c-4be0-89de-2d78f2909925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev">
+      <UniqueIdentifier>{6d0a88b2-7a52-4775-a876-8ded6652a516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine">
+      <UniqueIdentifier>{649e98ba-866f-4a0b-be25-cd43e5f621e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\PhysicsEngine">
+      <UniqueIdentifier>{402f484e-2d0b-4f4a-8ac4-9b6ad301d9ba}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_manager.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_resource.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsResource\framework_psaglow_resource.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsResource</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLSound\framework_sound_player.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLSound</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLSound\framework_sound_cache.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLSound</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLThread\framework_thread_pool.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLThread</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLThread</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_oglfw.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLLogger\framework_logger.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLLogger</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFramework.cpp">
+      <Filter>源文件\PSAGameFrameworkCore</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_core.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_demo.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_draw.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_glfw.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl2.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_tables.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp">
+      <Filter>资源文件\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibray\FiletoolsLibrary\Base64\base64\base64.cpp">
+      <Filter>资源文件\Base64</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_regobj.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\A-Config-Reg</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\framework_register.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\A-Config-Reg</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\FrameworkTest.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_class.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_particle.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_script.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_data.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_manager_tex.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_fx.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
+      <Filter>资源文件\PSAGameSystemFiles</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLDefine</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_math.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLDefine</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsResource\framework_psaglow_resource.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics\LLGraphicsResource</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_ext.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_std.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLSound\framework_sound.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLSound</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLThread</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLLogger\framework_logger.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLLogger</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.h">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imconfig.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_glfw.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl2.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3_loader.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imgui_internal.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imstb_rectpack.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imstb_textedit.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\GuiimguiLibrary\imgui_glfw3\imstb_truetype.h">
+      <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibray\FiletoolsLibrary\Base64\base64\base64.h">
+      <Filter>资源文件\Base64</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\FrameworkTest.h">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imvec.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.h">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
