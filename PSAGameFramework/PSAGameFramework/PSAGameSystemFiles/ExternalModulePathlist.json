@@ -1,0 +1,20 @@
+{
+  "ExtModuleVersion": 100,
+  "ExtModuleHeader": [
+    "ExternalLibray/GraphicsLibrary/glew_libray/include/",
+    "ExternalLibray/GraphicsLibrary/glfw_libray/include/",
+    "ExternalLibray/GraphicsLibrary/glm_libray/include/",
+    "ExternalLibray/GraphicsLibrary/image_loader/",
+    "ExternalLibray/GuiimguiLibrary/",
+    "ExternalLibray/FiletoolsLibrary/RapidJSON/include/",
+    "ExternalLibray/FiletoolsLibrary/BASS/include/",
+    "ExternalLibray/FiletoolsLibrary/Zlib/include/",
+    "ExternalLibray/FiletoolsLibrary/Base64/"
+  ],
+  "ExtModuleLibray": [
+    "ExternalLibray/GraphicsLibrary/glfw_libray/lib-vc2019/",
+    "ExternalLibray/GraphicsLibrary/glew_libray/bin/Release/x64/",
+    "ExternalLibray/FiletoolsLibrary/BASS/lib/",
+    "ExternalLibray/FiletoolsLibrary/Zlib/lib/"
+  ]
+}

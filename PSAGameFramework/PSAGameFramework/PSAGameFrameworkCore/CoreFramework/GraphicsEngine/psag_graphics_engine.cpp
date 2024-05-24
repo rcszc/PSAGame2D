@@ -1,0 +1,288 @@
+// psag_graphics_engine.
+#include "psag_graphics_engine.h"
+
+using namespace std;
+using namespace PSAG_LOGGER;
+
+namespace GraphicsEnginePost {
+
+	void PsagGLEnginePost::BloomShaderProcessHV() {
+		auto ShaderTempH = LLRES_Shaders->ResourceFind(ShaderBloomH);
+		auto ShaderTempV = LLRES_Shaders->ResourceFind(ShaderBloomV);
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncFramebufContextBind(LLRES_FrameBuffers->ResourceFind(FrameBufferBloomH), 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextBind(ShaderTempH);
+		{
+			StaticVertexFrameDraw();
+
+			// framework preset uniform.
+			ShaderUniform.UniformMatrix4x4(ShaderTempH, "MvpMatrix", RenderingMatrixMvp);
+
+			ShaderUniform.UniformVec2(ShaderTempH, "RenderMove", RenderMove);
+			ShaderUniform.UniformVec2(ShaderTempH, "RenderScale", RenderScale);
+
+			ShaderUniform.UniformInteger(ShaderTempH, "PostBloomRadius", RenderParameters.GameSceneBloomRadius);
+
+			auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
+			PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncTextureContextBind(TextureTempScene);
+			// bind texture context => sampler(tmu) => unbind.
+			ShaderUniform.UniformInteger(ShaderTempH, "PostTextures", TextureTempScene.TextureSamplerCount);
+		}
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextUnbind();
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncFramebufContextUnbind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncFramebufContextBind(LLRES_FrameBuffers->ResourceFind(FrameBufferBloomV), 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextBind(ShaderTempV);
+		{
+			StaticVertexFrameDraw();
+
+			// framework preset uniform.
+			ShaderUniform.UniformMatrix4x4(ShaderTempV, "MvpMatrix", RenderingMatrixMvp);
+
+			ShaderUniform.UniformVec2(ShaderTempV, "RenderMove", RenderMove);
+			ShaderUniform.UniformVec2(ShaderTempV, "RenderScale", RenderScale);
+
+			ShaderUniform.UniformInteger(ShaderTempV, "PostBloomRadius", RenderParameters.GameSceneBloomRadius);
+
+			auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
+			PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncTextureContextBind(TextureTempScene);
+			// bind texture context => sampler(tmu) => unbind.
+			ShaderUniform.UniformInteger(ShaderTempV, "PostTextures", TextureTempScene.TextureSamplerCount);
+		}
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextUnbind();
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncFramebufContextUnbind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	PsagGLEnginePost::PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution) {
+		// generate unique_id.
+		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsShader ShaderProcess;
+
+		ShaderProcess.ShaderLoaderVS(GraphicsShaderScript::PsagShaderScriptPublicVS, StringScript);
+		ShaderProcess.ShaderLoaderFS(GraphicsShaderScript::PsagShaderScriptPostFS,   StringScript);
+		
+		if (ShaderProcess.CreateCompileShader()) {
+			// post_process shader.	
+			ShaderProgramItem = to_string(GenResourceID.PsagGenTimeKey());
+			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
+		}
+
+		// **************** bloom H&V shader ****************
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsShader ShaderBloomHPCS;
+
+		ShaderBloomHPCS.ShaderLoaderVS(GraphicsShaderScript::PsagShaderScriptPublicVS, StringScript);
+		ShaderBloomHPCS.ShaderLoaderFS(GraphicsShaderScript::PsagShaderScriptBloomHFS, StringScript);
+
+		if (ShaderBloomHPCS.CreateCompileShader()) {
+			// bloom_process shader, h(横向采样).	
+			ShaderBloomH = to_string(GenResourceID.PsagGenTimeKey());
+			LLRES_Shaders->ResourceStorage(ShaderBloomH, &ShaderBloomHPCS);
+		}
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsShader ShaderBloomVPCS;
+
+		ShaderBloomVPCS.ShaderLoaderVS(GraphicsShaderScript::PsagShaderScriptPublicVS, StringScript);
+		ShaderBloomVPCS.ShaderLoaderFS(GraphicsShaderScript::PsagShaderScriptBloomVFS, StringScript);
+
+		if (ShaderBloomVPCS.CreateCompileShader()) {
+			// bloom_process shader, v(纵向采样).	
+			ShaderBloomV = to_string(GenResourceID.PsagGenTimeKey());
+			LLRES_Shaders->ResourceStorage(ShaderBloomV, &ShaderBloomVPCS);
+		}
+
+		// => mag"GraphicsEngineDataset::GLEngineStcVertexData". 
+
+		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
+		// convert: glm matrix => imfx matrix.
+		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
+		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+
+		// **************** Create Texture & FBO ****************
+		
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsTexture     TextureCreate;
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFrameBuffer FboGameScene;
+
+		ProcessTextures      = to_string(GenResourceID.PsagGenTimeKey());
+		GameSceneFrameBuffer = to_string(GenResourceID.PsagGenTimeKey());
+
+		TextureCreate.SetTextureParam(render_resolution.vector_x, render_resolution.vector_y, LinearFiltering);
+		TextureCreate.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
+
+		// create 3-layers texture res.
+		TextureCreate.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
+		TextureCreate.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
+		TextureCreate.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
+
+		if (TextureCreate.CreateTexture())
+			LLRES_Textures->ResourceStorage(ProcessTextures, &TextureCreate);
+
+		if (FboGameScene.CreateFrameBuffer()) {
+			FboGameScene.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 0);
+			LLRES_FrameBuffers->ResourceStorage(GameSceneFrameBuffer, &FboGameScene);
+		}
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFrameBuffer FboGameBloomH;
+		// bloom h shader texture.
+		FrameBufferBloomH = to_string(GenResourceID.PsagGenTimeKey());
+		if (FboGameBloomH.CreateFrameBuffer()) {
+			FboGameBloomH.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 1, 1);
+			LLRES_FrameBuffers->ResourceStorage(FrameBufferBloomH, &FboGameBloomH);
+		}
+		
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFrameBuffer FboGameBloomV;
+		// bloom v shader texture.
+		FrameBufferBloomV = to_string(GenResourceID.PsagGenTimeKey());
+		if (FboGameBloomV.CreateFrameBuffer()) {
+			FboGameBloomV.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 2, 0);
+			LLRES_FrameBuffers->ResourceStorage(FrameBufferBloomV, &FboGameBloomV);
+		}
+		
+		RenderResolution = Vector2T<float>((float)render_resolution.vector_x, (float)render_resolution.vector_y);
+		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "graphics_engine create post_shader(system).");
+	}
+
+	PsagGLEnginePost::~PsagGLEnginePost() {
+		// free graphics post resource.
+		LLRES_FrameBuffers->ResourceDelete(GameSceneFrameBuffer);
+		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(ProcessTextures).TextureSamplerCount);
+		LLRES_Textures->ResourceDelete(ProcessTextures);
+		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
+		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "graphics_engine free post_shader(system).");
+	}
+
+	bool PsagGLEnginePost::CaptureGameScene(const function<bool()>& rendering_func) {
+		bool ReturnFlagTemp = PSAG_FALSE;
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncFramebufContextBind(LLRES_FrameBuffers->ResourceFind(GameSceneFrameBuffer), NULL);
+		// opengl api color buffer.
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		{
+			// render game_scene => fbo.
+			ReturnFlagTemp = rendering_func();
+		}
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncFramebufContextUnbind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		return ReturnFlagTemp;
+	}
+
+	bool PsagGLEnginePost::RenderingPostModule() {
+		BloomShaderProcessHV();
+		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
+		
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextBind(ShaderTemp);
+		StaticVertexFrameDraw();
+
+		// framework preset uniform.
+		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderingMatrixMvp);
+		ShaderUniform.UniformVec2     (ShaderTemp, "RenderRes", RenderResolution);
+
+		ShaderUniform.UniformVec2(ShaderTemp, "RenderMove",  RenderMove);
+		ShaderUniform.UniformVec2(ShaderTemp, "RenderScale", RenderScale);
+
+		// bloom_radius limit = [0,32], post-shader settings uniform.
+		ShaderUniform.UniformInteger(ShaderTemp, "PostBloomRadius", RenderParameters.GameSceneBloomRadius);
+		ShaderUniform.UniformFloat  (ShaderTemp, "PostBloomFilter", RenderParameters.GameSceneBloomFilter);
+		ShaderUniform.UniformFloat  (ShaderTemp, "PostBloomSource", RenderParameters.GameSceneBloomBlend.vector_x);
+		ShaderUniform.UniformFloat  (ShaderTemp, "PostBloomBlur",   RenderParameters.GameSceneBloomBlend.vector_y);
+
+		auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncTextureContextBind(TextureTempScene);
+		// bind texture context => sampler(tmu) => unbind.
+		ShaderUniform.UniformInteger(ShaderTemp, "PostTextures", TextureTempScene.TextureSamplerCount);
+		
+		// shader context end.
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextUnbind();
+		return ShaderTemp != OPENGL_INVALID_HANDEL;
+	}
+}
+
+namespace GraphicsEngineBackground {
+
+	PsagGLEngineBackground::PsagGLEngineBackground(
+		const Vector2T<uint32_t>& render_resolution, const vector<ImageRawData>& imgdataset
+	) {
+		// generate unique_id.
+		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsShader ShaderProcess;
+
+		ShaderProcess.ShaderLoaderVS(GraphicsShaderScript::PsagShaderScriptPublicVS, StringScript);
+		ShaderProcess.ShaderLoaderFS(GraphicsShaderScript::PsagShaderScriptBackFS,   StringScript);
+
+		if (ShaderProcess.CreateCompileShader()) {
+			// back_process shader.	
+			ShaderProgramItem = to_string(GenResourceID.PsagGenTimeKey());
+			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
+		}
+
+		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
+
+		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
+		// convert: glm matrix => imfx matrix.
+		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
+		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+
+		// **************** load texture3D [mul_tex] ****************
+
+		if (imgdataset.size() > NULL) {
+			RenderTexIndex.vector_y = float(imgdataset.size() - 1);
+
+			PsagLow::PsagSupGraphicsTool::PsagGraphicsTexture BackTexture;
+			BackgroundTextures = to_string(GenResourceID.PsagGenTimeKey());
+
+			BackTexture.SetTextureParam(imgdataset[0].Width, imgdataset[0].Height, LinearFiltering);
+			BackTexture.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
+
+			for (const auto& LayerData : imgdataset)
+				BackTexture.PushCreateTexData(TextureParam(1.0f, 1.0f), DEF_IMG_CHANNEL_RGBA, LayerData.ImagePixels);
+
+			if (BackTexture.CreateTexture())
+				LLRES_Textures->ResourceStorage(BackgroundTextures, &BackTexture);
+		}
+		else
+			PushLogger(LogWarning, PSAGM_GLENGINE_BACK_LABEL, "background layers = 0.");
+		PushLogger(LogInfo, PSAGM_GLENGINE_BACK_LABEL, "graphics_engine create background.");
+	}
+
+	PsagGLEngineBackground::~PsagGLEngineBackground() {
+		// free graphics back resource.
+		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(BackgroundTextures).TextureSamplerCount);
+		LLRES_Textures->ResourceDelete(BackgroundTextures);
+		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
+		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "graphics_engine free back_shader(system).");
+	}
+
+	bool PsagGLEngineBackground::RenderingBackgroundModule() {
+		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextBind(ShaderTemp);
+		StaticVertexFrameDraw();
+
+		// framework preset uniform.
+		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderingMatrixMvp);
+		ShaderUniform.UniformVec2(ShaderTemp,      "RenderRes",  RenderResolution);
+		ShaderUniform.UniformFloat(ShaderTemp,     "RenderTime", RunTimeTick);
+
+		ShaderUniform.UniformVec2(ShaderTemp, "RenderMove",  RenderMove);
+		ShaderUniform.UniformVec2(ShaderTemp, "RenderScale", RenderScale);
+
+		ShaderUniform.UniformFloat(ShaderTemp, "TextureIndex",     (float)RenderTexIndex.vector_x);
+		ShaderUniform.UniformFloat(ShaderTemp, "TextureBackIndex", (float)RenderTexIndex.vector_y);
+		
+		ShaderUniform.UniformFloat(ShaderTemp, "BackVisibility", RenderParameters.BackgroundVisibility);
+		ShaderUniform.UniformVec2(ShaderTemp,  "BackStrength",   RenderParameters.BackgroundStrength);
+		ShaderUniform.UniformVec4(ShaderTemp,  "BackBlendColor", RenderParameters.BackgroundColor);
+
+		auto TextureTemp = LLRES_Textures->ResourceFind(BackgroundTextures);
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncTextureContextBind(TextureTemp);
+		ShaderUniform.UniformInteger(ShaderTemp, "MultipleBackTex", TextureTemp.TextureSamplerCount);
+
+		PsagLow::PsagSupGraphicsTool::PsagGraphicsFuncShaderContextUnbind();
+		RunTimeTick += PSAGM_VIR_TICKSTEP;
+		return ShaderTemp != OPENGL_INVALID_HANDEL;
+	}
+}
