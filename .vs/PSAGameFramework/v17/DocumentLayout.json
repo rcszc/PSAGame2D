@@ -279,7 +279,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -308,6 +308,19 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ExternalModulePathlist.json",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-03T11:28:24.428Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
               "Title": "psag_graphics_engine.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
@@ -316,8 +329,7 @@
               "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
               "ViewState": "AQIAAEkAAAAAAAAAAAAAAF4AAABFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-06T17:51:01.498Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-06T17:51:01.498Z"
             },
             {
               "$type": "Document",
@@ -354,19 +366,6 @@
               "ViewState": "AQIAAM8AAAAAAAAAAAAAAOIAAAACAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-05-03T14:41:11.748Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ExternalModulePathlist.json",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAzAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-05-03T11:28:24.428Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
