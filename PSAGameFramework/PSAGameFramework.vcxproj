@@ -181,6 +181,7 @@
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_background.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_bloom_h.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_bloom_v.frag" />
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_colorfilter.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_fx_sequence.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_particle.frag" />

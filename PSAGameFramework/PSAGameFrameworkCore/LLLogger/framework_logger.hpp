@@ -10,7 +10,7 @@
 #include "../LLDefine/framework_def_header.h"
 #include "../LLDefine/framework_def_math.hpp"
 
-#define PSAG_LOGGER_LABEL "PSAG_LOGGER"
+StaticStrLABEL PSAG_LOGGER_LABEL = "PSAG_LOGGER";
 
 // format number => string, %d(fill_zero).
 std::string FMT_NUMBER_FILLZERO(uint32_t number, int32_t digits);

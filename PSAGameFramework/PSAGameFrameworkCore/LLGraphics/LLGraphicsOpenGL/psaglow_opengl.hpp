@@ -14,7 +14,7 @@ protected: static RendererLogger PsagLowLog;
 // Manager Module [Renderer "Manager" Interface] 20240101.
 // Update: 2024_05_13. RCSZ
 namespace PSAG_OGL_MAG {
-#define PSAG_OGLMAG_LABEL "PSAG_OGL_MAG"
+	StaticStrLABEL PSAG_OGLMAG_LABEL = "PSAG_OGL_MAG";
 
 	// system.persets data, 2 * triangle_att dataset.
 	constexpr float ShaderTemplateRect[72] = {
@@ -232,7 +232,7 @@ public:
 // Resource Module [Renderer "Resource" Interface] ThreadSafe, 20240101.
 // Update: 2024_04_01. RCSZ
 namespace PSAG_OGL_RES {
-#define PSAG_OGLRES_LABEL "PSAG_OGL_RES"
+	StaticStrLABEL PSAG_OGLRES_LABEL = "PSAG_OGL_RES";
 
 	class PsagResTexSamplerOGL :public PsagOGLsystemLogger, public PsagGLresourceTMU {
 	protected:
@@ -251,7 +251,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResShadersOGL :public PsagOGLsystemLogger, public PsagGLresourceShader {
 	protected:
-		std::unordered_map<std::string, PsagShader> ResourceShaderMap = {};
+		std::unordered_map<ResUnique, PsagShader> ResourceShaderMap = {};
 		std::mutex ResourceShaderMutex = {};
 
 	public:
@@ -283,11 +283,8 @@ namespace PSAG_OGL_RES {
 
 	class PsagResTextureOGL :public PsagOGLsystemLogger, public PsagGLresourceTexture {
 	protected:
-		std::unordered_map<std::string, PsagTextureAttrib>       ResourceTextureMap    = {}; // Tex2D.
-		std::unordered_map<std::string, PsagTextureAttrib> ResourceExtTextureMap = {}; // Tex3D.
-
-		std::mutex ResourceTextureMutex    = {};
-		std::mutex ResourceExtTextureMutex = {};
+		std::unordered_map<ResUnique, PsagTextureAttrib> ResourceTextureMap = {};
+		std::mutex ResourceTextureMutex = {};
 
 	public:
 		PsagTextureAttrib ResourceFind(ResUnique key) override;
@@ -317,7 +314,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResVertexBufferOGL :public PsagOGLsystemLogger, public PsagGLresourceVertexBuffer {
 	protected:
-		std::unordered_map<std::string, PsagVertexBufferAttrib> ResourceVertexBufferMap = {};
+		std::unordered_map<ResUnique, PsagVertexBufferAttrib> ResourceVertexBufferMap = {};
 		std::mutex ResourceVertexBufferMutex = {};
 
 	public:
@@ -352,7 +349,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResVertexAttribOGL :public PsagOGLsystemLogger, public PsagGLresourceVertexAttribute {
 	protected:
-		std::unordered_map<std::string, PsagVertexAttribute> ResourceVertexAttrMap = {};
+		std::unordered_map<ResUnique, PsagVertexAttribute> ResourceVertexAttrMap = {};
 		std::mutex ResourceVertexAttrMutex = {};
 
 	public:
@@ -383,7 +380,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResFrameBufferOGL :public PsagOGLsystemLogger, public PsagGLresourceFrameBuffer {
 	protected:
-		std::unordered_map<std::string, PsagFrameBuffer> ResourceFrameBufferMap = {};
+		std::unordered_map<ResUnique, PsagFrameBuffer> ResourceFrameBufferMap = {};
 		std::mutex ResourceFrameBufferMutex = {};
 
 	public:
@@ -414,7 +411,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResRenderBufferOGL :public PsagOGLsystemLogger, public PsagGLresourceRenderBuffer {
 	protected:
-		std::unordered_map<std::string, PsagRenderBufferAttrib> ResourceRenderBufferMap = {};
+		std::unordered_map<ResUnique, PsagRenderBufferAttrib> ResourceRenderBufferMap = {};
 		std::mutex ResourceRenderBufferMutex = {};
 
 	public:
@@ -447,7 +444,7 @@ namespace PSAG_OGL_RES {
 // ImageLoader Module [Renderer "IMG" Interface].
 // Update: 2024_04_01. RCSZ
 namespace PSAG_OGL_IMG {
-#define PSAG_OGLIMG_LABEL "PSAG_OGL_IMG"
+	StaticStrLABEL PSAG_OGLIMG_LABEL = "PSAG_OGL_IMG";
 
 	class PsagIOImageFileSTB :public PsagOGLsystemLogger, public PsagIOmanagerImage {
 	public:

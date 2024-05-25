@@ -16,9 +16,9 @@ namespace PSAG_WINDOW_IMGUI {
         GUIIO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // enable gamepad controls.
 
         if (!std::filesystem::exists(cfgdata.FontsFilepath))
-            PushLogger(LogWarning, PSAG_WINDOWGUI_LABEL, "failed imgui_read: fonts file.");
+            PushLogger(LogWarning, PSAG_IMGUI_LABEL, "failed imgui_read: fonts file.");
         else
-            PushLogger(LogInfo, PSAG_WINDOWGUI_LABEL, "imgui_read: fonts file: %s", cfgdata.FontsFilepath.c_str());
+            PushLogger(LogInfo, PSAG_IMGUI_LABEL, "imgui_read: fonts file: %s", cfgdata.FontsFilepath.c_str());
 
         // setup imgui style.
         ImGui::StyleColorsDark();
@@ -56,7 +56,7 @@ namespace PSAG_WINDOW_IMGUI {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
-        PushLogger(LogInfo, PSAG_WINDOWGUI_LABEL, "imgui_free: imgui context.");
+        PushLogger(LogInfo, PSAG_IMGUI_LABEL, "imgui_free: imgui context.");
     }
 
     void SpcaImGuiEvent::RenderGuiContextA() {

@@ -11,7 +11,7 @@ namespace ActorShaderScript {
 }
 
 namespace GameActorCore {
-#define PSAGM_ACTOR_CORE_LABEL "PSAG_ACTOR_CORE"
+	StaticStrLABEL PSAGM_ACTOR_CORE_LABEL = "PSAG_ACTOR_CORE";
 	namespace Type {
 		// actor null_type value.
 		constexpr uint32_t ActorTypeNULL = 0;
@@ -82,10 +82,10 @@ namespace GameActorCore {
 		// create virtual texture.
 		bool ShaderLoadImage(const ImageRawData& image);
 
-		std::string                                  __VIR_TEXTURE_ITEM = {};
+		ResUnique                                    __VIR_TEXTURE_ITEM = {};
 		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM = {};
 		
-		std::string __ACTOR_SHADER_ITEM = {};
+		ResUnique   __ACTOR_SHADER_ITEM = {};
 		PsagMatrix4 __ACTOR_MATRIX_ITEM = {};
 
 		Vector2T<uint32_t> __WINDOW_RESOLUTION = {};
@@ -129,9 +129,13 @@ namespace GameActorCore {
 	};
 	// init(config) descriptor.
 	struct GameActorActuatorDESC {
-		float            ActorTimerStepSpeed;
 		GameActorShader* ActorShaderResource;
+		float            ActorTimerStepSpeed;
 		ActorPhyMode     ActorPhysicsMode;
+
+		float ControlFricMove;
+		float ControlFricRotate;
+		float ControlFricScale;
 
 		// params: x:phy_density, y:phy_friction.
 		Vector2T<float> InitialPhysics;
@@ -140,26 +144,22 @@ namespace GameActorCore {
 		Vector2T<float> InitialSpeed;
 		float           InitialRotate;
 
-		float ControlFrictionSpeedMove;
-		float ControlFrictionSpeedRotate;
-		float ControlFrictionSpeedScale;
-
 		GameActorHealthDESC ActorHealthSystem;
 
 		GameActorActuatorDESC() :
-			ActorTimerStepSpeed(1.0f),
 			ActorShaderResource(nullptr),
+			ActorTimerStepSpeed(1.0f),
 			ActorPhysicsMode   (PhyMoveActor),
 
-			InitialPhysics (Vector2T<float>(1.0f, 0.7f)),
-			InitialPosition({}),
-			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
-			InitialSpeed   ({}),
-			InitialRotate  (0.0f),
+			ControlFricMove  (1.0f),
+			ControlFricRotate(1.0f),
+			ControlFricScale (1.0f),
 
-			ControlFrictionSpeedMove  (1.0f),
-			ControlFrictionSpeedRotate(1.0f),
-			ControlFrictionSpeedScale (1.0f),
+			InitialPhysics (Vector2T<float>(1.0f, 0.7f)),
+			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
+			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
+			InitialSpeed   (Vector2T<float>(0.0f, 0.0f)),
+			InitialRotate  (0.0f),
 
 			ActorHealthSystem({})
 		{}
@@ -180,15 +180,15 @@ namespace GameActorCore {
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
 
-		std::string ActorShaderItem  = {};
-		std::string ActorTextureItem = {};
+		ResUnique ActorShaderItem  = {};
+		ResUnique ActorTextureItem = {};
 
 		// shader rendering size, shader_uniform.
 		Vector2T<float>                              RenderingResolution = {};
 		PsagMatrix4                                  RenderingMatrix     = {};
 		GraphicsEngineDataset::VirTextureUniformName RenderingUniform    = {};
 
-		std::string ActorPhysicsItem = {};
+		ResUnique ActorPhysicsItem = {};
 		float ActorPhysicsDensity = 1.0, ActorPhysicsFriction = 0.7f;
 
 		// x:move, y:rotate, z:scale.
@@ -210,7 +210,7 @@ namespace GameActorCore {
 		~GameActorActuator();
 
 		ActorPrivateINFO ActorGetPrivate()   { return ActorUniqueInfo;    }
-		ActorPrivateINFO ActorGetCollision() { return ActorCollisionINFO; };
+		ActorPrivateINFO ActorGetCollision() { return ActorCollisionINFO; }
 
 		float ActorGetHealth(size_t count) {
 			if (count < PSAG_HEALTH_STATE_NUM)
@@ -238,8 +238,13 @@ namespace GameActorCore {
 	};
 }
 
+// 用于构建静态场景,比静态Actor更加轻量.
+namespace GameBrickCore {
+	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
+}
+
 namespace GameActorManager {
-#define PSAGM_ACTOR_MAG_LABEL "PSAG_ACTOR_MAG"
+	StaticStrLABEL PSAGM_ACTOR_MAG_LABEL = "PSAG_ACTOR_MAG";
 
 	class GameActorActuatorManager {
 	protected:

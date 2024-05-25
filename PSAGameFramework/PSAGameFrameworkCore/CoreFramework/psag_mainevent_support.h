@@ -35,7 +35,7 @@ namespace GameLogic {
 }
 
 namespace PsagMainEvent {
-#define PSAGM_MAIN_EVENT_LABEL "PSAG_M_MAINEVENT"
+    StaticStrLABEL PSAGM_MAIN_EVENT_LABEL = "PSAG_M_MAINEVENT";
 
     struct Event {
         std::string          EventName;
@@ -71,7 +71,7 @@ namespace PsagMainEvent {
 
 namespace PsagFrameworkStart {
     class GameLogic::INTERFACE_DEVCLASS_GAME;
-#define PSAGM_FRAME_START_LABEL "PSAG_M_START"
+    StaticStrLABEL PSAGM_FRAME_START_LABEL = "PSAG_M_START";
 
 #define PSAGM_FLAG_FRAMEWORK 0xA0
 #define PSAGM_FLAG_NETWORK   0xB0
@@ -130,7 +130,7 @@ namespace PsagFrameworkStart {
 }
 
 namespace PsagFrameworkCore {
-#define PSAGM_FRAME_CORE_LABEL "PSAG_M_CORE"
+    StaticStrLABEL PSAGM_FRAME_CORE_LABEL = "PSAG_M_CORE";
     namespace PsagManage {
         class SysBackground;
         class SysFrontMask;
@@ -193,7 +193,7 @@ namespace PsagFrameworkCore {
     };
 
     namespace PsagManage {
-#define PSAGM_FRAME_COREMAG_LABEL "PSAG_M_COREMAG"
+        StaticStrLABEL PSAGM_FRAME_COREMAG_LABEL = "PSAG_M_COREMAG";
         // non-eventloop.
         class SysBackground :protected PSAGame2DFramework {
         protected:
@@ -209,7 +209,7 @@ namespace PsagGameSys = PsagFrameworkCore::PsagManage;
 
 // register game developer_class.
 namespace RegisterDevClass {
-#define PSAGM_FRAME_DEVREG_LABEL "PSAG_M_REGISTER"
+    StaticStrLABEL PSAGM_FRAME_DEVREG_LABEL = "PSAG_M_REGISTER";
 
     class ReflectionFactory {
     public:

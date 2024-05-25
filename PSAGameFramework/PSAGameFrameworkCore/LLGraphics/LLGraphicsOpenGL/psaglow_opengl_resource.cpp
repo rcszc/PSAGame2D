@@ -57,7 +57,7 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceShaderMap.find(key);
 		if (it != ResourceShaderMap.end()) {
-			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "shader: failed storage duplicate_key: %s", key.c_str());
+			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "shader: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		ResourceFlag ResFlag = {};
@@ -65,10 +65,10 @@ namespace PSAG_OGL_RES {
 		// resource = normal ?
 		if (ResFlag == DEFRES_FLAG_NORMAL) {
 			ResourceShaderMap[key] = ResStorage;
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "shader: storage key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "shader: storage key: %u", key);
 			return true;
 		}
-		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "shader: failed storage, key: %s, code: %i", key.c_str(), ResFlag);
+		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "shader: failed storage, key: %u, code: %i", key, ResFlag);
 		return false;
 	}
 
@@ -82,7 +82,7 @@ namespace PSAG_OGL_RES {
 			glDeleteProgram(it->second);
 			ResourceShaderMap.erase(it);
 
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "shader: delete key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "shader: delete key: %u", key);
 			return true;
 		}
 		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "shader: failed delete, not found key.");
@@ -101,7 +101,7 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceTextureMap.find(key);
 		if (it != ResourceTextureMap.end()) {
-			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "texture: failed storage duplicate_key: %s", key.c_str());
+			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "texture: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		ResourceFlag ResFlag = {};
@@ -109,10 +109,10 @@ namespace PSAG_OGL_RES {
 		// resource = normal ?
 		if (ResFlag == DEFRES_FLAG_NORMAL) {
 			ResourceTextureMap[key] = ResStorage;
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "texture: storage key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "texture: storage key: %u", key);
 			return true;
 		}
-		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "texture: failed storage, key: %s, code: %i", key.c_str(), ResFlag);
+		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "texture: failed storage, key: %u, code: %i", key, ResFlag);
 		return false;
 	}
 
@@ -126,7 +126,7 @@ namespace PSAG_OGL_RES {
 			glDeleteTextures(1, &it->second.Texture);
 			ResourceTextureMap.erase(it);
 
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "texture: delete key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "texture: delete key: %u", key);
 			return true;
 		}
 		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "texture: failed delete, not found key.");
@@ -145,7 +145,7 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceVertexBufferMap.find(key);
 		if (it != ResourceVertexBufferMap.end()) {
-			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "verbuffer: failed storage duplicate_key: %s", key.c_str());
+			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "verbuffer: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		ResourceFlag ResFlag = {};
@@ -153,10 +153,10 @@ namespace PSAG_OGL_RES {
 		// resource = normal ?
 		if (ResFlag == DEFRES_FLAG_NORMAL) {
 			ResourceVertexBufferMap[key] = ResStorage;
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "verbuffer: storage key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "verbuffer: storage key: %u", key);
 			return true;
 		}
-		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "verbuffer: failed storage, key: %s, code: %i", key.c_str(), ResFlag);
+		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "verbuffer: failed storage, key: %u, code: %i", key, ResFlag);
 		return false;
 	}
 
@@ -170,7 +170,7 @@ namespace PSAG_OGL_RES {
 			glDeleteBuffers(1, &it->second.DataBuffer);
 			ResourceVertexBufferMap.erase(it);
 
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "verbuffer: delete key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "verbuffer: delete key: %u", key);
 			return true;
 		}
 		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "verbuffer: failed delete, not found key.");
@@ -194,11 +194,11 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceVertexAttrMap.find(key);
 		if (it != ResourceVertexAttrMap.end()) {
-			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "veratt: failed storage duplicate_key: %s", key.c_str());
+			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "veratt: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		ResourceVertexAttrMap[key] = res;
-		PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "veratt: storage key: %s", key.c_str());
+		PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "veratt: storage key: %u", key);
 		return true;
 	}
 
@@ -212,7 +212,7 @@ namespace PSAG_OGL_RES {
 			glDeleteVertexArrays(1, &it->second);
 			ResourceVertexAttrMap.erase(it);
 
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "veratt: delete key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "veratt: delete key: %u", key);
 			return true;
 		}
 		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "veratt: failed delete, not found key.");
@@ -231,7 +231,7 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceFrameBufferMap.find(key);
 		if (it != ResourceFrameBufferMap.end()) {
-			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "framebuf: failed storage duplicate_key: %s", key.c_str());
+			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "framebuf: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		ResourceFlag ResFlag = {};
@@ -239,10 +239,10 @@ namespace PSAG_OGL_RES {
 		// resource = normal ?
 		if (ResFlag == DEFRES_FLAG_NORMAL) {
 			ResourceFrameBufferMap[key] = ResStorage;
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "framebuf: storage key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "framebuf: storage key: %u", key);
 			return true;
 		}
-		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "framebuf: failed storage, key: %s, code: %i", key.c_str(), ResFlag);
+		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "framebuf: failed storage, key: %u, code: %i", key, ResFlag);
 		return false;
 	}
 
@@ -256,7 +256,7 @@ namespace PSAG_OGL_RES {
 			glDeleteFramebuffers(1, &it->second);
 			ResourceFrameBufferMap.erase(it);
 
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "framebuf: delete key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "framebuf: delete key: %u", key);
 			return true;
 		}
 		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "framebuf: failed delete, not found key.");
@@ -275,7 +275,7 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceRenderBufferMap.find(key);
 		if (it != ResourceRenderBufferMap.end()) {
-			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "renderbuf: failed storage duplicate_key: %s", key.c_str());
+			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "renderbuf: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		ResourceFlag ResFlag = {};
@@ -283,10 +283,10 @@ namespace PSAG_OGL_RES {
 		// resource = normal ?
 		if (ResFlag == DEFRES_FLAG_NORMAL) {
 			ResourceRenderBufferMap[key] = ResStorage;
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "renderbuf: storage key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "renderbuf: storage key: %u", key);
 			return true;
 		}
-		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "renderbuf: failed storage, key: %s, code: %i", key.c_str(), ResFlag);
+		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "renderbuf: failed storage, key: %u, code: %i", key, ResFlag);
 		return false;
 	}
 
@@ -300,7 +300,7 @@ namespace PSAG_OGL_RES {
 			glDeleteFramebuffers(1, &it->second.RenderBuffer);
 			ResourceRenderBufferMap.erase(it);
 
-			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "renderbuf: delete key: %s", key.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "renderbuf: delete key: %u", key);
 			return true;
 		}
 		PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "renderbuf: failed delete, not found key.");

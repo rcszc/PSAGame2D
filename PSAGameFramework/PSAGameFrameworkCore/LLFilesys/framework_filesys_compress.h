@@ -7,12 +7,11 @@
 // LLFilesys PSA-L.1 (=>logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_FILESYS_COMPR_LABEL "PSAG_FILESYS_CPRS"
-
 #ifndef Z_GZIP // GZIP = Z_DEFLATE + 16.
 #define Z_GZIP (16 + MAX_WBITS)
 #endif
 namespace PSAG_FILESYS_COMPR {
+	StaticStrLABEL PSAG_FILESYS_COMPR_LABEL = "PSAG_FILESYS_CPRS";
 
 	class PsagFilesysCompress {
 	protected:

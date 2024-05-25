@@ -8,9 +8,9 @@
 
 #define PSAGM_VIR_TICKSTEP_GL 0.058f
 
-// 统一数据集管理,单一共享 VAO,VBO,TEXTURE.
+// 统一数据集管理,单一共享 VAO,VBO,TEXTURE(TMU).
 namespace GraphicsEngineDataset {
-#define PSAGM_GLENGINE_DATA_LABEL "PSAG_GL_DATASET"
+	StaticStrLABEL PSAGM_GLENGINE_DATA_LABEL = "PSAG_GL_DATASET";
 
 	// LLRES => stc_vertex_data system. (static vertex data) [静态矩形]
 	// => MODULE(update: 20240506):
@@ -20,8 +20,8 @@ namespace GraphicsEngineDataset {
 	class GLEngineStcVertexData :public PsagLow::PsagSupGraphicsLLRES {
 	private:
 		// opengl vao,vbo handle(res).
-		static std::string VertexAttribute;
-		static std::string VertexBuffer;
+		static ResUnique VertexAttribute;
+		static ResUnique VertexBuffer;
 	protected:
 		void StaticVertexFrameDraw();
 
@@ -44,20 +44,20 @@ namespace GraphicsEngineDataset {
 	class GLEngineDyVertexData :public PsagLow::PsagSupGraphicsLLRES {
 	private:
 		// opengl vao,vbo handle(res).
-		static std::string VertexAttribute;
-		static std::string VertexBuffer;
+		static ResUnique VertexAttribute;
+		static ResUnique VertexBuffer;
 
-		static std::unordered_map<std::string, VABO_DATASET_INFO> IndexItems;
+		static std::unordered_map<ResUnique, VABO_DATASET_INFO> IndexItems;
 		static std::vector<float> VertexRawDataset;
 
 		static bool GLOBAL_UPDATE_FLAG;
 		void UpdateVertexDyDataset();
 	protected:
-		bool VerDataItemAlloc(ResUnique strkey);
-		bool VerDataItemFree(ResUnique strkey);
+		bool VerDataItemAlloc(ResUnique rukey);
+		bool VerDataItemFree(ResUnique rukey);
 
-		bool VerOperFramePushData(ResUnique strkey, const std::vector<float>& data);
-		bool VerOperFrameDraw(ResUnique strkey);
+		bool VerOperFramePushData(ResUnique rukey, const std::vector<float>& data);
+		bool VerOperFrameDraw(ResUnique rukey);
 
 		// dynamic vertex system: framework oper.
 		void VertexDataObjectCreate();
@@ -87,25 +87,22 @@ namespace GraphicsEngineDataset {
 		Vector2T<uint32_t> ArraySize; // x:max, y:usage.
 		Vector2T<uint32_t> TextureResolution;
 
-		std::string TextureArrayIndex;
+		ResUnique TextureArrayIndex;
 		TextureLayerAlloc::TEX_LAYER_ALLOC* LayerAllotter;
 	};
 	// virtual texture(item) params: cropping,size.
 	struct VirTextureParam {
 		// 1:1/1, 2:1/2, 3:1/4, 4:1/8.
 		uint32_t ResolutionType;
-		std::string Texture;
+		ResUnique Texture;
 
 		uint32_t        SampleLayers;   // simpler-z offset
 		Vector2T<float> SampleCropping; // x,y:[0.0f,1.0f]
 		Vector2T<float> SampleSize;     // x,y:[image_size]
 
-		// str process buffer.
-		std::string StrProcess = {};
-
-		VirTextureParam() : ResolutionType(NULL), Texture({}), SampleLayers(NULL), SampleCropping({}), SampleSize({}) {};
-		VirTextureParam(uint32_t type, const std::string strkey, uint32_t layer, const Vector2T<float>& smpcro, const Vector2T<float>& smpsz) :
-			ResolutionType(type), Texture(strkey), SampleLayers(layer), SampleCropping(smpcro), SampleSize(smpsz)
+		VirTextureParam() : ResolutionType(NULL), Texture(NULL), SampleLayers(NULL), SampleCropping({}), SampleSize({}) {};
+		VirTextureParam(uint32_t type, ResUnique rukey, uint32_t layer, const Vector2T<float>& smpcro, const Vector2T<float>& smpsz) :
+			ResolutionType(type), Texture(rukey), SampleLayers(layer), SampleCropping(smpcro), SampleSize(smpsz)
 		{};
 	};
 
@@ -139,21 +136,21 @@ namespace GraphicsEngineDataset {
 		static SamplerTextures TexturesSize8X; // 1/1 resolution.
 
 		// virtual texture items index.
-		static std::unordered_map<std::string, VirTextureParam> TexIndexItems;
+		static std::unordered_map<ResUnique, VirTextureParam> TexIndexItems;
 
 		uint32_t CheckResolutionType(const Vector2T<uint32_t>& size);
-		VirTextureParam* FindTexIndexItems(ResUnique strkey);
+		VirTextureParam* FindTexIndexItems(ResUnique rukey);
 	protected:
-		bool VirTextureItemAlloc(ResUnique strkey, const ImageRawData& image);
-		bool VirTextureItemAllocEmpty(ResUnique strkey, const Vector2T<uint32_t>& size);
-		bool VirTextureItemFree(ResUnique strkey);
+		bool VirTextureItemAlloc(ResUnique rukey, const ImageRawData& image);
+		bool VirTextureItemAllocEmpty(ResUnique rukey, const Vector2T<uint32_t>& size);
+		bool VirTextureItemFree(ResUnique rukey);
 
-		bool VirTextureExist(ResUnique strkey);
+		bool VirTextureExist(ResUnique rukey);
 		// bind texture(array), layer(s) => virtual texture.
 		// upload uniform param, "uniform_name".
-		bool VirTextureItemDraw(ResUnique strkey, PsagShader shader, const VirTextureUniformName& uniform_name);
+		bool VirTextureItemDraw(ResUnique rukey, PsagShader shader, const VirTextureUniformName& uniform_name);
 		// virtual texture & layer_index.
-		bool VirTextureItemIndex(ResUnique strkey, PsagTexture& texture, uint32_t layer_index);
+		bool VirTextureItemIndex(ResUnique rukey, PsagTexture& texture, uint32_t layer_index);
 
 		// virtual texture system: framework oper.
 		void VirtualTextureDataObjectCreate(
@@ -164,7 +161,7 @@ namespace GraphicsEngineDataset {
 }
 
 namespace GraphicsShaderCode {
-#define PSAGM_GLENGINE_SHADER_LABEL "PSAG_GL_GLSL"
+	StaticStrLABEL PSAGM_GLENGINE_SHADER_LABEL = "PSAG_GL_GLSL";
 
 	struct PublicDESC {
 		std::string ShaderVertTemplate;
@@ -172,10 +169,11 @@ namespace GraphicsShaderCode {
 		std::string ShaderFragHeader;
 	};
 	struct PrivateDESC {
-		std::string ShaderFragGameBackground;
-		std::string ShaderFragBloomH;
-		std::string ShaderFragBloomV;
-		std::string ShaderFragGameScene;
+		std::string shaderFragColorFilter; // [post_sh_group]
+		std::string ShaderFragBloomH;      // [post_sh_group]
+		std::string ShaderFragBloomV;      // [post_sh_group]
+		std::string ShaderFragFinalPhase;  // [post_sh_group]
+		std::string ShaderFragBackground;
 		std::string ShaderFragParticle;
 		std::string ShaderFragFxSequence;
 	};
@@ -200,17 +198,20 @@ namespace GraphicsShaderCode {
 }
 
 namespace GraphicsEnginePost {
-#define PSAGM_GLENGINE_POST_LABEL "PSAG_GL_POST"
+	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
 	struct PostFxParameters {
+		Vector3T<float> GameSceneFilterCOL; // lv1-filter.
+		float           GameSceneFilterAVG; // lv2-filter.
 		// bloom_radius [1-32] calc & filter avg_color.
 		uint32_t GameSceneBloomRadius;
-		float    GameSceneBloomFilter;
 		// bloom_blend x:source, y:blur.
 		Vector2T<float> GameSceneBloomBlend;
 
 		PostFxParameters() :
-			GameSceneBloomRadius(1), GameSceneBloomFilter(0.0f), GameSceneBloomBlend(Vector2T<float>(1.0f, 1.0f))
+			GameSceneFilterCOL({}), GameSceneFilterAVG(0.0f),
+			GameSceneBloomRadius(1), 
+			GameSceneBloomBlend(Vector2T<float>(1.0f, 1.0f))
 		{}
 	};
 
@@ -221,16 +222,20 @@ namespace GraphicsEnginePost {
 		Vector2T<float> RenderingResolution = {};
 
 		PsagMatrix4 RenderingMatrixMvp = {};
-		// scene => bloom_h + bloom_v => post_shader.
-		std::string ShaderProgramItem = {};
-		std::string ShaderBloomH = {}, ShaderBloomV = {};
+		// scene => filter => bloom_h + bloom_v => post_shader.
+		ResUnique ShaderProgramItem = {};
+		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
 		
-		std::string GameSceneFrameBuffer = {};
+		ResUnique GameSceneFrameBuffer = {};
+		ResUnique FilterFrameBuffer    = {};
 		// 0:framebuffer_h, 1:framebuffer_v.
-		std::string BloomFrameBuffers[2] = {};
-		// texture_cube: 0:frame_buffer_tex, 1:bloom_h_tex, 2:bloom_v_tex
-		std::string ProcessTextures = {};
+		ResUnique BloomFrameBuffers[2] = {};
 
+		// texture_cube: 0: color_filter, 1:frame_buffer_tex, 2:bloom_h_tex, 3:bloom_v_tex
+		ResUnique ProcessTextures = {};
+
+		// vertex default: move,scale.
+		void ShaderVertexDefaultParams(PsagShader shader);
 		void BloomShaderProcessHV();
 	public:
 		PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution);
@@ -246,7 +251,7 @@ namespace GraphicsEnginePost {
 }
 
 namespace GraphicsEngineBackground {
-#define PSAGM_GLENGINE_BACK_LABEL "PSAG_GL_BACK"
+	StaticStrLABEL PSAGM_GLENGINE_BACK_LABEL = "PSAG_GL_BACK";
 
 	struct BackFxParameters {
 		// value[0.0,1.0]
@@ -276,11 +281,11 @@ namespace GraphicsEngineBackground {
 
 		PsagMatrix4 RenderingMatrixMvp = {};
 		// x:tex_idx[1,n-1], y:tex_idx[n].
-		std::string ShaderProgramItem = {};
+		ResUnique ShaderProgramItem = {};
 
-		Vector2T<float> RenderTexIndex = {};
-		// texture3d(n * layers).
-		std::string BackgroundTextures = {};
+		float TextureTopLayer = {};
+		// texture_array(n * layers).
+		ResUnique BackgroundTextures = {};
 	public:
 		PsagGLEngineBackground(
 			const Vector2T<uint32_t>& render_resolution, const std::vector<ImageRawData>& imgdataset
@@ -294,7 +299,7 @@ namespace GraphicsEngineBackground {
 }
 
 namespace GraphicsEngineParticle {
-#define PSAGM_GLENGINE_PARTICLE_LABEL "PSAG_GL_PARTICLE"
+	StaticStrLABEL PSAGM_GLENGINE_PARTICLE_LABEL = "PSAG_GL_PARTICLE";
 
 	enum EmittersMode {
 		PrtcPoints = 1 << 1, // 点云 [扩散]
@@ -407,8 +412,8 @@ namespace GraphicsEngineParticle {
 		std::vector<ParticleAttributes> DataParticles = {};
 		std::vector<float>              DataVertices  = {};
 
-		std::string ShaderProgramItem = {};
-		std::string DyVertexSysItem   = {};
+		ResUnique ShaderProgramItem = {};
+		ResUnique DyVertexSysItem   = {};
 
 		float       RenderTimer  = 0.0f;
 		PsagMatrix4 RenderMatrix = {};
@@ -416,7 +421,7 @@ namespace GraphicsEngineParticle {
 		Vector2T<float> RenderMove  = {};
 		Vector2T<float> RenderScale = Vector2T<float>(1.0f, 1.0f);
 
-		std::string VirTextureItem = {};
+		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
 		void CalcUpdateParticles(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
@@ -436,7 +441,7 @@ namespace GraphicsEngineParticle {
 }
 
 namespace GraphicsEnginePVFX {
-#define PSAGM_GLENGINE_PVFX_LABEL "PSAG_GL_PVFX"
+	StaticStrLABEL PSAGM_GLENGINE_PVFX_LABEL = "PSAG_GL_PVFX";
 
 	// image data => image(texture)_view.
 	class PsagGLEngineFxImageView :public PsagLow::PsagSupGraphicsLLRES {
@@ -453,7 +458,7 @@ namespace GraphicsEnginePVFX {
 	class PsagGLEngineFxCaptureView :public PsagLow::PsagSupGraphicsLLRES {
 	protected:
 		PsagTextureView TextureViewItem = {};
-		std::string FrameBufferItem = {};
+		ResUnique FrameBufferItem = {};
 	public:
 		PsagGLEngineFxCaptureView(const Vector2T<uint32_t>& render_resolution);
 		~PsagGLEngineFxCaptureView();
@@ -481,11 +486,11 @@ namespace GraphicsEnginePVFX {
 		Vector2T<float> PlayerPosition = {};
 		float           PlayerTimer    = 0.0f;
 
-		std::string ShaderProgramItem = {};
+		ResUnique   ShaderProgramItem = {};
 		float       RenderTimer       = 0.0f;
 		PsagMatrix4 RenderMatrix      = {};
 
-		std::string VirTextureItem = {};
+		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 	public:
 		PsagGLEngineFxSequence(const ImageRawData& image, const SequencePlayer& params);

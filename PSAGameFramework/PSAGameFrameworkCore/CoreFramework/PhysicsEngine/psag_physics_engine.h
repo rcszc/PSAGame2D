@@ -11,7 +11,7 @@
 
 // physics engine: box2d. [20240518]
 namespace PhysicsEngine {
-#define PSAGM_PHYENGINE_LABEL "PSAG_PHYSICS"
+	StaticStrLABEL PSAGM_PHYENGINE_LABEL = "PSAG_PHYSICS";
 
 	struct PhysicsBodyData {
 		size_t FindUniqueCode;
@@ -25,8 +25,13 @@ namespace PhysicsEngine {
 		{}
 	};
 
+	// square, length: +-10.0f.
+	std::vector<b2Vec2> PresetVertexGroupSqua();
+	
 	struct PhysicsBodyConfig {
 		size_t IndexUniqueCode;
+		// 2D碰撞顶点组 (封闭多边形).
+		std::vector<b2Vec2> CollVertexGroup;
 
 		Vector2T<float> PhyBoxPosition;
 		Vector2T<float> PhyBoxCollisionSize;
@@ -53,7 +58,7 @@ namespace PhysicsEngine {
 
 	class PhyEngineObjectData {
 	protected:
-		static std::unordered_map<std::string, PhysicsBodyData> PhysicsDataset;
+		static std::unordered_map<ResUnique, PhysicsBodyData> PhysicsDataset;
 
 		static b2World* PhysicsWorld;
 		static b2Body*  PhysicsWorldGround;

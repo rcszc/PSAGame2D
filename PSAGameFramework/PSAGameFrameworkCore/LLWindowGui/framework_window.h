@@ -22,10 +22,10 @@
 // LLWindowGui PSA-L.6 (=>logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_WINDOWGUI_LABEL "PSAG_WINDOWGUI"
-
 #define DEVICE_ENABLE_NVIDIA_GPU
 namespace PSAG_WINDOW_OGLFW {
+	StaticStrLABEL PSAG_WINDOW_LABEL = "PSAG_WINDOW";
+
 	// glfw window init_config. 
 	struct FwWindowConfig {
 		std::string WindowName;
@@ -120,6 +120,7 @@ ImU32 PsagConvertVec4ToImU32(const Vector4T<float> color) {
 #define PSAG_DEFCOLOR_WHITE  0xFFFFFFFF // °×É«
 #endif
 namespace PSAG_WINDOW_IMGUI {
+	StaticStrLABEL PSAG_IMGUI_LABEL = "PSAG_IMGUI";
 
 	struct ImGuiConfig {
 		std::string     ShaderVersionStr;              // opengl glsl version string

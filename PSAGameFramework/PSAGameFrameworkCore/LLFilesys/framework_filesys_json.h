@@ -6,9 +6,8 @@
 // LLFilesys PSA-L.2 (=>logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_FILESYS_JSON_LABEL "PSAG_FILESYS_JSON"
-
 namespace PSAG_FILESYS_JSON {
+	StaticStrLABEL PSAG_FILESYS_JSON_LABEL = "PSAG_FILESYS_JSON";
 	// .json str_data / .json str_name.
 	enum JsonModeType {
 		InputJsonFileName = 1 << 1,

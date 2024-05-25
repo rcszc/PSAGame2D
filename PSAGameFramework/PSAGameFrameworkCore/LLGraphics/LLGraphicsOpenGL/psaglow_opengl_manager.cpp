@@ -637,6 +637,7 @@ namespace UploadTextureGPU {
 // **************************************** Information ****************************************
 // OpenGL 4.6 get device info. [2023_12_30]
 // Update: 2024_01_25. RCSZ
+StaticStrLABEL PSAG_OGLMAG_INFO_LABEL = "PSAG_OGL_MAG_INFO";
 
 Vector2T<int32_t> SysPsagInformationOGL::InfoGetVertexUnitsMax() {
 	Vector2T<int32_t> GraphVaoVboUnits = {};
@@ -645,8 +646,8 @@ Vector2T<int32_t> SysPsagInformationOGL::InfoGetVertexUnitsMax() {
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &GraphVaoVboUnits.vector_y);
 
 	if (LoggerPrintInformation) {
-		PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device (vao)attribs_max units: %d entry", GraphVaoVboUnits.vector_x);
-		PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device (vbo)buffer_max units: %d entry",  GraphVaoVboUnits.vector_y);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (vao)attribs_max units: %d entry", GraphVaoVboUnits.vector_x);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (vbo)buffer_max units: %d entry",  GraphVaoVboUnits.vector_y);
 	}
 	return GraphVaoVboUnits;
 }
@@ -659,7 +660,7 @@ int32_t SysPsagInformationOGL::InfoGetTextureUnitsMax() {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MaterialMappingUnitsMax);
 
 	if (LoggerPrintInformation)
-		PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device [tmu]texture_max units: %d entry", MaterialMappingUnitsMax);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device [tmu]texture_max units: %d entry", MaterialMappingUnitsMax);
 
 	return MaterialMappingUnitsMax;
 }
@@ -672,7 +673,7 @@ float SysPsagInformationOGL::InfoGetGPUmemoryCapacity() {
 	float GMCmibytes = float(GraphMemoryCapacity) / 1024.0f;
 
 	if (LoggerPrintInformation)
-		PsagLowLog(LogPerfmac, PSAG_OGLMAG_LABEL, "device memory[capacity]: %.2f mib", GMCmibytes);
+		PsagLowLog(LogPerfmac, PSAG_OGLMAG_INFO_LABEL, "device memory[capacity]: %.2f mib", GMCmibytes);
 
 	return GMCmibytes;
 }
@@ -685,7 +686,7 @@ float SysPsagInformationOGL::InfoGetGPUmemoryUsage() {
 	float GMUmibytes = float(GraphMemoryUsage) / 1024.0f;
 
 	if (LoggerPrintInformation)
-		PsagLowLog(LogPerfmac, PSAG_OGLMAG_LABEL, "device memory[usage]: %.2f mib", GMUmibytes);
+		PsagLowLog(LogPerfmac, PSAG_OGLMAG_INFO_LABEL, "device memory[usage]: %.2f mib", GMUmibytes);
 
 	return GMUmibytes;
 }
@@ -697,15 +698,15 @@ Vector2T<int32_t> SysPsagInformationOGL::InfoGetShaderUniform() {
 	glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &GraphShaderUniform.vector_y);
 
 	if (LoggerPrintInformation) {
-		PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device (vert)uniform_max items: %d", GraphShaderUniform.vector_x);
-		PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device (frag)uniform_max items: %d", GraphShaderUniform.vector_y);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (vert)uniform_max items: %d", GraphShaderUniform.vector_x);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (frag)uniform_max items: %d", GraphShaderUniform.vector_y);
 	}
 	return GraphShaderUniform;
 }
 
 void SysPsagInformationOGL::InfoPrintPlatformParameters() {
-	PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device gpu supplier: %s",   (const char*)glGetString(GL_VENDOR));
-	PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device gpu model: %s",      (const char*)glGetString(GL_RENDERER));
-	PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device version opengl: %s", (const char*)glGetString(GL_VERSION));
-	PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "device version glsl: %s",   (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device gpu supplier: %s",   (const char*)glGetString(GL_VENDOR));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device gpu model: %s",      (const char*)glGetString(GL_RENDERER));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device version opengl: %s", (const char*)glGetString(GL_VERSION));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device version glsl: %s",   (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 }

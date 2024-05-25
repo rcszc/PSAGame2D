@@ -21,8 +21,8 @@ namespace system_err {
     inline bool ModuleLogger(GLenum glerr, const char* modulename, const char* message) {
         if (glerr != NULL) {
             // glerror => print logsystem.
-            PushLogger(LogError, PSAG_WINDOWGUI_LABEL, "fw_window %s code: %u", modulename, glerr);
-            PushLogger(LogError, PSAG_WINDOWGUI_LABEL, "fw_window %s", message);
+            PushLogger(LogError, PSAG_WINDOW_OGLFW::PSAG_WINDOW_LABEL, "fw_window %s code: %u", modulename, glerr);
+            PushLogger(LogError, PSAG_WINDOW_OGLFW::PSAG_WINDOW_LABEL, "fw_window %s", message);
             return false;
         }
         else
@@ -116,7 +116,7 @@ namespace PSAG_WINDOW_OGLFW {
         }
 
         if (MainWindowObject == nullptr) {
-            PushLogger(LogError, PSAG_WINDOWGUI_LABEL, "failed fw_window create object.");
+            PushLogger(LogError, PSAG_WINDOW_LABEL, "failed fw_window create object.");
             return false;
         }
 
@@ -134,7 +134,7 @@ namespace PSAG_WINDOW_OGLFW {
         bool profile, bool fixedsize
     ) {
         if (glfwInit() == NULL) {
-            PushLogger(LogError, PSAG_WINDOWGUI_LABEL, "failed fw_window init config.");
+            PushLogger(LogError, PSAG_WINDOW_LABEL, "failed fw_window init config.");
             return false;
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, version[0]);
@@ -154,7 +154,7 @@ namespace PSAG_WINDOW_OGLFW {
         glfwWindowHint(GLFW_SAMPLES, MSAA);                      // samples MSAA.
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE); // ´°¿ÚÍ¸Ã÷.
 
-        PushLogger(LogInfo, PSAG_WINDOWGUI_LABEL, "init opengl_glfw.");
+        PushLogger(LogInfo, PSAG_WINDOW_LABEL, "init opengl_glfw.");
         return system_err::ModuleLogger(
             glfwGetError(&ErrorMessage), "global_init", ErrorMessage
         );
@@ -171,10 +171,10 @@ namespace PSAG_WINDOW_OGLFW {
             IconImage.pixels = stbi_load(file.c_str(), &IconImage.width, &IconImage.height, &ImageChannels, NULL);
             glfwSetWindowIcon(MainWindowObject, 1, &IconImage);
             stbi_image_free(IconImage.pixels);
-            PushLogger(LogInfo, PSAG_WINDOWGUI_LABEL, "fw_window load: icon_image: %s", file.c_str());
+            PushLogger(LogInfo, PSAG_WINDOW_LABEL, "fw_window load: icon_image: %s", file.c_str());
         }
         else
-            PushLogger(LogWarning, PSAG_WINDOWGUI_LABEL, "failed fw_window load: icon_image.");
+            PushLogger(LogWarning, PSAG_WINDOW_LABEL, "failed fw_window load: icon_image.");
     }
 
     bool SpcaWindowEvent::GLFWwindowVsync(bool vswitch) {
@@ -215,7 +215,7 @@ namespace PSAG_WINDOW_OGLFW {
         // free window object.
         glfwDestroyWindow(MainWindowObject);
         glfwTerminate();
-        PushLogger(LogInfo, PSAG_WINDOWGUI_LABEL, "fw_window free: glfw context.");
+        PushLogger(LogInfo, PSAG_WINDOW_LABEL, "fw_window free: glfw context.");
 
         return system_err::ModuleLogger(
             glfwGetError(&ErrorMessage), "free opengl_glfw", ErrorMessage

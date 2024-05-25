@@ -13,7 +13,7 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_04_14.
+// Engine Update: 2024_05_25.
 #define PSAG2D_ENGINE_VER 12.20240514
 /*
 * 附加说明:

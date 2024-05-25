@@ -52,6 +52,7 @@
 #define PSAG_TRUE  (bool)1
 #define PSAG_FALSE (bool)0
 
+#define StaticStrLABEL constexpr const char*
 // core framework logger label.
 enum LOGLABEL {
 	LogError   = 1 << 1, // ±êÇ© <´íÎó>
@@ -84,8 +85,8 @@ public:
 	RawSoundStream() = default;
 	RawSoundStream(const RawDataStream& data) : std::vector<uint8_t>(data.begin(), data.end()) {}
 };
-using ResUnique = const std::string&;
-// virtual texture unique_key. (not llres_key)
-using VirTextureUnqiue = const std::string&;
+using ResUnique = unsigned long long;
+// virtual texture unique_key. (not llres key)
+using VirTextureUnqiue = unsigned long long;
 
 #endif

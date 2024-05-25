@@ -19,16 +19,16 @@ namespace PSAGSD_LOWLEVEL {
 
 		auto it = ResourceRawShoudMap.find(key);
 		if (it != ResourceRawShoudMap.end()) {
-			PushLogger(LogWarning, PSAG_SOUND_LABEL, "raw_sound: failed storage duplicate_key: %s", key.c_str());
+			PushLogger(LogWarning, PSAG_SOUND_DATA_LABEL, "raw_sound: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		// resource size = empty ?
 		if (!res.empty()) {
 			ResourceRawShoudMap[key] = res;
-			PushLogger(LogInfo, PSAG_SOUND_LABEL, "raw_sound: storage key: %s", key.c_str());
+			PushLogger(LogInfo, PSAG_SOUND_DATA_LABEL, "raw_sound: storage key: %u", key);
 			return true;
 		}
-		PushLogger(LogWarning, PSAG_SOUND_LABEL, "raw_sound: failed storage, key: %s, data_empty.", key.c_str());
+		PushLogger(LogWarning, PSAG_SOUND_DATA_LABEL, "raw_sound: failed storage, key: %u, data_empty.", key);
 		return false;
 	}
 
@@ -41,10 +41,10 @@ namespace PSAGSD_LOWLEVEL {
 			// vector free => clear map_item.
 			ResourceRawShoudMap.erase(it);
 
-			PushLogger(LogInfo, PSAG_SOUND_LABEL, "raw_sound: delete key: %s", key.c_str());
+			PushLogger(LogInfo, PSAG_SOUND_DATA_LABEL, "raw_sound: delete key: %u", key);
 			return true;
 		}
-		PushLogger(LogWarning, PSAG_SOUND_LABEL, "raw_sound: failed delete, not found key.");
+		PushLogger(LogWarning, PSAG_SOUND_DATA_LABEL, "raw_sound: failed delete, not found key.");
 		return false;
 	}
 
@@ -57,6 +57,6 @@ namespace PSAGSD_LOWLEVEL {
 
 	PSAG_SOUND_LLRES::~PSAG_SOUND_LLRES() {
 		size_t TotalSizeTemp = GetResTotalSizeBytes();
-		PushLogger(LogTrace, PSAG_SOUND_LABEL, "free resource(raw_sound): %u bytes", TotalSizeTemp);
+		PushLogger(LogTrace, PSAG_SOUND_DATA_LABEL, "free resource(raw_sound): %u bytes", TotalSizeTemp);
 	}
 }

@@ -31,8 +31,8 @@ namespace IMAGE_TOOLS {
 
 namespace GraphicsEngineDataset {
 
-	std::string GLEngineStcVertexData::VertexAttribute = {};
-	std::string GLEngineStcVertexData::VertexBuffer    = {};
+	ResUnique GLEngineStcVertexData::VertexAttribute = {};
+	ResUnique GLEngineStcVertexData::VertexBuffer    = {};
 
 	void GLEngineStcVertexData::StaticVertexFrameDraw() {
 		// draw static vertex.
@@ -41,22 +41,23 @@ namespace GraphicsEngineDataset {
 
 	void GLEngineStcVertexData::StaticVertexDataObjectCreate() {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
-
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsModel VertexProcess;
-		VertexBuffer = to_string(GenResourceID.PsagGenTimeKey());
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [stc]
-		if (LLRES_VertexAttributes->ResourceFind("STATIC_VAO") == OPENGL_INVALID_HANDEL)
-			LLRES_VertexAttributes->ResourceStorage("STATIC_VAO", VertexProcess.CreateVertexAttribute(0, 0));
+		if (LLRES_VertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
+			VertexAttribute = GenResourceID.PsagGenTimeKey();
+			LLRES_VertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
+		}
 
 		// create rendering rect.
 		if (VertexProcess.CreateStaticModel(
-			LLRES_VertexAttributes->ResourceFind("STATIC_VAO"),
+			LLRES_VertexAttributes->ResourceFind(VertexAttribute),
 			VerBufferTemp,
 			PSAG_OGL_MAG::ShaderTemplateRect,
 			PSAG_OGL_MAG::ShaderTemplateRectLen * sizeof(float)
 		)) {
+			VertexBuffer = GenResourceID.PsagGenTimeKey();
 			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "static vertex data manager_create.");
@@ -64,31 +65,31 @@ namespace GraphicsEngineDataset {
 
 	void GLEngineStcVertexData::StaticVertexDataObjectDelete() {
 		// opengl free vao,vbo handle.
-		LLRES_VertexAttributes->ResourceDelete("STATIC_VAO");
+		LLRES_VertexAttributes->ResourceDelete(VertexAttribute);
 		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);
 	}
 
-	string GLEngineDyVertexData::VertexAttribute = {};
-	string GLEngineDyVertexData::VertexBuffer    = {};
+	ResUnique GLEngineDyVertexData::VertexAttribute = {};
+	ResUnique GLEngineDyVertexData::VertexBuffer    = {};
 
-	unordered_map<string, VABO_DATASET_INFO> GLEngineDyVertexData::IndexItems = {};
+	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineDyVertexData::IndexItems = {};
 	vector<float> GLEngineDyVertexData::VertexRawDataset = {};
 
 	bool GLEngineDyVertexData::GLOBAL_UPDATE_FLAG = false;
 
-	bool GLEngineDyVertexData::VerDataItemAlloc(ResUnique strkey) {
-		auto it = IndexItems.find(strkey);
+	bool GLEngineDyVertexData::VerDataItemAlloc(ResUnique rukey) {
+		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
-			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data: failed alloc duplicate_key: %s", strkey.c_str());
+			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data: failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
-		IndexItems[strkey] = VABO_DATASET_INFO();
-		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: alloc key: %s", strkey.c_str());
+		IndexItems[rukey] = VABO_DATASET_INFO();
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: alloc key: %u", rukey);
 		return true;
 	}
 
-	bool GLEngineDyVertexData::VerDataItemFree(ResUnique strkey) {
-		auto it = IndexItems.find(strkey);
+	bool GLEngineDyVertexData::VerDataItemFree(ResUnique rukey) {
+		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			// erase data.
 			const auto& EraseParam = &it->second;
@@ -97,15 +98,15 @@ namespace GraphicsEngineDataset {
 				VertexRawDataset.begin() + EraseParam->DatasetOffsetLength + EraseParam->DatasetLength
 			);
 			IndexItems.erase(it);
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: delete key: %s", strkey.c_str());
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: delete key: %u", rukey);
 			return true;
 		}
 		PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: failed delete, not found key.");
 		return false;
 	}
 
-	bool GLEngineDyVertexData::VerOperFramePushData(ResUnique strkey, const vector<float>& data) {
-		auto it = IndexItems.find(strkey);
+	bool GLEngineDyVertexData::VerOperFramePushData(ResUnique rukey, const vector<float>& data) {
+		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			// offset => length => push back data.
 			it->second.DatasetOffsetLength = VertexRawDataset.size();
@@ -118,8 +119,8 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineDyVertexData::VerOperFrameDraw(ResUnique strkey) {
-		auto it = IndexItems.find(strkey);
+	bool GLEngineDyVertexData::VerOperFrameDraw(ResUnique rukey) {
+		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			// vertex dataset Î´¸üÐÂ => update_dataset.
 			if (GLOBAL_UPDATE_FLAG)
@@ -152,23 +153,25 @@ namespace GraphicsEngineDataset {
 
 	void GLEngineDyVertexData::VertexDataObjectCreate() {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
-
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsModel VertexProcess;
-		VertexBuffer = to_string(GenResourceID.PsagGenTimeKey());
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [dy]
-		if (LLRES_VertexAttributes->ResourceFind("DYNAMIC_VAO") == OPENGL_INVALID_HANDEL)
-			LLRES_VertexAttributes->ResourceStorage("DYNAMIC_VAO", VertexProcess.CreateVertexAttribute(0, 0));
+		if (LLRES_VertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
+			VertexAttribute = GenResourceID.PsagGenTimeKey();
+			LLRES_VertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
+		}
 
-		if (VertexProcess.CreateDynamicModel(LLRES_VertexAttributes->ResourceFind("DYNAMIC_VAO"), VerBufferTemp, nullptr, NULL))
+		if (VertexProcess.CreateDynamicModel(LLRES_VertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
+			VertexBuffer = GenResourceID.PsagGenTimeKey();
 			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
+		}
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "dynamic vertex data manager_create.");
 	}
 
 	void GLEngineDyVertexData::VertexDataObjectDelete() {
 		// opengl free vao,vbo handle.
-		LLRES_VertexAttributes->ResourceDelete("DYNAMIC_VAO");
+		LLRES_VertexAttributes->ResourceDelete(VertexAttribute);
 		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);
 	}
 
@@ -219,7 +222,7 @@ namespace GraphicsEngineDataset {
 	SamplerTextures GLEngineSmpTextureData::TexturesSize4X = {};
 	SamplerTextures GLEngineSmpTextureData::TexturesSize8X = {};
 
-	unordered_map<string, VirTextureParam> GLEngineSmpTextureData::TexIndexItems = {};
+	unordered_map<ResUnique, VirTextureParam> GLEngineSmpTextureData::TexIndexItems = {};
 
 	uint32_t GLEngineSmpTextureData::CheckResolutionType(const Vector2T<uint32_t>& size) {
 		uint32_t ResolutionType = NULL;
@@ -234,11 +237,11 @@ namespace GraphicsEngineDataset {
 		return ResolutionType;
 	}
 
-	VirTextureParam* GLEngineSmpTextureData::FindTexIndexItems(ResUnique strkey) {
-		return (TexIndexItems.find(strkey) != TexIndexItems.end()) ? &TexIndexItems[strkey] : nullptr;
+	VirTextureParam* GLEngineSmpTextureData::FindTexIndexItems(ResUnique rukey) {
+		return (TexIndexItems.find(rukey) != TexIndexItems.end()) ? &TexIndexItems[rukey] : nullptr;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemAlloc(ResUnique strkey, const ImageRawData& image) {
+	bool GLEngineSmpTextureData::VirTextureItemAlloc(ResUnique rukey, const ImageRawData& image) {
 		SamplerTextures* TextureIndex = nullptr;
 		const char* TexResLabel = "NULL";
 		
@@ -254,9 +257,9 @@ namespace GraphicsEngineDataset {
 			return false;
 		}
 
-		auto it = TexIndexItems.find(strkey);
+		auto it = TexIndexItems.find(rukey);
 		if (it != TexIndexItems.end()) {
-			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc duplicate_key: %s", strkey.c_str());
+			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
 		// ÎÆÀíäÖÈ¾²Ã¼ô.
@@ -303,7 +306,7 @@ namespace GraphicsEngineDataset {
 		}
 
 		// set_param => storage.
-		TexIndexItems[strkey] = VirTextureParam(
+		TexIndexItems[rukey] = VirTextureParam(
 			SizeType,
 			TextureIndex->TextureArrayIndex,
 			VirTextureLayer,
@@ -311,25 +314,25 @@ namespace GraphicsEngineDataset {
 			Vector2T<float>((float)image.Width, (float)image.Height)
 		);
 
-		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: alloc key: %s, cropping: %.2f x %.2f, res: %s",
-			strkey.c_str(), SmpCropping.vector_x, SmpCropping.vector_y, TexResLabel);
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: alloc key: %u, cropping: %.2f x %.2f, res: %s",
+			rukey, SmpCropping.vector_x, SmpCropping.vector_y, TexResLabel);
 		return true;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemAllocEmpty(ResUnique strkey, const Vector2T<uint32_t>& size) {
+	bool GLEngineSmpTextureData::VirTextureItemAllocEmpty(ResUnique rukey, const Vector2T<uint32_t>& size) {
 		ImageRawData EmptyImageTemp = {};
 		EmptyImageTemp.ImagePixels = {};
 		// set virtual resolution.
 		EmptyImageTemp.Width = size.vector_x; EmptyImageTemp.Height = size.vector_y;
 		EmptyImageTemp.Channels = DEF_IMG_CHANNEL_RGBA;
 		// alloc.
-		return VirTextureItemAlloc(strkey, EmptyImageTemp);
+		return VirTextureItemAlloc(rukey, EmptyImageTemp);
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemFree(ResUnique strkey) {
+	bool GLEngineSmpTextureData::VirTextureItemFree(ResUnique rukey) {
 		SamplerTextures* TextureIndex = nullptr;
 		
-		VirTextureParam* TexParam = FindTexIndexItems(strkey);
+		VirTextureParam* TexParam = FindTexIndexItems(rukey);
 		if (TexParam == nullptr) {
 			PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: failed delete, not found key.");
 			return false;
@@ -343,7 +346,7 @@ namespace GraphicsEngineDataset {
 		if (TextureIndex == nullptr)
 			return false;
 
-		auto it = TexIndexItems.find(strkey);
+		auto it = TexIndexItems.find(rukey);
 		if (it != TexIndexItems.end()) {
 			// erase item param.
 			it->second = VirTextureParam();
@@ -353,19 +356,19 @@ namespace GraphicsEngineDataset {
 			// texture count - 1.
 			--TextureIndex->ArraySize.vector_y;
 
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: delete key: %s", strkey.c_str());
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: delete key: %u", rukey);
 			return true;
 		}
 		return false;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureExist(ResUnique strkey) {
-		return FindTexIndexItems(strkey) == nullptr ? false : true;
+	bool GLEngineSmpTextureData::VirTextureExist(ResUnique rukey) {
+		return FindTexIndexItems(rukey) == nullptr ? false : true;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemDraw(ResUnique strkey, PsagShader shader, const VirTextureUniformName& uniform_name) {
+	bool GLEngineSmpTextureData::VirTextureItemDraw(ResUnique rukey, PsagShader shader, const VirTextureUniformName& uniform_name) {
 		// find virtual texture item_idx.
-		auto TexItemTemp = FindTexIndexItems(strkey);
+		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
 			// find tex => bind context => sampler => uniform(s).
 			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
@@ -384,9 +387,9 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemIndex(ResUnique strkey, PsagTexture& texture, uint32_t layer_index) {
+	bool GLEngineSmpTextureData::VirTextureItemIndex(ResUnique rukey, PsagTexture& texture, uint32_t layer_index) {
 		// find virtual texture item_idx.
-		auto TexItemTemp = FindTexIndexItems(strkey);
+		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
 			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
@@ -399,9 +402,7 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	void GLEngineSmpTextureData::VirtualTextureDataObjectCreate(
-		Vector2T<uint32_t> base_size, const VirTexturesGenParams& params
-	) {
+	void GLEngineSmpTextureData::VirtualTextureDataObjectCreate(Vector2T<uint32_t> base_size, const VirTexturesGenParams& params) {
 		if (base_size.vector_x < 512 || base_size.vector_y < 512)
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_create texture, base_size > 512.");
 
@@ -461,16 +462,16 @@ namespace GraphicsEngineDataset {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 		if (!CreateErrorFlag) {
 			// create key => storage res.
-			TexturesSize8X.TextureArrayIndex = to_string(GenResourceID.PsagGenTimeKey());
+			TexturesSize8X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
 			LLRES_Textures->ResourceStorage(TexturesSize8X.TextureArrayIndex, &TextureCreate8X);
 
-			TexturesSize4X.TextureArrayIndex = to_string(GenResourceID.PsagGenTimeKey());
+			TexturesSize4X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
 			LLRES_Textures->ResourceStorage(TexturesSize4X.TextureArrayIndex, &TextureCreate4X);
 
-			TexturesSize2X.TextureArrayIndex = to_string(GenResourceID.PsagGenTimeKey());
+			TexturesSize2X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
 			LLRES_Textures->ResourceStorage(TexturesSize2X.TextureArrayIndex, &TextureCreate2X);
 
-			TexturesSize1X.TextureArrayIndex = to_string(GenResourceID.PsagGenTimeKey());
+			TexturesSize1X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
 			LLRES_Textures->ResourceStorage(TexturesSize1X.TextureArrayIndex, &TextureCreate1X);
 		}
 

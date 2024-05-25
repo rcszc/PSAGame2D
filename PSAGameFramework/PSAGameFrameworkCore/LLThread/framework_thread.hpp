@@ -7,10 +7,10 @@
 // LLThread PSA-L.5 (=>logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_THREAD_LABEL "PSAG_THREAD" 
-
 // PSAG thread(task) pool.
 namespace PSAG_THREAD_POOL {
+    StaticStrLABEL PSAG_THREAD_LABEL = "PSAG_THREAD";
+
     // run_time_type_information.
     struct RTTI_OBJECT_INFO {
         std::string ObjectName;

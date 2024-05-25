@@ -1,27 +1,19 @@
-#version 460 core
-
-in vec4 FxColor;
-in vec2 FxCoord;
-
 uniform sampler2DArray MultipleBackTex;
 uniform vec2  RenderRes;
 uniform float RenderTime;
 
-uniform float TextureIndex;
 uniform float TextureBackIndex;
 
 uniform float BackVisibility;
 uniform vec2  BackStrength;
 uniform vec4  BackBlendColor;
 
-out vec4 FragColor;
-
 void main()
 {
 	vec4 TexColorFront = texture(MultipleBackTex, vec3(FxCoord, 0.0));
 
 	TexColorFront.a    = step(0.16, length(TexColorFront.rgb));
-    TexColorFront.rgb *= BackStrength.y;
+	TexColorFront.rgb *= BackStrength.y;
 	
 	vec4 PreviousColor = texture(MultipleBackTex, vec3(FxCoord, TextureBackIndex));
 	PreviousColor.rgb *= 0.58 * BackStrength.x;

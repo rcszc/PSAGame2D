@@ -7,7 +7,7 @@ using namespace PSAG_LOGGER;
 bool PSAG_FUNC_BASS_GLOBAL_INIT() {
     // init config bass(global).
     if (!BASS_Init(PSAG_BASS_CONFIG_DEVICE, PSAG_BASS_CONFIG_FREQ, NULL, nullptr, nullptr)) {
-        PushLogger(LogError, PSAG_SOUND_LABEL, "failed bass global_initialize.");
+        PushLogger(LogError, PSAG_SOUND_PLAYER::PSAG_SOUND_LABEL, "failed bass global_initialize.");
         return false;
     }
     return true;
@@ -16,7 +16,7 @@ bool PSAG_FUNC_BASS_GLOBAL_INIT() {
 bool PSAG_FUNC_BASS_GLOBAL_FREE() {
     // free system bass(global).
     if (!BASS_Free()) {
-        PushLogger(LogError, PSAG_SOUND_LABEL, "failed bass global_free.");
+        PushLogger(LogError, PSAG_SOUND_PLAYER::PSAG_SOUND_LABEL, "failed bass global_free.");
         return false;
     }
     return true;

@@ -12,9 +12,9 @@ void DevTestClass::CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> P
     ConfigBullet.ActorTimerStepSpeed = 1.0f;
     ConfigBullet.ActorShaderResource = ActorShaderBullet;
 
-    ConfigBullet.ControlFrictionSpeedMove   = 0.1f;
-    ConfigBullet.ControlFrictionSpeedRotate = 1.0f;
-    ConfigBullet.ControlFrictionSpeedScale  = 1.0f;
+    ConfigBullet.ControlFricMove   = 0.1f;
+    ConfigBullet.ControlFricRotate = 1.0f;
+    ConfigBullet.ControlFricScale  = 1.0f;
 
     ConfigBullet.InitialPhysics  = Vector2T<float>(7.0f, 2.0f);
     ConfigBullet.InitialPosition = PosBegin;
@@ -110,9 +110,9 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ConfigActors.ActorTimerStepSpeed = 1.0f;
     ConfigActors.ActorShaderResource = ActorShaderPawn;
 
-    ConfigActors.ControlFrictionSpeedMove   = 2.0f;
-    ConfigActors.ControlFrictionSpeedRotate = 1.0f;
-    ConfigActors.ControlFrictionSpeedScale  = 1.0f;
+    ConfigActors.ControlFricMove   = 2.0f;
+    ConfigActors.ControlFricRotate = 1.0f;
+    ConfigActors.ControlFricScale  = 1.0f;
 
     GameActorCore::GameActorActuatorDESC NPCActorDESC = ConfigActors;
     GameActorCore::GameActorHealthDESC   NPCActorHealthDESC = {};
@@ -151,9 +151,9 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ConfigWalls.ActorShaderResource = ActorShaderWall;
     ConfigWalls.ActorPhysicsMode    = GameActorCore::PhyFixedActor;
 
-    ConfigWalls.ControlFrictionSpeedMove   = 1.0f;
-    ConfigWalls.ControlFrictionSpeedRotate = 1.0f;
-    ConfigWalls.ControlFrictionSpeedScale  = 1.0f;
+    ConfigWalls.ControlFricMove   = 1.0f;
+    ConfigWalls.ControlFricRotate = 1.0f;
+    ConfigWalls.ControlFricScale  = 1.0f;
     ConfigWalls.InitialPhysics = Vector2T<float>(0.0f, 0.1f);
 
     ConfigWalls.InitialPosition = Vector2T<float>(0.0f, 95.0f);

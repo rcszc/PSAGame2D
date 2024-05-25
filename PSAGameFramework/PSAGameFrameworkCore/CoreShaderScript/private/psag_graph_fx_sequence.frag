@@ -1,8 +1,3 @@
-#version 460 core
-
-in vec4 FxColor;
-in vec2 FxCoord;
-
 uniform sampler2DArray ParticleVirTex;
 uniform int   ParticleVirTexLayer;
 uniform vec2  ParticleVirTexCropping;
@@ -13,8 +8,6 @@ uniform vec2  RenderUvOffset;
 uniform vec4  RenderColorBlend;
 uniform float RenderTime;
 
-out vec4 FragColor;
-
 void main()
 {
 	vec2 SampleCoord = FxCoord * RenderUvSize + RenderUvOffset;
@@ -22,5 +15,5 @@ void main()
 
 	Color.a = (Color.r + Color.g + Color.b) / 3.0;
 
-    FragColor = Color * RenderColorBlend;
+	FragColor = Color * RenderColorBlend;
 }

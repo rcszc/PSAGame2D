@@ -32,15 +32,15 @@ namespace GameActorCore {
 
 	GameActorShader::GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION) {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsShader ShaderProcess;
-		__ACTOR_SHADER_ITEM = to_string(GenResourceID.PsagGenTimeKey());
 
 		ShaderProcess.ShaderLoaderPushVS(ActorShaderScript::PsagShaderScriptPublicVS, StringScript);
 		ShaderProcess.ShaderLoaderPushFS(SHADER_FRAG,                                 StringScript);
 
-		if (ShaderProcess.CreateCompileShader())
+		if (ShaderProcess.CreateCompileShader()) {
+			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
 			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
+		}
 
 		float RenderScale = (float)RESOLUTION.vector_x / (float)RESOLUTION.vector_y;
 		// porj matrix & scale ortho.
@@ -91,10 +91,10 @@ namespace GameActorCore {
 
 		if (!image.ImagePixels.empty()) {
 			PSAG_SYSGEN_TIME_KEY GenResourceID;
-			__VIR_TEXTURE_ITEM = to_string(GenResourceID.PsagGenTimeKey());
+			__VIR_TEXTURE_ITEM = GenResourceID.PsagGenTimeKey();
 			// alloc virtual sampler texture.
 			if (!VirTextureItemAlloc(__VIR_TEXTURE_ITEM, image)) {
-				PushLogger(LogError, PSAGM_GLENGINE_POST_LABEL, "game_actor shader failed load_image.");
+				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed load_image.");
 				return false;
 			}
 			__VIR_UNIFORM_ITEM = SystemPresetUname();
@@ -127,9 +127,9 @@ namespace GameActorCore {
 		RenderingResolution.vector_y = (float)INIT_DESC.ActorShaderResource->__WINDOW_RESOLUTION.vector_y;
 
 		// inter speed_scale(base:1.0f)
-		AnimInterSpeed.vector_x = INIT_DESC.ControlFrictionSpeedMove;
-		AnimInterSpeed.vector_y = INIT_DESC.ControlFrictionSpeedRotate;
-		AnimInterSpeed.vector_z = INIT_DESC.ControlFrictionSpeedScale;
+		AnimInterSpeed.vector_x = INIT_DESC.ControlFricMove;
+		AnimInterSpeed.vector_y = INIT_DESC.ControlFricRotate;
+		AnimInterSpeed.vector_z = INIT_DESC.ControlFricScale;
 
 		// config initial state.
 		ActorStateScale[0] = INIT_DESC.InitialScale;
@@ -142,21 +142,21 @@ namespace GameActorCore {
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode = ActorUniqueInfo.ActorUniqueCode;
+		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua();
 
 		switch (INIT_DESC.ActorPhysicsMode) {
 		case(PhyMoveActor):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
 		case(PhyFixedActor): { ActorPhyConfig.PhysicsModeTypeFlag = false; break; }
 		}
 
-		ActorPhyConfig.PhyBoxRotate = INIT_DESC.InitialRotate;
-		ActorPhyConfig.PhyBoxCollisionSize = 
-			Vector2T<float>(10.0f * INIT_DESC.InitialScale.vector_x, 10.0f * INIT_DESC.InitialScale.vector_y);
-		ActorPhyConfig.PhyBoxPosition = INIT_DESC.InitialPosition;
+		ActorPhyConfig.PhyBoxRotate        = INIT_DESC.InitialRotate;
+		ActorPhyConfig.PhyBoxCollisionSize = INIT_DESC.InitialScale;
+		ActorPhyConfig.PhyBoxPosition      = INIT_DESC.InitialPosition;
 
 		ActorPhyConfig.PhyBodyDensity  = INIT_DESC.InitialPhysics.vector_x;
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
-		ActorPhysicsItem = to_string(GenResourceID.PsagGenTimeKey());
+		ActorPhysicsItem = GenResourceID.PsagGenTimeKey();
 		PhyBodyItemAlloc(ActorPhysicsItem, ActorPhyConfig);
 
 		ActorPhysicsDensity  = INIT_DESC.InitialPhysics.vector_x;
@@ -261,7 +261,7 @@ namespace GameActorCore {
 		StaticVertexFrameDraw();
 
 		// framework preset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderingMatrix);
+		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        RenderingMatrix);
 		ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderingResolution);
 
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorTime", VirTimerCount);

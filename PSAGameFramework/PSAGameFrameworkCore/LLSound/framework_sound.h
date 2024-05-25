@@ -6,8 +6,6 @@
 // LLSound PSA - L.4 (=> logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_SOUND_LABEL "PSAG_SOUND"
-
 #define PSAG_BASS_CONFIG_DEVICE -1
 #define PSAG_BASS_CONFIG_FREQ    44100
 
@@ -15,6 +13,8 @@ bool PSAG_FUNC_BASS_GLOBAL_INIT();
 bool PSAG_FUNC_BASS_GLOBAL_FREE();
 
 namespace PSAG_SOUND_PLAYER {
+	StaticStrLABEL PSAG_SOUND_LABEL = "PSAG_SOUND";
+
 	// enable 3d_sound.
 	struct Sound3DConfig {
 		bool EnableFlag;
@@ -51,13 +51,14 @@ namespace PSAG_SOUND_PLAYER {
 
 // psag sound low_level, resource.
 namespace PSAGSD_LOWLEVEL {
+	StaticStrLABEL PSAG_SOUND_DATA_LABEL = "PSAG_SOUND_DATA";
 	// PSA - CVT.1 func.
 	RawSoundStream SOUND_LLRES_CONVERT_FUNC(const RawDataStream& dataset);
 
 	// PSAG framework lowlevel sound dataset.
 	class PSAG_SOUND_LLRES {
 	protected:
-		std::unordered_map<std::string, RawSoundStream> ResourceRawShoudMap = {};
+		std::unordered_map<ResUnique, RawSoundStream> ResourceRawShoudMap = {};
 		std::mutex ResourceRawShoudMutex = {};
 
 	public:

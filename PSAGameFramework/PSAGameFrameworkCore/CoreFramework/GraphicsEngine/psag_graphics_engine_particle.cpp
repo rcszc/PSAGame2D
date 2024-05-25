@@ -239,16 +239,20 @@ namespace GraphicsEngineParticle {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsShader ShaderProcess;
-		ShaderProgramItem = to_string(GenResourceID.PsagGenTimeKey());
+		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
 
-		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate,  StringScript);
+		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,    StringScript);
+		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragTools,     StringScript);
 		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.ShaderFragParticle, StringScript);
 
-		if (ShaderProcess.CreateCompileShader())
+		// create & storage particles_shader.
+		if (ShaderProcess.CreateCompileShader()) {
+			ShaderProgramItem = GenResourceID.PsagGenTimeKey();
 			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
+		}
 
 		// => mag"GraphicsEngineDataset::GLEngineStcVertexData".
-		DyVertexSysItem = to_string(GenResourceID.PsagGenTimeKey());
+		DyVertexSysItem = GenResourceID.PsagGenTimeKey();
 		VerDataItemAlloc(DyVertexSysItem);
 
 		float RenderScale = (float)render_resolution.vector_x / (float)render_resolution.vector_y;

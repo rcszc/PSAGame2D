@@ -5,8 +5,8 @@
 // LLFilesys PSA-L.3 (=>logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_FILESYS_LOADER_LABEL "PSAG_FILESYS_LOAD"
 namespace PSAG_FILESYS_LOADER {
+    StaticStrLABEL PSAG_FILESYS_LOADER_LABEL = "PSAG_FILESYS_LOAD";
 
     class PsagFilesysLoaderBinary {
     protected:

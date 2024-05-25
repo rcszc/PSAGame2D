@@ -5,17 +5,26 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace PhysicsEngine {
-	unordered_map<string, PhysicsBodyData> PhyEngineObjectData::PhysicsDataset = {};
+	unordered_map<ResUnique, PhysicsBodyData> PhyEngineObjectData::PhysicsDataset = {};
 
 	b2World* PhyEngineObjectData::PhysicsWorld       = nullptr;
 	b2Body*  PhyEngineObjectData::PhysicsWorldGround = nullptr;
 
 	Vector2T<float> PhyEngineObjectData::PhysicsIterations = Vector2T<float>(16.0f, 8.0f);
 
+	vector<b2Vec2> PresetVertexGroupSqua() {
+		vector<b2Vec2> CreateVertGroup = {};
+		CreateVertGroup.push_back(b2Vec2(-10.0f, -10.0f));
+		CreateVertGroup.push_back(b2Vec2( 10.0f, -10.0f));
+		CreateVertGroup.push_back(b2Vec2( 10.0f,  10.0f));
+		CreateVertGroup.push_back(b2Vec2(-10.0f,  10.0f));
+		return CreateVertGroup;
+	}
+
 	bool PhyEngineObjectData::PhyBodyItemAlloc(ResUnique strkey, PhysicsBodyConfig config) {
 		auto it = PhysicsDataset.find(strkey);
 		if (it != PhysicsDataset.end()) {
-			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %s", strkey.c_str());
+			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", strkey);
 			return false;
 		}
 		// 创建 Actor 物理碰撞.
@@ -29,7 +38,12 @@ namespace PhysicsEngine {
 		b2Body* BodyData = PhysicsWorld->CreateBody(&DefineBody);
 
 		b2PolygonShape CollisionBox;
-		CollisionBox.SetAsBox(config.PhyBoxCollisionSize.vector_x, config.PhyBoxCollisionSize.vector_y);
+		// process scale.
+		for (auto& ScaleVert : config.CollVertexGroup) {
+			ScaleVert.x *= config.PhyBoxCollisionSize.vector_x;
+			ScaleVert.y *= config.PhyBoxCollisionSize.vector_y;
+		}
+		CollisionBox.Set(config.CollVertexGroup.data(), (int32)config.CollVertexGroup.size());
 
 		b2FixtureDef DefineFixture;
 		DefineFixture.shape    = &CollisionBox;
@@ -44,8 +58,8 @@ namespace PhysicsEngine {
 		}
 		PhysicsDataset[strkey] = PhysicsBodyData(config.IndexUniqueCode, PhysicsWorldGround, BodyData);
 
-		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %s", strkey.c_str());
-		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %s", strkey.c_str());
+		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %u", strkey);
+		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %u", strkey);
 		return true;
 	}
 
@@ -55,7 +69,7 @@ namespace PhysicsEngine {
 			// free ersae data.
 			PhysicsWorld->DestroyBody(it->second.Box2dActorPointer);
 			PhysicsDataset.erase(it);
-			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %s", strkey.c_str());
+			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %u", strkey);
 			return true;
 		}
 		PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data item: failed delete, not found key.");

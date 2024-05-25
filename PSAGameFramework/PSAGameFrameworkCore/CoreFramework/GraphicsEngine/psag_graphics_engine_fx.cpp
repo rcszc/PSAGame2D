@@ -21,7 +21,7 @@ namespace GraphicsEnginePVFX {
 	PsagGLEngineFxImageView::~PsagGLEngineFxImageView() {
 		// free image_view resource.
 		glDeleteTextures(1, &TextureViewItem.Texture);
-		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "psag_fx image_view system free.");
+		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx image_view system free.");
 	}
 
 	PsagTexture PsagGLEngineFxImageView::GetTextureView() {
@@ -40,8 +40,8 @@ namespace GraphicsEnginePVFX {
 
 		TextureViewItem = CreateTexView.CreateTexture();
 
-		FrameBufferItem = to_string(GenResourceID.PsagGenTimeKey());
 		if (CreateFrameBuffer.CreateFrameBuffer()) {
+			FrameBufferItem = GenResourceID.PsagGenTimeKey();
 			// create bind frame_buffer.
 			PsagTextureAttrib TexAttribTemp = {};
 			TexAttribTemp.Texture = TextureViewItem.Texture;
@@ -70,7 +70,7 @@ namespace GraphicsEnginePVFX {
 		// free capture_view resource.
 		LLRES_FrameBuffers->ResourceDelete(FrameBufferItem);
 		glDeleteTextures(1, &TextureViewItem.Texture);
-		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "psag_fx capture_view system free.");
+		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system free.");
 	}
 
 	PsagTexture PsagGLEngineFxCaptureView::GetCaptureTexView() {
@@ -83,13 +83,14 @@ namespace GraphicsEnginePVFX {
 		PlayerParams = params;
 
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsShader ShaderProcess;
+		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
 
-		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate,    StringScript);
+		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,      StringScript);
 		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.ShaderFragFxSequence, StringScript);
 
+		// create & storage fx_sequence_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			// sequence process shader.	
-			ShaderProgramItem = to_string(GenResourceID.PsagGenTimeKey());
+			ShaderProgramItem = GenResourceID.PsagGenTimeKey();
 			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
 		}
 
@@ -101,9 +102,9 @@ namespace GraphicsEnginePVFX {
 		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
 		memcpy_s(RenderMatrix.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
-		VirTextureItem = to_string(GenResourceID.PsagGenTimeKey());
+		VirTextureItem = GenResourceID.PsagGenTimeKey();
 		if (!VirTextureItemAlloc(VirTextureItem, image)) {
-			PushLogger(LogError, PSAGM_GLENGINE_POST_LABEL, "psag_fx sequence system: failed create vir_tex.");
+			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system: failed create vir_tex.");
 			return;
 		}
 		// set uniform params name.
@@ -112,14 +113,14 @@ namespace GraphicsEnginePVFX {
 		VirTextureUniform.TexParamCropping = "ParticleVirTexCropping";
 		VirTextureUniform.TexParamSize     = "ParticleVirTexSize";
 
-		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "psag_fx sequence system init.");
+		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system init.");
 	}
 
 	PsagGLEngineFxSequence::~PsagGLEngineFxSequence() {
 		// free graphics sequence resource.
 		VirTextureItemFree(VirTextureItem);
 		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
-		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "graphics_engine free post_shader(system).");
+		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "graphics_engine free post_shader(system).");
 	}
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {

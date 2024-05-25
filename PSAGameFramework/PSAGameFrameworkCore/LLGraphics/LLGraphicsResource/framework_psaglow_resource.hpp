@@ -6,10 +6,10 @@
 // low_graphics_xxx => framework_psaglow_resource => framework.
 #include "../LLGraphicsOpenGL/psaglow_opengl.hpp"
 
-#define PSAG_LLRES_LABEL "PSAG_LLRES"
-#define PSAG_LLRES_DELETE(PTR) delete PTR; PTR = nullptr;
-
 namespace PSAGGL_LOWLEVEL {
+#define PSAG_LLRES_DELETE(PTR) delete PTR; PTR = nullptr;
+	StaticStrLABEL PSAG_LLRES_LABEL = "PSAG_LLRES";
+
 	// PSAG framework lowlevel graphic dataset.
 	class PSAG_GRAPHICS_LLRES {
 	private:
