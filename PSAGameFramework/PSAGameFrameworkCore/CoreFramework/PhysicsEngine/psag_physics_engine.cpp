@@ -5,12 +5,9 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace PhysicsEngine {
-	unordered_map<ResUnique, PhysicsBodyData> PhyEngineObjectData::PhysicsDataset = {};
-
-	b2World* PhyEngineObjectData::PhysicsWorld       = nullptr;
-	b2Body*  PhyEngineObjectData::PhysicsWorldGround = nullptr;
-
-	Vector2T<float> PhyEngineObjectData::PhysicsIterations = Vector2T<float>(16.0f, 8.0f);
+	unordered_map<string, PhysiceWorldData> PhyEngineCoreDataset::PhysicsWorlds = {};
+	// global cycles calc iterations.
+	Vector2T<float> PhyEngineCoreDataset::PhysicsIterations = Vector2T<float>(16.0f, 8.0f);
 
 	vector<b2Vec2> PresetVertexGroupSqua() {
 		vector<b2Vec2> CreateVertGroup = {};
@@ -21,12 +18,18 @@ namespace PhysicsEngine {
 		return CreateVertGroup;
 	}
 
-	bool PhyEngineObjectData::PhyBodyItemAlloc(ResUnique strkey, PhysicsBodyConfig config) {
-		auto it = PhysicsDataset.find(strkey);
-		if (it != PhysicsDataset.end()) {
-			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", strkey);
+	bool PhyEngineCoreDataset::PhyBodyItemAlloc(string world, ResUnique rukey, PhysicsBodyConfig config) {
+		auto WorldPointer = PhysicsWorldFind(world);
+		if (WorldPointer == nullptr) {
+			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
 			return false;
 		}
+		auto it = WorldPointer->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsDataset.end()) {
+			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", rukey);
+			return false;
+		}
+
 		// 创建 Actor 物理碰撞.
 		b2BodyDef DefineBody;
 		if (config.PhysicsModeTypeFlag) DefineBody.type = b2_dynamicBody;
@@ -35,7 +38,7 @@ namespace PhysicsEngine {
 		DefineBody.position = b2Vec2(config.PhyBoxPosition.vector_x, config.PhyBoxPosition.vector_y);
 		DefineBody.angle    = config.PhyBoxRotate;
 		// world(global) => create body item.
-		b2Body* BodyData = PhysicsWorld->CreateBody(&DefineBody);
+		b2Body* BodyData = WorldPointer->PhysicsWorld->CreateBody(&DefineBody);
 
 		b2PolygonShape CollisionBox;
 		// process scale.
@@ -56,30 +59,42 @@ namespace PhysicsEngine {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc, data = nullptr.");
 			return false;
 		}
-		PhysicsDataset[strkey] = PhysicsBodyData(config.IndexUniqueCode, PhysicsWorldGround, BodyData);
+		WorldPointer->PhysicsDataset[rukey] = PhysicsBodyData(config.IndexUniqueCode, BodyData);
 
-		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %u", strkey);
-		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %u", strkey);
+		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
+		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %u", rukey);
+		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %u", rukey);
 		return true;
 	}
 
-	bool PhyEngineObjectData::PhyBodyItemFree(ResUnique strkey) {
-		auto it = PhysicsDataset.find(strkey);
-		if (it != PhysicsDataset.end()) {
+	bool PhyEngineCoreDataset::PhyBodyItemFree(string world, ResUnique rukey) {
+		auto WorldPointer = PhysicsWorldFind(world);
+		if (WorldPointer == nullptr) {
+			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
+			return false;
+		}
+		auto it = WorldPointer->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsDataset.end()) {
 			// free ersae data.
-			PhysicsWorld->DestroyBody(it->second.Box2dActorPointer);
-			PhysicsDataset.erase(it);
-			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %u", strkey);
+			WorldPointer->PhysicsWorld->DestroyBody(it->second.Box2dActorPtr);
+			WorldPointer->PhysicsDataset.erase(it);
+			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
+			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %u", rukey);
 			return true;
 		}
 		PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data item: failed delete, not found key.");
 		return false;
 	}
 
-	void PhyEngineObjectData::PhyBodyItemResetBox(ResUnique strkey, Vector2T<float> size, float density, float friction) {
-		auto it = PhysicsDataset.find(strkey);
-		if (it != PhysicsDataset.end()) {
-			auto BodyTemp = it->second.Box2dActorPointer;
+	void PhyEngineCoreDataset::PhyBodyItemResetBox(string world, ResUnique rukey, Vector2T<float> size, float density, float friction) {
+		auto WorldPointer = PhysicsWorldFind(world);
+		if (WorldPointer == nullptr) {
+			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
+			return;
+		}
+		auto it = WorldPointer->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsDataset.end()) {
+			auto BodyTemp = it->second.Box2dActorPtr;
 
 			b2Fixture* Fixture = BodyTemp->GetFixtureList();
 			while (Fixture) {
@@ -99,59 +114,93 @@ namespace PhysicsEngine {
 		}
 	}
 
-	PhysicsRunState PhyEngineObjectData::PhyBodyItemGet(ResUnique strkey) {
-		auto it = PhysicsDataset.find(strkey);
-		if (it != PhysicsDataset.end()) {
+	PhysicsRunState PhyEngineCoreDataset::PhyBodyItemGet(string world, ResUnique rukey) {
+		auto WorldPointer = PhysicsWorldFind(world);
+		if (WorldPointer == nullptr)
+			return PhysicsRunState();
+
+		auto it = WorldPointer->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsDataset.end()) {
 			return PhysicsRunState(
-				it->second.Box2dActorPointer->GetAngle(),
-				Vector2T<float>(it->second.Box2dActorPointer->GetPosition().x, it->second.Box2dActorPointer->GetPosition().y),
-				it->second.Box2dActorPointer
+				it->second.Box2dActorPtr->GetAngle(),
+				Vector2T<float>(it->second.Box2dActorPtr->GetPosition().x, it->second.Box2dActorPtr->GetPosition().y),
+				it->second.Box2dActorPtr
 			);
 		}
 		return PhysicsRunState();
 	}
 
-	size_t PhyEngineObjectData::PhyBodyItemGetCollision(ResUnique strkey) {
+	size_t PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, ResUnique rukey) {
 		size_t ReturnUnqiueIndex = NULL;
 		b2Body* BodyCollided = nullptr;
 
-		auto it = PhysicsDataset.find(strkey);
-		if (it != PhysicsDataset.end()) {
-			auto ThisBody = it->second.Box2dActorPointer;
+		auto WorldPointer = PhysicsWorldFind(world);
+		if (WorldPointer == nullptr)
+			return ReturnUnqiueIndex;
 
-			for (b2Contact* Contact = PhysicsWorld->GetContactList(); Contact; Contact = Contact->GetNext()) {
+		auto it = WorldPointer->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsDataset.end()) {
+			auto ThisBody = it->second.Box2dActorPtr;
+			// 遍历查询Box2D碰撞对 [box2d_api]
+			for (b2Contact* Contact = WorldPointer->PhysicsWorld->GetContactList(); Contact; Contact = Contact->GetNext()) {
 				if (Contact->IsTouching() && (Contact->GetFixtureA()->GetBody() == ThisBody || Contact->GetFixtureB()->GetBody() == ThisBody)) {
 					BodyCollided = Contact->GetFixtureA()->GetBody() == 
 						ThisBody ? Contact->GetFixtureB()->GetBody() : Contact->GetFixtureA()->GetBody();
 					break;
 				}
 			}
-			for (const auto PhyItem : PhysicsDataset)
-				if (PhyItem.second.Box2dActorPointer == BodyCollided)
-					ReturnUnqiueIndex = PhyItem.second.FindUniqueCode;
+			for (const auto& PhyItem : WorldPointer->PhysicsDataset)
+				if (PhyItem.second.Box2dActorPtr == BodyCollided)
+					ReturnUnqiueIndex = PhyItem.second.BindUniqueCode;
 		}
 		return ReturnUnqiueIndex;
 	}
 
-	void PhyEngineObjectData::PhysicsObjectCreate(float width_scale) {
-		// create physics world.
-		b2Vec2 ConfigGravity(0.0f, 0.0f);
-		PhysicsWorld = new b2World(ConfigGravity);
-
-		PushLogger(LogTrace, PSAGM_PHYENGINE_LABEL, "physics system create.");
-	}
-
-	void PhyEngineObjectData::PhysicsObjectDelete() {
-		if (PhysicsWorld == nullptr) {
-			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "physics system free, world_ptr = nullptr.");
-			return;
+	bool PhyEngineCoreDataset::PhysicsWorldCreate(string strkey, Vector2T<float> gravity_vector) {
+		if (PhysicsWorldFind(strkey) != nullptr) {
+			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "physics_world: failed alloc duplicate_key: %s", strkey.c_str());
+			return false;
 		}
-		delete PhysicsWorld;
-		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "physics system free.");
+		PhysiceWorldData CreatePhyWorld = {};
+		// create physics world.
+		b2Vec2 ConfigGravity(gravity_vector.vector_x, gravity_vector.vector_y);
+		CreatePhyWorld.PhysicsWorld = new b2World(ConfigGravity);
+
+		PhysicsWorlds[strkey] = CreatePhyWorld;
+		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "physics_world item: alloc key: %s", strkey.c_str());
+		return true;
 	}
 
-	void PhyEngineObjectData::PhysicsSystemUpdateState(float speed_scale) {
-		// box2d api update_world.
-		PhysicsWorld->Step(PSAGM_VIR_TICKSTEP_PHY * speed_scale, (int32)PhysicsIterations.vector_x, (int32)PhysicsIterations.vector_y);
+	bool PhyEngineCoreDataset::PhysicsWorldDelete(string strkey) {
+		auto it = PhysicsWorlds.find(strkey);
+		if (it != PhysicsWorlds.end()) {
+			// free ersae data.
+			size_t BodiesCount = NULL;
+			for (auto& BodyItem : it->second.PhysicsDataset) {
+				// free all bodies.
+				it->second.PhysicsWorld->DestroyBody(BodyItem.second.Box2dActorPtr);
+				++BodiesCount;
+			}
+			delete it->second.PhysicsWorld;
+			PhysicsWorlds.erase(it);
+
+			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "physics_world item: free_bodies: %u, delete key: %s", 
+				BodiesCount, strkey.c_str());
+			return true;
+		}
+		PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "physics_world item: failed delete, not found key.");
+		return false;
+	}
+
+	PhysiceWorldData* PhyEngineCoreDataset::PhysicsWorldFind(string strkey) {
+		return (PhysicsWorlds.find(strkey) != PhysicsWorlds.end()) ? &PhysicsWorlds[strkey] : nullptr;
+	}
+
+	void PhyEngineCoreDataset::PhysicsSystemUpdateState(float time_step) {
+		for (auto& WorldItem : PhysicsWorlds) {
+			// box2d api update_world.
+			WorldItem.second.PhysicsWorld->Step(
+				PSAGM_VIR_TICKSTEP_PHY * time_step, (int32)PhysicsIterations.vector_x, (int32)PhysicsIterations.vector_y);
+		}
 	}
 }

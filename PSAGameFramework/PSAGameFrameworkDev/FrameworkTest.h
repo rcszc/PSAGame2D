@@ -39,6 +39,7 @@ protected:
     GameActorCore::GameActorShader* ActorShaderNPC = nullptr;
     GameActorCore::GameActorShader* ActorShaderWall = nullptr;
 
+    void CreateNpcActor(float max_hp);
     void CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed);
     void HealthHandlerFuncNPC(const GameActorCore::HealthFuncParams& params);
 

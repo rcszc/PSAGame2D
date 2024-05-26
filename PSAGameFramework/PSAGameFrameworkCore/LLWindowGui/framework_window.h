@@ -74,6 +74,7 @@ namespace PSAG_WINDOW_OGLFW {
 	private:
 		static std::chrono::steady_clock::time_point CalcSpeedTimer;
 		static size_t CalcSpeedFrameCount;
+		static float  CalcSpeedTemp[2]; // 0:speed, 1:smooth.
 	protected:
 		GLFWwindow* MainWindowObject = {};
 

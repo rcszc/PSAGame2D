@@ -35,6 +35,17 @@ namespace GameActorCore {
 		uint32_t ActorTypeCode;
 	};
 
+	// name, mode, params = {}
+	// mode: 1:create, 2:delete params: x:gravity_vec_x, y:gravity_vec_y
+	class GameActorPhysicalWorld :public PhysicsEngine::PhyEngineCoreDataset {
+	public:
+		GameActorPhysicalWorld(std::string name_key, int mode, Vector2T<float> params = {}) {
+			if (mode == 1) OperFlag = PhysicsWorldCreate(name_key, params);
+			if (mode == 2) OperFlag = PhysicsWorldDelete(name_key);
+		}
+		bool OperFlag = false;
+	};
+
 	/* Actor Fragment ShaderDemo:
 		#version 460 core
 
@@ -130,8 +141,8 @@ namespace GameActorCore {
 	// init(config) descriptor.
 	struct GameActorActuatorDESC {
 		GameActorShader* ActorShaderResource;
-		float            ActorTimerStepSpeed;
-		ActorPhyMode     ActorPhysicsMode;
+		std::string      ActorInPhyWorld;
+		ActorPhyMode     ActorPhysicalMode;
 
 		float ControlFricMove;
 		float ControlFricRotate;
@@ -145,11 +156,11 @@ namespace GameActorCore {
 		float           InitialRotate;
 
 		GameActorHealthDESC ActorHealthSystem;
-
+		
 		GameActorActuatorDESC() :
 			ActorShaderResource(nullptr),
-			ActorTimerStepSpeed(1.0f),
-			ActorPhysicsMode   (PhyMoveActor),
+			ActorInPhyWorld    ("SYSTEM_PHY_WORLD"),
+			ActorPhysicalMode  (PhyMoveActor),
 
 			ControlFricMove  (1.0f),
 			ControlFricRotate(1.0f),
@@ -169,13 +180,14 @@ namespace GameActorCore {
 	class GameActorActuator :
 		public GraphicsEngineDataset::GLEngineStcVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
-		public PhysicsEngine::PhyEngineObjectData
+		public PhysicsEngine::PhyEngineCoreDataset
 	{
 	protected:
 		std::chrono::steady_clock::time_point ActorTimer = std::chrono::steady_clock::now();
 
 		ActorPrivateINFO ActorUniqueInfo = {};
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
+		std::string ActorInPhyWorld = {};
 
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
@@ -232,15 +244,10 @@ namespace GameActorCore {
 		// actor virtual(scene) coord =convert=> window coord(pixel).
 		Vector2T<float> ActorConvertVirCoord(Vector2T<uint32_t> window_res);
 
-		void ActorUpdateHealth();
-		void ActorUpdate();
+		void ActorUpdateHealth(float timestep);
+		void ActorUpdate(float timestep);
 		void ActorRendering();
 	};
-}
-
-// 用于构建静态场景,比静态Actor更加轻量.
-namespace GameBrickCore {
-	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
 }
 
 namespace GameActorManager {
@@ -267,11 +274,25 @@ namespace GameActorManager {
 
 		// update all actor_object "ActorUpdateHealth" & "ActorUpdate".
 		// rendering all actor_object "ActorRendering".
-		void RunAllGameActor();
-		// actors dataset debug(panel_gui).
-		void ActorManagerDebug(std::function<void(std::unordered_map<size_t, GameActorCore::GameActorActuator*>)> debug_function) {
-			debug_function(GameActorDataset);
-		}
+		void RunAllGameActor(float timestep);
+	};
+}
+
+// 用于构建静态场景,比静态Actor更加高效.
+namespace GameBrickCore {
+	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
+
+	struct GameBrickActuatorDESC {
+		//std::vector<Vector2T<float>> 
+	};
+
+	class GameBrickActuator :
+		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public PhysicsEngine::PhyEngineCoreDataset 
+	{
+	protected:
+
 	};
 }
 
@@ -279,7 +300,7 @@ namespace GameDebugGuiWindow {
 	// debug window [panel], actor. 
 	void DebugWindowGuiActor(const std::string& name, GameActorCore::GameActorActuator* actor);
 	// debug window [panel], actor_manager(actors). 
-	void DebugWindowGuiActors(std::unordered_map<size_t, GameActorCore::GameActorActuator*> actors);
+	void DebugWindowGuiActors(std::unordered_map<size_t, GameActorCore::GameActorActuator*>* actors);
 }
 
 #endif

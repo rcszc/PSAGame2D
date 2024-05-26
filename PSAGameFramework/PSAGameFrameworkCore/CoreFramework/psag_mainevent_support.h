@@ -20,6 +20,7 @@ namespace GameLogic {
         GraphicsEngineBackground::BackFxParameters* BackShaderParams;
 
         Vector2T<uint32_t> WindowResolution;
+        float GameRunTimeStep;
     };
 
     // frameowrk game_logic interface.
@@ -145,7 +146,7 @@ namespace PsagFrameworkCore {
         public GraphicsEngineDataset::GLEngineStcVertexData,  // static vertex.
         public GraphicsEngineDataset::GLEngineSmpTextureData, // textures.
         // init physics system.
-        public PhysicsEngine::PhyEngineObjectData
+        public PhysicsEngine::PhyEngineCoreDataset
     {
     private:
         static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;
@@ -165,13 +166,15 @@ namespace PsagFrameworkCore {
         PsagLow::PsagSupWindowGuiConfigGui ImGuiInitConfig = {};
 
         // renderer init params.
-        uint32_t RendererMSAA = 1;
+        uint32_t RendererMSAA        = 1;
         bool     RendererWindowFixed = false;
 
         // renderer event_loop params.
         Vector4T<float>* RenderingFrameColorPtr = &RenderBgColor;
         Vector2T<uint32_t> RenderingWinSize = {};
         Vector2T<uint32_t> RenderingVirTextureSizeBase = {};
+        // time step (fps)benchmark.
+        float RenderingBaseFPS = 165.0f;
 
         void FrameworkInitConfig(const std::string& gl_version);
         void FrameworkRendererLowinit(const std::string& gl_version);

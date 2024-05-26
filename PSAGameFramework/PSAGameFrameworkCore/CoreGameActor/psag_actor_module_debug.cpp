@@ -40,12 +40,12 @@ namespace GameDebugGuiWindow {
 		ImGui::End();
 	}
 
-	void DebugWindowGuiActors(unordered_map<size_t, GameActorCore::GameActorActuator*> actors) {
+	void DebugWindowGuiActors(unordered_map<size_t, GameActorCore::GameActorActuator*>* actors) {
 		ImGui::Begin("DebugActors INFO", (bool*)0, ImGuiWindowFlags_NoScrollbar);
-		ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 0.92f), "Actors Number: %u", actors.size());
+		ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 0.92f), "Actors Number: %u", actors->size());
 
 		int CountItemID = NULL;
-		for (const auto& ActorItem : actors) {
+		for (const auto& ActorItem : *actors) {
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.16f, 0.0f, 0.16f, 0.92f));
 			ImGui::PushID(CountItemID);
 			ImGui::BeginChild("INFO", ImVec2(ImGui::GetWindowSize().x - IMGUI_ITEM_SPAC * 2.0f, 64.0f), true);

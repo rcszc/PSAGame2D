@@ -14,15 +14,12 @@ namespace PhysicsEngine {
 	StaticStrLABEL PSAGM_PHYENGINE_LABEL = "PSAG_PHYSICS";
 
 	struct PhysicsBodyData {
-		size_t FindUniqueCode;
+		// bind actor_unique_code.
+		size_t  BindUniqueCode;
+		b2Body* Box2dActorPtr;
 
-		b2Body* Box2dGroundPointer;
-		b2Body* Box2dActorPointer;
-
-		PhysicsBodyData() : FindUniqueCode(NULL), Box2dGroundPointer(nullptr), Box2dActorPointer(nullptr) {}
-		PhysicsBodyData(size_t code, b2Body* ground, b2Body* actor) : 
-			FindUniqueCode(code), Box2dGroundPointer(ground), Box2dActorPointer(actor)
-		{}
+		PhysicsBodyData() : BindUniqueCode(NULL), Box2dActorPtr(nullptr) {}
+		PhysicsBodyData(size_t code, b2Body* actor) : BindUniqueCode(code), Box2dActorPtr(actor) {}
 	};
 
 	// square, length: +-10.0f.
@@ -56,28 +53,34 @@ namespace PhysicsEngine {
 		{}
 	};
 
-	class PhyEngineObjectData {
+	struct PhysiceWorldData {
+		// physics world & body_dataset.
+		b2World* PhysicsWorld;
+		std::unordered_map<ResUnique, PhysicsBodyData> PhysicsDataset;
+
+		PhysiceWorldData() : PhysicsWorld(nullptr), PhysicsDataset({}) {}
+	};
+	// box2d worlds bodies manager.
+	class PhyEngineCoreDataset {
 	protected:
-		static std::unordered_map<ResUnique, PhysicsBodyData> PhysicsDataset;
-
-		static b2World* PhysicsWorld;
-		static b2Body*  PhysicsWorldGround;
-
+		static std::unordered_map<std::string, PhysiceWorldData> PhysicsWorlds;
 		// x:velocity_iterations, y:position_iterations.
 		static Vector2T<float> PhysicsIterations;
 
-		bool PhyBodyItemAlloc(ResUnique strkey, PhysicsBodyConfig config);
-		bool PhyBodyItemFree(ResUnique strkey);
+		bool PhyBodyItemAlloc(std::string world, ResUnique rukey, PhysicsBodyConfig config);
+		bool PhyBodyItemFree(std::string world, ResUnique rukey);
 
-		void PhyBodyItemResetBox(ResUnique strkey, Vector2T<float> size, float density, float friction);
-		PhysicsRunState PhyBodyItemGet(ResUnique strkey);
-		size_t PhyBodyItemGetCollision(ResUnique strkey);
+		void PhyBodyItemResetBox(std::string world, ResUnique rukey, Vector2T<float> size, float density, float friction);
+		PhysicsRunState PhyBodyItemGet(std::string world, ResUnique rukey);
+		size_t PhyBodyItemGetCollision(std::string world, ResUnique rukey);
 
 		// physics system: framework oper.
-		void PhysicsObjectCreate(float width_scale);
-		void PhysicsObjectDelete();
+		bool PhysicsWorldCreate(std::string strkey, Vector2T<float> gravity_vector);
+		bool PhysicsWorldDelete(std::string strkey);
+		PhysiceWorldData* PhysicsWorldFind(std::string strkey);
+
 		// framework global update state.
-		void PhysicsSystemUpdateState(float speed_scale = 1.0f);
+		void PhysicsSystemUpdateState(float time_step);
 	};
 }
 

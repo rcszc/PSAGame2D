@@ -123,7 +123,7 @@ namespace GraphicsEnginePVFX {
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "graphics_engine free post_shader(system).");
 	}
 
-	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
+	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color, float timestep) {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
 
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextBind(ShaderTemp);
@@ -155,7 +155,7 @@ namespace GraphicsEnginePVFX {
 			PlayerTimer = 0.0f;
 			PlayerPosition.vector_x += 1.0f / PlayerParams.UaxisFrameNumber;
 		}
-		PlayerTimer += PSAGM_VIR_TICKSTEP_GL * 2.0f;
+		PlayerTimer += PSAGM_VIR_TICKSTEP_GL * 2.0f * timestep;
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);

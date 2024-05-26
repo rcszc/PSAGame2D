@@ -435,7 +435,7 @@ namespace GraphicsEngineParticle {
 		ParticleSystemState				 GetParticleState();
 		std::vector<ParticleAttributes>* GetParticleDataset();
 
-		void UpdateParticleData();
+		void UpdateParticleData(float timestep);
 		void RenderParticleFX();
 	};
 }
@@ -496,7 +496,7 @@ namespace GraphicsEnginePVFX {
 		PsagGLEngineFxSequence(const ImageRawData& image, const SequencePlayer& params);
 		~PsagGLEngineFxSequence();
 
-		bool DrawFxSequence(const Vector4T<float>& blend_color);
+		bool DrawFxSequence(const Vector4T<float>& blend_color, float timestep);
 		uint32_t PlayerCyclesCount = NULL;
 	};
 }

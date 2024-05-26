@@ -239,24 +239,26 @@ namespace PSAG_WINDOW_OGLFW {
     }
 
     chrono::steady_clock::time_point SpcaWindowEvent::CalcSpeedTimer = chrono::steady_clock::now();
-    size_t SpcaWindowEvent::CalcSpeedFrameCount = NULL;
+    size_t SpcaWindowEvent::CalcSpeedFrameCount = 60;
+    float  SpcaWindowEvent::CalcSpeedTemp[2]    = { 1.0f,1.0f };
 
     constexpr float SAMPLER_TIME_MS = 500.0f;
     float SpcaWindowEvent::CalcFrameSpeedScale(float base_fps) {
-        float ResultSpeedScale = 1.0f;
         // sample timer 500ms.
         if (chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - CalcSpeedTimer).count() >= 
             (int64_t)SAMPLER_TIME_MS
         ) {
             // calc frame(base_fps) scale.
-            ResultSpeedScale = base_fps / (float)CalcSpeedFrameCount * (SAMPLER_TIME_MS / 1000.0f);
+            CalcSpeedTemp[0] = base_fps / (float)CalcSpeedFrameCount * (SAMPLER_TIME_MS / 1000.0f);
             CalcSpeedFrameCount = NULL;
             CalcSpeedTimer = chrono::steady_clock::now();
         }
         REFRESH_CALL_FUNC = [&](chrono::steady_clock::time_point time) {
-            CalcSpeedTimer = time;
+            CalcSpeedTimer      = time;
+            CalcSpeedFrameCount = NULL;
         };
         ++CalcSpeedFrameCount;
-        return ResultSpeedScale;
+        CalcSpeedTemp[1] += (CalcSpeedTemp[0] - CalcSpeedTemp[1]) * 0.01f;
+        return CalcSpeedTemp[1];
     }
 }

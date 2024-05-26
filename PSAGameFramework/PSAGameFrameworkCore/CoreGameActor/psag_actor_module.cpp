@@ -126,25 +126,31 @@ namespace GameActorCore {
 		RenderingResolution.vector_x = (float)INIT_DESC.ActorShaderResource->__WINDOW_RESOLUTION.vector_x;
 		RenderingResolution.vector_y = (float)INIT_DESC.ActorShaderResource->__WINDOW_RESOLUTION.vector_y;
 
+		if (PhysicsWorldFind(INIT_DESC.ActorInPhyWorld) == nullptr) {
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", INIT_DESC.ActorInPhyWorld.c_str());
+			return;
+		}
+		ActorInPhyWorld = INIT_DESC.ActorInPhyWorld;
+
 		// inter speed_scale(base:1.0f)
 		AnimInterSpeed.vector_x = INIT_DESC.ControlFricMove;
 		AnimInterSpeed.vector_y = INIT_DESC.ControlFricRotate;
 		AnimInterSpeed.vector_z = INIT_DESC.ControlFricScale;
 
-		// config initial state.
-		ActorStateScale[0] = INIT_DESC.InitialScale;
-		ActorStateScale[1] = INIT_DESC.InitialScale;
-
 		ActorStateMove[0] = INIT_DESC.InitialSpeed;
 		ActorStateMove[1] = INIT_DESC.InitialPosition;
 		ActorStateRotate  = Vector2T<float>(INIT_DESC.InitialRotate, INIT_DESC.InitialRotate);
+		
+		// config initial state.
+		ActorStateScale[0] = INIT_DESC.InitialScale;
+		ActorStateScale[1] = INIT_DESC.InitialScale;
 		
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode = ActorUniqueInfo.ActorUniqueCode;
 		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua();
 
-		switch (INIT_DESC.ActorPhysicsMode) {
+		switch (INIT_DESC.ActorPhysicalMode) {
 		case(PhyMoveActor):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
 		case(PhyFixedActor): { ActorPhyConfig.PhysicsModeTypeFlag = false; break; }
 		}
@@ -157,7 +163,7 @@ namespace GameActorCore {
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
 		ActorPhysicsItem = GenResourceID.PsagGenTimeKey();
-		PhyBodyItemAlloc(ActorPhysicsItem, ActorPhyConfig);
+		PhyBodyItemAlloc(ActorInPhyWorld, ActorPhysicsItem, ActorPhyConfig);
 
 		ActorPhysicsDensity  = INIT_DESC.InitialPhysics.vector_x;
 		ActorPhysicsFriction = INIT_DESC.InitialPhysics.vector_y;
@@ -174,7 +180,7 @@ namespace GameActorCore {
 
 	GameActorActuator::~GameActorActuator() {
 		// free: physics system item.
-		PhyBodyItemFree(ActorPhysicsItem);
+		PhyBodyItemFree(ActorInPhyWorld, ActorPhysicsItem);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor item delete: %u", ActorUniqueInfo.ActorUniqueCode);
 	}
 
@@ -194,10 +200,12 @@ namespace GameActorCore {
 		);
 	}
 
-	void GameActorActuator::ActorUpdateHealth() {
+	void GameActorActuator::ActorUpdateHealth(float timestep) {
 		// state trans calc.
-		for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i)
-			ActorHealthState[1][i] += (ActorHealthState[0][i] - ActorHealthState[1][i]) * PSAGM_ACTOR_INTER * ActorHealthState[2][i];
+		for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i) {
+			ActorHealthState[1][i] += (ActorHealthState[0][i] - ActorHealthState[1][i])
+				* PSAGM_ACTOR_INTER * ActorHealthState[2][i] * timestep;
+		}
 
 		// in func parameters.
 		HealthFuncParams FuncParams = {};
@@ -220,22 +228,18 @@ namespace GameActorCore {
 	}
 
 #define PSAGM_FP32_LOSS std::numeric_limits<float>::epsilon()
-	void GameActorActuator::ActorUpdate() {
+	void GameActorActuator::ActorUpdate(float timestep) {
 		// speed_sub: move, inter: scale.
-		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0], PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_x);
-		SysVector2FInter(ActorStateScale[0], ActorStateScale[1], PSAGM_ACTOR_INTER * AnimInterSpeed.vector_z);
+		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0], PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_x * timestep);
+		SysVector2FInter(ActorStateScale[0], ActorStateScale[1], PSAGM_ACTOR_INTER * AnimInterSpeed.vector_z * timestep);
 		// rotate speed sub(vir_friction).
-		ActorStateRotate.vector_x += (0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_x;
+		ActorStateRotate.vector_x += 
+			(0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_y * timestep;
 
-		auto PhysicsState = PhyBodyItemGet(ActorPhysicsItem);
+		auto PhysicsState = PhyBodyItemGet(ActorInPhyWorld, ActorPhysicsItem);
 
-		b2Vec2 DesiredVelocity = b2Vec2(ActorStateMove[0].vector_x, ActorStateMove[0].vector_y);
-		b2Vec2 CurrentVelocity = PhysicsState.BodySourcePointer->GetLinearVelocity();
-		b2Vec2 Force = (DesiredVelocity - CurrentVelocity);
-
-		Force.x *= PhysicsState.BodySourcePointer->GetMass();
-		Force.y *= PhysicsState.BodySourcePointer->GetMass();
-		PhysicsState.BodySourcePointer->ApplyForceToCenter(Force, true);
+		if (abs(ActorStateMove[0].vector_x) > PSAGM_FP32_LOSS || abs(ActorStateMove[0].vector_y) > PSAGM_FP32_LOSS)
+			PhysicsState.BodySourcePointer->SetLinearVelocity(b2Vec2(ActorStateMove[0].vector_x, ActorStateMove[0].vector_y));
 
 		if (abs(ActorStateRotate.vector_x) > PSAGM_FP32_LOSS) {
 			float CurrentAngularVelocity = PhysicsState.BodySourcePointer->GetAngularVelocity();
@@ -250,7 +254,7 @@ namespace GameActorCore {
 		ActorPrivateINFO CollisionItem = {};
 		// update collision info.
 		CollisionItem.ActorTypeCode   = Type::ActorTypeNULL;
-		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollision(ActorPhysicsItem);
+		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollision(ActorInPhyWorld, ActorPhysicsItem);
 		ActorCollisionINFO = CollisionItem;
 	}
 

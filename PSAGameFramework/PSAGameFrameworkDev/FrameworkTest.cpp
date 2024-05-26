@@ -9,7 +9,7 @@ namespace TActor = GameActorCore::Type;
 void DevTestClass::CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed) {
     GameActorCore::GameActorActuatorDESC ConfigBullet;
 
-    ConfigBullet.ActorTimerStepSpeed = 1.0f;
+    ConfigBullet.ActorInPhyWorld     = "MyPhyWorld";
     ConfigBullet.ActorShaderResource = ActorShaderBullet;
 
     ConfigBullet.ControlFricMove   = 0.1f;
@@ -20,8 +20,41 @@ void DevTestClass::CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> P
     ConfigBullet.InitialPosition = PosBegin;
     ConfigBullet.InitialScale    = Vector2T<float>(0.2f, 0.2f);
     ConfigBullet.InitialSpeed    = PosSpeed;
+    
+    size_t AC = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_bullet"), ConfigBullet);
+}
 
-    TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_bullet"), ConfigBullet);
+void DevTestClass::CreateNpcActor(float max_hp) {
+    // config actor.
+    GameActorCore::GameActorActuatorDESC ConfigActors;
+
+    ConfigActors.ActorInPhyWorld     = "MyPhyWorld";
+    ConfigActors.ActorShaderResource = ActorShaderNPC;
+
+    ConfigActors.ControlFricMove   = 2.0f;
+    ConfigActors.ControlFricRotate = 1.0f;
+    ConfigActors.ControlFricScale  = 1.0f;
+
+    GameActorCore::GameActorHealthDESC NPCActorHealthDESC = {};
+
+    ConfigActors.InitialPhysics  = Vector2T<float>(7.2f, 3.2f);
+    ConfigActors.InitialPosition = Vector2T<float>(-70.0f, 0.0f);
+
+    NPCActorHealthDESC.InitialHealthState[0] = max_hp;
+    NPCActorHealthDESC.InitialHealthSpeed[0] = 1.0f;
+    NPCActorHealthDESC.HealthHandlerFunc = [this](GameActorCore::HealthFuncParams params) { HealthHandlerFuncNPC(params); };
+    // HP DESC => ACTOR DESC.
+    ConfigActors.ActorHealthSystem = NPCActorHealthDESC;
+
+    // 初始化位置创建.
+    ConfigActors.InitialPosition = Vector2T<float>(32.0f, 10.0f);
+    NpcActorCode[0] = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), ConfigActors);
+
+    ConfigActors.InitialPosition = Vector2T<float>(-20.0f, 10.0f);
+    NpcActorCode[1] = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), ConfigActors);
+
+    ConfigActors.InitialPosition = Vector2T<float>(10.0f, 32.0f);
+    NpcActorCode[2] = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), ConfigActors);
 }
 
 void DevTestClass::HealthHandlerFuncNPC(const GameActorCore::HealthFuncParams& params) {
@@ -70,6 +103,7 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     CreateBg.LayerDataPush(LoadRawImage.DecodeImageRawData(TestBinLoad2.GetDataBinary()));
     CreateBg.LayerDataPush(LoadRawImage.DecodeImageRawData(TestBinLoad1.GetDataBinary()));
 
+    // 创建全局背景处理对象.
     CreateBg.CreateBackground(WinSize);
 
     PsagLow::PsagSupGraphicsFunc::PsagGraphicsImageRawDat DecRawImage;
@@ -79,8 +113,9 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
         WinSize, DecRawImage.DecodeImageRawData(LoadParticle.GetDataBinary())
     );
     
-    PsagLow::PsagSupFilesysLoaderBin LoadSequence("Test/fx_fire_test.png");
+    // ******************************** TEST 序列帧贴图 ********************************
 
+    PsagLow::PsagSupFilesysLoaderBin LoadSequence("Test/fx_fire_test.png");
     GraphicsEnginePVFX::SequencePlayer SequenceParams = {};
 
     SequenceParams.UaxisFrameNumber = 6.0f;
@@ -94,11 +129,14 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     // ******************************** TEST ACTORS ********************************
 
+    GameActorCore::GameActorPhysicalWorld CreatePhyWorld("MyPhyWorld", 1);
+
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_pawn");
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_npc");
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_bullet");
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_wall");
 
+    // 创建Actor着色器资源.
     ActorShaderPawn   = new GameActorCore::GameActorShader(ActorFragPawn,   WinSize);
     ActorShaderBullet = new GameActorCore::GameActorShader(ActorFragBullet, WinSize);
     ActorShaderNPC    = new GameActorCore::GameActorShader(ActorFragNPC,    WinSize);
@@ -107,49 +145,31 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     // config actor.
     GameActorCore::GameActorActuatorDESC ConfigActors;
 
-    ConfigActors.ActorTimerStepSpeed = 1.0f;
+    ConfigActors.ActorInPhyWorld     = "MyPhyWorld";
     ConfigActors.ActorShaderResource = ActorShaderPawn;
 
     ConfigActors.ControlFricMove   = 2.0f;
     ConfigActors.ControlFricRotate = 1.0f;
     ConfigActors.ControlFricScale  = 1.0f;
 
-    GameActorCore::GameActorActuatorDESC NPCActorDESC = ConfigActors;
-    GameActorCore::GameActorHealthDESC   NPCActorHealthDESC = {};
-
+    GameActorCore::GameActorHealthDESC NPCActorHealthDESC = {};
     // config hp system.
-    NPCActorDESC.ActorHealthSystem = NPCActorHealthDESC;
+    ConfigActors.ActorHealthSystem = NPCActorHealthDESC;
 
-    NPCActorDESC.InitialPhysics  = Vector2T<float>(5.0f, 0.32f);
-    NPCActorDESC.InitialPosition = Vector2T<float>(-70.0f, 0.0f);
+    ConfigActors.InitialPhysics  = Vector2T<float>(5.0f, 3.2f);
+    ConfigActors.InitialPosition = Vector2T<float>(-70.0f, 0.0f);
 
-    PawnActorCode = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_pawn"), NPCActorDESC);
+    PawnActorCode = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_pawn"), ConfigActors);
 
-    NPCActorHealthDESC.InitialHealthState[0] = 100.0f;
-    NPCActorHealthDESC.InitialHealthSpeed[0] = 1.0f;
-    NPCActorHealthDESC.HealthHandlerFunc =
-        [this](GameActorCore::HealthFuncParams params) { HealthHandlerFuncNPC(params); };
-    NPCActorDESC.ActorHealthSystem = NPCActorHealthDESC;
-
-    NPCActorDESC.InitialPhysics      = Vector2T<float>(1.0f, 0.32f);
-    NPCActorDESC.ActorShaderResource = ActorShaderNPC;
-
-    NPCActorDESC.InitialPosition = Vector2T<float>(32.0f, 10.0f);
-    NpcActorCode[0] = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), NPCActorDESC);
-
-    NPCActorDESC.InitialPosition = Vector2T<float>(-20.0f, 10.0f);
-    NpcActorCode[1] = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), NPCActorDESC);
-
-    NPCActorDESC.InitialPosition = Vector2T<float>(10.0f, 32.0f);
-    NpcActorCode[2] = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), NPCActorDESC);
+    CreateNpcActor(100.0f);
 
     // 创建测试墙体.
 
     GameActorCore::GameActorActuatorDESC ConfigWalls;
 
-    ConfigWalls.ActorTimerStepSpeed = 1.0f;
+    ConfigWalls.ActorInPhyWorld     = "MyPhyWorld";
     ConfigWalls.ActorShaderResource = ActorShaderWall;
-    ConfigWalls.ActorPhysicsMode    = GameActorCore::PhyFixedActor;
+    ConfigWalls.ActorPhysicalMode   = GameActorCore::PhyFixedActor;
 
     ConfigWalls.ControlFricMove   = 1.0f;
     ConfigWalls.ControlFricRotate = 1.0f;
@@ -176,18 +196,17 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 }
 
 void DevTestClass::LogicCloseFree() {
+
+    GameActorCore::GameActorPhysicalWorld CreatePhyWorld("MyPhyWorld", 2);
+
     delete AshesParticles;
     delete TestCaptureView;
 }
 
 bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
 
-    AshesParticles->UpdateParticleData();
+    AshesParticles->UpdateParticleData(RunningState.GameRunTimeStep);
     AshesParticles->RenderParticleFX();
-
-    //TestCaptureView->CaptureContextBind();
-    //TestSequence->DrawFxSequence(TestColor);
-    //TestCaptureView->CaptureContextUnBind();
 
     for (auto& Bullet : *TestGameActors.GetSourceData()) {
         if (Bullet.second->ActorGetLifeTime() > 2.5f && 
@@ -214,7 +233,7 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
         }
     }
 
-    TestGameActors.RunAllGameActor();
+    TestGameActors.RunAllGameActor(RunningState.GameRunTimeStep);
     TestGameActors.UpdateManagerData();
 
     // background blend color_inter calc.
@@ -226,6 +245,10 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
 
     RunningState.BackShaderParams->BackgroundStrength.vector_x +=
         (BgBlendStrengthSet - RunningState.BackShaderParams->BackgroundStrength.vector_x) * 0.02f;
+
+    TestCaptureView->CaptureContextBind();
+    TestSequence->DrawFxSequence(TestColor, RunningState.GameRunTimeStep);
+    TestCaptureView->CaptureContextUnBind();
 
     ++CountTimer;
 	return true;
@@ -256,6 +279,9 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
         ImGui::SliderFloat("VISIB", &BgVisibilitySet, 0.1f, 2.0f);
         ImGui::SliderFloat("BLEND", &BgBlendStrengthSet, 0.1f, 2.0f);
 
+        ImGui::SliderFloat3("Filter RGB", RunningState.PostShaderParams->GameSceneFilterCOL.data(), 0.0f, 2.0f);
+        ImGui::SliderFloat("Filter AVG", &RunningState.PostShaderParams->GameSceneFilterAVG, 0.0f, 2.0f);
+
         ImGui::ProgressBar(RunningState.BackShaderParams->BackgroundVisibility / 2.0f);
         ImGui::ProgressBar(RunningState.BackShaderParams->BackgroundStrength.vector_x / 2.0f);
         ImGui::ProgressBar(BloomRadius / 32.0f);
@@ -264,45 +290,52 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
 
     auto PawnActorObj = TestGameActors.FindGameActor(PawnActorCode);
 
-    TestGameActors.ActorManagerDebug(GameDebugGuiWindow::DebugWindowGuiActors);
+    GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
     GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
 
     if (ImGui::IsKeyDown(ImGuiKey_W))
-        PawnActorObj->ActorMappingMoveSpeed()->vector_y -= 0.2f;
+        PawnActorObj->ActorMappingMoveSpeed()->vector_y -= 0.2f * RunningState.GameRunTimeStep;
     if (ImGui::IsKeyDown(ImGuiKey_S))
-        PawnActorObj->ActorMappingMoveSpeed()->vector_y += 0.2f;
+        PawnActorObj->ActorMappingMoveSpeed()->vector_y += 0.2f * RunningState.GameRunTimeStep;
 
     if (ImGui::IsKeyDown(ImGuiKey_A)) {
-        PawnActorObj->ActorMappingMoveSpeed()->vector_x -= 0.2f;
-        *PawnActorObj->ActorMappingRotateSpeed() -= 0.0032f;
+        PawnActorObj->ActorMappingMoveSpeed()->vector_x -= 0.2f * RunningState.GameRunTimeStep;
+        *PawnActorObj->ActorMappingRotateSpeed() -= 0.0032f * RunningState.GameRunTimeStep;
     }
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
-        PawnActorObj->ActorMappingMoveSpeed()->vector_x += 0.2f;
-        *PawnActorObj->ActorMappingRotateSpeed() += 0.0032f;
+        PawnActorObj->ActorMappingMoveSpeed()->vector_x += 0.2f * RunningState.GameRunTimeStep;
+        *PawnActorObj->ActorMappingRotateSpeed() += 0.0032f * RunningState.GameRunTimeStep;
     }
-
+    
+    bool NpcFlag = false;
     for (size_t i = 0; i < 3; ++i) {
         auto NpcActorObj = TestGameActors.FindGameActor(NpcActorCode[i]);
         if (NpcActorObj != nullptr) {
             Vector2T<float> NPCPosition = NpcActorObj->ActorConvertVirCoord(RunningState.WindowResolution);
             ImGui::SetNextWindowPos(ImVec2(NPCPosition.vector_x, NPCPosition.vector_y));
-            ImGui::SetNextWindowSize(ImVec2(200.0f, 36.0f));
+            ImGui::SetNextWindowSize(ImVec2(200.0f, 42.0f));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
             ImGui::Begin(
                 string("NPC" + to_string(i)).c_str(), 
                 (bool*)0, 
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
             );
-            ImGui::Text("NPC Actor HP: %.2f", NpcActorObj->ActorGetHealth(0));
+            ImGui::ProgressBar(NpcActorObj->ActorGetHealth(0) / 100.0f);
             ImGui::End();
+            ImGui::PopStyleColor(2);
+            NpcFlag |= true;
         }
     }
+    if (!NpcFlag) CreateNpcActor(100.0f);
 
     // mouse_fire.
     Vector2T<float> ConvertCoord = PawnActorObj->ActorConvertVirCoord(RunningState.WindowResolution);
-    if (ImGui::IsMouseClicked(0)) {
+    // 鼠标左键 & 不悬停任何UI控件.
+    if (ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()) {
         Vector2T<float> VectorSpeed(ImGui::GetMousePos().x - ConvertCoord.vector_x, ImGui::GetMousePos().y - ConvertCoord.vector_y);
 
-        Vector2T<float> ActorSpeed(VectorSpeed.vector_x * 0.2f, VectorSpeed.vector_y * 0.2f);
+        Vector2T<float> ActorSpeed(VectorSpeed.vector_x * 0.5f, VectorSpeed.vector_y * 0.5f);
         Vector2T<float> ActorPosition(
             PawnActorObj->ActorGetPosition().vector_x + 12.0f * FmtValue(VectorSpeed.vector_x),
             PawnActorObj->ActorGetPosition().vector_y + 12.0f * FmtValue(VectorSpeed.vector_y)

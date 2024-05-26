@@ -54,9 +54,10 @@ namespace PsagFrameworkCore {
         else
             FrameworkParams.BackShaderParams = &RendererBackFX->RenderParameters;
         FrameworkParams.WindowResolution = RenderingWinSize;
+        FrameworkParams.GameRunTimeStep  = CalcFrameSpeedScale(RenderingBaseFPS);
 
         // update physics system.
-        PhysicsSystemUpdateState();
+        PhysicsSystemUpdateState(FrameworkParams.GameRunTimeStep);
 
         // opengl render_event loop.
         RenderContextAbove();
@@ -112,8 +113,8 @@ namespace PsagFrameworkCore {
         VertexDataObjectCreate();
         StaticVertexDataObjectCreate();
         VirtualTextureDataObjectCreate(RenderingVirTextureSizeBase);
-        // physics system create.
-        PhysicsObjectCreate((float)WindowInitConfig.WindowSizeWidth / (float)WindowInitConfig.WindowSizeHeight);
+        // physics system create. default(debug?) world.
+        PhysicsWorldCreate("SYSTEM_PHY_WORLD", Vector2T<float>());
 
         // create game2d post-shader.
         RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
@@ -148,7 +149,7 @@ namespace PsagFrameworkCore {
         StaticVertexDataObjectDelete();
         VirtualTextureDataObjectDelete();
         // physics system init.
-        PhysicsObjectDelete();
+        PhysicsWorldDelete("SYSTEM_PHY_WORLD");
 
         ImGuiFree();
         CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStcVertexData::LowLevelResourceFree();
