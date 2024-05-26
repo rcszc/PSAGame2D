@@ -13,17 +13,14 @@ __当前版本:__ 先行版 v20240526
 - 主要用于交流和学习
 
 __开发进度:__ ██████░░░░ 60%
-> LoC: 8431
+> Files: 61, LoC: 8431
 ---
 
 ## PSAG-ARCH 架构
 
-### 框架层级:
+### 框架层级 & 渲染架构
 
-<img src="PSAGameDesigns/EngineLayersArch.png"/>
-
----
-
-### 渲染架构:
-
-<img src="PSAGameDesigns/RendererArch.png"/>
+<p align="center">
+  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:47%;"/>
+  <img src="PSAGameDesigns/RendererArch.png" style="width:52%;"/>
+</p>
