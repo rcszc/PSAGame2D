@@ -216,7 +216,7 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
         ) {
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
             CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcPoints);
-            CreatePartc.ConfigCreateNumber(150);
+            CreatePartc.ConfigCreateNumber(16);
             CreatePartc.ConfigLifeDispersion(Vector2T<float>(512.0f, 1024.0f));
             CreatePartc.ConfigSizeDispersion(Vector2T<float>(0.42f, 1.28f));
 

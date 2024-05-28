@@ -122,6 +122,7 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <AdditionalIncludeDirectories>ExternalLibrary/GraphicsLibrary/glew_library/include/;ExternalLibrary/GraphicsLibrary/glfw_library/include/;ExternalLibrary/GraphicsLibrary/glm_library/include/;ExternalLibrary/GraphicsLibrary/image_loader/;ExternalLibrary/GuiimguiLibrary/;ExternalLibrary/FiletoolsLibrary/RapidJSON/include/;ExternalLibrary/FiletoolsLibrary/BASS/include/;ExternalLibrary/FiletoolsLibrary/Zlib/include/;ExternalLibrary/FiletoolsLibrary/Base64/;ExternalLibrary/PhysicalLibray/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
