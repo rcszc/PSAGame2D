@@ -23,7 +23,7 @@ __开发进度:__ ██████░░░░ 60%
 
 <p align="center">
   <img src="PSAGameDesigns/EngineLayersArch.png" style="width:45%;"/>
-  <img src="PSAGameDesigns/RendererArch.png" style="width:50%;"/>
+  <img src="PSAGameDesigns/RenderArch.png" style="width:50%;"/>
 </p>
 
 > 架构未完成, 可能还会有微调
