@@ -154,6 +154,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_class.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_regobj.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_debug.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_manager.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_script.cpp" />

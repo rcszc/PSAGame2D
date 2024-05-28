@@ -169,6 +169,14 @@ namespace PSAG_LOGGER_FILESYS {
 	}
 
 	bool StartLogFileProcess(const char* folder) {
+		filesystem::path CreateDir = "PSAGameSystemLogs/";
+		// create system folder.
+		if (!filesystem::exists(CreateDir)) {
+			if (filesystem::create_directories(CreateDir))
+				PSAG_LOGGER::PushLogger(LogError, PSAG_LOGGER_LABEL, "create log_folder failed create.");
+			PSAG_LOGGER::PushLogger(LogInfo, PSAG_LOGGER_LABEL, "create log_folder: system('PSAGameSystemLogs/')");
+		}
+
 		if (!filesystem::exists(folder) || !filesystem::is_directory(folder)) {
 			PSAG_LOGGER::PushLogger(LogError, PSAG_LOGGER_LABEL, "invalid folder: %s", folder);
 			return false;

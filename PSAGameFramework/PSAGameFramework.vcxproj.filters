@@ -210,6 +210,9 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp">
       <Filter>资源文件\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">

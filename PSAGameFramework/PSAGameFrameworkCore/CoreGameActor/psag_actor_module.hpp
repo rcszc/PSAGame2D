@@ -289,7 +289,12 @@ namespace GameBrickCore {
 	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
 
 	struct GameBrickActuatorDESC {
-		//std::vector<Vector2T<float>> 
+		// brick background(debug) color.
+		Vector4T<float> BrickDebugColor;
+		ImageRawData    BrickImageTexture;
+
+		std::vector<Vector2T<float>> BrickVertexCollision;
+		std::vector<Vector2T<float>> BrickVertexUvCoord;
 	};
 
 	class GameBrickActuator :
@@ -298,6 +303,8 @@ namespace GameBrickCore {
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:
+
+	public:
 
 	};
 }
