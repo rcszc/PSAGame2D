@@ -18,7 +18,7 @@ namespace PsagFrameworkCore {
     GraphicsEngineBackground::PsagGLEngineBackground* PSAGame2DFramework::RendererBackFX = nullptr;
 
     void PSAGame2DFramework::FrameworkRendererLowinit(const string& gl_version) {
-        PsagLow::PsagSupGraphicsFunc::PsagGraphicsSysinit GLINIT;
+        PsagLow::PsagSupGraphicsOper::PsagGraphicsSysinit GLINIT;
         // in_logger funcptr => init.
         GLINIT.LoggerFunc(PushLogger);
         GLINIT.RendererInit(FrameworkGraphicsParams, gl_version);
@@ -98,7 +98,7 @@ namespace PsagFrameworkCore {
         CoreInitErrorFlag |= !GLFWwindowVsync(PSAG_FALSE);
         CoreInitErrorFlag |= !GLFWwindowCallback();
 
-        PsagLow::PsagSupGraphicsFunc::GraphicsINFO GLINFO;
+        PsagLow::PsagSupGraphicsOper::GraphicsINFO GLINFO;
         GLINFO.LoggerPrintInformation = true;
 
         // init_window => init_renderer_low(opengl).

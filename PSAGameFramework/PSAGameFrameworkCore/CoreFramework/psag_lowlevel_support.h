@@ -27,7 +27,7 @@ namespace PsagLow {
 #ifdef ENABLE_LOWMODULE_GRAPHICS
 	using PsagSupGraphicsLLRES = PSAGGL_LOWLEVEL::PSAG_GRAPHICS_LLRES;
 	// psag renderer tool class&func.
-	namespace PsagSupGraphicsFunc = PSAGGL_LOWLEVEL::GRAPHICS_OPER;
+	namespace PsagSupGraphicsOper = PSAGGL_LOWLEVEL::GRAPHICS_OPER;
 #endif
 	// low_module 'filesys' support.
 #ifdef ENABLE_LOWMODULE_FILESYS

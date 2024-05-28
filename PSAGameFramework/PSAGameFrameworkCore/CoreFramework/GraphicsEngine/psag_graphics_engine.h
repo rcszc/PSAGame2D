@@ -12,29 +12,37 @@
 namespace GraphicsEngineDataset {
 	StaticStrLABEL PSAGM_GLENGINE_DATA_LABEL = "PSAG_GL_DATASET";
 
-	// LLRES => stc_vertex_data system. (static vertex data) [¾²Ì¬¾ØÐÎ]
+	struct VABO_DATASET_INFO {
+		size_t DatasetLength;
+		size_t DatasetOffsetLength;
+
+		VABO_DATASET_INFO() : DatasetLength(NULL), DatasetOffsetLength(NULL) {}
+	};
+
+	// LLRES => stc_vertex_data system. (static vertex data)
 	// => MODULE(update: 20240506):
 	// derive class:
 	// "GraphicsEnginePost::PsagGLEnginePost"
 	// "GraphicsEngineBackground::PsagGLEngineBackground"
 	class GLEngineStcVertexData :public PsagLow::PsagSupGraphicsLLRES {
 	private:
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender;
 		// opengl vao,vbo handle(res).
 		static ResUnique VertexAttribute;
 		static ResUnique VertexBuffer;
+
+		static std::unordered_map<ResUnique, VABO_DATASET_INFO> IndexItems;
 	protected:
 		void StaticVertexFrameDraw();
+
+		bool VerStcDataItemAlloc(ResUnique rukey, const std::vector<float>& data);
+		bool VerStcDataItemFree(ResUnique rukey);
+
+		bool VerStcOperFrameDraw(ResUnique rukey);
 
 		// static vertex system: framework oper.
 		void StaticVertexDataObjectCreate();
 		void StaticVertexDataObjectDelete();
-	};
-
-	struct VABO_DATASET_INFO {
-		size_t DatasetLength;
-		size_t DatasetOffsetLength;
-
-		VABO_DATASET_INFO() : DatasetLength(NULL), DatasetOffsetLength(NULL) {}
 	};
 
 	// LLRES => dy_vertex_data system. (dynamic vertex data)
@@ -43,6 +51,7 @@ namespace GraphicsEngineDataset {
 	// "GraphicsEngineParticle::PsagGLEngineParticle"
 	class GLEngineDyVertexData :public PsagLow::PsagSupGraphicsLLRES {
 	private:
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender;
 		// opengl vao,vbo handle(res).
 		static ResUnique VertexAttribute;
 		static ResUnique VertexBuffer;
@@ -53,11 +62,11 @@ namespace GraphicsEngineDataset {
 		static bool GLOBAL_UPDATE_FLAG;
 		void UpdateVertexDyDataset();
 	protected:
-		bool VerDataItemAlloc(ResUnique rukey);
-		bool VerDataItemFree(ResUnique rukey);
+		bool VerDyDataItemAlloc(ResUnique rukey);
+		bool VerDyDataItemFree(ResUnique rukey);
 
-		bool VerOperFramePushData(ResUnique rukey, const std::vector<float>& data);
-		bool VerOperFrameDraw(ResUnique rukey);
+		bool VerDyOperFramePushData(ResUnique rukey, const std::vector<float>& data);
+		bool VerDyOperFrameDraw(ResUnique rukey);
 
 		// dynamic vertex system: framework oper.
 		void VertexDataObjectCreate();
@@ -128,7 +137,8 @@ namespace GraphicsEngineDataset {
 	// derive class:
 	class GLEngineSmpTextureData :public PsagLow::PsagSupGraphicsLLRES {
 	private:
-		static PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform;
 
 		static SamplerTextures TexturesSize1X; // 1/8 resolution.
 		static SamplerTextures TexturesSize2X; // 1/4 resolution.
@@ -222,7 +232,8 @@ namespace GraphicsEnginePost {
 
 	class PsagGLEnginePost :public GraphicsEngineDataset::GLEngineStcVertexData {
 	protected:
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
 
@@ -279,8 +290,8 @@ namespace GraphicsEngineBackground {
 
 	class PsagGLEngineBackground :public GraphicsEngineDataset::GLEngineStcVertexData {
 	protected:
-		float RunTimeTick = 0.0f;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
 
@@ -413,7 +424,8 @@ namespace GraphicsEngineParticle {
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	protected:
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
 		std::vector<ParticleAttributes> DataParticles = {};
 		std::vector<float>              DataVertices  = {};
@@ -463,6 +475,7 @@ namespace GraphicsEnginePVFX {
 	// captrue => texture_view.
 	class PsagGLEngineFxCaptureView :public PsagLow::PsagSupGraphicsLLRES {
 	protected:
+		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
 		PsagTextureView TextureViewItem = {};
 		ResUnique FrameBufferItem = {};
 	public:
@@ -490,7 +503,9 @@ namespace GraphicsEnginePVFX {
 	protected:
 		static float SystemTimeStep;
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
+
 		SequencePlayer  PlayerParams   = {};
 		Vector2T<float> PlayerPosition = {};
 		float           PlayerTimer    = 0.0f;

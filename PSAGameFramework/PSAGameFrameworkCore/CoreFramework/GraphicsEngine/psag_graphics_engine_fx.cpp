@@ -8,7 +8,7 @@ using namespace GraphicsShaderCode;
 namespace GraphicsEnginePVFX {
 
 	PsagGLEngineFxImageView::PsagGLEngineFxImageView(const ImageRawData& image_data) {
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsTextureView CreateTexView;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsTextureView CreateTexView;
 
 		if (!CreateTexView.CreateTexViewData(image_data))
 			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx image_view system: failed create tex_view.");
@@ -32,8 +32,8 @@ namespace GraphicsEnginePVFX {
 		// generate unique_id.
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsTextureView CreateTexView;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFrameBuffer CreateFrameBuffer;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsTextureView CreateTexView;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer CreateFrameBuffer;
 
 		if (!CreateTexView.CreateTexViewEmpty(render_resolution.vector_x, render_resolution.vector_y))
 			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system: failed create tex_view.");
@@ -56,13 +56,13 @@ namespace GraphicsEnginePVFX {
 
 	void PsagGLEngineFxCaptureView::CaptureContextBind() {
 		// opengl api context bind.
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncFramebufContextBind(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0);
+		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void PsagGLEngineFxCaptureView::CaptureContextUnBind() {
 		// opengl api context unbind.
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncFramebufContextUnbind();
+		ShaderRender.RenderUnbindFrameBuffer();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -82,7 +82,7 @@ namespace GraphicsEnginePVFX {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 		PlayerParams = params;
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsShader ShaderProcess;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
 
 		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,      StringScript);
@@ -126,7 +126,7 @@ namespace GraphicsEnginePVFX {
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextBind(ShaderTemp);
+		ShaderRender.RenderBindShader(ShaderTemp);
 		StaticVertexFrameDraw();
 
 		// system parset uniform.
@@ -159,8 +159,8 @@ namespace GraphicsEnginePVFX {
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
+		ShaderRender.RenderUnbindShader();
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextUnbind();
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
 		return ShaderTemp != OPENGL_INVALID_HANDEL;
 	}

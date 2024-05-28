@@ -43,6 +43,7 @@ namespace PSAGGL_LOWLEVEL {
 	};
 
 	namespace GRAPHICS_OPER {
+		namespace PsagRender = RenderingSupport;
 		// psag graphics class. low_level => framework_middle level.
 		// init, shader, texture, model, rbo, fbo, uniform.
 
@@ -59,24 +60,7 @@ namespace PSAGGL_LOWLEVEL {
 
 		using PsagGraphicsImageLoader = PSAG_OGL_IMG::PsagIOImageFileSTB;
 		using PsagGraphicsImageRawDat = PSAG_OGL_IMG::PsagIOImageRawDataSTB;
-
-		namespace PsagUploadTex = UploadTextureGPU;
-
-		// rendering support func: non thread safe.
-		// PSA-V1.0 R-FUNC 0.1, 2024_04_01. RCSZ
-
-		extern std::function<void(const PsagShader&)>                PsagGraphicsFuncShaderContextBind;
-		extern std::function<void(const PsagTextureAttrib&)>         PsagGraphicsFuncTextureContextBind;
-		extern std::function<void(const PsagFrameBuffer&, uint32_t)> PsagGraphicsFuncFramebufContextBind;
-
-		extern std::function<void()> PsagGraphicsFuncShaderContextUnbind;
-		extern std::function<void()> PsagGraphicsFuncTextureContextUnbind;
-		extern std::function<void()> PsagGraphicsFuncFramebufContextUnbind;
-
-		extern std::function<void(const PsagVertexBufferAttrib&)>                 PsagGraphicsFuncDrawModel;
-		extern std::function<void(const PsagVertexBufferAttrib&, size_t, size_t)> PsagGraphicsFuncDrawVert;
-		extern std::function<void(PsagVertexBufferAttrib*, float*, size_t)>       PsagGraphicsFuncUpdateModel;
-
+		
 		// NST CLASS.
 		using GraphicsINFO = SysPsagInformationOGL;
 	}

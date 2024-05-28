@@ -577,28 +577,22 @@ namespace PSAG_OGL_MAG {
 }
 
 namespace RenderingSupport {
+	void PSAG_OGLAPI_RENDER_OPER::RenderBindShader(const PsagShader& program) {
+		// rendering context enable shader_program.
+		glUseProgram(program);
+	}
 
-	void RenderBindShader(const PsagShader& program) { glUseProgram(program); }
-	void RenderUnbindShader()                        { glUseProgram(NULL);    }
-
-	void RenderBindTexture(const PsagTextureAttrib& texture) {
+	void PSAG_OGLAPI_RENDER_OPER::RenderBindTexture(const PsagTextureAttrib& texture) {
 		glActiveTexture(GL_TEXTURE0 + texture.TextureSamplerCount);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texture.Texture);
 	}
-	void RenderUnbindTexture() {
-		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
-	}
 
-	void RnenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
+	void PSAG_OGLAPI_RENDER_OPER::RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
 	}
-	void RnenderUnbindFrameBuffer() {
-		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-		//glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-	}
 
-	void DrawVertexGroup(const PsagVertexBufferAttrib& model) {
+	void PSAG_OGLAPI_RENDER_OPER::DrawVertexGroup(const PsagVertexBufferAttrib& model) {
 		glBindVertexArray(model.DataAttrib);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);
 		glDrawArrays(GL_TRIANGLES, NULL, GLsizei(model.VerticesDataBytes / model.VertexBytes));
@@ -606,7 +600,8 @@ namespace RenderingSupport {
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
 
-	void DrawVertexGroupExt(const PsagVertexBufferAttrib& model, size_t length_vertex, size_t offset_vertex) {
+	void PSAG_OGLAPI_RENDER_OPER::DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t length_vertex, size_t offset_vertex) {
+		// 非全部绘制: "model.VertexBytes", "model.VerticesDataBytes" 成员无效.
 		glBindVertexArray(model.DataAttrib);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);
 		glDrawArrays(GL_TRIANGLES, (GLint)offset_vertex, (GLsizei)length_vertex);
@@ -614,23 +609,51 @@ namespace RenderingSupport {
 		glBindVertexArray(NULL);
 	}
 
-	void UploadVertexGroup(PsagVertexBufferAttrib* model, float* verptr, size_t bytes) {
+	void PSAG_OGLAPI_RENDER_OPER::UploadVertexDataset(PsagVertexBufferAttrib* model, float* verptr, size_t bytes) {
 		// update vertices dataset bytes_param.
 		model->VerticesDataBytes = bytes;
 		glBindBuffer(GL_ARRAY_BUFFER, model->DataBuffer);
 		glBufferData(GL_ARRAY_BUFFER, bytes, verptr, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
-}
-namespace UploadTextureGPU {
 
-	void UploadTextureLayerRGBA(const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr) {
+	void PSAG_OGLAPI_RENDER_OPER::UploadTextureLayer(
+		const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr, uint32_t channels
+	) {
+		GLenum ColorChannelsType = GL_RGBA;
+		if (channels == 3) ColorChannelsType -= 1;
+
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
 		glTexSubImage3D(
-			GL_TEXTURE_2D_ARRAY, NULL, 0, 0, (GLint)layer, size.vector_x, size.vector_y, 1, GL_RGBA,
+			GL_TEXTURE_2D_ARRAY, NULL, 0, 0, (GLint)layer, size.vector_x, size.vector_y, 1, ColorChannelsType,
 			GL_UNSIGNED_BYTE, dataptr
 		);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
+	}
+
+	std::vector<float> PSAG_OGLAPI_RENDER_OPER::ReadVertexDatasetFP32(PsagVertexBuffer vbo) {
+		std::vector<float> ReadDataTemp = {};
+		GLint GpuBufferSize = NULL;
+
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &GpuBufferSize);
+
+		size_t ElementCount = (size_t)GpuBufferSize / sizeof(float);
+		float* DataPtr = (float*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+		ReadDataTemp.insert(ReadDataTemp.begin(), DataPtr, DataPtr + ElementCount);
+
+		glBindBuffer(GL_ARRAY_BUFFER, NULL);
+		return ReadDataTemp;
+	}
+
+	void PSAG_OGLAPI_RENDER_OPER::RenderUnbindShader() {
+		glUseProgram(NULL);
+	}
+	void PSAG_OGLAPI_RENDER_OPER::RenderUnbindTexture() {
+		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
+	}
+	void PSAG_OGLAPI_RENDER_OPER::RenderUnbindFrameBuffer() {
+		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 	}
 }
 

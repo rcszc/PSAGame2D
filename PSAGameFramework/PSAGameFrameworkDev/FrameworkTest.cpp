@@ -89,7 +89,7 @@ void DevTestClass::HealthHandlerFuncNPC(const GameActorCore::HealthFuncParams& p
 }
 
 bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
-    PsagLow::PsagSupGraphicsFunc::PsagGraphicsImageRawDat LoadRawImage;
+    PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat LoadRawImage;
 
     PsagLow::PsagSupFilesysLoaderBin TestBinLoad1("Test/TEST_BACK1.png");
     PsagLow::PsagSupFilesysLoaderBin TestBinLoad2("Test/TEST_BACK2.png");
@@ -106,7 +106,7 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     // 创建全局背景处理对象.
     CreateBg.CreateBackground(WinSize);
 
-    PsagLow::PsagSupGraphicsFunc::PsagGraphicsImageRawDat DecRawImage;
+    PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
     PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
 
     AshesParticles = new GraphicsEngineParticle::PsagGLEngineParticle(
@@ -216,7 +216,7 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
         ) {
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
             CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcPoints);
-            CreatePartc.ConfigCreateNumber(10);
+            CreatePartc.ConfigCreateNumber(150);
             CreatePartc.ConfigLifeDispersion(Vector2T<float>(512.0f, 1024.0f));
             CreatePartc.ConfigSizeDispersion(Vector2T<float>(0.42f, 1.28f));
 

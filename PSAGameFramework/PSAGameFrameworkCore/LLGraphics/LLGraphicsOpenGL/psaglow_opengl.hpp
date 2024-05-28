@@ -1,4 +1,4 @@
-// psaglow_opengl. 2024_04_01. RCSZ
+// psaglow_opengl. 2024_03_12. RCSZ
 // PSAG Framework OpenGL LowLevel.
 
 #ifndef _PSAGLOW_OPENGL_H
@@ -186,28 +186,33 @@ namespace PSAG_OGL_MAG {
 	};
 }
 
-// not_std: imfx_renderer interface.
+// not_std: psag_renderer interface.
 namespace RenderingSupport {
-	// 2023_12_31 [OpenGL渲染支持函数].
-	void RenderBindShader(const PsagShader& program);
-	void RenderUnbindShader();
+	class PSAG_OGLAPI_RENDER_OPER {
+	public:
+		void RenderBindShader(const PsagShader& program);
+		void RenderBindTexture(const PsagTextureAttrib& texture);
+		void RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
 
-	void RenderBindTexture(const PsagTextureAttrib& texture);
-	void RenderUnbindTexture();
+		void DrawVertexGroup(const PsagVertexBufferAttrib& model);
+		void DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t length_vertex, size_t offset_vertex);
 
-	void RnenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
-	void RnenderUnbindFrameBuffer();
+		// **************** UPLOAD (CPU => GPU) ****************
 
-	void DrawVertexGroup(const PsagVertexBufferAttrib& model);
-	void DrawVertexGroupExt(const PsagVertexBufferAttrib& model, size_t length_vertex, size_t offset_vertex);
-	// 配合'LLRES'VBO持久映射.
-	void UploadVertexGroup(PsagVertexBufferAttrib* model, float* verptr, size_t bytes);
-}
-// not_std: upload gpu texture_data.
-namespace UploadTextureGPU {
-	void UploadTextureLayerRGBA(
-		const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr
-	);
+		void UploadVertexDataset(PsagVertexBufferAttrib* model, float* verptr, size_t bytes);
+		void UploadTextureLayer(
+			const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr,
+			uint32_t channels = 4
+		);
+		
+		// **************** READ (GPU => CPU) ****************
+
+		std::vector<float> ReadVertexDatasetFP32(PsagVertexBuffer vbo);
+
+		void RenderUnbindShader();
+		void RenderUnbindTexture();
+		void RenderUnbindFrameBuffer();
+	};
 }
 
 // not_std: framework_renderer interface.

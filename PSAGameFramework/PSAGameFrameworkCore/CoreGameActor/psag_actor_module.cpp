@@ -32,30 +32,12 @@ namespace GameActorCore {
 	}
 
 	GameActorShader::GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION) {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsShader ShaderProcess;
+		// system actor default vert_shader.
+		ShaderScript.vector_x = ActorShaderScript::PsagShaderScriptPublicVS;
+		ShaderScript.vector_y = SHADER_FRAG;
 
-		ShaderProcess.ShaderLoaderPushVS(ActorShaderScript::PsagShaderScriptPublicVS, StringScript);
-		ShaderProcess.ShaderLoaderPushFS(SHADER_FRAG,                                 StringScript);
-
-		if (ShaderProcess.CreateCompileShader()) {
-			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
-			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
-		}
-
-		float RenderScale = (float)RESOLUTION.vector_x / (float)RESOLUTION.vector_y;
-		// porj matrix & scale ortho.
-		glm::mat4 ProjectionMatrix = glm::ortho(
-			-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
-			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
-		);
-		// convert: glm matrix => psag matrix.
-		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
-		memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
-
-		__WINDOW_RESOLUTION = RESOLUTION;
-		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader create: %u x %u", 
-			RESOLUTION.vector_x, RESOLUTION.vector_y);
+		ShaderResolution = RESOLUTION;
+		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader create: %u x %u", RESOLUTION.vector_x, RESOLUTION.vector_y);
 	}
 
 	GameActorShader::~GameActorShader() {
@@ -71,6 +53,22 @@ namespace GameActorCore {
 			PushLogger(LogWarning, PSAGM_ACTOR_CORE_LABEL, "game_actor shader texture duplicate.");
 			return false;
 		}
+		return true;
+	}
+
+	bool GameActorShader::ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC) {
+		if (VER_DESC.VertexShaderEnable) {
+			if (VER_DESC.VertexShaderScript.empty()) {
+				// vertex shader non-script.
+				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader vert_script empty.");
+				return false;
+			}
+			ShaderScript.vector_x = VER_DESC.VertexShaderScript;
+		}
+		VerPosition = &VER_DESC.ShaderVertexCollision;
+		VerUvCoord  = &VER_DESC.ShaderVertexUvCoord;
+		// shader frag non-texture out color.
+		ShaderDebugCol = VER_DESC.ShaderDebugColor;
 		return true;
 	}
 
@@ -104,6 +102,36 @@ namespace GameActorCore {
 		return false;
 	}
 
+	Vector2T<uint32_t> GameActorShader::__CREATE_SHADER_RES() {
+		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
+
+		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
+		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
+
+		if (ShaderProcess.CreateCompileShader()) {
+			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
+			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
+		}
+
+		float RenderScale = (float)ShaderResolution.vector_x / (float)ShaderResolution.vector_y;
+		// porj matrix & scale ortho.
+		glm::mat4 ProjectionMatrix = glm::ortho(
+			-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
+			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
+		);
+		// convert: glm matrix => psag matrix.
+		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
+		memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+
+		//__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
+		
+
+		return ShaderResolution;
+	}
+
+	// ******************************** GameActorActuator ********************************
+
 #define PSAGM_ACTOR_INTER     0.05f
 #define PSAGM_ACTOR_INTER_SUB 0.005f
 	constexpr Vector2T<float> ActorMoveSpeedZERO(0.0f, 0.0f);
@@ -118,14 +146,15 @@ namespace GameActorCore {
 		ActorUniqueInfo.ActorTypeCode   = TYPE;
 
 		if (INIT_DESC.ActorShaderResource == nullptr) {
-			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource = nullptr.");
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader_resource = nullptr.");
 			return;
 		}
+		// create shader_resource.
+		auto ResTemp = INIT_DESC.ActorShaderResource->__CREATE_SHADER_RES();
+		RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
+
 		ActorShaderItem = INIT_DESC.ActorShaderResource->__ACTOR_SHADER_ITEM;
 		RenderingMatrix = INIT_DESC.ActorShaderResource->__ACTOR_MATRIX_ITEM;
-
-		RenderingResolution.vector_x = (float)INIT_DESC.ActorShaderResource->__WINDOW_RESOLUTION.vector_x;
-		RenderingResolution.vector_y = (float)INIT_DESC.ActorShaderResource->__WINDOW_RESOLUTION.vector_y;
 
 		if (PhysicsWorldFind(INIT_DESC.ActorInPhyWorld) == nullptr) {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", INIT_DESC.ActorInPhyWorld.c_str());
@@ -262,7 +291,7 @@ namespace GameActorCore {
 	void GameActorActuator::ActorRendering() {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ActorShaderItem);
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextBind(ShaderTemp);
+		ShaderRender.RenderBindShader(ShaderTemp);
 		StaticVertexFrameDraw();
 
 		// framework preset uniform.
@@ -275,7 +304,7 @@ namespace GameActorCore {
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", ActorStateRotate.vector_y);
 		ShaderUniform.UniformVec2 (ShaderTemp, "ActorScale",  ActorStateScale[1]);
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextUnbind();
+		ShaderRender.RenderUnbindShader();
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
 	}
 }

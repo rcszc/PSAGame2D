@@ -88,6 +88,7 @@ public:
 
 // vertex_buffer & vertex_attribute.
 struct PsagVertexBufferAttrib {
+	// 顶点组大小(bytes), 顶点数据(集)大小(bytes).
 	size_t VertexBytes, VerticesDataBytes;
 
 	PsagVertexBuffer DataBuffer;

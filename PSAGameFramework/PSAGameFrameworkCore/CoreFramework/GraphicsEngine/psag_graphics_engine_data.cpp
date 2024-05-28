@@ -30,18 +30,41 @@ namespace IMAGE_TOOLS {
 }
 
 namespace GraphicsEngineDataset {
+	PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER
+		GLEngineStcVertexData::ShaderRender = {};
 
 	ResUnique GLEngineStcVertexData::VertexAttribute = {};
 	ResUnique GLEngineStcVertexData::VertexBuffer    = {};
 
+	std::unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStcVertexData::IndexItems = {};
+
 	void GLEngineStcVertexData::StaticVertexFrameDraw() {
 		// draw static vertex.
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncDrawModel(LLRES_VertexBuffers->ResourceFind(VertexBuffer));
+		ShaderRender.DrawVertexGroup(LLRES_VertexBuffers->ResourceFind(VertexBuffer));
+	}
+
+	bool GLEngineStcVertexData::VerStcDataItemAlloc(ResUnique rukey, const vector<float>& data) {
+		auto it = IndexItems.find(rukey);
+		if (it != IndexItems.end()) {
+			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc): failed alloc duplicate_key: %u", rukey);
+			return false;
+		}
+		IndexItems[rukey] = VABO_DATASET_INFO();
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: alloc key: %u", rukey);
+		return true;
+	}
+
+	bool GLEngineStcVertexData::VerStcDataItemFree(ResUnique rukey) {
+		return true;
+	}
+
+	bool GLEngineStcVertexData::VerStcOperFrameDraw(ResUnique rukey) {
+		return true;
 	}
 
 	void GLEngineStcVertexData::StaticVertexDataObjectCreate() {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsModel VertexProcess;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [stc]
@@ -69,6 +92,9 @@ namespace GraphicsEngineDataset {
 		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);
 	}
 
+	PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER
+		GLEngineDyVertexData::ShaderRender = {};
+
 	ResUnique GLEngineDyVertexData::VertexAttribute = {};
 	ResUnique GLEngineDyVertexData::VertexBuffer    = {};
 
@@ -77,7 +103,7 @@ namespace GraphicsEngineDataset {
 
 	bool GLEngineDyVertexData::GLOBAL_UPDATE_FLAG = false;
 
-	bool GLEngineDyVertexData::VerDataItemAlloc(ResUnique rukey) {
+	bool GLEngineDyVertexData::VerDyDataItemAlloc(ResUnique rukey) {
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data: failed alloc duplicate_key: %u", rukey);
@@ -88,7 +114,7 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineDyVertexData::VerDataItemFree(ResUnique rukey) {
+	bool GLEngineDyVertexData::VerDyDataItemFree(ResUnique rukey) {
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			// erase data.
@@ -105,12 +131,12 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineDyVertexData::VerOperFramePushData(ResUnique rukey, const vector<float>& data) {
+	bool GLEngineDyVertexData::VerDyOperFramePushData(ResUnique rukey, const vector<float>& data) {
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			// offset => length => push back data.
 			it->second.DatasetOffsetLength = VertexRawDataset.size();
-			it->second.DatasetLength = data.size();
+			it->second.DatasetLength       = data.size();
 			VertexRawDataset.insert(VertexRawDataset.end(), data.data(), data.data() + data.size());
 			// set_flag: 待更新状态.
 			GLOBAL_UPDATE_FLAG = true;
@@ -119,14 +145,14 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineDyVertexData::VerOperFrameDraw(ResUnique rukey) {
+	bool GLEngineDyVertexData::VerDyOperFrameDraw(ResUnique rukey) {
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			// vertex dataset 未更新 => update_dataset.
 			if (GLOBAL_UPDATE_FLAG)
 				UpdateVertexDyDataset();
 			// draw vertex: length,offset.
-			PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncDrawVert(
+			ShaderRender.DrawVertexGroupSeg(
 				LLRES_VertexBuffers->ResourceFind(VertexBuffer),
 				it->second.DatasetLength / (FS_VERTEX_LENGTH), it->second.DatasetOffsetLength / (FS_VERTEX_LENGTH)
 			);
@@ -144,7 +170,7 @@ namespace GraphicsEngineDataset {
 
 	void GLEngineDyVertexData::UpdateVertexDyDataset() {
 		// vertex buffer update_dataset, cpu => gpu.
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncUpdateModel(
+		ShaderRender.UploadVertexDataset(
 			LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer), VertexRawDataset.data(), VertexRawDataset.size() * sizeof(float)
 		);
 		// set_flag: 已更新状态.
@@ -153,7 +179,7 @@ namespace GraphicsEngineDataset {
 
 	void GLEngineDyVertexData::VertexDataObjectCreate() {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsModel VertexProcess;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [dy]
@@ -215,7 +241,8 @@ namespace GraphicsEngineDataset {
 		}
 	}
 
-	PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform GLEngineSmpTextureData::ShaderUniform = {};
+	PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER GLEngineSmpTextureData::ShaderRender = {};
+	PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform GLEngineSmpTextureData::ShaderUniform = {};
 
 	SamplerTextures GLEngineSmpTextureData::TexturesSize1X = {};
 	SamplerTextures GLEngineSmpTextureData::TexturesSize2X = {};
@@ -296,8 +323,8 @@ namespace GraphicsEngineDataset {
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: src: %u x %u, fmt_fill: %u x %u",
 				ImgDataTemp.Width, ImgDataTemp.Height, TextureIndex->TextureResolution.vector_x, TextureIndex->TextureResolution.vector_y);
 			
-			// upload texture layer_data.
-			PsagLow::PsagSupGraphicsFunc::PsagUploadTex::UploadTextureLayerRGBA(
+			// upload texture layer_data, rgba(default).
+			ShaderRender.UploadTextureLayer(
 				LLRES_Textures->ResourceFind(TextureIndex->TextureArrayIndex).Texture,
 				VirTextureLayer,
 				TextureIndex->TextureResolution,
@@ -374,7 +401,7 @@ namespace GraphicsEngineDataset {
 			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
 				return false;
-			PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncTextureContextBind(TexResourceTemp);
+			ShaderRender.RenderBindTexture(TexResourceTemp);
 
 			// bind texture context => sampler(tmu) count.
 			ShaderUniform.UniformInteger(shader, uniform_name.TexParamSampler, TexResourceTemp.TextureSamplerCount);
@@ -425,10 +452,10 @@ namespace GraphicsEngineDataset {
 		TexturesSize2X.LayerAllotter = new TextureLayerAlloc::TEX_LAYER_ALLOC(params.Tex2Xnum);
 		TexturesSize1X.LayerAllotter = new TextureLayerAlloc::TEX_LAYER_ALLOC(params.Tex1Xnum);
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsTexture TextureCreate8X;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsTexture TextureCreate4X;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsTexture TextureCreate2X;
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsTexture TextureCreate1X;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture TextureCreate8X;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture TextureCreate4X;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture TextureCreate2X;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture TextureCreate1X;
 
 		// global textures filter mode.
 		TextureFilterMode TexMode = LinearFiltering | MipmapFiltering;

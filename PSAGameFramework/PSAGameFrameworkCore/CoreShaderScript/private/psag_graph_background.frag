@@ -1,6 +1,5 @@
 uniform sampler2DArray MultipleBackTex;
 uniform vec2  RenderRes;
-uniform float RenderTime;
 
 uniform float TextureBackIndex;
 

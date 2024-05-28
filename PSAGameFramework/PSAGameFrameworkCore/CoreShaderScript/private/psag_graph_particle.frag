@@ -10,6 +10,7 @@ const vec2 Pivot = vec2(0.5, 0.5);
 void main()
 {
 	float RandomValue = RandomFloat(FxColor.r + FxColor.g + FxColor.b + FxColor.a);
+	// rotate angle * time_step.
 	float Angle = RenderTime * 0.2 + RandomValue * 5.0;
 	mat2 Rotation = mat2(cos(Angle), -sin(Angle), sin(Angle), cos(Angle));
 

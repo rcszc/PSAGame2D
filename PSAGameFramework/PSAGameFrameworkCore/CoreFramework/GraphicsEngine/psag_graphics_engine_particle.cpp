@@ -238,7 +238,7 @@ namespace GraphicsEngineParticle {
 	PsagGLEngineParticle::PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image) {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsShader ShaderProcess;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
 
 		ShaderProcess.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,    StringScript);
@@ -253,7 +253,7 @@ namespace GraphicsEngineParticle {
 
 		// => mag"GraphicsEngineDataset::GLEngineStcVertexData".
 		DyVertexSysItem = GenResourceID.PsagGenTimeKey();
-		VerDataItemAlloc(DyVertexSysItem);
+		VerDyDataItemAlloc(DyVertexSysItem);
 
 		float RenderScale = (float)render_resolution.vector_x / (float)render_resolution.vector_y;
 		float RenderSpace = SystemRenderingOrthoSpace;
@@ -283,7 +283,7 @@ namespace GraphicsEngineParticle {
 	PsagGLEngineParticle::~PsagGLEngineParticle() {
 		// free graphics particle resource.
 		VirTextureItemFree(VirTextureItem);
-		VerDataItemFree(DyVertexSysItem);
+		VerDyDataItemFree(DyVertexSysItem);
 		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
 	}
 
@@ -292,14 +292,14 @@ namespace GraphicsEngineParticle {
 		// "particle_attributes" => float
 		VertexDataConvert(DataParticles, DataVertices);
 		// particles_data => data cache. 
-		VerOperFramePushData(DyVertexSysItem, DataVertices);
+		VerDyOperFramePushData(DyVertexSysItem, DataVertices);
 	}
 
 	void PsagGLEngineParticle::RenderParticleFX() {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextBind(ShaderTemp);
+		ShaderRender.RenderBindShader(ShaderTemp);
 		// draw particles vertex.
-		VerOperFrameDraw(DyVertexSysItem);
+		VerDyOperFrameDraw(DyVertexSysItem);
 
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);
@@ -311,8 +311,8 @@ namespace GraphicsEngineParticle {
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
 
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsFuncShaderContextUnbind();
-		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
+		ShaderRender.RenderUnbindShader();
+		RenderTimer += PSAGM_VIR_TICKSTEP_GL * GraphicsEngineTimeStep;
 	}
 
 	ParticleSystemState PsagGLEngineParticle::GetParticleState() {

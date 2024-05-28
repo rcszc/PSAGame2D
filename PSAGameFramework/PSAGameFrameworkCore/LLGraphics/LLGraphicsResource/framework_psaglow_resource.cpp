@@ -46,19 +46,4 @@ namespace PSAGGL_LOWLEVEL {
 		// llres free status_flag.
 		return !ReturnFlag;
 	}
-
-	namespace GRAPHICS_OPER {
-		// define func_obj.
-		std::function<void(const PsagShader&)>                PsagGraphicsFuncShaderContextBind     = RenderingSupport::RenderBindShader;
-		std::function<void(const PsagTextureAttrib&)>         PsagGraphicsFuncTextureContextBind    = RenderingSupport::RenderBindTexture;
-		std::function<void(const PsagFrameBuffer&, uint32_t)> PsagGraphicsFuncFramebufContextBind   = RenderingSupport::RnenderBindFrameBuffer;
-
-		std::function<void()> PsagGraphicsFuncShaderContextUnbind   = RenderingSupport::RenderUnbindShader;
-		std::function<void()> PsagGraphicsFuncTextureContextUnbind  = RenderingSupport::RenderUnbindTexture;
-		std::function<void()> PsagGraphicsFuncFramebufContextUnbind = RenderingSupport::RnenderUnbindFrameBuffer;
-
-		std::function<void(const PsagVertexBufferAttrib&)>                 PsagGraphicsFuncDrawModel   = RenderingSupport::DrawVertexGroup;
-		std::function<void(const PsagVertexBufferAttrib&, size_t, size_t)> PsagGraphicsFuncDrawVert    = RenderingSupport::DrawVertexGroupExt;
-		std::function<void(PsagVertexBufferAttrib*, float*, size_t)>       PsagGraphicsFuncUpdateModel = RenderingSupport::UploadVertexGroup;
-	}
 }

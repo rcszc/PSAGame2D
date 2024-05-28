@@ -76,7 +76,31 @@ namespace GameActorCore {
 			FragColor = vec4(1.0);
 		}
 	*/
-	class GameActorShader :public GraphicsEngineDataset::GLEngineSmpTextureData {
+
+	struct GameActorShaderVerticesDESC {
+		Vector4T<float> ShaderDebugColor;
+
+		// shader ver: coord & collision.
+		std::vector<Vector2T<float>> ShaderVertexCollision;
+		std::vector<Vector2T<float>> ShaderVertexUvCoord;
+
+		// false: use system_default vert_shader.
+		bool        VertexShaderEnable;
+		std::string VertexShaderScript;
+
+		GameActorShaderVerticesDESC() :
+			ShaderDebugColor     (Vector4T<float>(0.0f, 0.2f, 0.2f, 0.92f)),
+			ShaderVertexCollision({}),
+			ShaderVertexUvCoord  ({}),
+			VertexShaderEnable   (false),
+			VertexShaderScript   ({})
+		{}
+	};
+
+	class GameActorShader :
+		public GraphicsEngineDataset::GLEngineDyVertexData,
+		public GraphicsEngineDataset::GLEngineSmpTextureData
+	{
 	protected:
 		GraphicsEngineDataset::VirTextureUniformName SystemPresetUname() {
 			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
@@ -89,11 +113,22 @@ namespace GameActorCore {
 		}
 		bool CheckRepeatTex(VirTextureUnqiue virtex);
 		bool ReferVirTextureFlag = false;
+
+		// x:vert_shader, y:frag_shader.
+		Vector2T<std::string> ShaderScript     = {};
+		Vector2T<uint32_t>    ShaderResolution = {};
+		Vector4T<float>       ShaderDebugCol   = {};
+
+		std::vector<Vector2T<float>>* VerPosition = nullptr;
+		std::vector<Vector2T<float>>* VerUvCoord  = nullptr;
 	public:
 		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
 		~GameActorShader();
 
-		// referencing virtual texture(non-free).
+		// load vertices(pos,uv) resource. (warn: ref)
+		bool ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC);
+
+		// referencing virtual texture(non-delete).
 		bool ShaderLoadVirTexture(VirTextureUnqiue virtex);
 		// create virtual texture.
 		bool ShaderLoadImage(const ImageRawData& image);
@@ -102,9 +137,11 @@ namespace GameActorCore {
 		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM = {};
 		
 		ResUnique   __ACTOR_SHADER_ITEM = {};
+		ResUnique   __ACTOR_VERTEX_ITEM = {};
 		PsagMatrix4 __ACTOR_MATRIX_ITEM = {};
 
-		Vector2T<uint32_t> __WINDOW_RESOLUTION = {};
+		// return window resolution.
+		Vector2T<uint32_t> __CREATE_SHADER_RES();
 	};
 
 	// hp handler function params.
@@ -189,11 +226,12 @@ namespace GameActorCore {
 		public __ACTOR_MODULES_TIMESTEP
 	{
 	protected:
-		std::chrono::steady_clock::time_point ActorTimer = std::chrono::steady_clock::now();
+		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
-		ActorPrivateINFO ActorUniqueInfo = {};
-		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
-		std::string ActorInPhyWorld = {};
+		std::chrono::steady_clock::time_point ActorTimer      = std::chrono::steady_clock::now();
+		ActorPrivateINFO                      ActorUniqueInfo = {};
+		std::string                           ActorInPhyWorld = {};
 
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
@@ -287,15 +325,6 @@ namespace GameActorManager {
 // 用于构建静态场景,比静态Actor更加高效.
 namespace GameBrickCore {
 	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
-
-	struct GameBrickActuatorDESC {
-		// brick background(debug) color.
-		Vector4T<float> BrickDebugColor;
-		ImageRawData    BrickImageTexture;
-
-		std::vector<Vector2T<float>> BrickVertexCollision;
-		std::vector<Vector2T<float>> BrickVertexUvCoord;
-	};
 
 	class GameBrickActuator :
 		public GraphicsEngineDataset::GLEngineStcVertexData,

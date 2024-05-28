@@ -16,7 +16,7 @@ namespace GameDebugGuiWindow {
 	void DebugWindowGuiActor(const string& name, GameActorCore::GameActorActuator* actor) {
 		ImGui::Begin(name.c_str());
 		{
-			ImGui::Text("Actor Name: %u, Code: %u", actor->ActorGetPrivate().ActorTypeCode, actor->ActorGetPrivate().ActorUniqueCode);
+			ImGui::Text("Actor Type: %u, Code: %u", actor->ActorGetPrivate().ActorTypeCode, actor->ActorGetPrivate().ActorUniqueCode);
 			ImGui::Text("W"); ImGui::SameLine();
 			LndicatorLED(ImGui::IsKeyDown(ImGuiKey_W), ImVec2(28.0f, 28.0f), H_COLOR, L_COLOR);
 			ImGui::SameLine(); ImGui::Text("A"); ImGui::SameLine();
