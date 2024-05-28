@@ -21,6 +21,6 @@ __开发进度:__ ██████░░░░ 60%
 ### 框架层级 & 渲染架构
 
 <p align="center">
-  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:47%;"/>
-  <img src="PSAGameDesigns/RendererArch.png" style="width:52%;"/>
+  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:45%;"/>
+  <img src="PSAGameDesigns/RendererArch.png" style="width:50%;"/>
 </p>
