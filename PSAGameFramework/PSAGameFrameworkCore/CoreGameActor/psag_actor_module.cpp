@@ -5,6 +5,7 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
+float __ACTOR_MODULES_TIMESTEP::ActorModulesTimeStep = 1.0f;
 namespace GameActorCore {
 	namespace Type {
 		uint32_t GameActorTypeBind::ActorTypeIs(const string& type_name) {
@@ -200,11 +201,11 @@ namespace GameActorCore {
 		);
 	}
 
-	void GameActorActuator::ActorUpdateHealth(float timestep) {
+	void GameActorActuator::ActorUpdateHealth() {
 		// state trans calc.
 		for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i) {
 			ActorHealthState[1][i] += (ActorHealthState[0][i] - ActorHealthState[1][i])
-				* PSAGM_ACTOR_INTER * ActorHealthState[2][i] * timestep;
+				* PSAGM_ACTOR_INTER * ActorHealthState[2][i] * ActorModulesTimeStep;
 		}
 
 		// in func parameters.
@@ -228,13 +229,13 @@ namespace GameActorCore {
 	}
 
 #define PSAGM_FP32_LOSS std::numeric_limits<float>::epsilon()
-	void GameActorActuator::ActorUpdate(float timestep) {
+	void GameActorActuator::ActorUpdate() {
 		// speed_sub: move, inter: scale.
-		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0], PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_x * timestep);
-		SysVector2FInter(ActorStateScale[0], ActorStateScale[1], PSAGM_ACTOR_INTER * AnimInterSpeed.vector_z * timestep);
+		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0], PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_x * ActorModulesTimeStep);
+		SysVector2FInter(ActorStateScale[0], ActorStateScale[1], PSAGM_ACTOR_INTER * AnimInterSpeed.vector_z * ActorModulesTimeStep);
 		// rotate speed sub(vir_friction).
 		ActorStateRotate.vector_x += 
-			(0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_y * timestep;
+			(0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_y * ActorModulesTimeStep;
 
 		auto PhysicsState = PhyBodyItemGet(ActorInPhyWorld, ActorPhysicsItem);
 

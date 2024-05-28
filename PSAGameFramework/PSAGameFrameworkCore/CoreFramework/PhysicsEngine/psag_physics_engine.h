@@ -9,6 +9,13 @@
 
 #define PSAGM_VIR_TICKSTEP_PHY 0.042f
 
+// 物理引擎"TimeStep"由"PhysicsEngine::PhyEngineCoreDataset"自身更新.
+// PhysicsEngine::PhyEngineCoreDataset::PhysicsSystemUpdateState => __PHYSICS_ENGINE_TIMESETP.
+class __PHYSICS_ENGINE_TIMESETP {
+protected:
+	static float PhysicsEngineTimeStep;
+};
+
 // physics engine: box2d. [20240518]
 namespace PhysicsEngine {
 	StaticStrLABEL PSAGM_PHYENGINE_LABEL = "PSAG_PHYSICS";
@@ -61,7 +68,7 @@ namespace PhysicsEngine {
 		PhysiceWorldData() : PhysicsWorld(nullptr), PhysicsDataset({}) {}
 	};
 	// box2d worlds bodies manager.
-	class PhyEngineCoreDataset {
+	class PhyEngineCoreDataset :public __PHYSICS_ENGINE_TIMESETP {
 	protected:
 		static std::unordered_map<std::string, PhysiceWorldData> PhysicsWorlds;
 		// x:velocity_iterations, y:position_iterations.
@@ -80,7 +87,7 @@ namespace PhysicsEngine {
 		PhysiceWorldData* PhysicsWorldFind(std::string strkey);
 
 		// framework global update state.
-		void PhysicsSystemUpdateState(float time_step);
+		void PhysicsSystemUpdateState();
 	};
 }
 

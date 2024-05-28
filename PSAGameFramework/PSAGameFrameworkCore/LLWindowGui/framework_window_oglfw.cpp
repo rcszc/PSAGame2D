@@ -83,13 +83,18 @@ namespace PSAG_WINDOW_OGLFW {
     }
 
     // 窗口关闭(键),回调[FW]
-    void SpcaGlfwSystemCallback::CallbackClose(GLFWwindow* window) {};
+    void SpcaGlfwSystemCallback::CallbackWindowClose(GLFWwindow* window) {}
 
     std::function<void(std::chrono::steady_clock::time_point)> SpcaGlfwSystemCallback::REFRESH_CALL_FUNC = 
         [&](std::chrono::steady_clock::time_point) {};
     void SpcaGlfwSystemCallback::CallbackWindowRefresh(GLFWwindow* window) {
         REFRESH_CALL_FUNC(chrono::steady_clock::now());
     }
+
+#ifdef DEVICE_ENABLE_WINAPI_PROCESS
+    WNDPROC SpcaGlfwSystemCallback::OLD_WINDOW_PROC = nullptr;
+    HWND    SpcaGlfwSystemCallback::OLD_WINDOW_HWND = nullptr;
+#endif
 
     bool SpcaWindowEvent::GLFWwindowCreate(FwWindowConfig config) {
         // glfw system error-callback.
@@ -119,7 +124,6 @@ namespace PSAG_WINDOW_OGLFW {
             PushLogger(LogError, PSAG_WINDOW_LABEL, "failed fw_window create object.");
             return false;
         }
-
         glfwMakeContextCurrent(MainWindowObject);
         //glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -206,8 +210,16 @@ namespace PSAG_WINDOW_OGLFW {
         glfwSetFramebufferSizeCallback(MainWindowObject, CallbackWindowSize);
         ReturnFlag = system_err::ModuleLogger(glfwGetError(&ErrorMessage), "callback:'window resize'", ErrorMessage);
 
+        glfwSetWindowCloseCallback(MainWindowObject, CallbackWindowClose);
+        ReturnFlag = system_err::ModuleLogger(glfwGetError(&ErrorMessage), "callback:'window close'", ErrorMessage);
+
         glfwSetWindowRefreshCallback(MainWindowObject, CallbackWindowRefresh);
         ReturnFlag = system_err::ModuleLogger(glfwGetError(&ErrorMessage), "callback:'window refresh'", ErrorMessage);
+
+#ifdef DEVICE_ENABLE_WINAPI_PROCESS
+        OLD_WINDOW_HWND = glfwGetWin32Window(MainWindowObject);
+        //OLD_WINDOW_PROC = (WNDPROC);
+#endif
         return ReturnFlag;
     }
 
@@ -215,11 +227,9 @@ namespace PSAG_WINDOW_OGLFW {
         // free window object.
         glfwDestroyWindow(MainWindowObject);
         glfwTerminate();
-        PushLogger(LogInfo, PSAG_WINDOW_LABEL, "fw_window free: glfw context.");
 
-        return system_err::ModuleLogger(
-            glfwGetError(&ErrorMessage), "free opengl_glfw", ErrorMessage
-        );
+        PushLogger(LogInfo, PSAG_WINDOW_LABEL, "fw_window free: glfw context.");
+        return system_err::ModuleLogger(glfwGetError(&ErrorMessage), "free opengl_glfw", ErrorMessage);
     }
 
     void SpcaWindowEvent::RenderContextAbove() {
@@ -238,27 +248,25 @@ namespace PSAG_WINDOW_OGLFW {
         glfwSwapBuffers(MainWindowObject);
     }
 
-    chrono::steady_clock::time_point SpcaWindowEvent::CalcSpeedTimer = chrono::steady_clock::now();
-    size_t SpcaWindowEvent::CalcSpeedFrameCount = 60;
-    float  SpcaWindowEvent::CalcSpeedTemp[2]    = { 1.0f,1.0f };
+    chrono::steady_clock::time_point SpcaWindowEvent::FrameTimer = chrono::steady_clock::now();
+    float SpcaWindowEvent::CalcFrameTime       = 0.0f;
+    float SpcaWindowEvent::CalcStepTimeTemp[2] = { 1.0f,1.0f };
 
-    constexpr float SAMPLER_TIME_MS = 500.0f;
-    float SpcaWindowEvent::CalcFrameSpeedScale(float base_fps) {
-        // sample timer 500ms.
-        if (chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - CalcSpeedTimer).count() >= 
-            (int64_t)SAMPLER_TIME_MS
-        ) {
-            // calc frame(base_fps) scale.
-            CalcSpeedTemp[0] = base_fps / (float)CalcSpeedFrameCount * (SAMPLER_TIME_MS / 1000.0f);
-            CalcSpeedFrameCount = NULL;
-            CalcSpeedTimer = chrono::steady_clock::now();
-        }
-        REFRESH_CALL_FUNC = [&](chrono::steady_clock::time_point time) {
-            CalcSpeedTimer      = time;
-            CalcSpeedFrameCount = NULL;
-        };
-        ++CalcSpeedFrameCount;
-        CalcSpeedTemp[1] += (CalcSpeedTemp[0] - CalcSpeedTemp[1]) * 0.01f;
-        return CalcSpeedTemp[1];
+    constexpr float SAMPLER_TIME_MS   = 500.0f;
+    constexpr float INTER_SPEED_VALUE = 0.032f; // [20240528.1644]
+
+    void SpcaWindowEvent::ClacFrameTimeStepBegin() {
+        // frame timer start(begin).
+        FrameTimer = chrono::steady_clock::now();
+    }
+
+    float SpcaWindowEvent::CalcFrameTimeStepEnd(float base_fps) {
+        // calc frame_time: accuracy(us).
+        CalcFrameTime = (float)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now() - FrameTimer).count();
+        CalcFrameTime /= 1000000.0f; // us convert sec.
+        // calc base_fps step_scale.
+        CalcStepTimeTemp[0] = base_fps / (1.0f / CalcFrameTime);
+        CalcStepTimeTemp[1] += (CalcStepTimeTemp[0] - CalcStepTimeTemp[1]) * INTER_SPEED_VALUE;
+        return CalcStepTimeTemp[1];
     }
 }

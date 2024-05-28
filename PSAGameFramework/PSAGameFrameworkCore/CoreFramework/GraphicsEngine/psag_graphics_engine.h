@@ -197,6 +197,11 @@ namespace GraphicsShaderCode {
 	extern GraphicsEngineLayerRes GLOBALRES;
 }
 
+class __GRAPHICS_ENGINE_TIMESETP {
+protected:
+	static float GraphicsEngineTimeStep;
+};
+
 namespace GraphicsEnginePost {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
@@ -404,7 +409,8 @@ namespace GraphicsEngineParticle {
 
 	class PsagGLEngineParticle :
 		public GraphicsEngineDataset::GLEngineDyVertexData,
-		public GraphicsEngineDataset::GLEngineSmpTextureData
+		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	protected:
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
@@ -435,7 +441,7 @@ namespace GraphicsEngineParticle {
 		ParticleSystemState				 GetParticleState();
 		std::vector<ParticleAttributes>* GetParticleDataset();
 
-		void UpdateParticleData(float timestep);
+		void UpdateParticleData();
 		void RenderParticleFX();
 	};
 }
@@ -478,9 +484,12 @@ namespace GraphicsEnginePVFX {
 	// Ãÿ–ß–Ú¡–Ã˘Õº.
 	class PsagGLEngineFxSequence :
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
-		public GraphicsEngineDataset::GLEngineStcVertexData
+		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	protected:
+		static float SystemTimeStep;
+
 		PsagLow::PsagSupGraphicsFunc::PsagGraphicsUniform ShaderUniform = {};
 		SequencePlayer  PlayerParams   = {};
 		Vector2T<float> PlayerPosition = {};
@@ -496,7 +505,7 @@ namespace GraphicsEnginePVFX {
 		PsagGLEngineFxSequence(const ImageRawData& image, const SequencePlayer& params);
 		~PsagGLEngineFxSequence();
 
-		bool DrawFxSequence(const Vector4T<float>& blend_color, float timestep);
+		bool DrawFxSequence(const Vector4T<float>& blend_color);
 		uint32_t PlayerCyclesCount = NULL;
 	};
 }

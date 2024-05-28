@@ -146,13 +146,17 @@ namespace PsagFrameworkCore {
         public GraphicsEngineDataset::GLEngineStcVertexData,  // static vertex.
         public GraphicsEngineDataset::GLEngineSmpTextureData, // textures.
         // init physics system.
-        public PhysicsEngine::PhyEngineCoreDataset
+        public PhysicsEngine::PhyEngineCoreDataset,
+        // system time step.
+        public __GRAPHICS_ENGINE_TIMESETP,
+        public __ACTOR_MODULES_TIMESTEP
+        // public __PHYSICS_ENGINE_TIMESETP, (”Î"PhysicsEngine::PhyEngineCoreDataset"≥ÂÕª)
     {
     private:
         static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;
         static GraphicsEngineBackground::PsagGLEngineBackground* RendererBackFX;
 
-        GraphicsEngineBackground::BackFxParameters NULL_PARAMETERS = {};
+        GraphicsEngineBackground::BackFxParameters BackgroundParams = {};
 
         // friend class:
         friend class PsagManage::SysBackground;
@@ -174,7 +178,7 @@ namespace PsagFrameworkCore {
         Vector2T<uint32_t> RenderingWinSize = {};
         Vector2T<uint32_t> RenderingVirTextureSizeBase = {};
         // time step (fps)benchmark.
-        float RenderingBaseFPS = 165.0f;
+        float RenderingBaseFPS = 120.0f;
 
         void FrameworkInitConfig(const std::string& gl_version);
         void FrameworkRendererLowinit(const std::string& gl_version);

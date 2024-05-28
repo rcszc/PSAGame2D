@@ -1,4 +1,5 @@
 // framework_window.
+#define ENABLE_GLFW_NATIVE_WIN32
 
 #ifndef _FRAMEWORK_WINDOW_H
 #define _FRAMEWORK_WINDOW_H
@@ -23,6 +24,8 @@
 #include "../LLLogger/framework_logger.hpp"
 
 #define DEVICE_ENABLE_NVIDIA_GPU
+#define DEVICE_ENABLE_WINAPI_PROCESS
+
 namespace PSAG_WINDOW_OGLFW {
 	StaticStrLABEL PSAG_WINDOW_LABEL = "PSAG_WINDOW";
 
@@ -34,19 +37,22 @@ namespace PSAG_WINDOW_OGLFW {
 		bool WindowFullFlag;
 
 		FwWindowConfig() :
-			WindowSizeWidth  (768),
-			WindowSizeHeight (432),
-			WindowName       ({}),
-			WindowFullFlag   (false)
+			WindowSizeWidth (768),
+			WindowSizeHeight(432),
+			WindowName      ({}),
+			WindowFullFlag  (false)
 		{}
 		FwWindowConfig(uint32_t w, uint32_t h, const std::string& name, bool fs) :
-			WindowSizeWidth  (w),
-			WindowSizeHeight (h),
-			WindowName       (name),
-			WindowFullFlag   (fs)
+			WindowSizeWidth (w),
+			WindowSizeHeight(h),
+			WindowName      (name),
+			WindowFullFlag  (fs)
 		{}
 	};
 
+#ifdef DEVICE_ENABLE_WINAPI_PROCESS
+#include <Windows.h>
+#endif
 	class SpcaGlfwSystemCallback {
 	protected:
 		static Vector3T<float> ValueMouseScroll; // x:pos, y:min, z:max
@@ -64,21 +70,26 @@ namespace PSAG_WINDOW_OGLFW {
 		static void CallbackDropFiles  (GLFWwindow* window, int count, const char** paths);
 		static void CallbackWindowSize (GLFWwindow* window, int width, int height);
 
-		static void CallbackClose(GLFWwindow* window);
+		static void CallbackWindowClose(GLFWwindow* window);
 		static void CallbackWindowRefresh(GLFWwindow* window);
+
+#ifdef DEVICE_ENABLE_WINAPI_PROCESS
+		static WNDPROC OLD_WINDOW_PROC;
+		static HWND    OLD_WINDOW_HWND;
+#endif
 	};
 
 	using FwSysErrorMessage = const char*;
 	// core-framework inherits window-event.
 	class SpcaWindowEvent :public SpcaGlfwSystemCallback {
 	private:
-		static std::chrono::steady_clock::time_point CalcSpeedTimer;
-		static size_t CalcSpeedFrameCount;
-		static float  CalcSpeedTemp[2]; // 0:speed, 1:smooth.
+		static std::chrono::steady_clock::time_point FrameTimer;
+		static float CalcFrameTime;
+		static float CalcStepTimeTemp[2]; // 0:speed, 1:smooth.
 	protected:
 		GLFWwindow* MainWindowObject = {};
 
-		Vector2T<int> RenderBuffer = Vector2T<int>(32, 32);
+		Vector2T<int>   RenderBuffer  = Vector2T<int>(32, 32);
 		Vector4T<float> RenderBgColor = Vector4T<float>();
 
 		FwSysErrorMessage ErrorMessage = nullptr;
@@ -96,7 +107,8 @@ namespace PSAG_WINDOW_OGLFW {
 		void RenderContextAbove(); // opengl render context above.
 		void RenderContextBelow(); // opengl render context below.
 
-		float CalcFrameSpeedScale(float base_fps);
+		void  ClacFrameTimeStepBegin();
+		float CalcFrameTimeStepEnd(float base_fps);
 		// return true:close.
 		bool CloseFlag() { return (bool)glfwWindowShouldClose(MainWindowObject); };
 	};
@@ -131,22 +143,22 @@ namespace PSAG_WINDOW_IMGUI {
 		float           FrameRounding, WindowRounding; // imgui: frame,window global_style_rounding
 
 		ImGuiConfig() :
-			ShaderVersionStr ({}),
-			FontsFilepath    ({}),
-			FontsGlobalColor ({}),
-			FontsGlobalSize  (16.0f),
-			FrameRounding    (0.0f),
-			WindowRounding   (0.0f)
+			ShaderVersionStr({}),
+			FontsFilepath   ({}),
+			FontsGlobalColor({}),
+			FontsGlobalSize (16.0f),
+			FrameRounding   (0.0f),
+			WindowRounding  (0.0f)
 		{}
 		ImGuiConfig(
 			const std::string& version, const std::string& path, const Vector4T<float>& color, 
 			float size, float round, float wround) :
-			ShaderVersionStr (version),
-			FontsFilepath    (path),
-			FontsGlobalColor (color),
-			FontsGlobalSize  (size),
-			FrameRounding    (round),
-			WindowRounding   (wround)
+			ShaderVersionStr(version),
+			FontsFilepath   (path),
+			FontsGlobalColor(color),
+			FontsGlobalSize (size),
+			FrameRounding   (round),
+			WindowRounding  (wround)
 		{}
 	};
 

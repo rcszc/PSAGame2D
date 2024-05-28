@@ -6,6 +6,11 @@
 #include "../CoreFramework/GraphicsEngine/psag_graphics_engine.h"
 #include "../CoreFramework/PhysicsEngine/psag_physics_engine.h"
 
+class __ACTOR_MODULES_TIMESTEP {
+protected:
+	static float ActorModulesTimeStep;
+};
+
 namespace ActorShaderScript {
 	extern const char* PsagShaderScriptPublicVS;
 }
@@ -180,7 +185,8 @@ namespace GameActorCore {
 	class GameActorActuator :
 		public GraphicsEngineDataset::GLEngineStcVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
-		public PhysicsEngine::PhyEngineCoreDataset
+		public PhysicsEngine::PhyEngineCoreDataset,
+		public __ACTOR_MODULES_TIMESTEP
 	{
 	protected:
 		std::chrono::steady_clock::time_point ActorTimer = std::chrono::steady_clock::now();
@@ -244,8 +250,8 @@ namespace GameActorCore {
 		// actor virtual(scene) coord =convert=> window coord(pixel).
 		Vector2T<float> ActorConvertVirCoord(Vector2T<uint32_t> window_res);
 
-		void ActorUpdateHealth(float timestep);
-		void ActorUpdate(float timestep);
+		void ActorUpdateHealth();
+		void ActorUpdate();
 		void ActorRendering();
 	};
 }
@@ -274,7 +280,7 @@ namespace GameActorManager {
 
 		// update all actor_object "ActorUpdateHealth" & "ActorUpdate".
 		// rendering all actor_object "ActorRendering".
-		void RunAllGameActor(float timestep);
+		void RunAllGameActor();
 	};
 }
 

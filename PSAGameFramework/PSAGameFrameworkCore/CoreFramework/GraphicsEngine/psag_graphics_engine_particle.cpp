@@ -287,8 +287,8 @@ namespace GraphicsEngineParticle {
 		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
 	}
 
-	void PsagGLEngineParticle::UpdateParticleData(float timestep) {
-		CalcUpdateParticles(DataParticles, 0.5f * timestep, 1.0f * timestep);
+	void PsagGLEngineParticle::UpdateParticleData() {
+		CalcUpdateParticles(DataParticles, 0.72f * GraphicsEngineTimeStep, GraphicsEngineTimeStep);
 		// "particle_attributes" => float
 		VertexDataConvert(DataParticles, DataVertices);
 		// particles_data => data cache. 

@@ -47,17 +47,20 @@ namespace PsagFrameworkCore {
 
     bool PSAGame2DFramework::CoreFrameworkEvent() {
         bool CoreErrorFlag = PSAG_FALSE;
+        ClacFrameTimeStepBegin();
         // state submit.
         FrameworkParams.PostShaderParams = &RendererPostFX->RenderParameters;
         if (RendererBackFX == nullptr)
-            FrameworkParams.BackShaderParams = &NULL_PARAMETERS;
+            FrameworkParams.BackShaderParams = &BackgroundParams;
         else
             FrameworkParams.BackShaderParams = &RendererBackFX->RenderParameters;
         FrameworkParams.WindowResolution = RenderingWinSize;
-        FrameworkParams.GameRunTimeStep  = CalcFrameSpeedScale(RenderingBaseFPS);
 
-        // update physics system.
-        PhysicsSystemUpdateState(FrameworkParams.GameRunTimeStep);
+        // update time_step.
+        GraphicsEngineTimeStep = FrameworkParams.GameRunTimeStep;
+        PhysicsEngineTimeStep  = FrameworkParams.GameRunTimeStep;
+        ActorModulesTimeStep   = FrameworkParams.GameRunTimeStep;
+        PhysicsSystemUpdateState();
 
         // opengl render_event loop.
         RenderContextAbove();
@@ -73,6 +76,8 @@ namespace PsagFrameworkCore {
         }
         RenderContextBelow();
         
+        // clac_frame global time_step.
+        FrameworkParams.GameRunTimeStep = CalcFrameTimeStepEnd(RenderingBaseFPS);
         // glfw close_window flag & renderer block error.
         return !(CloseFlag() || CoreErrorFlag);
     }
@@ -90,7 +95,7 @@ namespace PsagFrameworkCore {
 
         GLFWwindowSetIcon(EngineIconImage);
 
-        CoreInitErrorFlag |= !GLFWwindowVsync(PSAG_TRUE);
+        CoreInitErrorFlag |= !GLFWwindowVsync(PSAG_FALSE);
         CoreInitErrorFlag |= !GLFWwindowCallback();
 
         PsagLow::PsagSupGraphicsFunc::GraphicsINFO GLINFO;

@@ -54,11 +54,11 @@ namespace GameActorManager {
 		GameActorFreeList.clear();
 	}
 
-	void GameActorActuatorManager::RunAllGameActor(float timestep) {
+	void GameActorActuatorManager::RunAllGameActor() {
 		for (auto& RunActorItem : GameActorDataset) {
 			// update actor state.
-			RunActorItem.second->ActorUpdateHealth(timestep);
-			RunActorItem.second->ActorUpdate(timestep);
+			RunActorItem.second->ActorUpdateHealth();
+			RunActorItem.second->ActorUpdate();
 			RunActorItem.second->ActorRendering();
 		}
 	}

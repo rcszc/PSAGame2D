@@ -205,7 +205,7 @@ void DevTestClass::LogicCloseFree() {
 
 bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
 
-    AshesParticles->UpdateParticleData(RunningState.GameRunTimeStep);
+    AshesParticles->UpdateParticleData();
     AshesParticles->RenderParticleFX();
 
     for (auto& Bullet : *TestGameActors.GetSourceData()) {
@@ -233,7 +233,7 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
         }
     }
 
-    TestGameActors.RunAllGameActor(RunningState.GameRunTimeStep);
+    TestGameActors.RunAllGameActor();
     TestGameActors.UpdateManagerData();
 
     // background blend color_inter calc.
@@ -247,7 +247,7 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
         (BgBlendStrengthSet - RunningState.BackShaderParams->BackgroundStrength.vector_x) * 0.02f;
 
     TestCaptureView->CaptureContextBind();
-    TestSequence->DrawFxSequence(TestColor, RunningState.GameRunTimeStep);
+    TestSequence->DrawFxSequence(TestColor);
     TestCaptureView->CaptureContextUnBind();
 
     ++CountTimer;
@@ -335,7 +335,7 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
     if (ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()) {
         Vector2T<float> VectorSpeed(ImGui::GetMousePos().x - ConvertCoord.vector_x, ImGui::GetMousePos().y - ConvertCoord.vector_y);
 
-        Vector2T<float> ActorSpeed(VectorSpeed.vector_x * 0.5f, VectorSpeed.vector_y * 0.5f);
+        Vector2T<float> ActorSpeed(VectorSpeed.vector_x * 2.0f * RunningState.GameRunTimeStep, VectorSpeed.vector_y * 2.0f * RunningState.GameRunTimeStep);
         Vector2T<float> ActorPosition(
             PawnActorObj->ActorGetPosition().vector_x + 12.0f * FmtValue(VectorSpeed.vector_x),
             PawnActorObj->ActorGetPosition().vector_y + 12.0f * FmtValue(VectorSpeed.vector_y)

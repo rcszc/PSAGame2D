@@ -4,7 +4,9 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
+float __PHYSICS_ENGINE_TIMESETP::PhysicsEngineTimeStep = 1.0f;
 namespace PhysicsEngine {
+
 	unordered_map<string, PhysiceWorldData> PhyEngineCoreDataset::PhysicsWorlds = {};
 	// global cycles calc iterations.
 	Vector2T<float> PhyEngineCoreDataset::PhysicsIterations = Vector2T<float>(16.0f, 8.0f);
@@ -196,11 +198,11 @@ namespace PhysicsEngine {
 		return (PhysicsWorlds.find(strkey) != PhysicsWorlds.end()) ? &PhysicsWorlds[strkey] : nullptr;
 	}
 
-	void PhyEngineCoreDataset::PhysicsSystemUpdateState(float time_step) {
+	void PhyEngineCoreDataset::PhysicsSystemUpdateState() {
 		for (auto& WorldItem : PhysicsWorlds) {
 			// box2d api update_world.
 			WorldItem.second.PhysicsWorld->Step(
-				PSAGM_VIR_TICKSTEP_PHY * time_step, (int32)PhysicsIterations.vector_x, (int32)PhysicsIterations.vector_y);
+				PSAGM_VIR_TICKSTEP_PHY * PhysicsEngineTimeStep, (int32)PhysicsIterations.vector_x, (int32)PhysicsIterations.vector_y);
 		}
 	}
 }

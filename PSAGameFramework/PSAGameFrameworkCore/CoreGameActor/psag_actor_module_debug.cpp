@@ -10,8 +10,8 @@ namespace GameDebugGuiWindow {
 		else       ImGui::ColorButton("", lcol, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoTooltip, size);
 	}
 
-	constexpr ImVec4 L_COLOR = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-	constexpr ImVec4 H_COLOR = ImVec4(0.0f, 1.0f, 0.92f, 1.0f);
+	constexpr ImVec4 L_COLOR = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	constexpr ImVec4 H_COLOR = ImVec4(0.0f, 1.0f, 0.9f, 1.0f);
 
 	void DebugWindowGuiActor(const string& name, GameActorCore::GameActorActuator* actor) {
 		ImGui::Begin(name.c_str());
@@ -41,7 +41,7 @@ namespace GameDebugGuiWindow {
 	}
 
 	void DebugWindowGuiActors(unordered_map<size_t, GameActorCore::GameActorActuator*>* actors) {
-		ImGui::Begin("DebugActors INFO", (bool*)0, ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin("DebugActors", (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
 		ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 0.92f), "Actors Number: %u", actors->size());
 
 		int CountItemID = NULL;

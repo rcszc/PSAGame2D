@@ -5,7 +5,9 @@ using namespace std;
 using namespace PSAG_LOGGER;
 using namespace GraphicsShaderCode;
 
+float __GRAPHICS_ENGINE_TIMESETP::GraphicsEngineTimeStep = 1.0f;
 namespace GraphicsEnginePost {
+
 	void PsagGLEnginePost::ShaderVertexDefaultParams(PsagShader shader) {
 		ShaderUniform.UniformVec2(shader, "RenderMove",  Vector2T<float>(0.0f, 0.0f));
 		ShaderUniform.UniformVec2(shader, "RenderScale", Vector2T<float>(1.0f, 1.0f));
