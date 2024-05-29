@@ -22,14 +22,15 @@ __开发进度:__ ███████░░░ 65%
 ### 框架层级 & 渲染架构
 
 <p align="center">
-  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:45%;"/>
-  <img src="PSAGameDesigns/RenderArch.png" style="width:51%;"/>
+  <img src="PSAGameDesigns/EngineLayerArch.png" style="width:45%"/>
+  <span style="display:inline-block; width:0%;"></span>
+  <img src="PSAGameDesigns/RendererArch.png" style="width:51%;"/>
 </p>
 
 ### 顶点组管理器架构
 
 <p align="center">
-  <img src="PSAGameDesigns/VertexGroupArch.png"/>
+  <img src="PSAGameDesigns/VertexGroupsArch.png"/>
 </p>
 
 > 架构未完成, 可能还会有微调
