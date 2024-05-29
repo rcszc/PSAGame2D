@@ -38,3 +38,5 @@ __开发进度:__ ███████░░░ 65%
 ## 开发中ing... DebugGUI
 
 <img src="PSAGameDesigns/PSAGame2Dv20240529.0408.png"/>
+
+> __PS:__ "PSA"是为了致敬咱的工作室PomeloStar, 为什么不是引擎而是框架? 凭我一个菜鸟的实力根本搓不出引擎 (只能是框架
