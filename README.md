@@ -14,7 +14,7 @@ __当前版本:__ 先行版 v20240530
 - 主要用于交流和学习
 
 __开发进度:__ ███████░░░ 65%
-> FrameworkCore Files: 62, LoC: 8600
+> FrameworkCore Files: 62, LoC: 8681
 ---
 
 ## PSAG-ARCH 架构
@@ -23,7 +23,7 @@ __开发进度:__ ███████░░░ 65%
 
 <p align="center">
   <img src="PSAGameDesigns/EngineLayerArch.png" style="width:45%"/>
-  <span style="display:inline-block; width:0%;"></span>
+  <span style="display:inline-block; width:1%;"></span>
   <img src="PSAGameDesigns/RendererArch.png" style="width:51%;"/>
 </p>
 
