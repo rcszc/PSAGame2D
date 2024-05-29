@@ -121,6 +121,8 @@ namespace GameActorCore {
 
 		std::vector<Vector2T<float>>* VerPosition = nullptr;
 		std::vector<Vector2T<float>>* VerUvCoord  = nullptr;
+
+		bool CreateResourceFlag = false;
 	public:
 		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
 		~GameActorShader();
@@ -226,7 +228,7 @@ namespace GameActorCore {
 		public __ACTOR_MODULES_TIMESTEP
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
 		std::chrono::steady_clock::time_point ActorTimer      = std::chrono::steady_clock::now();

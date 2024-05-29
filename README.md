@@ -2,7 +2,7 @@
 # PSAGame2D
 > PomeloStar 2D游戏开发框架.
 
-__当前版本:__ 先行版 v20240526
+__当前版本:__ 先行版 v20240530
 
 > 先行版暂无文档, 其实就是工地hhh🙂, 一堆模块还处于开发阶段. ( 希望别弃坑了~~前面还有一堆坑~~
 
@@ -13,7 +13,7 @@ __当前版本:__ 先行版 v20240526
 - 框架内置多级背景处理以及多级后期处理着色器组
 - 主要用于交流和学习
 
-__开发进度:__ ██████░░░░ 60%
+__开发进度:__ ███████░░░ 65%
 > FrameworkCore Files: 62, LoC: 8600
 ---
 
@@ -23,7 +23,13 @@ __开发进度:__ ██████░░░░ 60%
 
 <p align="center">
   <img src="PSAGameDesigns/EngineLayersArch.png" style="width:45%;"/>
-  <img src="PSAGameDesigns/RenderArch.png" style="width:50%;"/>
+  <img src="PSAGameDesigns/RenderArch.png" style="width:51%;"/>
+</p>
+
+### 顶点组管理器架构
+
+<p align="center">
+  <img src="PSAGameDesigns/VertexGroupArch.png"/>
 </p>
 
 > 架构未完成, 可能还会有微调

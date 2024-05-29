@@ -188,30 +188,44 @@ namespace PSAG_OGL_MAG {
 
 // not_std: psag_renderer interface.
 namespace RenderingSupport {
-	class PSAG_OGLAPI_RENDER_OPER {
+	// opengl api context bind_state.
+	enum OpenGLApiContext {
+		NullContext    = 1 << 0, // null.
+		ShaderContext  = 1 << 1, // shader program.
+		TextureContext = 1 << 2, // texture.
+		FrameContext   = 1 << 3, // frame buffer.
+		RenderContext  = 1 << 4  // render buffer.
+	};
+
+	class PsagOpenGLApiRenderOper {
+	protected:
+		static OpenGLApiContext GlobalThisContextStat;
 	public:
 		void RenderBindShader(const PsagShader& program);
 		void RenderBindTexture(const PsagTextureAttrib& texture);
 		void RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
 
 		void DrawVertexGroup(const PsagVertexBufferAttrib& model);
-		void DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t length_vertex, size_t offset_vertex);
+		void DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t vert_len, size_t vert_off);
 
-		// **************** UPLOAD (CPU => GPU) ****************
+		// **************** UPLOAD (CPU => GPU), READ (GPU => CPU) ****************
 
-		void UploadVertexDataset(PsagVertexBufferAttrib* model, float* verptr, size_t bytes);
+		void UploadVertexDataset(
+			PsagVertexBufferAttrib* model, float* verptr, size_t bytes,
+			GLenum type = GL_DYNAMIC_DRAW // gpu memory storage mode.
+		);
 		void UploadTextureLayer(
 			const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr,
-			uint32_t channels = 4
+			uint32_t channels = 4 // texture(image) data channels.
 		);
-		
-		// **************** READ (GPU => CPU) ****************
-
 		std::vector<float> ReadVertexDatasetFP32(PsagVertexBuffer vbo);
 
 		void RenderUnbindShader();
 		void RenderUnbindTexture();
 		void RenderUnbindFrameBuffer();
+
+		// global state: opengl context. (non-thread-safe)
+		OpenGLApiContext GET_THIS_CONTEXT() { return GlobalThisContextStat; };
 	};
 }
 

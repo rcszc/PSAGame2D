@@ -103,30 +103,34 @@ namespace GameActorCore {
 	}
 
 	Vector2T<uint32_t> GameActorShader::__CREATE_SHADER_RES() {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
+		// non-create resource => create.
+		if (!CreateResourceFlag) {
+			PSAG_SYSGEN_TIME_KEY GenResourceID;
+			PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 
-		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
-		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
+			ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
+			ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
 
-		if (ShaderProcess.CreateCompileShader()) {
-			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
-			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
+			if (ShaderProcess.CreateCompileShader()) {
+				__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
+				LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
+			}
+
+			float RenderScale = (float)ShaderResolution.vector_x / (float)ShaderResolution.vector_y;
+			// porj matrix & scale ortho.
+			glm::mat4 ProjectionMatrix = glm::ortho(
+				-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
+				-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
+			);
+			// convert: glm matrix => psag matrix.
+			const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
+			memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+
+			//__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
+
+			CreateResourceFlag = true;
+			PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource create.");
 		}
-
-		float RenderScale = (float)ShaderResolution.vector_x / (float)ShaderResolution.vector_y;
-		// porj matrix & scale ortho.
-		glm::mat4 ProjectionMatrix = glm::ortho(
-			-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
-			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
-		);
-		// convert: glm matrix => psag matrix.
-		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
-		memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
-
-		//__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
-		
-
 		return ShaderResolution;
 	}
 
@@ -292,7 +296,7 @@ namespace GameActorCore {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ActorShaderItem);
 
 		ShaderRender.RenderBindShader(ShaderTemp);
-		StaticVertexFrameDraw();
+		VerStcOperFrameDraw(GetPresetRect());
 
 		// framework preset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        RenderingMatrix);

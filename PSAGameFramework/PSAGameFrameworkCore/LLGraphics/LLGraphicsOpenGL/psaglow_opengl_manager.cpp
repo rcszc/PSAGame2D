@@ -577,22 +577,27 @@ namespace PSAG_OGL_MAG {
 }
 
 namespace RenderingSupport {
-	void PSAG_OGLAPI_RENDER_OPER::RenderBindShader(const PsagShader& program) {
+	OpenGLApiContext PsagOpenGLApiRenderOper::GlobalThisContextStat = NullContext;
+
+	void PsagOpenGLApiRenderOper::RenderBindShader(const PsagShader& program) {
 		// rendering context enable shader_program.
 		glUseProgram(program);
+		GlobalThisContextStat = ShaderContext;
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::RenderBindTexture(const PsagTextureAttrib& texture) {
+	void PsagOpenGLApiRenderOper::RenderBindTexture(const PsagTextureAttrib& texture) {
 		glActiveTexture(GL_TEXTURE0 + texture.TextureSamplerCount);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texture.Texture);
+		GlobalThisContextStat = TextureContext;
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
+	void PsagOpenGLApiRenderOper::RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
+		GlobalThisContextStat = FrameContext;
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::DrawVertexGroup(const PsagVertexBufferAttrib& model) {
+	void PsagOpenGLApiRenderOper::DrawVertexGroup(const PsagVertexBufferAttrib& model) {
 		glBindVertexArray(model.DataAttrib);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);
 		glDrawArrays(GL_TRIANGLES, NULL, GLsizei(model.VerticesDataBytes / model.VertexBytes));
@@ -600,24 +605,24 @@ namespace RenderingSupport {
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t length_vertex, size_t offset_vertex) {
+	void PsagOpenGLApiRenderOper::DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t vert_len, size_t vert_off) {
 		// 非全部绘制: "model.VertexBytes", "model.VerticesDataBytes" 成员无效.
 		glBindVertexArray(model.DataAttrib);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);
-		glDrawArrays(GL_TRIANGLES, (GLint)offset_vertex, (GLsizei)length_vertex);
+		glDrawArrays(GL_TRIANGLES, (GLint)vert_off, (GLsizei)vert_len);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindVertexArray(NULL);
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::UploadVertexDataset(PsagVertexBufferAttrib* model, float* verptr, size_t bytes) {
+	void PsagOpenGLApiRenderOper::UploadVertexDataset(PsagVertexBufferAttrib* model, float* verptr, size_t bytes, GLenum type) {
 		// update vertices dataset bytes_param.
 		model->VerticesDataBytes = bytes;
 		glBindBuffer(GL_ARRAY_BUFFER, model->DataBuffer);
-		glBufferData(GL_ARRAY_BUFFER, bytes, verptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, bytes, verptr, type);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::UploadTextureLayer(
+	void PsagOpenGLApiRenderOper::UploadTextureLayer(
 		const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr, uint32_t channels
 	) {
 		GLenum ColorChannelsType = GL_RGBA;
@@ -631,7 +636,7 @@ namespace RenderingSupport {
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
 	}
 
-	std::vector<float> PSAG_OGLAPI_RENDER_OPER::ReadVertexDatasetFP32(PsagVertexBuffer vbo) {
+	std::vector<float> PsagOpenGLApiRenderOper::ReadVertexDatasetFP32(PsagVertexBuffer vbo) {
 		std::vector<float> ReadDataTemp = {};
 		GLint GpuBufferSize = NULL;
 
@@ -646,14 +651,17 @@ namespace RenderingSupport {
 		return ReadDataTemp;
 	}
 
-	void PSAG_OGLAPI_RENDER_OPER::RenderUnbindShader() {
+	void PsagOpenGLApiRenderOper::RenderUnbindShader() {
 		glUseProgram(NULL);
+		GlobalThisContextStat = NullContext;
 	}
-	void PSAG_OGLAPI_RENDER_OPER::RenderUnbindTexture() {
+	void PsagOpenGLApiRenderOper::RenderUnbindTexture() {
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
+		GlobalThisContextStat = NullContext;
 	}
-	void PSAG_OGLAPI_RENDER_OPER::RenderUnbindFrameBuffer() {
+	void PsagOpenGLApiRenderOper::RenderUnbindFrameBuffer() {
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+		GlobalThisContextStat = NullContext;
 	}
 }
 

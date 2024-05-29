@@ -30,36 +30,85 @@ namespace IMAGE_TOOLS {
 }
 
 namespace GraphicsEngineDataset {
-	PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper
 		GLEngineStcVertexData::ShaderRender = {};
 
 	ResUnique GLEngineStcVertexData::VertexAttribute = {};
-	ResUnique GLEngineStcVertexData::VertexBuffer    = {};
+	ResUnique GLEngineStcVertexData::VertexBuffer = {};
 
 	std::unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStcVertexData::IndexItems = {};
-
-	void GLEngineStcVertexData::StaticVertexFrameDraw() {
-		// draw static vertex.
-		ShaderRender.DrawVertexGroup(LLRES_VertexBuffers->ResourceFind(VertexBuffer));
-	}
+	ResUnique GLEngineStcVertexData::SystemPresetRectangle = {};
 
 	bool GLEngineStcVertexData::VerStcDataItemAlloc(ResUnique rukey, const vector<float>& data) {
+		VABO_DATASET_INFO AllocVertInfo = {};
+
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc): failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
-		IndexItems[rukey] = VABO_DATASET_INFO();
+		auto VertexAttrib = LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer);
+		// 映射GPU显存 => 重写数据 => 上传GPU显存.
+		vector<float> DatasetTemp = ShaderRender.ReadVertexDatasetFP32(VertexAttrib->DataBuffer);
+
+		AllocVertInfo.DatasetOffsetLength = DatasetTemp.size();
+		AllocVertInfo.DatasetLength       = data.size();
+		// push_back add dataset.
+		DatasetTemp.insert(DatasetTemp.begin(), data.begin(), data.end());
+		// cpu =upload=> gpu memory.
+		ShaderRender.UploadVertexDataset(VertexAttrib, DatasetTemp.data(), DatasetTemp.size() * sizeof(float), GL_STATIC_DRAW);
+
+		IndexItems[rukey] = AllocVertInfo;
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetTemp.size());
 		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: alloc key: %u", rukey);
 		return true;
 	}
 
 	bool GLEngineStcVertexData::VerStcDataItemFree(ResUnique rukey) {
-		return true;
+		auto it = IndexItems.find(rukey);
+		if (it != IndexItems.end()) {
+			IndexItems.erase(it); // delete info_item.
+			auto VertexAttrib = LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer);
+			// 映射GPU显存 => 重写信息 => 重写数据 => 上传GPU显存.
+			vector<float> DatasetTemp = ShaderRender.ReadVertexDatasetFP32(VertexAttrib->DataBuffer);
+			vector<float> DatasetRewriting = {};
+
+			size_t DataPointerCount = NULL;
+			for (auto& STCIT : IndexItems) {
+				// 重写信息(属性) & 数据.
+				size_t PreviousCount = DatasetRewriting.size();
+				DataPointerCount += STCIT.second.DatasetLength;
+
+				DatasetRewriting.insert(
+					DatasetRewriting.begin(), 
+					DatasetTemp.data() + STCIT.second.DatasetOffsetLength,
+					DatasetTemp.data() + STCIT.second.DatasetOffsetLength + STCIT.second.DatasetLength
+				);
+				STCIT.second.DatasetOffsetLength = PreviousCount;
+				STCIT.second.DatasetLength       = DataPointerCount;
+			}
+			// cpu =upload=> gpu memory.
+			ShaderRender.UploadVertexDataset(VertexAttrib, DatasetRewriting.data(), DatasetRewriting.size() * sizeof(float), GL_STATIC_DRAW);
+			
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetRewriting.size());
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: delete key: %u", rukey);
+			return true;
+		}
+		PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: failed delete, not found key.");
+		return false;
 	}
 
 	bool GLEngineStcVertexData::VerStcOperFrameDraw(ResUnique rukey) {
-		return true;
+		auto it = IndexItems.find(rukey);
+		if (it != IndexItems.end()) {
+			// draw vertex: length,offset.
+			ShaderRender.DrawVertexGroupSeg(
+				LLRES_VertexBuffers->ResourceFind(VertexBuffer),
+				it->second.DatasetLength / (FS_VERTEX_LENGTH), it->second.DatasetOffsetLength / (FS_VERTEX_LENGTH)
+			);
+			return true;
+		}
+		return false;
 	}
 
 	void GLEngineStcVertexData::StaticVertexDataObjectCreate() {
@@ -74,15 +123,17 @@ namespace GraphicsEngineDataset {
 		}
 
 		// create rendering rect.
-		if (VertexProcess.CreateStaticModel(
-			LLRES_VertexAttributes->ResourceFind(VertexAttribute),
-			VerBufferTemp,
-			PSAG_OGL_MAG::ShaderTemplateRect,
-			PSAG_OGL_MAG::ShaderTemplateRectLen * sizeof(float)
-		)) {
+		if (VertexProcess.CreateStaticModel(LLRES_VertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
 			VertexBuffer = GenResourceID.PsagGenTimeKey();
 			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
+
+		// alloc system preset.
+		SystemPresetRectangle = GenResourceID.PsagGenTimeKey();
+		vector<float> DataTemp = {};
+		DataTemp.assign(PSAG_OGL_MAG::ShaderTemplateRect, PSAG_OGL_MAG::ShaderTemplateRect + PSAG_OGL_MAG::ShaderTemplateRectLen);
+		VerStcDataItemAlloc(SystemPresetRectangle, DataTemp);
+
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "static vertex data manager_create.");
 	}
 
@@ -92,7 +143,7 @@ namespace GraphicsEngineDataset {
 		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);
 	}
 
-	PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper
 		GLEngineDyVertexData::ShaderRender = {};
 
 	ResUnique GLEngineDyVertexData::VertexAttribute = {};
@@ -106,11 +157,11 @@ namespace GraphicsEngineDataset {
 	bool GLEngineDyVertexData::VerDyDataItemAlloc(ResUnique rukey) {
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
-			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data: failed alloc duplicate_key: %u", rukey);
+			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy): failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
 		IndexItems[rukey] = VABO_DATASET_INFO();
-		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: alloc key: %u", rukey);
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy) item: alloc key: %u", rukey);
 		return true;
 	}
 
@@ -124,10 +175,10 @@ namespace GraphicsEngineDataset {
 				VertexRawDataset.begin() + EraseParam->DatasetOffsetLength + EraseParam->DatasetLength
 			);
 			IndexItems.erase(it);
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: delete key: %u", rukey);
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy) item: delete key: %u", rukey);
 			return true;
 		}
-		PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data item: failed delete, not found key.");
+		PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy) item: failed delete, not found key.");
 		return false;
 	}
 
@@ -241,7 +292,7 @@ namespace GraphicsEngineDataset {
 		}
 	}
 
-	PsagLow::PsagSupGraphicsOper::PsagRender::PSAG_OGLAPI_RENDER_OPER GLEngineSmpTextureData::ShaderRender = {};
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper GLEngineSmpTextureData::ShaderRender = {};
 	PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform GLEngineSmpTextureData::ShaderUniform = {};
 
 	SamplerTextures GLEngineSmpTextureData::TexturesSize1X = {};

@@ -127,7 +127,7 @@ namespace GraphicsEnginePVFX {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
 
 		ShaderRender.RenderBindShader(ShaderTemp);
-		StaticVertexFrameDraw();
+		VerStcOperFrameDraw(GetPresetRect());
 
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);

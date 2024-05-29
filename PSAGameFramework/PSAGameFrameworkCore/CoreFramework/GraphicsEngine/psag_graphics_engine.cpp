@@ -21,7 +21,7 @@ namespace GraphicsEnginePost {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ShaderRender.RenderBindShader(FilterShader);
 		{
-			StaticVertexFrameDraw();
+			VerStcOperFrameDraw(GetPresetRect());
 			// framework preset uniform.
 			ShaderUniform.UniformMatrix4x4(FilterShader, "MvpMatrix", RenderingMatrixMvp);
 			ShaderVertexDefaultParams(FilterShader);
@@ -48,7 +48,7 @@ namespace GraphicsEnginePost {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			ShaderRender.RenderBindShader(ShaderTemp[i]);
 			{
-				StaticVertexFrameDraw();
+				VerStcOperFrameDraw(GetPresetRect());
 				// framework preset uniform.
 				ShaderUniform.UniformMatrix4x4(ShaderTemp[i], "MvpMatrix", RenderingMatrixMvp);
 				ShaderVertexDefaultParams(ShaderTemp[i]);
@@ -219,7 +219,7 @@ namespace GraphicsEnginePost {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
 		
 		ShaderRender.RenderBindShader(ShaderTemp);
-		StaticVertexFrameDraw();
+		VerStcOperFrameDraw(GetPresetRect());
 
 		// framework preset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderingMatrixMvp);
@@ -301,7 +301,7 @@ namespace GraphicsEngineBackground {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
 
 		ShaderRender.RenderBindShader(ShaderTemp);
-		StaticVertexFrameDraw();
+		VerStcOperFrameDraw(GetPresetRect());
 
 		// framework preset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderingMatrixMvp);
