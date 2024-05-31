@@ -217,6 +217,14 @@ protected:
 namespace GraphicsEnginePost {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
+	struct GameCamera {
+		Vector2T<float> CameraOffset; // camera offset. (move)
+		Vector2T<float> CameraLens;   // camera lens. (scale)
+		float           CameraRotate; // camera rotate. (angle)
+
+		GameCamera() : CameraOffset({}), CameraLens(Vector2T<float>(1.0f, 1.0f)), CameraRotate(0.0f) {}
+	};
+
 	struct PostFxParameters {
 		Vector3T<float> GameSceneFilterCOL; // lv1-filter.
 		float           GameSceneFilterAVG; // lv2-filter.
@@ -224,11 +232,15 @@ namespace GraphicsEnginePost {
 		uint32_t GameSceneBloomRadius;
 		// bloom_blend x:source, y:blur.
 		Vector2T<float> GameSceneBloomBlend;
+		// game global scene camera.
+		GameCamera GameCameraTrans;
 
 		PostFxParameters() :
-			GameSceneFilterCOL({}), GameSceneFilterAVG(0.0f),
+			GameSceneFilterCOL  (Vector3T<float>()),
+			GameSceneFilterAVG  (0.0f),
 			GameSceneBloomRadius(1), 
-			GameSceneBloomBlend(Vector2T<float>(1.0f, 1.0f))
+			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),
+			GameCameraTrans     ({})
 		{}
 	};
 
@@ -239,7 +251,12 @@ namespace GraphicsEnginePost {
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
 
+		glm::mat4 MatrixPorj = {};
+		glm::mat4 MatrixView = {};
+
+		// bloom shader hv mvp != scene mvp.
 		PsagMatrix4 RenderingMatrixMvp = {};
+		PsagMatrix4 BloomShaderMvp     = {};
 		// scene => filter => bloom_h + bloom_v => post_shader.
 		ResUnique ShaderProgramItem = {};
 		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
@@ -255,6 +272,7 @@ namespace GraphicsEnginePost {
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);
 		void BloomShaderProcessHV();
+		void CameraMatrixTrans();
 	public:
 		PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution);
 		~PsagGLEnginePost();

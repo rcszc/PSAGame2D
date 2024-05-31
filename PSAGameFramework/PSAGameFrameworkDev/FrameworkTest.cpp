@@ -9,7 +9,7 @@ namespace TActor = GameActorCore::Type;
 void DevTestClass::CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed) {
     GameActorCore::GameActorActuatorDESC ConfigBullet;
 
-    ConfigBullet.ActorInPhyWorld     = "MyPhyWorld";
+    ConfigBullet.ActorPhysicsWorld     = "MyPhyWorld";
     ConfigBullet.ActorShaderResource = ActorShaderBullet;
 
     ConfigBullet.ControlFricMove   = 0.1f;
@@ -28,7 +28,7 @@ void DevTestClass::CreateNpcActor(float max_hp) {
     // config actor.
     GameActorCore::GameActorActuatorDESC ConfigActors;
 
-    ConfigActors.ActorInPhyWorld     = "MyPhyWorld";
+    ConfigActors.ActorPhysicsWorld     = "MyPhyWorld";
     ConfigActors.ActorShaderResource = ActorShaderNPC;
 
     ConfigActors.ControlFricMove   = 2.0f;
@@ -137,15 +137,15 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_wall");
 
     // 创建Actor着色器资源.
-    ActorShaderPawn   = new GameActorCore::GameActorShader(ActorFragPawn,   WinSize);
-    ActorShaderBullet = new GameActorCore::GameActorShader(ActorFragBullet, WinSize);
-    ActorShaderNPC    = new GameActorCore::GameActorShader(ActorFragNPC,    WinSize);
-    ActorShaderWall   = new GameActorCore::GameActorShader(ActorFragWall,   WinSize);
+    ActorShaderPawn   = new GameActorCore::GameActorShader(ActorFragPawn, WinSize);   ActorShaderPawn->CreateShaderRes();
+    ActorShaderBullet = new GameActorCore::GameActorShader(ActorFragBullet, WinSize); ActorShaderBullet->CreateShaderRes();
+    ActorShaderNPC    = new GameActorCore::GameActorShader(ActorFragNPC, WinSize);    ActorShaderNPC->CreateShaderRes();
+    ActorShaderWall   = new GameActorCore::GameActorShader(ActorFragWall, WinSize);   ActorShaderWall->CreateShaderRes();
 
     // config actor.
     GameActorCore::GameActorActuatorDESC ConfigActors;
 
-    ConfigActors.ActorInPhyWorld     = "MyPhyWorld";
+    ConfigActors.ActorPhysicsWorld     = "MyPhyWorld";
     ConfigActors.ActorShaderResource = ActorShaderPawn;
 
     ConfigActors.ControlFricMove   = 2.0f;
@@ -167,7 +167,7 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     GameActorCore::GameActorActuatorDESC ConfigWalls;
 
-    ConfigWalls.ActorInPhyWorld     = "MyPhyWorld";
+    ConfigWalls.ActorPhysicsWorld     = "MyPhyWorld";
     ConfigWalls.ActorShaderResource = ActorShaderWall;
     ConfigWalls.ActorPhysicalMode   = GameActorCore::PhyFixedActor;
 
@@ -281,6 +281,8 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
 
         ImGui::SliderFloat3("Filter RGB", RunningState.PostShaderParams->GameSceneFilterCOL.data(), 0.0f, 2.0f);
         ImGui::SliderFloat("Filter AVG", &RunningState.PostShaderParams->GameSceneFilterAVG, 0.0f, 2.0f);
+
+        ImGui::SliderFloat2("CAMERA", RunningState.PostShaderParams->GameCameraTrans.CameraOffset.data(), -100.0f, 100.0f);
 
         ImGui::ProgressBar(RunningState.BackShaderParams->BackgroundVisibility / 2.0f);
         ImGui::ProgressBar(RunningState.BackShaderParams->BackgroundStrength.vector_x / 2.0f);

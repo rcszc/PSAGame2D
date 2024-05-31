@@ -20,6 +20,13 @@ namespace PhysicsEngine {
 		return CreateVertGroup;
 	}
 
+	vector<b2Vec2> VertexPosToBox2dVec(const vector<Vector2T<float>>& data) {
+		vector<b2Vec2> DatasetTemp = {};
+		for (const auto& Vert : data)
+			DatasetTemp.push_back(b2Vec2(Vert.vector_x, Vert.vector_y));
+		return DatasetTemp;
+	}
+
 	bool PhyEngineCoreDataset::PhyBodyItemAlloc(string world, ResUnique rukey, PhysicsBodyConfig config) {
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr) {

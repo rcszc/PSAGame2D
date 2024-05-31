@@ -31,6 +31,7 @@ namespace PhysicsEngine {
 
 	// square, length: +-10.0f.
 	std::vector<b2Vec2> PresetVertexGroupSqua();
+	std::vector<b2Vec2> VertexPosToBox2dVec(const std::vector<Vector2T<float>>& data);
 	
 	struct PhysicsBodyConfig {
 		size_t IndexUniqueCode;

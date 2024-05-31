@@ -149,7 +149,9 @@ namespace PsagFrameworkCore {
         public PhysicsEngine::PhyEngineCoreDataset,
         // system time step.
         public __GRAPHICS_ENGINE_TIMESETP,
-        public __ACTOR_MODULES_TIMESTEP
+        public __ACTOR_MODULES_TIMESTEP,
+        // system camera position get.
+        public __ACTOR_MODULES_CAMERAPOS
         // public __PHYSICS_ENGINE_TIMESETP, (”Î"PhysicsEngine::PhyEngineCoreDataset"≥ÂÕª)
     {
     private:

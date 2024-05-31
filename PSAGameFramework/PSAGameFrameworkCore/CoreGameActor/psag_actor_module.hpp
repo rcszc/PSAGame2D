@@ -10,6 +10,11 @@ class __ACTOR_MODULES_TIMESTEP {
 protected:
 	static float ActorModulesTimeStep;
 };
+// 主要用于Actor位置映射屏幕位置, 做参数计算.
+class __ACTOR_MODULES_CAMERAPOS {
+protected:
+	static Vector2T<float> ActorModulesCameraPos;
+};
 
 namespace ActorShaderScript {
 	extern const char* PsagShaderScriptPublicVS;
@@ -98,7 +103,7 @@ namespace GameActorCore {
 	};
 
 	class GameActorShader :
-		public GraphicsEngineDataset::GLEngineDyVertexData,
+		public GraphicsEngineDataset::GLEngineStcVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData
 	{
 	protected:
@@ -114,18 +119,17 @@ namespace GameActorCore {
 		bool CheckRepeatTex(VirTextureUnqiue virtex);
 		bool ReferVirTextureFlag = false;
 
+		Vector4T<float> ShaderDebugColor;
 		// x:vert_shader, y:frag_shader.
-		Vector2T<std::string> ShaderScript     = {};
-		Vector2T<uint32_t>    ShaderResolution = {};
-		Vector4T<float>       ShaderDebugCol   = {};
+		Vector2T<std::string> ShaderScript = {};
 
 		std::vector<Vector2T<float>>* VerPosition = nullptr;
 		std::vector<Vector2T<float>>* VerUvCoord  = nullptr;
-
-		bool CreateResourceFlag = false;
 	public:
 		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
 		~GameActorShader();
+		// create actor shader_resource.
+		bool CreateShaderRes();
 
 		// load vertices(pos,uv) resource. (warn: ref)
 		bool ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC);
@@ -142,8 +146,11 @@ namespace GameActorCore {
 		ResUnique   __ACTOR_VERTEX_ITEM = {};
 		PsagMatrix4 __ACTOR_MATRIX_ITEM = {};
 
-		// return window resolution.
-		Vector2T<uint32_t> __CREATE_SHADER_RES();
+		Vector2T<uint32_t> __RENDER_RESOLUTION = {};
+
+		std::vector<Vector2T<float>>* __GET_VERTICES_RES() {
+			return VerPosition;
+		}
 	};
 
 	// hp handler function params.
@@ -185,7 +192,7 @@ namespace GameActorCore {
 	// init(config) descriptor.
 	struct GameActorActuatorDESC {
 		GameActorShader* ActorShaderResource;
-		std::string      ActorInPhyWorld;
+		std::string      ActorPhysicsWorld;
 		ActorPhyMode     ActorPhysicalMode;
 
 		float ControlFricMove;
@@ -203,7 +210,7 @@ namespace GameActorCore {
 		
 		GameActorActuatorDESC() :
 			ActorShaderResource(nullptr),
-			ActorInPhyWorld    ("SYSTEM_PHY_WORLD"),
+			ActorPhysicsWorld  ("SYSTEM_PHY_WORLD"),
 			ActorPhysicalMode  (PhyMoveActor),
 
 			ControlFricMove  (1.0f),
@@ -225,26 +232,23 @@ namespace GameActorCore {
 		public GraphicsEngineDataset::GLEngineStcVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
-		public __ACTOR_MODULES_TIMESTEP
+		public __ACTOR_MODULES_TIMESTEP,
+		public __ACTOR_MODULES_CAMERAPOS
 	{
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
-		std::chrono::steady_clock::time_point ActorTimer      = std::chrono::steady_clock::now();
-		ActorPrivateINFO                      ActorUniqueInfo = {};
-		std::string                           ActorInPhyWorld = {};
+		std::chrono::steady_clock::time_point ActorTimer        = std::chrono::steady_clock::now();
+		ActorPrivateINFO                      ActorUniqueInfo   = {};
+		GameActorShader*                      ActorResource     = nullptr;
+		std::string                           ActorPhysicsWorld = {};
 
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
 
-		ResUnique ActorShaderItem  = {};
-		ResUnique ActorTextureItem = {};
-
 		// shader rendering size, shader_uniform.
-		Vector2T<float>                              RenderingResolution = {};
-		PsagMatrix4                                  RenderingMatrix     = {};
-		GraphicsEngineDataset::VirTextureUniformName RenderingUniform    = {};
+		Vector2T<float> RenderingResolution = {};
 
 		ResUnique ActorPhysicsItem = {};
 		float ActorPhysicsDensity = 1.0, ActorPhysicsFriction = 0.7f;
@@ -324,9 +328,30 @@ namespace GameActorManager {
 	};
 }
 
-// 用于构建静态场景,比静态Actor更加高效.
+// 用于构建静态场景, 比静态'Actor'更加轻量, 但是同样共享'Actor'的着色器资源.
 namespace GameBrickCore {
 	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
+
+	struct GameBrickActuatorDESC {
+		GameActorCore::GameActorShader* BrickShaderResource;
+		std::string                     BrickPhysicsWorld;
+
+		// params: x:phy_density, y:phy_friction.
+		Vector2T<float> InitialPhysics;
+		Vector2T<float> InitialPosition;
+		Vector2T<float> InitialScale;
+		float           InitialRotate;
+
+		GameBrickActuatorDESC() :
+			BrickShaderResource(nullptr),
+			BrickPhysicsWorld  ({}),
+
+			InitialPhysics (Vector2T<float>(1.0f, 0.7f)),
+			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
+			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
+			InitialRotate  (0.0f)
+		{}
+	};
 
 	class GameBrickActuator :
 		public GraphicsEngineDataset::GLEngineStcVertexData,
@@ -334,9 +359,10 @@ namespace GameBrickCore {
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:
-
+		GameActorCore::GameActorShader* ShaderResource = nullptr;
 	public:
-
+		~GameBrickActuator();
+		GameBrickActuator();
 	};
 }
 

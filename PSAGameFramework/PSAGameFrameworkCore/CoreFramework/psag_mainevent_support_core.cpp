@@ -61,6 +61,8 @@ namespace PsagFrameworkCore {
         PhysicsEngineTimeStep  = FrameworkParams.GameRunTimeStep;
         ActorModulesTimeStep   = FrameworkParams.GameRunTimeStep;
         PhysicsSystemUpdateState();
+        // main_scene camera pos => actor modules.
+        ActorModulesCameraPos = RendererPostFX->RenderParameters.GameCameraTrans.CameraOffset;
 
         // opengl render_event loop.
         RenderContextAbove();

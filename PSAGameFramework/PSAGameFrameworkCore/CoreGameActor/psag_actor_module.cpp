@@ -5,7 +5,9 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-float __ACTOR_MODULES_TIMESTEP::ActorModulesTimeStep = 1.0f;
+float           __ACTOR_MODULES_TIMESTEP::ActorModulesTimeStep   = 1.0f;
+Vector2T<float> __ACTOR_MODULES_CAMERAPOS::ActorModulesCameraPos = {};
+
 namespace GameActorCore {
 	namespace Type {
 		uint32_t GameActorTypeBind::ActorTypeIs(const string& type_name) {
@@ -36,16 +38,72 @@ namespace GameActorCore {
 		ShaderScript.vector_x = ActorShaderScript::PsagShaderScriptPublicVS;
 		ShaderScript.vector_y = SHADER_FRAG;
 
-		ShaderResolution = RESOLUTION;
+		__RENDER_RESOLUTION = RESOLUTION;
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader create: %u x %u", RESOLUTION.vector_x, RESOLUTION.vector_y);
 	}
 
 	GameActorShader::~GameActorShader() {
+		// delete virtual static vertex_dataset.
+		VerStcDataItemFree(__ACTOR_VERTEX_ITEM);
 		// 引用虚拟纹理情况下, 不由"GameActorShader"回收.
 		if (!ReferVirTextureFlag)
 			VirTextureItemFree(__VIR_TEXTURE_ITEM);
+		// delete opengl shader.
 		LLRES_Shaders->ResourceDelete(__ACTOR_SHADER_ITEM);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader delete.");
+	}
+
+	bool GameActorShader::CreateShaderRes() {
+		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
+
+		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
+		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
+
+		if (ShaderProcess.CreateCompileShader()) {
+			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
+			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
+		}
+		else {
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed create.");
+			return false;
+		}
+
+		float RenderScale = (float)__RENDER_RESOLUTION.vector_x / (float)__RENDER_RESOLUTION.vector_y;
+		// porj matrix & scale ortho.
+		glm::mat4 ProjectionMatrix = glm::ortho(
+			-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
+			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
+		);
+		// convert: glm matrix => psag matrix.
+		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
+		memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+
+		__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
+		if (VerPosition != nullptr) {
+
+			vector<float> DatasetTemp = {};
+			for (size_t i = 0; i < VerPosition->size(); ++i) {
+				// vertex group, std: GL_VERT_01.
+				vector<float> VertexGroup = {
+					// pos: vec3, color: vec4, uv: vec2, normal: vec3
+					(*VerPosition)[i].vector_x, (*VerPosition)[i].vector_y, 0.0f,
+					ShaderDebugColor.vector_x, ShaderDebugColor.vector_y, ShaderDebugColor.vector_z, ShaderDebugColor.vector_w,
+					(*VerUvCoord)[i].vector_x, (*VerUvCoord)[i].vector_y,
+					0.0f, 0.0f, 0.0f
+				};
+				DatasetTemp.insert(DatasetTemp.begin(), VertexGroup.begin(), VertexGroup.end());
+			}
+			// upload static dataset.
+			VerStcDataItemAlloc(__ACTOR_VERTEX_ITEM, DatasetTemp);
+		}
+		else {
+			vector<float> PresetTemp = {};
+			PresetTemp.assign(PSAG_OGL_MAG::ShaderTemplateRect, PSAG_OGL_MAG::ShaderTemplateRect + PSAG_OGL_MAG::ShaderTemplateRectLen);
+			VerStcDataItemAlloc(__ACTOR_VERTEX_ITEM, PresetTemp);
+		}
+		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource create.");
+		return true;
 	}
 
 	bool GameActorShader::CheckRepeatTex(VirTextureUnqiue virtex) {
@@ -65,10 +123,15 @@ namespace GameActorCore {
 			}
 			ShaderScript.vector_x = VER_DESC.VertexShaderScript;
 		}
+		// position num = uv num.
+		if (VER_DESC.ShaderVertexCollision.size() != VER_DESC.ShaderVertexUvCoord.size()) {
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader vert: pos_size != uv_num.");
+			return false;
+		}
 		VerPosition = &VER_DESC.ShaderVertexCollision;
 		VerUvCoord  = &VER_DESC.ShaderVertexUvCoord;
 		// shader frag non-texture out color.
-		ShaderDebugCol = VER_DESC.ShaderDebugColor;
+		ShaderDebugColor = VER_DESC.ShaderDebugColor;
 		return true;
 	}
 
@@ -102,42 +165,10 @@ namespace GameActorCore {
 		return false;
 	}
 
-	Vector2T<uint32_t> GameActorShader::__CREATE_SHADER_RES() {
-		// non-create resource => create.
-		if (!CreateResourceFlag) {
-			PSAG_SYSGEN_TIME_KEY GenResourceID;
-			PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
-
-			ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
-			ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
-
-			if (ShaderProcess.CreateCompileShader()) {
-				__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
-				LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
-			}
-
-			float RenderScale = (float)ShaderResolution.vector_x / (float)ShaderResolution.vector_y;
-			// porj matrix & scale ortho.
-			glm::mat4 ProjectionMatrix = glm::ortho(
-				-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
-				-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
-			);
-			// convert: glm matrix => psag matrix.
-			const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
-			memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
-
-			//__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
-
-			CreateResourceFlag = true;
-			PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource create.");
-		}
-		return ShaderResolution;
-	}
-
 	// ******************************** GameActorActuator ********************************
 
-#define PSAGM_ACTOR_INTER     0.05f
-#define PSAGM_ACTOR_INTER_SUB 0.005f
+#define PSAGM_ACTOR_INTER 0.05f
+#define PSAGM_ACTOR_FRICT 0.005f
 	constexpr Vector2T<float> ActorMoveSpeedZERO(0.0f, 0.0f);
 
 	GameActorActuator::GameActorActuator(uint32_t TYPE, const GameActorActuatorDESC& INIT_DESC) {
@@ -153,18 +184,17 @@ namespace GameActorCore {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader_resource = nullptr.");
 			return;
 		}
-		// create shader_resource.
-		auto ResTemp = INIT_DESC.ActorShaderResource->__CREATE_SHADER_RES();
+		// shader_resolution.
+		auto ResTemp = INIT_DESC.ActorShaderResource->__RENDER_RESOLUTION;
 		RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
 
-		ActorShaderItem = INIT_DESC.ActorShaderResource->__ACTOR_SHADER_ITEM;
-		RenderingMatrix = INIT_DESC.ActorShaderResource->__ACTOR_MATRIX_ITEM;
+		ActorResource = INIT_DESC.ActorShaderResource;
 
-		if (PhysicsWorldFind(INIT_DESC.ActorInPhyWorld) == nullptr) {
-			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", INIT_DESC.ActorInPhyWorld.c_str());
+		if (PhysicsWorldFind(INIT_DESC.ActorPhysicsWorld) == nullptr) {
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", INIT_DESC.ActorPhysicsWorld.c_str());
 			return;
 		}
-		ActorInPhyWorld = INIT_DESC.ActorInPhyWorld;
+		ActorPhysicsWorld = INIT_DESC.ActorPhysicsWorld;
 
 		// inter speed_scale(base:1.0f)
 		AnimInterSpeed.vector_x = INIT_DESC.ControlFricMove;
@@ -189,6 +219,9 @@ namespace GameActorCore {
 		case(PhyFixedActor): { ActorPhyConfig.PhysicsModeTypeFlag = false; break; }
 		}
 
+		if (INIT_DESC.ActorShaderResource->__GET_VERTICES_RES() != nullptr)
+			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.ActorShaderResource->__GET_VERTICES_RES());
+
 		ActorPhyConfig.PhyBoxRotate        = INIT_DESC.InitialRotate;
 		ActorPhyConfig.PhyBoxCollisionSize = INIT_DESC.InitialScale;
 		ActorPhyConfig.PhyBoxPosition      = INIT_DESC.InitialPosition;
@@ -197,7 +230,7 @@ namespace GameActorCore {
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
 		ActorPhysicsItem = GenResourceID.PsagGenTimeKey();
-		PhyBodyItemAlloc(ActorInPhyWorld, ActorPhysicsItem, ActorPhyConfig);
+		PhyBodyItemAlloc(ActorPhysicsWorld, ActorPhysicsItem, ActorPhyConfig);
 
 		ActorPhysicsDensity  = INIT_DESC.InitialPhysics.vector_x;
 		ActorPhysicsFriction = INIT_DESC.InitialPhysics.vector_y;
@@ -214,7 +247,7 @@ namespace GameActorCore {
 
 	GameActorActuator::~GameActorActuator() {
 		// free: physics system item.
-		PhyBodyItemFree(ActorInPhyWorld, ActorPhysicsItem);
+		PhyBodyItemFree(ActorPhysicsWorld, ActorPhysicsItem);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor item delete: %u", ActorUniqueInfo.ActorUniqueCode);
 	}
 
@@ -227,10 +260,15 @@ namespace GameActorCore {
 		float ValueScale = (float)window_res.vector_y / (float)window_res.vector_x;
 		float LossWidth  = window_res.vector_x * 0.5f;
 		float LossHeight = window_res.vector_y * 0.5f;
-
+		
+		// actor_position - camera_position.
+		Vector2T<float> ActorMapping(
+			ActorStateMove[1].vector_x + ActorModulesCameraPos.vector_x / ValueScale,
+			ActorStateMove[1].vector_y + ActorModulesCameraPos.vector_y
+		);
 		return Vector2T<float>(
-			ActorStateMove[1].vector_x * ValueScale / SystemRenderingOrthoSpace * LossWidth + LossWidth,
-			ActorStateMove[1].vector_y / SystemRenderingOrthoSpace * LossHeight + LossHeight
+			ActorMapping.vector_x * ValueScale / SystemRenderingOrthoSpace * LossWidth + LossWidth,
+			ActorMapping.vector_y / SystemRenderingOrthoSpace * LossHeight + LossHeight
 		);
 	}
 
@@ -264,13 +302,13 @@ namespace GameActorCore {
 #define PSAGM_FP32_LOSS std::numeric_limits<float>::epsilon()
 	void GameActorActuator::ActorUpdate() {
 		// speed_sub: move, inter: scale.
-		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0], PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_x * ActorModulesTimeStep);
+		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0],  PSAGM_ACTOR_FRICT * AnimInterSpeed.vector_x * ActorModulesTimeStep);
 		SysVector2FInter(ActorStateScale[0], ActorStateScale[1], PSAGM_ACTOR_INTER * AnimInterSpeed.vector_z * ActorModulesTimeStep);
 		// rotate speed sub(vir_friction).
 		ActorStateRotate.vector_x += 
-			(0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_INTER_SUB * AnimInterSpeed.vector_y * ActorModulesTimeStep;
+			(0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_FRICT * AnimInterSpeed.vector_y * ActorModulesTimeStep;
 
-		auto PhysicsState = PhyBodyItemGet(ActorInPhyWorld, ActorPhysicsItem);
+		auto PhysicsState = PhyBodyItemGet(ActorPhysicsWorld, ActorPhysicsItem);
 
 		if (abs(ActorStateMove[0].vector_x) > PSAGM_FP32_LOSS || abs(ActorStateMove[0].vector_y) > PSAGM_FP32_LOSS)
 			PhysicsState.BodySourcePointer->SetLinearVelocity(b2Vec2(ActorStateMove[0].vector_x, ActorStateMove[0].vector_y));
@@ -288,18 +326,18 @@ namespace GameActorCore {
 		ActorPrivateINFO CollisionItem = {};
 		// update collision info.
 		CollisionItem.ActorTypeCode   = Type::ActorTypeNULL;
-		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollision(ActorInPhyWorld, ActorPhysicsItem);
+		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollision(ActorPhysicsWorld, ActorPhysicsItem);
 		ActorCollisionINFO = CollisionItem;
 	}
 
 	void GameActorActuator::ActorRendering() {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ActorShaderItem);
+		auto ShaderTemp = LLRES_Shaders->ResourceFind(ActorResource->__ACTOR_SHADER_ITEM);
 
 		ShaderRender.RenderBindShader(ShaderTemp);
-		VerStcOperFrameDraw(GetPresetRect());
+		VerStcOperFrameDraw(ActorResource->__ACTOR_VERTEX_ITEM);
 
 		// framework preset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        RenderingMatrix);
+		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", ActorResource->__ACTOR_MATRIX_ITEM);
 		ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderingResolution);
 
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorTime", VirTimerCount);
