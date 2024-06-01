@@ -9,7 +9,7 @@
 * ImGui: ImGui For OpenGL3
 * ImageLoader: STB_IMAGE, STB_IMAGE_WRITE
 * JsonLoader: RapidJSON
-* SoundLoader: BASS
+* SoundLoader: Audiere
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */

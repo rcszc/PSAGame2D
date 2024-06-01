@@ -43,4 +43,5 @@
 *.gitattributes
 *.ilk
 *.pdb
+*.idb
 *.lastbuildstate

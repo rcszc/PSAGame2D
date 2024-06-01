@@ -5,9 +5,10 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace GameDebugGuiWindow {
+	ImGuiColorEditFlags COLBUT = ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoTooltip;
 	inline void LndicatorLED(bool state, const ImVec2& size, const ImVec4& hcol, const ImVec4& lcol) {
-		if (state) ImGui::ColorButton("", hcol, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoTooltip, size);
-		else       ImGui::ColorButton("", lcol, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoTooltip, size);
+		if (state) ImGui::ColorButton("##COL", hcol, COLBUT, size);
+		else       ImGui::ColorButton("##COL", lcol, COLBUT, size);
 	}
 
 	constexpr ImVec4 L_COLOR = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);

@@ -47,10 +47,10 @@ namespace PsagLow {
 	// 'RawDataStream' => 'RawSoundStream'
 #define PsagSupSoundRawCVT PSAGSD_LOWLEVEL::SOUND_LLRES_CONVERT_FUNC;
 
-	using PsagSupSound3DCfg = PSAG_SOUND_PLAYER::Sound3DConfig;
+	//using PsagSupSound3DCfg = PSAG_SOUND_PLAYER::Sound3DConfig;
 
-	using PsagSupSoundHDload   = PSAG_SOUND_PLAYER::PsagSoundHandleLoader;
-	using PsagSupSoundHDplayer = PSAG_SOUND_PLAYER::PsagSoundPlayerHandle;
+	//using PsagSupSoundHDload   = PSAG_SOUND_PLAYER::PsagSoundHandleLoader;
+	//using PsagSupSoundHDplayer = PSAG_SOUND_PLAYER::PsagSoundPlayerHandle;
 #endif
 	// low_module 'thread' support.
 #ifdef ENABLE_LOWMODULE_THREAD

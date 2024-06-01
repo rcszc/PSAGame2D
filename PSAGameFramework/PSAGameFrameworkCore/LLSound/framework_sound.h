@@ -2,13 +2,14 @@
 
 #ifndef _FRAMEWORK_SOUND_H
 #define _FRAMEWORK_SOUND_H
-#include <bass.h>
+#include <audiere.h>
 // LLSound PSA - L.4 (=> logger).
 #include "../LLLogger/framework_logger.hpp"
 
 #define PSAG_BASS_CONFIG_DEVICE -1
 #define PSAG_BASS_CONFIG_FREQ    44100
 
+/*
 bool PSAG_FUNC_BASS_GLOBAL_INIT();
 bool PSAG_FUNC_BASS_GLOBAL_FREE();
 
@@ -48,6 +49,7 @@ namespace PSAG_SOUND_PLAYER {
 		bool Set3DSoundListenerPosition(const Vector3T<float>& pos);
 	};
 }
+*/
 
 // psag sound low_level, resource.
 namespace PSAGSD_LOWLEVEL {
