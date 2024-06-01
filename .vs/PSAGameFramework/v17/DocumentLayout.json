@@ -294,7 +294,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -323,106 +323,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ExternalModulePathlist.json",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAwAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-05-03T11:28:24.428Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "framework_sound.h",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAASAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-03T11:28:24.424Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "framework_sound_player.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
-              "ViewState": "AQIAAG8AAAAAAAAAAAAAAHQAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-03T11:28:24.424Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "psag_lowlevel_support.h",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
-              "ViewState": "AQIAAB4AAAAAAAAAAAAAAC0AAAA9AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-03T11:28:24.413Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "PSAGameFramework.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFramework.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFramework.cpp",
               "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFramework.cpp",
               "RelativeToolTip": "PSAGameFramework\\PSAGameFramework.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAWAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAACAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-03T11:28:24.414Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "framework_sound_cache.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAvAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-03T11:28:24.424Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "FrameworkTest.h",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAABEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-03T11:28:24.419Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "FrameworkTest.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
-              "ViewState": "AQIAAAYBAAAAAAAAAADwvxYBAAAHAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-03T11:28:24.33Z",
               "EditorCaption": ""
             },
             {
@@ -435,8 +344,101 @@
               "RelativeToolTip": ".gitignore",
               "ViewState": "AQIAABIAAAAAAAAAAADwvy0AAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-06-01T16:25:31.554Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-01T16:25:31.554Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 71,
+              "Title": "stdio.h",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22000.0\\ucrt\\stdio.h",
+              "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22000.0\\ucrt\\stdio.h",
+              "ViewState": "AQIAAJIFAAAAAAAAAAAgwJ4FAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-25T18:13:57.714Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ExternalModulePathlist.json",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameSystemFiles\\ExternalModulePathlist.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-05-03T11:28:24.428Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "framework_sound.h",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-03T11:28:24.424Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "framework_sound_player.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_player.cpp",
+              "ViewState": "AQIAAG8AAAAAAAAAAAAAAHQAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T11:28:24.424Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "psag_lowlevel_support.h",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAAAC0AAAA9AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-03T11:28:24.413Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "framework_sound_cache.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\LLSound\\framework_sound_cache.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T11:28:24.424Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FrameworkTest.h",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAABEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-03T11:28:24.419Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FrameworkTest.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
+              "ViewState": "AQIAAAYBAAAAAAAAAADwvxYBAAAHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T11:28:24.33Z"
             },
             {
               "$type": "Document",
@@ -448,8 +450,7 @@
               "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
               "ViewState": "AQIAAA8AAAAAAAAAAAAAAAkAAAA9AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-18T07:16:07.498Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-18T07:16:07.498Z"
             },
             {
               "$type": "Document",
@@ -474,16 +475,6 @@
               "ViewState": "AQIAALcAAAAAAAAAAAAAAF4AAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-06T17:51:01.498Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 71,
-              "Title": "stdio.h",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22000.0\\ucrt\\stdio.h",
-              "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22000.0\\ucrt\\stdio.h",
-              "ViewState": "AQIAAJIFAAAAAAAAAAAgwJ4FAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-25T18:13:57.714Z"
             },
             {
               "$type": "Document",

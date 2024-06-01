@@ -33,6 +33,8 @@
 
 # PSAGame2D
 
+/.vs
+
 *.tlog
 *.obj
 *.iobj

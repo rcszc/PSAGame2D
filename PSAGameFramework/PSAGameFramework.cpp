@@ -25,6 +25,14 @@
 // 无丝竹之乱耳~
 #pragma warning(disable: 4819)
 
+#pragma comment(lib, "opengl32.lib ")
+#pragma comment(lib, "glfw3.lib    ")
+#pragma comment(lib, "glew32.lib   ")
+#pragma comment(lib, "glu32.lib    ")
+#pragma comment(lib, "audiere.lib  ")
+#pragma comment(lib, "zlibwapi.lib ")
+#pragma comment(lib, "box2d.lib    ")
+
 int main() {
 	int FrameworkResult = -1;
 	PSAG_LOGGER_FILESYS::StartLogFileProcess("PSAGameSystemLogs/");
