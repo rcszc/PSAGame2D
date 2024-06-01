@@ -130,7 +130,7 @@ namespace PSAG_OGL_MAG {
 				delete[] ShaderLogInfo;
 			}
 			else
-				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "%s shader compilation succeeded.", label);
+				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "%s shader compilation succeeded.", label.c_str());
 		}
 		else if (!label.empty()) { // program handle.
 
@@ -149,7 +149,7 @@ namespace PSAG_OGL_MAG {
 				delete[] ShaderLogInfo;
 			}
 			else
-				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "%s program link succeeded.", label);
+				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "%s program link succeeded.", label.c_str());
 		}
 		return (bool)CompileSuccess;
 	}

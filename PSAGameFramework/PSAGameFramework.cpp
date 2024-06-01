@@ -35,7 +35,7 @@
 
 int main() {
 	int FrameworkResult = -1;
-	PSAG_LOGGER_FILESYS::StartLogFileProcess("PSAGameSystemLogs/");
+	PSAG_LOGGER_PROCESS::StartLogProcessing("PSAGameSystemLogs/");
 	{
 		PsagFrameworkCore::PSAGame2DFramework* MainPSAGame2D = new PsagFrameworkCore::PSAGame2DFramework();
 		PsagFrameworkStart::CorePsagMainStart FrameworkStarter = {};
@@ -46,6 +46,6 @@ int main() {
 		// framework free exit.
 		FrameworkResult = FrameworkStarter.FreeFramework();
 	}
-	PSAG_LOGGER_FILESYS::FreeLogFileProcess();
+	PSAG_LOGGER_PROCESS::FreeLogProcessing();
 	return FrameworkResult;
 }

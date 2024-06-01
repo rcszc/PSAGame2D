@@ -9,14 +9,15 @@
 #include "framework_logger.hpp"
 
 using namespace std;
+namespace PRLC = PSAG_LOGGER::ReadLogCache;
 
 mutex LogMutex = {};
-vector<PSAG_LOGGER::ReadLogCache::LogCache> GLOBAL_LOG_CACHE = {};
+vector<PRLC::LogCache> GLOBAL_LOG_CACHE = {};
 
 size_t LogWarringLines = NULL, LogErrorLines = NULL;
 
-queue<string> LogWriteQueue     = {};
-condition_variable LogCondition = {};
+queue<PRLC::LogCache> LogWriteQueue = {};
+condition_variable    LogCondition  = {};
 
 #include <iomanip>
 // time [xxxx.xx.xx.xx:xx:xx:xx ms].
@@ -77,15 +78,10 @@ namespace PSAG_LOGGER {
 
 		string FmtModuleName = "[" + module_name + "]: ";
 		string FmtLog = __get_timestamp() + ":" + LogLabelTemp + ":" + FmtModuleName + logstr_text;
-		// => read logger chache.
-		GLOBAL_LOG_CACHE.push_back(PSAG_LOGGER::ReadLogCache::LogCache(FmtLog, module_name, label));
-
-		LogWriteQueue.push(FmtLog);
+		// => read logger chache & logger process(print).
+		GLOBAL_LOG_CACHE.push_back(PRLC::LogCache(FmtLog, module_name, label));
+		LogWriteQueue.push(PRLC::LogCache(FmtLog, module_name, label));
 		LogCondition.notify_one();
-
-		auto FindLevelColor = HashLogLable.find(label);
-		if (FindLevelColor != HashLogLable.end() && LOG_PRINT_SWITCH)
-			cout << FindLevelColor->second << FmtLog << " \033[0m" << endl;
 	}
 
 #define LOGGER_BUFFER_LEN 2048
@@ -100,7 +96,10 @@ namespace PSAG_LOGGER {
 		PushLogProcess(label, (string)module_label, LoggerStrTemp);
 	}
 
-	void SET_PRINTLOG_STATE(bool status_flag) { LOG_PRINT_SWITCH = status_flag; };
+	void SET_PRINTLOG_STATE(bool status_flag) {
+		unique_lock<mutex> LogThreadLock(LogMutex);
+		LOG_PRINT_SWITCH = status_flag; 
+	};
 
 	Vector3T<size_t> LogLinesStatistics() {
 		Vector3T<size_t> ReturnValue = {};
@@ -139,7 +138,7 @@ namespace PSAG_LOGGER {
 }
 
 #define LOGFILE_EXTENSION ".log"
-namespace PSAG_LOGGER_FILESYS {
+namespace PSAG_LOGGER_PROCESS {
 
 	thread* LogProcessThread = {};
 	bool    LogProcessFlag   = true;
@@ -159,16 +158,21 @@ namespace PSAG_LOGGER_FILESYS {
 			LogCondition.wait(LogThreadLock, [] { return !LogWriteQueue.empty() || !LogProcessFlag; });
 
 			while (!LogWriteQueue.empty()) {
-				const string& LogMsgTemp = LogWriteQueue.front();
+				const PRLC::LogCache& LogMsgTemp = LogWriteQueue.front();
 				
-				WriteLogFile << LogMsgTemp << endl;
+				WriteLogFile << LogMsgTemp.LogString << endl;
+				// print.
+				auto FindLevelColor = HashLogLable.find(LogMsgTemp.LogLabel);
+				if (FindLevelColor != HashLogLable.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
+					cout << FindLevelColor->second << LogMsgTemp.LogString << " \033[0m" << endl;
+				// delete logmsg_item.
 				LogWriteQueue.pop();
 			}
 		}
 		WriteLogFile.close();
 	}
 
-	bool StartLogFileProcess(const char* folder) {
+	bool StartLogProcessing(const char* folder) {
 		filesystem::path CreateDir = "PSAGameSystemLogs/";
 		// create system folder.
 		if (!filesystem::exists(CreateDir)) {
@@ -193,7 +197,7 @@ namespace PSAG_LOGGER_FILESYS {
 		return true;
 	}
 
-	bool FreeLogFileProcess() {
+	bool FreeLogProcessing() {
 		LogProcessFlag = false;
 		try {
 			// set_flag => notify => join_thread.

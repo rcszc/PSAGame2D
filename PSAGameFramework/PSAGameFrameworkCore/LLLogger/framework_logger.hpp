@@ -45,10 +45,10 @@ namespace PSAG_LOGGER {
 	size_t GetTimeCountNow();
 }
 
-namespace PSAG_LOGGER_FILESYS {
-	// async thread process. write folder.
-	bool StartLogFileProcess(const char* folder);
-	bool FreeLogFileProcess();
+namespace PSAG_LOGGER_PROCESS {
+	// async thread process. write folder & print.
+	bool StartLogProcessing(const char* folder);
+	bool FreeLogProcessing();
 }
 
 // framework global generate_key.
