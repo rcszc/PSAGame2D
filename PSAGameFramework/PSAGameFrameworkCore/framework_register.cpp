@@ -3,8 +3,8 @@
 // include dev game_logic header.
 #include "../PSAGameFrameworkDev/FrameworkTest.h"
 
-// reg_class: 'REDVCLASS()'
-REDVCLASS(DevTestClass);
+// reg_class: 'PSAGCLASS()'
+PSAGCLASS(DevTestClass);
 
 namespace PsagFrameworkCore {
 	void PSAGame2DFramework::InitializeRegistrationDev() {

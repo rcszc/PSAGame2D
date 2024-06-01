@@ -232,9 +232,6 @@ namespace GameActorCore {
 		ActorPhysicsItem = GenResourceID.PsagGenTimeKey();
 		PhyBodyItemAlloc(ActorPhysicsWorld, ActorPhysicsItem, ActorPhyConfig);
 
-		ActorPhysicsDensity  = INIT_DESC.InitialPhysics.vector_x;
-		ActorPhysicsFriction = INIT_DESC.InitialPhysics.vector_y;
-
 		// config health system.
 		memcpy(ActorHealthState[0], INIT_DESC.ActorHealthSystem.InitialHealthState, PSAG_HEALTH_STATE_NUM * sizeof(float));
 		memcpy(ActorHealthState[1], INIT_DESC.ActorHealthSystem.InitialHealthState, PSAG_HEALTH_STATE_NUM * sizeof(float));

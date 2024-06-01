@@ -242,17 +242,16 @@ namespace GameActorCore {
 		std::chrono::steady_clock::time_point ActorTimer        = std::chrono::steady_clock::now();
 		ActorPrivateINFO                      ActorUniqueInfo   = {};
 		GameActorShader*                      ActorResource     = nullptr;
-		std::string                           ActorPhysicsWorld = {};
+
+		std::string ActorPhysicsWorld = {};
+		ResUnique   ActorPhysicsItem  = {};
 
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
 
-		// shader rendering size, shader_uniform.
+		// shader rendering size, shader_uniform param.
 		Vector2T<float> RenderingResolution = {};
-
-		ResUnique ActorPhysicsItem = {};
-		float ActorPhysicsDensity = 1.0, ActorPhysicsFriction = 0.7f;
-
+		
 		// x:move, y:rotate, z:scale.
 		Vector3T<float> AnimInterSpeed = {};
 
@@ -359,10 +358,35 @@ namespace GameBrickCore {
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:
-		GameActorCore::GameActorShader* ShaderResource = nullptr;
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
+
+		size_t                          BrickUniqueID      = NULL;
+		GameActorCore::GameActorShader* BrickResource      = nullptr;
+		GameActorCore::ActorPrivateINFO BrickCollisionINFO = {};
+
+		std::string BrickPhysicsWorld = {};
+		ResUnique   BcickPhysicsItem  = {};
+
+		float VirTimerStepSpeed = 1.0f;
+		float VirTimerCount     = 0.0f;
+
+		// shader rendering size, shader_uniform param.
+		Vector2T<float> RenderingResolution = {};
+
+		Vector2T<float> BrickStaticPosition = {};
+		Vector2T<float> BrickStaticScale    = {};
+		float           BrickStaticRotate   = {};
 	public:
 		~GameBrickActuator();
-		GameBrickActuator();
+		GameBrickActuator(const GameBrickActuatorDESC& INIT_DESC);
+
+		size_t          BrickGetUniqueID() { return BrickUniqueID; }
+		Vector2T<float> BrickGetPosition() { return BrickStaticPosition; }
+		Vector2T<float> BrickGetScale()    { return BrickStaticScale; }
+		float           BrickGetRotate()   { return BrickStaticRotate; }
+
+		void BrickRendering();
 	};
 }
 

@@ -270,7 +270,7 @@ namespace RegisterDevClass {
     extern ProfxReflection GAMEREF;
 }
 // ◊¢≤·”√ªß¿‡ (inheritance "INTERFACE_DEVCLASS_GAME").
-#define REDVCLASS(UserClass) \
+#define PSAGCLASS(UserClass) \
     inline static RegisterDevClass::Registrar<UserClass> UserClass##Registrar(#UserClass)
 
 #endif

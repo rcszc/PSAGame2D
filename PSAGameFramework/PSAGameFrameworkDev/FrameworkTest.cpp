@@ -89,6 +89,7 @@ void DevTestClass::HealthHandlerFuncNPC(const GameActorCore::HealthFuncParams& p
 }
 
 bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
+    /*
     PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat LoadRawImage;
 
     PsagLow::PsagSupFilesysLoaderBin TestBinLoad1("Test/TEST_BACK1.png");
@@ -105,6 +106,7 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     // 创建全局背景处理对象.
     CreateBg.CreateBackground(WinSize);
+    */
 
     PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
     PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
@@ -167,7 +169,7 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     GameActorCore::GameActorActuatorDESC ConfigWalls;
 
-    ConfigWalls.ActorPhysicsWorld     = "MyPhyWorld";
+    ConfigWalls.ActorPhysicsWorld   = "MyPhyWorld";
     ConfigWalls.ActorShaderResource = ActorShaderWall;
     ConfigWalls.ActorPhysicalMode   = GameActorCore::PhyFixedActor;
 
@@ -259,7 +261,7 @@ float FmtValue(float value) {
 }
 
 bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
-
+    
     ImGui::PushStyleColor(ImGuiCol_WindowBg,       ImVec4(0.16f, 0.16f, 0.16f, 0.92f));
     ImGui::PushStyleColor(ImGuiCol_FrameBg,        ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
@@ -352,13 +354,13 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
     }
     ImGui::End();
 
-    ImGui::PopStyleColor(5);
+    ImGui::PopStyleColor(8);
 
     RunningState.PostShaderParams->GameSceneBloomRadius = (uint32_t)BloomRadius;
     RunningState.BackShaderParams->BackgroundStrength.vector_y = RunningState.BackShaderParams->BackgroundVisibility + 0.32f;
     
     RunningState.BackShaderParams->BackgroundColor = 
         Vector4T<float>(ColorAnimInter.x, ColorAnimInter.y, ColorAnimInter.z, ColorAnimInter.w);
-
+        
 	return true;
 }
