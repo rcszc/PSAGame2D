@@ -104,10 +104,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>ExternalLibrary/GraphicsLibrary/glew_library/include/;ExternalLibrary/GraphicsLibrary/glfw_library/include/;ExternalLibrary/GraphicsLibrary/glm_library/include/;ExternalLibrary/GraphicsLibrary/image_loader/;ExternalLibrary/GuiimguiLibrary/;ExternalLibrary/FiletoolsLibrary/RapidJSON/include/;ExternalLibrary/FiletoolsLibrary/BASS/include/;ExternalLibrary/FiletoolsLibrary/Zlib/include/;ExternalLibrary/FiletoolsLibrary/Base64/;ExternalLibrary/PhysicalLibray/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>ExternalLibrary/GraphicsLibrary/glfw_library/lib-vc2019/;ExternalLibrary/GraphicsLibrary/glew_library/lib/Release/x64/;ExternalLibrary/FiletoolsLibrary/BASS/lib/;ExternalLibrary/FiletoolsLibrary/Zlib/lib/;ExternalLibrary/PhysicalLibray/lib/debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;glu32.lib;bass.lib;zlibwapi.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

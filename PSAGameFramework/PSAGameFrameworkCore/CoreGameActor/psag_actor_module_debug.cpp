@@ -13,8 +13,8 @@ namespace GameDebugGuiWindow {
 	constexpr ImVec4 L_COLOR = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	constexpr ImVec4 H_COLOR = ImVec4(0.0f, 1.0f, 0.9f, 1.0f);
 
-	void DebugWindowGuiActor(const string& name, GameActorCore::GameActorActuator* actor) {
-		ImGui::Begin(name.c_str());
+	void DebugWindowGuiActor(const char* name, GameActorCore::GameActorActuator* actor) {
+		ImGui::Begin(name);
 		{
 			ImGui::Text("Actor Type: %u, Code: %u", actor->ActorGetPrivate().ActorTypeCode, actor->ActorGetPrivate().ActorUniqueCode);
 			ImGui::Text("W"); ImGui::SameLine();

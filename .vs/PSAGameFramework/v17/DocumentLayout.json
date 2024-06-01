@@ -7,28 +7,40 @@
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_data.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_data.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_data.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_data.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support_core.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -49,10 +61,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_register.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -79,10 +87,6 @@
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\LLDefine\\framework_def_math.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\PhysicsEngine\\psag_physics_engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\PhysicsEngine\\psag_physics_engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -93,10 +97,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLGraphics\\LLGraphicsOpenGL\\psaglow_opengl.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\LLGraphics\\LLGraphicsOpenGL\\psaglow_opengl.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|solutionrelative:PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F047AD81-29D9-4812-872B-4A6C97C48D5E}|PSAGameFramework\\PSAGameFramework.vcxproj|F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_script.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -290,7 +290,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -298,7 +298,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "framework_register.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_register.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\framework_register.cpp",
@@ -319,33 +319,127 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "psag_graphics_engine.h",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
-              "ViewState": "AQIAAFIAAAAAAAAAAAAAAGcAAAAmAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-03T14:41:11.748Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "FrameworkTest.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
               "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
               "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.cpp",
-              "ViewState": "AQIAAKEAAAAAAAAAAAAAAKUAAAAbAAAA",
+              "ViewState": "AQIAAAYBAAAAAAAAAADwvyMBAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-03T11:28:24.33Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "psag_graphics_engine.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
+              "ViewState": "AQIAALcAAAAAAAAAAAAAAF4AAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-06T17:51:01.498Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "psag_actor_module_debug.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-18T07:16:07.498Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "psag_actor_module.hpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
+              "ViewState": "AQIAAGoBAAAAAAAAAAAAAH0BAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-17T04:02:11.633Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "framework_init_config.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABMAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T11:28:24.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "psag_actor_module.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
+              "ViewState": "AQIAABkBAAAAAAAAAAAAACUBAABgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-17T04:02:04.365Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "psag_graphics_engine_particle.cpp",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
+              "ViewState": "AQIAAJAAAAAAAAAAAAAAANYAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-03T14:42:42.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FrameworkTest.h",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAACcAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-03T11:28:24.419Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "psag_graphics_engine.h",
+              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
+              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
+              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
+              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.h",
+              "ViewState": "AQIAAFIAAAAAAAAAAAAAAGMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-03T14:41:11.748Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "psag_graphics_engine_data.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_data.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_data.cpp",
@@ -354,31 +448,6 @@
               "ViewState": "AQIAADwAAAAAAAAAAAAAAEQAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-03T14:53:13.937Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "psag_actor_module.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.cpp",
-              "ViewState": "AQIAABkBAAAAAAAAAAAAACEBAAAlAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-17T04:02:04.365Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "FrameworkTest.h",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkDev\\FrameworkTest.h",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAAACcAAAAzAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-03T11:28:24.419Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -392,35 +461,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "psag_graphics_engine.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine.cpp",
-              "ViewState": "AQIAALcAAAAAAAAAAAAAAF4AAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-06T17:51:01.498Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "psag_actor_module.hpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module.hpp",
-              "ViewState": "AQIAABwBAAAAAAAAAAAAAHwBAAAXAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-17T04:02:11.633Z"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "psag_mainevent_support_core.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support_core.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support_core.cpp",
@@ -432,7 +473,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "psag_graphics_engine_fx.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_fx.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_fx.cpp",
@@ -444,7 +485,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 12,
               "Title": "psag_actor_module_brick.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_brick.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_brick.cpp",
@@ -456,7 +497,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "psag_mainevent_support.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support.cpp",
@@ -468,7 +509,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "psag_mainevent_support.h",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support.h",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support.h",
@@ -480,19 +521,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "psag_actor_module_debug.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_debug.cpp",
-              "ViewState": "AQIAACEAAAAAAAAAAAAAADcAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-18T07:16:07.498Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "psag_actor_module_manager.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_manager.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_manager.cpp",
@@ -504,7 +533,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "psag_actor_module_script.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_script.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreGameActor\\psag_actor_module_script.cpp",
@@ -516,7 +545,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "psag_mainevent_support_class.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support_class.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_mainevent_support_class.cpp",
@@ -528,7 +557,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "psag_lowlevel_support.h",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\psag_lowlevel_support.h",
@@ -540,7 +569,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 20,
               "Title": "framework_def_math.hpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLDefine\\framework_def_math.hpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLDefine\\framework_def_math.hpp",
@@ -552,19 +581,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "framework_init_config.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\framework_init_config.cpp",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAABMAAAAqAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-03T11:28:24.408Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "psag_physics_engine.h",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\PhysicsEngine\\psag_physics_engine.h",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\PhysicsEngine\\psag_physics_engine.h",
@@ -576,7 +593,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "psag_physics_engine.cpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\PhysicsEngine\\psag_physics_engine.cpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\PhysicsEngine\\psag_physics_engine.cpp",
@@ -588,7 +605,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "psaglow_opengl.hpp",
               "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\LLGraphics\\LLGraphicsOpenGL\\psaglow_opengl.hpp",
               "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\LLGraphics\\LLGraphicsOpenGL\\psaglow_opengl.hpp",
@@ -597,18 +614,6 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-05-03T11:28:24.416Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "psag_graphics_engine_particle.cpp",
-              "DocumentMoniker": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
-              "RelativeDocumentMoniker": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
-              "ToolTip": "F:\\C\u002B\u002BProject\\RCSZ_CPP\\PSAGameFramework\\PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
-              "RelativeToolTip": "PSAGameFramework\\PSAGameFrameworkCore\\CoreFramework\\GraphicsEngine\\psag_graphics_engine_particle.cpp",
-              "ViewState": "AQIAAMMAAAAAAAAAAAAAANYAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-03T14:42:42.629Z"
             },
             {
               "$type": "Document",

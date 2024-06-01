@@ -392,7 +392,7 @@ namespace GameBrickCore {
 
 namespace GameDebugGuiWindow {
 	// debug window [panel], actor. 
-	void DebugWindowGuiActor(const std::string& name, GameActorCore::GameActorActuator* actor);
+	void DebugWindowGuiActor(const char* name, GameActorCore::GameActorActuator* actor);
 	// debug window [panel], actor_manager(actors). 
 	void DebugWindowGuiActors(std::unordered_map<size_t, GameActorCore::GameActorActuator*>* actors);
 }
