@@ -15,7 +15,7 @@ __当前版本:__ 先行版 v20240531
 > 我粗略的学习过ECS, 此设计可能并没有ECS优秀, 只是个人尝试
 
 __开发进度:__ ███████░░░ 69%
-> FrameworkCore Files: 62, LoC: 9113
+> FrameworkCore Files: 62, LoC: 9095
 ---
 
 ## PSAG-ARCH 架构

@@ -108,8 +108,8 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     CreateBg.CreateBackground(WinSize);
     */
 
-    //PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
-    //PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
+    PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
+    PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
 
     // ******************************** TEST –Ú¡–÷°Ã˘Õº ********************************
 
@@ -127,10 +127,6 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     PsagLow::PsagSupFilesysLoaderBin SoundBin("Test/TestSoundMC.ogg");
     PsagLow::PsagSupSoundData TestSoundDat(PsagSupSoundRawCVT(SoundBin.GetDataBinary()));
-
-    TestSoundPlayer = new PsagLow::PsagSupSoundDataPlayer(TestSoundDat);
-
-    TestSoundPlayer->SetPlayerBegin();
 
     // ******************************** TEST ACTORS ********************************
 
@@ -308,9 +304,6 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
 
     GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
     GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
-
-    if (ImGui::Button("TestSund"))
-        TestSoundPlayer->SoundPlayer();
 
     if (ImGui::IsKeyDown(ImGuiKey_W))
         PawnActorObj->ActorMappingMoveSpeed()->vector_y -= 0.2f * RunningState.GameRunTimeStep;
