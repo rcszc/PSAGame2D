@@ -4,114 +4,154 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-/*
-bool PSAG_FUNC_BASS_GLOBAL_INIT() {
-    // init config bass(global).
-    if (!BASS_Init(PSAG_BASS_CONFIG_DEVICE, PSAG_BASS_CONFIG_FREQ, NULL, nullptr, nullptr)) {
-        PushLogger(LogError, PSAG_SOUND_PLAYER::PSAG_SOUND_LABEL, "failed bass global_initialize.");
-        return false;
-    }
-    return true;
-}
-
-bool PSAG_FUNC_BASS_GLOBAL_FREE() {
-    // free system bass(global).
-    if (!BASS_Free()) {
-        PushLogger(LogError, PSAG_SOUND_PLAYER::PSAG_SOUND_LABEL, "failed bass global_free.");
-        return false;
-    }
-    return true;
-}
-
 namespace PSAG_SOUND_PLAYER {
+    namespace system {
+        ALCdevice*  __PsagSoundDeviceHandle::SoundDevicePtr  = nullptr;
+        ALCcontext* __PsagSoundDeviceHandle::SoundContextPtr = nullptr;
 
-    inline bool BassHanderRepeat(const HSTREAM& handel) {
-        if (handel != NULL) {
-            PushLogger(LogWarning, PSAG_SOUND_LABEL, "bass handel_loader: repeat.");
+        bool __PsagSoundDeviceHandle::CreateSoundDevice() {
+            SoundDevicePtr = alcOpenDevice(nullptr); // default device.
+            SoundContextPtr = alcCreateContext(SoundDevicePtr, nullptr);
+            // set this-thread => context.
+            if (alcMakeContextCurrent(SoundContextPtr) == ALC_FALSE) {
+                PushLogger(LogError, PSAG_SOUND_LABEL, "sound(openal) global failed create context.");
+                return false;
+            }
+            PushLogger(LogTrace, PSAG_SOUND_LABEL, "sound(openal) global create device & context.");
             return true;
         }
-        return false;
-    }
 
-    bool PsagSoundHandleLoader::SoundLoaderRawStream(const RawSoundStream& rawdata) {
-        if (BassHanderRepeat(BassStreamObject))
-            return false;
-        // create mem_stream => load_stream.
-        BassStreamObject = BASS_StreamCreateFileUser(STREAMFILE_NOBUFFER, BASS_SAMPLE_FLOAT, nullptr, nullptr);
-        BASS_StreamPutData(BassStreamObject, rawdata.data(), (DWORD)rawdata.size());
-        if (BassStreamObject == NULL)
-            PushLogger(LogError, PSAG_SOUND_LABEL, "bass handel_loader: load_raw_data error.");
-        return BassStreamObject != NULL;
-    }
-
-    bool PsagSoundHandleLoader::SoundLoaderFile(const string& filename) {
-        if (BassHanderRepeat(BassStreamObject))
-            return false;
-        // create file_loader => load_file.
-        BassStreamObject = BASS_StreamCreateFile(FALSE, filename.c_str(), 0, 0, BASS_SAMPLE_FLOAT);
-        if (BassStreamObject == NULL)
-            PushLogger(LogError, PSAG_SOUND_LABEL, "bass handel_loader: load_file error.");
-        return BassStreamObject != NULL;
-    }
-
-    HSTREAM PsagSoundHandleLoader::_MS_GETRES() { return BassStreamObject; }
-
-    PsagSoundPlayerHandle::PsagSoundPlayerHandle(PsagSoundHandleLoader& loader, const Sound3DConfig& s3d) {
-        BassStreamObject = loader._MS_GETRES();
-        // loader handle = null : invalid_hd.
-        if (BassStreamObject == NULL)
-            PushLogger(LogError, PSAG_SOUND_LABEL, "bass system: loader error, hd = null.");
-
-        if (s3d.EnableFlag) {
-            BASS_ChannelSet3DAttributes(
-                BassStreamObject, BASS_3DMODE_NORMAL, s3d.SoundLimit.vector_x, s3d.SoundLimit.vector_y, -1, -1, -1
-            ) == (int)true ? 
-                PushLogger(LogInfo, PSAG_SOUND_LABEL, "bass system: enabel 3d_attrib.") : 
-                PushLogger(LogError, PSAG_SOUND_LABEL, "bass system: enabel 3d_attrib error.");
-        }
-        Sound3DEnabelFlag = s3d.EnableFlag;
-    }
-
-    inline bool BassFuncProcess(bool flag, const char* info) {
-        flag == (int)false ? 
-            PushLogger(LogError, PSAG_SOUND_LABEL, "failed loader(sound): %s.", info) :
-            PushLogger(LogInfo, PSAG_SOUND_LABEL, "loader(sound): %s.", info);
-        return flag;
-    }
-
-    bool PsagSoundPlayerHandle::PlayerSound() { return BassFuncProcess(BASS_ChannelPlay(BassStreamObject, TRUE), "player_sound"); }
-    bool PsagSoundPlayerHandle::PauseSound()  { return BassFuncProcess(BASS_ChannelPause(BassStreamObject), "pause_sound");        }
-
-    bool PsagSoundPlayerHandle::SetPlayerPosition(float second) {
-        QWORD BytePosition = BASS_ChannelSeconds2Bytes(BassStreamObject, (double)second);
-        // second => byte_pos => set player_pos.
-        if (!BASS_ChannelSetPosition(BassStreamObject, BytePosition, BASS_POS_BYTE)) {
-            PushLogger(LogError, PSAG_SOUND_LABEL, "failed loader(sound): set player_pos.");
+        bool __PsagSoundDeviceHandle::DeleteSoundDevice() {
+            alcMakeContextCurrent(nullptr);
+            // delete context & close device.
+            alcDestroyContext(SoundContextPtr);
+            if (alcCloseDevice(SoundDevicePtr) == ALC_FALSE) {
+                PushLogger(LogError, PSAG_SOUND_LABEL, "sound(openal) global failed close_device.");
+                return false;
+            }
+            PushLogger(LogTrace, PSAG_SOUND_LABEL, "sound(openal) global free_context & close_device.");
             return true;
         }
-        PushLogger(LogInfo, PSAG_SOUND_LABEL, "loader(sound): set player_pos: %.2f s", second);
-        return false;
     }
 
-    bool PsagSoundPlayerHandle::PlayerEndedFlag() {
-        // playback ended, true: end, false: playing...
-        return (BASS_ChannelIsActive(BassStreamObject) != BASS_ACTIVE_PLAYING);
+    bool PsagSoundDataResource::CreateBufHandle(ALuint& handle) {
+        // openal generate handle.
+        alGenBuffers(1, &handle);
+        // openal handle index > 0.
+        if (handle) { PushLogger(LogInfo, PSAG_SOUND_LABEL, "sound(openal) handle create.");           return true; }
+        else        { PushLogger(LogWarning, PSAG_SOUND_LABEL, "sound(openal) handle failed create."); return false; }
     }
 
-    bool PsagSoundPlayerHandle::Set3DSoundListenerPosition(const Vector3T<float>& pos) {
-        BASS_3DVECTOR ListenerPos = {};
-        memcpy(&ListenerPos.x, &pos.vector_x, sizeof(float) * 3);
+#define STB_VORBIS_NO_STDIO
+#include "stb_vorbis.c"
+    
+    PsagSoundDataResource::PsagSoundDataResource(const RawSoundStream& rawdata) {
+        if (rawdata.empty()) {
+            PushLogger(LogError, PSAG_SOUND_LABEL, "sound(audio) raw_data empty.");
+            return;
+        }
+        if (CreateBufHandle(BufferObjectHandle)) {
+            int VorbisError = NULL;
+            // raw file bin_data => stb read.
+            stb_vorbis* VorbisMemory = stb_vorbis_open_memory(rawdata.data(), (int)rawdata.size(), &VorbisError, nullptr);
+            if (VorbisMemory == nullptr) {
+                PushLogger(LogError, PSAG_SOUND_LABEL, "sound(audio) loader: invalid format.");
+                return;
+            }
+            stb_vorbis_info VorbisInfo = {};
+            // get audio params.
+            VorbisInfo = stb_vorbis_get_info(VorbisMemory);
+            int SampleRate = VorbisInfo.sample_rate;
+            int Channels   = VorbisInfo.channels;
+            // get total samples number.
+            size_t SampleNum = (size_t)stb_vorbis_stream_length_in_samples(VorbisMemory);
 
-        BASS_3DVECTOR ListenerVEL   = { 0.0f, 0.0f, 0.0f };  // listener speed.
-        BASS_3DVECTOR ListenerFRONT = { 0.0f, 0.0f, -1.0f }; // listener front.
-        BASS_3DVECTOR ListenerTOP   = { 0.0f, 1.0f, 0.0f };  // listener top.
+            ALenum DataFormat = NULL;
+            switch (Channels) {
+            case(1): { DataFormat = AL_FORMAT_MONO16;   break; }
+            case(2): { DataFormat = AL_FORMAT_STEREO16; break; }
+            default: {
+                PushLogger(LogError, PSAG_SOUND_LABEL, "sound(audio) decode: non_channels.");
+                return;
+            }}
+            // data(pcm) cache.
+            vector<int16_t> AudioDataCache(SampleNum * (size_t)Channels);
+            if (stb_vorbis_get_samples_short_interleaved(
+                VorbisMemory, Channels, AudioDataCache.data(), (int)AudioDataCache.size()
+            ) <= NULL) {
+                stb_vorbis_close(VorbisMemory);
+                PushLogger(LogError, PSAG_SOUND_LABEL, "sound(audio) decode: failed read pcm_data.");
+                return;
+            }
+            alBufferData(
+                BufferObjectHandle, DataFormat, 
+                AudioDataCache.data(), 
+                (ALsizei)AudioDataCache.size() * sizeof(int16_t),
+                (ALsizei)SampleRate
+            );
+            stb_vorbis_close(VorbisMemory);
 
-        return BASS_Set3DPosition(&ListenerPos, &ListenerVEL, &ListenerFRONT, &ListenerTOP);
+            PushLogger(LogInfo, PSAG_SOUND_LABEL, "sound(audio) decode: channels: %d, Rate: %d", Channels, SampleRate);
+            PushLogger(LogInfo, PSAG_SOUND_LABEL, "sound(audio) loader: %u samples", AudioDataCache.size());
+            return;
+        }
+        PushLogger(LogError, PSAG_SOUND_LABEL, "sound(audio) failed create.");
     }
 
-    PsagSoundPlayerHandle::~PsagSoundPlayerHandle() {
-        if (!BASS_StreamFree(BassStreamObject))
-            PushLogger(LogError, PSAG_SOUND_LABEL, "bass system: free error.");
+    PsagSoundDataResource::~PsagSoundDataResource() {
+        alDeleteBuffers(1, &BufferObjectHandle);
+        PushLogger(LogInfo, PSAG_SOUND_LABEL, "sound(audio) loader: delete buffer.");
+    }
+
+    PsagSoundDataPlayer::PsagSoundDataPlayer(PsagSoundDataResource& loader) {
+        BufferObjectHandle = loader._MS_GETRES();
+        // invalid handle.
+        if (BufferObjectHandle == NULL)
+            PushLogger(LogError, PSAG_SOUND_LABEL, "sound system: loader error, hd = null.");
+        
+        // create source => bind buffer.
+        alGenSources(1, &SourceObjectHandle);
+        if (SourceObjectHandle == NULL) {
+            PushLogger(LogError, PSAG_SOUND_LABEL, "sound system: failed create source.");
+            return;
+        }
+        alSourcei(SourceObjectHandle, AL_BUFFER, BufferObjectHandle);
+        alSourcei(SourceObjectHandle, AL_LOOPING, AL_TRUE);
+    }
+
+    PsagSoundDataPlayer::~PsagSoundDataPlayer() {
+        alDeleteSources(1, &SourceObjectHandle);
+        PushLogger(LogInfo, PSAG_SOUND_LABEL, "sound system: delete player.");
     };
+
+    void PsagSoundDataPlayer::SoundPlayer() { return alSourcePlay(SourceObjectHandle); }
+    void PsagSoundDataPlayer::SoundPause()  { return alSourcePause(SourceObjectHandle); }
+
+    void PsagSoundDataPlayer::SetPlayerBegin() {
+        alSourceRewind(SourceObjectHandle);
+        PushLogger(LogInfo, PSAG_SOUND_LABEL, "sound system: set pos_begin.");
+    }
+
+    bool PsagSoundDataPlayer::PlayerEndedFlag() {
+        ALint StateTemp = NULL;
+        alGetSourcei(SourceObjectHandle, AL_SOURCE_STATE, &StateTemp);
+        return StateTemp == AL_STOPPED ? true : false;
+    }
+
+    void PsagSoundDataPlayer::SoundSet3DPosition(const Vector3T<float>& position) {
+        alSource3f(SourceObjectHandle, AL_POSITION, position.vector_x, position.vector_y, position.vector_z);
+    }
+    void PsagSoundDataPlayer::SoundSet3DDirection(const Vector3T<float>& direction) {
+        alSource3f(SourceObjectHandle, AL_DIRECTION, direction.vector_x, direction.vector_y, direction.vector_z);
+    }
+    void PsagSoundDataPlayer::SoundSet3DGain(float gain) {
+        alSourcef(SourceObjectHandle, AL_GAIN, gain);
+    }
+
+    void PsagSoundDataPlayer::SoundSet3DVelocity(const Vector3T<float>& velocity) {
+        alSource3f(SourceObjectHandle, AL_VELOCITY, velocity.vector_x, velocity.vector_y, velocity.vector_z);
+    }
+    void PsagSoundDataPlayer::SoundSet3DVelocityListener(const Vector3T<float>& listener_v) {
+        alListener3f(AL_VELOCITY, listener_v.vector_x, listener_v.vector_y, listener_v.vector_z);
+    }
 }
-*/

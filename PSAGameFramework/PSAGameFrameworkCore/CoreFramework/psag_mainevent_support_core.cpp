@@ -120,8 +120,11 @@ namespace PsagFrameworkCore {
         VertexDataObjectCreate();
         StaticVertexDataObjectCreate();
         VirtualTextureDataObjectCreate(RenderingVirTextureSizeBase);
+
+        // sound system create.
+        CoreInitErrorFlag |= !CreateSoundDevice();
         // physics system create. default(debug?) world.
-        PhysicsWorldCreate("SYSTEM_PHY_WORLD", Vector2T<float>());
+        CoreInitErrorFlag |= !PhysicsWorldCreate("SYSTEM_PHY_WORLD", Vector2T<float>());
 
         // create game2d post-shader.
         RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
@@ -155,8 +158,11 @@ namespace PsagFrameworkCore {
         VertexDataObjectDelete();
         StaticVertexDataObjectDelete();
         VirtualTextureDataObjectDelete();
-        // physics system init.
-        PhysicsWorldDelete("SYSTEM_PHY_WORLD");
+
+        // sound system delete.
+        CoreInitErrorFlag |= !DeleteSoundDevice();
+        // physics system delete.
+        CoreInitErrorFlag |= !PhysicsWorldDelete("SYSTEM_PHY_WORLD");
 
         ImGuiFree();
         CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStcVertexData::LowLevelResourceFree();

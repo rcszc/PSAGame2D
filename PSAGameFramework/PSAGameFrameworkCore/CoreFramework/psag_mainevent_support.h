@@ -138,6 +138,8 @@ namespace PsagFrameworkCore {
     }
 
     class PSAGame2DFramework :public PsagFrameworkStart::CoreMidFrameworkBase,
+        // init & free sound_system.
+        public PsagLow::PsagSupSoundSystem::__PsagSoundDeviceHandle,
         public PsagLow::PsagSupWindowGuiEventOglfw,
         public PsagLow::PsagSupWindowGuiEventImGui,
         // public PsagLow::PsagSupGraphicsLLRES, (”Î"GLEngineVertexDyData"≥ÂÕª)

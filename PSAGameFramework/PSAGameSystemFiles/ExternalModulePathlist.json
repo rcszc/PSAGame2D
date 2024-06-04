@@ -7,7 +7,7 @@
     "ExternalLibrary/GraphicsLibrary/image_loader/",
     "ExternalLibrary/GuiimguiLibrary/",
     "ExternalLibrary/FiletoolsLibrary/RapidJSON/include/",
-    "ExternalLibrary/FiletoolsLibrary/Audiere/include/",
+    "ExternalLibrary/FiletoolsLibrary/OpenAL/include/",
     "ExternalLibrary/FiletoolsLibrary/Zlib/include/",
     "ExternalLibrary/FiletoolsLibrary/Base64/",
     "ExternalLibrary/PhysicalLibray/include"
@@ -15,7 +15,7 @@
   "ExtModuleLibray": [
     "ExternalLibrary/GraphicsLibrary/glfw_libray/lib-vc2019/",
     "ExternalLibrary/GraphicsLibrary/glew_libray/bin/Release/x64/",
-    "ExternalLibrary/FiletoolsLibrary/Audiere/lib/",
+    "ExternalLibrary/FiletoolsLibrary/OpenAL/lib/Win64/",
     "ExternalLibrary/FiletoolsLibrary/Zlib/lib/",
     "ExternalLibrary/PhysicalLibray/lib"
   ]

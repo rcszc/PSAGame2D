@@ -168,7 +168,7 @@ namespace GameActorCore {
 			std::memset(this, NULL, sizeof(HealthFuncParams));
 		}
 	};
-#define PSAG_HEALTH_STATE_NUM 16
+#define PSAG_HEALTH_STATE_NUM 6
 	struct GameActorHealthDESC {
 		float InitialHealthState[PSAG_HEALTH_STATE_NUM];
 		float InitialHealthSpeed[PSAG_HEALTH_STATE_NUM];
@@ -206,6 +206,9 @@ namespace GameActorCore {
 		Vector2T<float> InitialSpeed;
 		float           InitialRotate;
 
+		// system core comp switch_flags.
+		bool EnableHealth = true, EnableRendering = true;
+
 		GameActorHealthDESC ActorHealthSystem;
 		
 		GameActorActuatorDESC() :
@@ -227,21 +230,74 @@ namespace GameActorCore {
 		{}
 	};
 
+	// ######################## actor system components ########################
+	// basic_components: comp_space_trans, comp_health_trans, comp_rendering
+	// 2024_06_04. RCSZ.
+	namespace system {
+
+		class ActorSpaceTrans :
+			public PhysicsEngine::PhyEngineCoreDataset,
+			public __ACTOR_MODULES_TIMESTEP
+		{
+		protected:
+			// world index, body(item) index.
+			std::string PhysicsWorld;
+			ResUnique   PhysicsBody;
+
+			Vector3T<float> CalcInterSpeed;
+		public:
+			ActorSpaceTrans(const std::string& phy_world, ResUnique phy_body, const Vector3T<float>& inter_speed) :
+				PhysicsWorld(phy_world), PhysicsBody(phy_body), CalcInterSpeed(inter_speed)
+			{}
+
+			Vector2T<float> ActorStateMoveVec = {};
+			Vector2T<float> ActorStateScale   = {};
+			float           ActorStateRotate  = {};
+
+			void UpdateActorSpaceTrans(Vector2T<float>& position, Vector2T<float>& scale, float& rotate);
+		};
+
+		class ActorHealthTrans : public __ACTOR_MODULES_TIMESTEP {
+		protected:
+			std::function<void(const HealthFuncParams&)> ActorHealthHandlerFunc = {};
+		public:
+			ActorHealthTrans(const std::function<void(const HealthFuncParams&)>& func) :
+				ActorHealthHandlerFunc(func)
+			{}
+
+			// actor hp_state system. 0:set_state, 1:actor_state, 2:inter_speed.
+			float ActorHealthState[3][PSAG_HEALTH_STATE_NUM] = {};
+
+			void UpdateActorHealthTrans(const HealthFuncParams& params);
+		};
+
+		class ActorRendering : public GraphicsEngineDataset::GLEngineStcVertexData {
+		protected:
+			PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender  = {};
+			PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                 ShaderUniform = {};
+		public:
+			ResUnique ShaderIndex      = NULL;
+			ResUnique VertexGroupIndex = NULL;
+
+			Vector2T<float> RenderResolution = {};
+			PsagMatrix4     RenderMatrix     = {};
+
+			void UpdateActorRendering(
+				const Vector2T<float>& position, const Vector2T<float>& scale, float rotate, float time_count
+			);
+		};
+	}
+
 	// 游戏 Actor (实体)执行器.
 	class GameActorActuator :
-		public GraphicsEngineDataset::GLEngineStcVertexData,
-		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
 		public __ACTOR_MODULES_TIMESTEP,
 		public __ACTOR_MODULES_CAMERAPOS
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
-
-		std::chrono::steady_clock::time_point ActorTimer        = std::chrono::steady_clock::now();
-		ActorPrivateINFO                      ActorUniqueInfo   = {};
-		GameActorShader*                      ActorResource     = nullptr;
+		std::chrono::steady_clock::time_point ActorTimer      = std::chrono::steady_clock::now();
+		ActorPrivateINFO                      ActorUniqueInfo = {};
+		GameActorShader*                      ActorResource   = nullptr;
 
 		std::string ActorPhysicsWorld = {};
 		ResUnique   ActorPhysicsItem  = {};
@@ -255,40 +311,38 @@ namespace GameActorCore {
 		// x:move, y:rotate, z:scale.
 		Vector3T<float> AnimInterSpeed = {};
 
-		// move,scale 0:set_speed, 1:render_value.
-		// rotate x:set_speed, y:render_value.
-		Vector2T<float> ActorStateMove[2]  = {};
-		Vector2T<float> ActorStateRotate   = {};
-		Vector2T<float> ActorStateScale[2] = { Vector2T<float>(1.0f, 1.0f), Vector2T<float>(1.0f, 1.0f) };
+		ActorPrivateINFO ActorCollisionInfo = {};
+		Vector2T<float>  ActorStatePosition = {};
+		Vector2T<float>  ActorStateScale    = {};
+		float            ActorStateRotate   = {};
 
-		ActorPrivateINFO ActorCollisionINFO = {};
-
-		// actor hp_state system. 0:set_state, 1:actor_state, 2:trans_speed.
-		float ActorHealthState[3][PSAG_HEALTH_STATE_NUM] = {};
-		std::function<void(const HealthFuncParams&)> ActorHealthHandlerFunc = {};
+		// Actor基础组件.
+		system::ActorSpaceTrans*  ActorCompSpaceTrans  = nullptr;
+		system::ActorHealthTrans* ActorCompHealthTrans = nullptr;
+		system::ActorRendering*   ActorCompRendering   = nullptr;
 	public:
 		GameActorActuator(uint32_t TYPE, const GameActorActuatorDESC& INIT_DESC);
 		~GameActorActuator();
 
 		ActorPrivateINFO ActorGetPrivate()   { return ActorUniqueInfo;    }
-		ActorPrivateINFO ActorGetCollision() { return ActorCollisionINFO; }
+		ActorPrivateINFO ActorGetCollision() { return ActorCollisionInfo; }
 
 		float ActorGetHealth(size_t count) {
 			if (count < PSAG_HEALTH_STATE_NUM)
-				return ActorHealthState[1][count];
+				return ActorCompHealthTrans == nullptr ? 0.0f : ActorCompHealthTrans->ActorHealthState[1][count];
 			return 0.0f;
 		}
 
 		// timer: accuracy: ms, unit: s.
 		float ActorGetLifeTime();
 		// actor get_state: rotate & position.
-		float           ActorGetRotate()   { return ActorStateRotate.vector_y; };
-		Vector2T<float> ActorGetPosition() { return ActorStateMove[1]; };
+		float           ActorGetRotate()   { return ActorStateRotate; };
+		Vector2T<float> ActorGetPosition() { return ActorStatePosition; };
 
-		float*           ActorMappingRotateSpeed() { return &ActorStateRotate.vector_x; };
-		Vector2T<float>* ActorMappingMoveSpeed()   { return &ActorStateMove[0]; };
+		float*           ActorMappingRotateSpeed() { return &ActorCompSpaceTrans->ActorStateRotate; };
+		Vector2T<float>* ActorMappingMoveSpeed()   { return &ActorCompSpaceTrans->ActorStateMoveVec; };
 		// not scale actor collision_box.
-		Vector2T<float>* ActorMappingScaleModify() { return &ActorStateScale[0]; };
+		Vector2T<float>* ActorMappingScaleModify() { return &ActorCompSpaceTrans->ActorStateScale; };
 
 		// actor virtual(scene) coord =convert=> window coord(pixel).
 		Vector2T<float> ActorConvertVirCoord(Vector2T<uint32_t> window_res);
@@ -299,35 +353,7 @@ namespace GameActorCore {
 	};
 }
 
-namespace GameActorManager {
-	StaticStrLABEL PSAGM_ACTOR_MAG_LABEL = "PSAG_ACTOR_MAG";
-
-	class GameActorActuatorManager {
-	protected:
-		std::unordered_map<size_t, GameActorCore::GameActorActuator*> GameActorDataset = {};
-		std::vector<size_t> GameActorFreeList = {};
-	public:
-		GameActorActuatorManager() {};
-		~GameActorActuatorManager();
-
-		// get_source data(hash_map), pointer.
-		std::unordered_map<size_t, GameActorCore::GameActorActuator*>* GetSourceData() { 
-			return &GameActorDataset; 
-		}
-
-		size_t CreateGameActor(uint32_t actor_code, const GameActorCore::GameActorActuatorDESC& actor_desc);
-		bool   DeleteGameActor(size_t unique_code);
-		GameActorCore::GameActorActuator* FindGameActor(size_t unique_code);
-
-		void UpdateManagerData();
-
-		// update all actor_object "ActorUpdateHealth" & "ActorUpdate".
-		// rendering all actor_object "ActorRendering".
-		void RunAllGameActor();
-	};
-}
-
-// 用于构建静态场景, 比静态'Actor'更加轻量, 但是同样共享'Actor'的着色器资源.
+// 用于构建静态场景, 比静态'Actor'更加轻量, 但是使用了一些共同组件.
 namespace GameBrickCore {
 	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
 
@@ -340,6 +366,9 @@ namespace GameBrickCore {
 		Vector2T<float> InitialPosition;
 		Vector2T<float> InitialScale;
 		float           InitialRotate;
+
+		// system core comp switch_flags.
+		bool EnableRendering = true;
 
 		GameBrickActuatorDESC() :
 			BrickShaderResource(nullptr),
@@ -358,12 +387,9 @@ namespace GameBrickCore {
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
-
 		size_t                          BrickUniqueID      = NULL;
 		GameActorCore::GameActorShader* BrickResource      = nullptr;
-		GameActorCore::ActorPrivateINFO BrickCollisionINFO = {};
+		GameActorCore::ActorPrivateINFO BrickCollisionInfo = {};
 
 		std::string BrickPhysicsWorld = {};
 		ResUnique   BcickPhysicsItem  = {};
@@ -377,6 +403,8 @@ namespace GameBrickCore {
 		Vector2T<float> BrickStaticPosition = {};
 		Vector2T<float> BrickStaticScale    = {};
 		float           BrickStaticRotate   = {};
+
+		GameActorCore::system::ActorRendering* BirckCompRendering = nullptr;
 	public:
 		~GameBrickActuator();
 		GameBrickActuator(const GameBrickActuatorDESC& INIT_DESC);
@@ -387,6 +415,54 @@ namespace GameBrickCore {
 		float           BrickGetRotate()   { return BrickStaticRotate; }
 
 		void BrickRendering();
+	};
+}
+
+namespace GameCoreManager {
+	StaticStrLABEL PSAGM_CORE_MAG_LABEL = "PSAG_GAMECORE_MAG";
+
+	class GameActorActuatorManager {
+	protected:
+		std::unordered_map<size_t, GameActorCore::GameActorActuator*> GameActorDataset = {};
+		std::vector<size_t> GameActorFreeList = {};
+	public:
+		GameActorActuatorManager() {};
+		~GameActorActuatorManager();
+
+		// get_source data(hash_map), pointer.
+		std::unordered_map<size_t, GameActorCore::GameActorActuator*>* GetSourceData() {
+			return &GameActorDataset;
+		}
+
+		size_t CreateGameActor(uint32_t actor_code, const GameActorCore::GameActorActuatorDESC& actor_desc);
+		bool   DeleteGameActor(size_t unique_code);
+		GameActorCore::GameActorActuator* FindGameActor(size_t unique_code);
+
+		void UpdateManagerData();
+
+		// update all actor_object "ActorUpdateHealth" & "ActorUpdate".
+		// rendering all actor_object "ActorRendering".
+		void RunAllGameActor();
+	};
+
+	class GameBrickActuatorManager {
+	protected:
+		std::unordered_map<size_t, GameBrickCore::GameBrickActuator*> GameBrickDataset = {};
+		std::vector<size_t> GameBrickFreeList = {};
+	public:
+		GameBrickActuatorManager() {};
+		~GameBrickActuatorManager();
+
+		// get_source data(hash_map), pointer.
+		std::unordered_map<size_t, GameBrickCore::GameBrickActuator*>* GetSourceData() {
+			return &GameBrickDataset;
+		}
+
+		size_t CreateGameActor(const GameBrickCore::GameBrickActuatorDESC& brick_desc);
+		bool   DeleteGameActor(size_t unique_code);
+		
+		// rendering all brick_object "BrickRendering".
+		void RunAllGameActor();
 	};
 }
 

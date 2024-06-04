@@ -4,12 +4,12 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-namespace GameActorManager {
+namespace GameCoreManager {
 	GameActorActuatorManager::~GameActorActuatorManager() {
 		for (auto& ActorItem : GameActorDataset)
 			if (ActorItem.second != nullptr)
 				delete ActorItem.second;
-		PushLogger(LogInfo, PSAGM_ACTOR_MAG_LABEL, "game_actor manager system delete.");
+		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_actor manager system delete.");
 	}
 
 	size_t GameActorActuatorManager::CreateGameActor(
@@ -19,7 +19,7 @@ namespace GameActorManager {
 			new GameActorCore::GameActorActuator(actor_code, actor_desc);
 		// actor pointer = nullptr.
 		if (CreateGameActor == nullptr) {
-			PushLogger(LogError, PSAGM_ACTOR_MAG_LABEL, "game_actor(mag) item failed create.");
+			PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_actor(mag) item failed create.");
 			return NULL;
 		}
 		size_t UniqueCode = CreateGameActor->ActorGetPrivate().ActorUniqueCode;
@@ -61,5 +61,39 @@ namespace GameActorManager {
 			RunActorItem.second->ActorUpdate();
 			RunActorItem.second->ActorRendering();
 		}
+	}
+
+	GameBrickActuatorManager::~GameBrickActuatorManager() {
+		for (auto& BrickItem : GameBrickDataset)
+			if (BrickItem.second != nullptr)
+				delete BrickItem.second;
+		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_brick manager system delete.");
+	}
+
+	size_t GameBrickActuatorManager::CreateGameActor(const GameBrickCore::GameBrickActuatorDESC& brick_desc) {
+		GameBrickCore::GameBrickActuator* CreateGameBrick = new GameBrickCore::GameBrickActuator(brick_desc);
+		// brick pointer = nullptr.
+		if (CreateGameBrick == nullptr) {
+			PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_brick(mag) item failed create.");
+			return NULL;
+		}
+		size_t UniqueCode = CreateGameBrick->BrickGetUniqueID();
+		GameBrickDataset[UniqueCode] = CreateGameBrick;
+		return UniqueCode;
+	}
+
+	bool GameBrickActuatorManager::DeleteGameActor(size_t unique_code) {
+		auto it = GameBrickDataset.find(unique_code);
+		if (it != GameBrickDataset.end()) {
+			delete it->second;
+			GameBrickDataset.erase(it);
+			return true;
+		}
+		return false;
+	}
+
+	void GameBrickActuatorManager::RunAllGameActor() {
+		for (auto& RunBrickItem : GameBrickDataset)
+			RunBrickItem.second->BrickRendering();
 	}
 }

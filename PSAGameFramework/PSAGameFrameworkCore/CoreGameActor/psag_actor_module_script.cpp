@@ -15,9 +15,9 @@ layout (location = 3) in vec3 VertexNormal;
 
 uniform mat4 MvpMatrix;
 
-uniform vec2  ActorMove;
-uniform float ActorRotate;
-uniform vec2  ActorScale;
+uniform vec2  ActorPos;
+uniform float ActorRot;
+uniform vec2  ActorSize;
 
 out vec4 FxColor;
 out vec2 FxCoord;
@@ -25,17 +25,17 @@ out vec2 FxCoord;
 void main()
 {
     mat2 Rotation2DMatrix = mat2(
-        cos(ActorRotate), -sin(ActorRotate),
-        sin(ActorRotate),  cos(ActorRotate)
+        cos(ActorRot), -sin(ActorRot),
+        sin(ActorRot),  cos(ActorRot)
     );
 
 	mat2 Scale2DMatrix = mat2(
-		ActorScale.x, 0.0,
-		0.0, ActorScale.y
+		ActorSize.x, 0.0,
+		0.0, ActorSize.y
 	);
 
 	// scale => rotate => move.
-	vec2 VerPos = vec2(VertexPosition.xy * Scale2DMatrix * Rotation2DMatrix + ActorMove);
+	vec2 VerPos = vec2(VertexPosition.xy * Scale2DMatrix * Rotation2DMatrix + ActorPos);
 	gl_Position = MvpMatrix * vec4(vec3(VerPos.x, VerPos.y, VertexPosition.z), 1.0);
 	FxColor     = VertexColor;
 	FxCoord     = VertexTexture;

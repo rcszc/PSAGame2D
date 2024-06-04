@@ -14,8 +14,8 @@ __当前版本:__ 先行版 v20240531
 - 框架内置多级背景处理以及多级后期处理着色器组
 > 我粗略的学习过ECS, 此设计可能并没有ECS优秀, 只是个人尝试
 
-__开发进度:__ ███████░░░ 67%
-> FrameworkCore Files: 62, LoC: 8816
+__开发进度:__ ███████░░░ 69%
+> FrameworkCore Files: 62, LoC: 9113
 ---
 
 ## PSAG-ARCH 架构
@@ -23,7 +23,7 @@ __开发进度:__ ███████░░░ 67%
 ### 框架层级 & 渲染架构
 
 <p align="center">
-  <img src="PSAGameDesigns/EngineLayerArch.png" style="width:45%"/>
+  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:45%"/>
   <span style="display:inline-block; width:1%;"></span>
   <img src="PSAGameDesigns/RendererArch.png" style="width:51%;"/>
 </p>

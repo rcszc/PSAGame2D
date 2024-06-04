@@ -25,6 +25,15 @@ namespace GameBrickCore {
 
 		BrickResource = INIT_DESC.BrickShaderResource;
 
+		if (INIT_DESC.EnableRendering) {
+			BirckCompRendering = new GameActorCore::system::ActorRendering();
+
+			BirckCompRendering->RenderResolution = RenderingResolution;
+			BirckCompRendering->ShaderIndex      = BrickResource->__ACTOR_SHADER_ITEM;
+			BirckCompRendering->VertexGroupIndex = BrickResource->__ACTOR_VERTEX_ITEM;
+			BirckCompRendering->RenderMatrix     = BrickResource->__ACTOR_MATRIX_ITEM;
+		}
+
 		if (PhysicsWorldFind(INIT_DESC.BrickPhysicsWorld) == nullptr) {
 			PushLogger(LogError, PSAGM_BRICK_CORE_LABEL, "game_brick unable find world: %s", INIT_DESC.BrickPhysicsWorld.c_str());
 			return;
@@ -37,8 +46,9 @@ namespace GameBrickCore {
 
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
-		ActorPhyConfig.IndexUniqueCode = BrickUniqueID;
-		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua();
+		ActorPhyConfig.IndexUniqueCode     = BrickUniqueID;
+		ActorPhyConfig.CollVertexGroup     = PhysicsEngine::PresetVertexGroupSqua(); // default vertex_group.
+		ActorPhyConfig.PhysicsModeTypeFlag = false;
 
 		if (INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());
@@ -57,22 +67,10 @@ namespace GameBrickCore {
 	}
 
 	void GameBrickActuator::BrickRendering() {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(BrickResource->__ACTOR_SHADER_ITEM);
-
-		ShaderRender.RenderBindShader(ShaderTemp);
-		VerStcOperFrameDraw(BrickResource->__ACTOR_VERTEX_ITEM);
-
-		// framework preset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", BrickResource->__ACTOR_MATRIX_ITEM);
-		ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderingResolution);
-
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorTime", VirTimerCount);
-		ShaderUniform.UniformVec2 (ShaderTemp, "ActorMove", BrickStaticPosition);
-		// rotate angle =convet=> radian.
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", BrickStaticRotate);
-		ShaderUniform.UniformVec2 (ShaderTemp, "ActorScale",  BrickStaticScale);
-
-		ShaderRender.RenderUnbindShader();
+		if (BirckCompRendering == nullptr)
+			return;
+		// rendering brick shader_data.
+		BirckCompRendering->UpdateActorRendering(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, VirTimerCount);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
 	}
 }

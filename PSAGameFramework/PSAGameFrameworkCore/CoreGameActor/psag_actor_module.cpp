@@ -167,9 +167,70 @@ namespace GameActorCore {
 
 	// ******************************** GameActorActuator ********************************
 
+	inline void SysVector2FInter(const Vector2T<float>& src, Vector2T<float>& inter, float value) {
+		inter.vector_x += (src.vector_x - inter.vector_x) * value;
+		inter.vector_y += (src.vector_y - inter.vector_y) * value;
+	}
+	constexpr Vector2T<float> ActorMoveSpeedZERO(0.0f, 0.0f);
 #define PSAGM_ACTOR_INTER 0.05f
 #define PSAGM_ACTOR_FRICT 0.005f
-	constexpr Vector2T<float> ActorMoveSpeedZERO(0.0f, 0.0f);
+
+#define PSAGM_FP32_LOSS std::numeric_limits<float>::epsilon()
+	namespace system {
+
+		void ActorSpaceTrans::UpdateActorSpaceTrans(Vector2T<float>& position, Vector2T<float>& scale, float& rotate) {
+			// speed_sub: move, inter: scale.
+			SysVector2FInter(ActorMoveSpeedZERO, ActorStateMoveVec, PSAGM_ACTOR_FRICT * CalcInterSpeed.vector_x * ActorModulesTimeStep);
+			SysVector2FInter(ActorStateScale, scale, PSAGM_ACTOR_INTER * CalcInterSpeed.vector_z * ActorModulesTimeStep);
+			// rotate speed sub(vir_friction).
+			ActorStateRotate += (0.0f - ActorStateRotate) * PSAGM_ACTOR_FRICT * CalcInterSpeed.vector_y * ActorModulesTimeStep;
+
+			auto PhysicsState = PhyBodyItemGet(PhysicsWorld, PhysicsBody);
+
+			if (abs(ActorStateMoveVec.vector_x) > PSAGM_FP32_LOSS || abs(ActorStateMoveVec.vector_y) > PSAGM_FP32_LOSS)
+				PhysicsState.BodySourcePointer->SetLinearVelocity(b2Vec2(ActorStateMoveVec.vector_x, ActorStateMoveVec.vector_y));
+
+			if (abs(ActorStateRotate) > PSAGM_FP32_LOSS) {
+				float CurrentAngularVelocity = PhysicsState.BodySourcePointer->GetAngularVelocity();
+				float Torque = (ActorStateRotate - CurrentAngularVelocity) * PhysicsState.BodySourcePointer->GetInertia();
+				PhysicsState.BodySourcePointer->ApplyTorque(Torque, true);
+			}
+
+			// rendering actor state.
+			position = PhysicsState.BodyPositionMove;
+			rotate   = PhysicsState.BodyRotateAngle;
+		}
+
+		void ActorHealthTrans::UpdateActorHealthTrans(const HealthFuncParams& params) {
+			// state inter_calc.
+			for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i) {
+				ActorHealthState[1][i] += (ActorHealthState[0][i] - ActorHealthState[1][i])
+					* PSAGM_ACTOR_INTER * ActorHealthState[2][i] * ActorModulesTimeStep;
+			}
+			// calling hp processing functions.
+			ActorHealthHandlerFunc(params);
+		}
+
+		void ActorRendering::UpdateActorRendering(
+			const Vector2T<float>& position, const Vector2T<float>& scale, float rotate, float time_count
+		) {
+			auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderIndex);
+
+			ShaderRender.RenderBindShader(ShaderTemp);
+			VerStcOperFrameDraw(VertexGroupIndex);
+
+			// framework preset uniform.
+			ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        RenderMatrix);
+			ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderResolution);
+
+			ShaderUniform.UniformFloat(ShaderTemp, "ActorTime", time_count);
+			ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",  position);
+			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  rotate);
+			ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize", scale);
+
+			ShaderRender.RenderUnbindShader();
+		}
+	}
 
 	GameActorActuator::GameActorActuator(uint32_t TYPE, const GameActorActuatorDESC& INIT_DESC) {
 		if (TYPE == Type::ActorTypeNULL) {
@@ -187,8 +248,17 @@ namespace GameActorCore {
 		// shader_resolution.
 		auto ResTemp = INIT_DESC.ActorShaderResource->__RENDER_RESOLUTION;
 		RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
-
+		// actor自身留有shader资源指针, 目前无操作. 2024_06_04.
 		ActorResource = INIT_DESC.ActorShaderResource;
+
+		if (INIT_DESC.EnableRendering) {
+			ActorCompRendering = new system::ActorRendering();
+
+			ActorCompRendering->RenderResolution = RenderingResolution;
+			ActorCompRendering->ShaderIndex      = ActorResource->__ACTOR_SHADER_ITEM;
+			ActorCompRendering->VertexGroupIndex = ActorResource->__ACTOR_VERTEX_ITEM;
+			ActorCompRendering->RenderMatrix     = ActorResource->__ACTOR_MATRIX_ITEM;
+		}
 
 		if (PhysicsWorldFind(INIT_DESC.ActorPhysicsWorld) == nullptr) {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", INIT_DESC.ActorPhysicsWorld.c_str());
@@ -200,19 +270,11 @@ namespace GameActorCore {
 		AnimInterSpeed.vector_x = INIT_DESC.ControlFricMove;
 		AnimInterSpeed.vector_y = INIT_DESC.ControlFricRotate;
 		AnimInterSpeed.vector_z = INIT_DESC.ControlFricScale;
-
-		ActorStateMove[0] = INIT_DESC.InitialSpeed;
-		ActorStateMove[1] = INIT_DESC.InitialPosition;
-		ActorStateRotate  = Vector2T<float>(INIT_DESC.InitialRotate, INIT_DESC.InitialRotate);
-		
-		// config initial state.
-		ActorStateScale[0] = INIT_DESC.InitialScale;
-		ActorStateScale[1] = INIT_DESC.InitialScale;
 		
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode = ActorUniqueInfo.ActorUniqueCode;
-		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua();
+		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua(); // default vertex_group.
 
 		switch (INIT_DESC.ActorPhysicalMode) {
 		case(PhyMoveActor):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
@@ -231,18 +293,38 @@ namespace GameActorCore {
 
 		ActorPhysicsItem = GenResourceID.PsagGenTimeKey();
 		PhyBodyItemAlloc(ActorPhysicsWorld, ActorPhysicsItem, ActorPhyConfig);
+		
+		// config space_trans. ture: non-fixed.
+		if (ActorPhyConfig.PhysicsModeTypeFlag == true) {
+			ActorCompSpaceTrans = new system::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem, AnimInterSpeed);
+			// init move(speed_vec), rotate, scale.
+			ActorCompSpaceTrans->ActorStateMoveVec = INIT_DESC.InitialSpeed;
+			ActorCompSpaceTrans->ActorStateRotate  = INIT_DESC.InitialRotate;
+			ActorCompSpaceTrans->ActorStateScale   = INIT_DESC.InitialScale;
+		}
+		ActorStatePosition = INIT_DESC.InitialPosition;
+		ActorStateRotate   = INIT_DESC.InitialRotate;
+		ActorStateScale    = INIT_DESC.InitialScale;
 
-		// config health system.
-		memcpy(ActorHealthState[0], INIT_DESC.ActorHealthSystem.InitialHealthState, PSAG_HEALTH_STATE_NUM * sizeof(float));
-		memcpy(ActorHealthState[1], INIT_DESC.ActorHealthSystem.InitialHealthState, PSAG_HEALTH_STATE_NUM * sizeof(float));
-		memcpy(ActorHealthState[2], INIT_DESC.ActorHealthSystem.InitialHealthSpeed, PSAG_HEALTH_STATE_NUM * sizeof(float));
+		// create hp comp.
+		if (INIT_DESC.EnableHealth) {
+			ActorCompHealthTrans = new system::ActorHealthTrans(INIT_DESC.ActorHealthSystem.HealthHandlerFunc);
 
-		ActorHealthHandlerFunc = INIT_DESC.ActorHealthSystem.HealthHandlerFunc;
-
+			// config health system.
+			size_t Bytes = PSAG_HEALTH_STATE_NUM * sizeof(float);
+			memcpy(ActorCompHealthTrans->ActorHealthState[0], INIT_DESC.ActorHealthSystem.InitialHealthState, Bytes);
+			memcpy(ActorCompHealthTrans->ActorHealthState[1], INIT_DESC.ActorHealthSystem.InitialHealthState, Bytes);
+			memcpy(ActorCompHealthTrans->ActorHealthState[2], INIT_DESC.ActorHealthSystem.InitialHealthSpeed, Bytes);
+		}
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor item create.");
 	}
 
 	GameActorActuator::~GameActorActuator() {
+		// free: sysem_components.
+		if (ActorCompSpaceTrans != nullptr)  delete ActorCompSpaceTrans;
+		if (ActorCompHealthTrans != nullptr) delete ActorCompHealthTrans;
+		if (ActorCompRendering != nullptr)   delete ActorCompRendering;
+
 		// free: physics system item.
 		PhyBodyItemFree(ActorPhysicsWorld, ActorPhysicsItem);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor item delete: %u", ActorUniqueInfo.ActorUniqueCode);
@@ -260,8 +342,8 @@ namespace GameActorCore {
 		
 		// actor_position - camera_position.
 		Vector2T<float> ActorMapping(
-			ActorStateMove[1].vector_x + ActorModulesCameraPos.vector_x / ValueScale,
-			ActorStateMove[1].vector_y + ActorModulesCameraPos.vector_y
+			ActorStatePosition.vector_x + ActorModulesCameraPos.vector_x / ValueScale,
+			ActorStatePosition.vector_y + ActorModulesCameraPos.vector_y
 		);
 		return Vector2T<float>(
 			ActorMapping.vector_x * ValueScale / SystemRenderingOrthoSpace * LossWidth + LossWidth,
@@ -270,80 +352,40 @@ namespace GameActorCore {
 	}
 
 	void GameActorActuator::ActorUpdateHealth() {
-		// state trans calc.
-		for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i) {
-			ActorHealthState[1][i] += (ActorHealthState[0][i] - ActorHealthState[1][i])
-				* PSAGM_ACTOR_INTER * ActorHealthState[2][i] * ActorModulesTimeStep;
-		}
+		if (ActorCompHealthTrans == nullptr)
+			return;
 
 		// in func parameters.
 		HealthFuncParams FuncParams = {};
 		FuncParams.ThisActorUniqueCode = ActorUniqueInfo.ActorUniqueCode;
-		FuncParams.ActorCollision      = ActorCollisionINFO;
+		FuncParams.ActorCollision      = ActorCollisionInfo;
 
-		FuncParams.ActorHealthStates = ActorHealthState[0];
+		FuncParams.ActorHealthStates = ActorCompHealthTrans->ActorHealthState[0];
 		FuncParams.ActorHealthLength = PSAG_HEALTH_STATE_NUM;
 
-		FuncParams.ActorPosition = ActorStateMove[1];
-		FuncParams.ActorSpeed    = ActorStateMove[0];
+		FuncParams.ActorPosition = ActorStatePosition;
+		FuncParams.ActorSpeed = 
+			ActorCompSpaceTrans == nullptr ? Vector2T<float>(0.0f, 0.0f) : ActorCompSpaceTrans->ActorStateMoveVec;
 
-		// calling hp processing functions.
-		ActorHealthHandlerFunc(FuncParams);
+		ActorCompHealthTrans->UpdateActorHealthTrans(FuncParams);
 	}
 
-	inline void SysVector2FInter(const Vector2T<float>& src, Vector2T<float>& inter, float value) {
-		inter.vector_x += (src.vector_x - inter.vector_x) * value;
-		inter.vector_y += (src.vector_y - inter.vector_y) * value;
-	}
-
-#define PSAGM_FP32_LOSS std::numeric_limits<float>::epsilon()
 	void GameActorActuator::ActorUpdate() {
-		// speed_sub: move, inter: scale.
-		SysVector2FInter(ActorMoveSpeedZERO, ActorStateMove[0],  PSAGM_ACTOR_FRICT * AnimInterSpeed.vector_x * ActorModulesTimeStep);
-		SysVector2FInter(ActorStateScale[0], ActorStateScale[1], PSAGM_ACTOR_INTER * AnimInterSpeed.vector_z * ActorModulesTimeStep);
-		// rotate speed sub(vir_friction).
-		ActorStateRotate.vector_x += 
-			(0.0f - ActorStateRotate.vector_x) * PSAGM_ACTOR_FRICT * AnimInterSpeed.vector_y * ActorModulesTimeStep;
-
-		auto PhysicsState = PhyBodyItemGet(ActorPhysicsWorld, ActorPhysicsItem);
-
-		if (abs(ActorStateMove[0].vector_x) > PSAGM_FP32_LOSS || abs(ActorStateMove[0].vector_y) > PSAGM_FP32_LOSS)
-			PhysicsState.BodySourcePointer->SetLinearVelocity(b2Vec2(ActorStateMove[0].vector_x, ActorStateMove[0].vector_y));
-
-		if (abs(ActorStateRotate.vector_x) > PSAGM_FP32_LOSS) {
-			float CurrentAngularVelocity = PhysicsState.BodySourcePointer->GetAngularVelocity();
-			float Torque = (ActorStateRotate.vector_x - CurrentAngularVelocity) * PhysicsState.BodySourcePointer->GetInertia();
-			PhysicsState.BodySourcePointer->ApplyTorque(Torque, true);
-		}
-
-		// rendering actor state.
-		ActorStateMove[1] = PhysicsState.BodyPositionMove;
-		ActorStateRotate.vector_y = PhysicsState.BodyRotateAngle;
+		if (ActorCompSpaceTrans != nullptr)
+			ActorCompSpaceTrans->UpdateActorSpaceTrans(ActorStatePosition, ActorStateScale, ActorStateRotate);
 
 		ActorPrivateINFO CollisionItem = {};
 		// update collision info.
 		CollisionItem.ActorTypeCode   = Type::ActorTypeNULL;
 		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollision(ActorPhysicsWorld, ActorPhysicsItem);
-		ActorCollisionINFO = CollisionItem;
+		ActorCollisionInfo = CollisionItem;
 	}
 
 	void GameActorActuator::ActorRendering() {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ActorResource->__ACTOR_SHADER_ITEM);
-
-		ShaderRender.RenderBindShader(ShaderTemp);
-		VerStcOperFrameDraw(ActorResource->__ACTOR_VERTEX_ITEM);
-
-		// framework preset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", ActorResource->__ACTOR_MATRIX_ITEM);
-		ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderingResolution);
-
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorTime", VirTimerCount);
-		ShaderUniform.UniformVec2 (ShaderTemp, "ActorMove", ActorStateMove[1]);
-		// rotate angle =convet=> radian.
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", ActorStateRotate.vector_y);
-		ShaderUniform.UniformVec2 (ShaderTemp, "ActorScale",  ActorStateScale[1]);
-
-		ShaderRender.RenderUnbindShader();
+		if (ActorCompRendering == nullptr)
+			return;
+		// rendering actor shader_data.
+		ActorCompRendering->UpdateActorRendering(ActorStatePosition, ActorStateScale, ActorStateRotate, VirTimerCount);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
 	}
 }

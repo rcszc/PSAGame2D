@@ -108,13 +108,9 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     CreateBg.CreateBackground(WinSize);
     */
 
-    PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
-    PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
+    //PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
+    //PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
 
-    AshesParticles = new GraphicsEngineParticle::PsagGLEngineParticle(
-        WinSize, DecRawImage.DecodeImageRawData(LoadParticle.GetDataBinary())
-    );
-    
     // ******************************** TEST –Ú¡–÷°Ã˘Õº ********************************
 
     PsagLow::PsagSupFilesysLoaderBin LoadSequence("Test/fx_fire_test.png");
@@ -128,6 +124,13 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     TestSequence = new GraphicsEnginePVFX::PsagGLEngineFxSequence(
         DecRawImage.DecodeImageRawData(LoadSequence.GetDataBinary()), SequenceParams
     );
+
+    PsagLow::PsagSupFilesysLoaderBin SoundBin("Test/TestSoundMC.ogg");
+    PsagLow::PsagSupSoundData TestSoundDat(PsagSupSoundRawCVT(SoundBin.GetDataBinary()));
+
+    TestSoundPlayer = new PsagLow::PsagSupSoundDataPlayer(TestSoundDat);
+
+    TestSoundPlayer->SetPlayerBegin();
 
     // ******************************** TEST ACTORS ********************************
 
@@ -143,6 +146,13 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ActorShaderBullet = new GameActorCore::GameActorShader(ActorFragBullet, WinSize); ActorShaderBullet->CreateShaderRes();
     ActorShaderNPC    = new GameActorCore::GameActorShader(ActorFragNPC, WinSize);    ActorShaderNPC->CreateShaderRes();
     ActorShaderWall   = new GameActorCore::GameActorShader(ActorFragWall, WinSize);   ActorShaderWall->CreateShaderRes();
+
+    GameBrickCore::GameBrickActuatorDESC ConfigBrick = {};
+
+    ConfigBrick.BrickShaderResource = ActorShaderWall;
+    ConfigBrick.BrickPhysicsWorld = "MyPhyWorld";
+
+    TestBrick = new GameBrickCore::GameBrickActuator(ConfigBrick);
 
     // config actor.
     GameActorCore::GameActorActuatorDESC ConfigActors;
@@ -238,6 +248,8 @@ bool DevTestClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) 
     TestGameActors.RunAllGameActor();
     TestGameActors.UpdateManagerData();
 
+    TestBrick->BrickRendering();
+
     // background blend color_inter calc.
     ColorAnimInter += ImVec4(BgBlendColorSet - ColorAnimInter) * 0.02f;
 
@@ -296,6 +308,9 @@ bool DevTestClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
 
     GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
     GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
+
+    if (ImGui::Button("TestSund"))
+        TestSoundPlayer->SoundPlayer();
 
     if (ImGui::IsKeyDown(ImGuiKey_W))
         PawnActorObj->ActorMappingMoveSpeed()->vector_y -= 0.2f * RunningState.GameRunTimeStep;

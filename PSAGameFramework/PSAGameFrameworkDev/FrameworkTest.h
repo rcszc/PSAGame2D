@@ -29,7 +29,7 @@ protected:
 
     // ######################## TEST ACTORS ########################
 
-    GameActorManager::GameActorActuatorManager TestGameActors;
+    GameCoreManager::GameActorActuatorManager TestGameActors;
 
     size_t PawnActorCode = NULL;
     size_t NpcActorCode[3] = {};
@@ -38,6 +38,8 @@ protected:
     GameActorCore::GameActorShader* ActorShaderBullet = nullptr;
     GameActorCore::GameActorShader* ActorShaderNPC = nullptr;
     GameActorCore::GameActorShader* ActorShaderWall = nullptr;
+
+    GameBrickCore::GameBrickActuator* TestBrick = nullptr;
 
     void CreateNpcActor(float max_hp);
     void CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed);

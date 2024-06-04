@@ -9,7 +9,7 @@
 * ImGui: ImGui For OpenGL3
 * ImageLoader: STB_IMAGE, STB_IMAGE_WRITE
 * JsonLoader: RapidJSON
-* SoundLoader: Audiere
+* SoundLoader: OpenAL, STB_VORBIS
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
@@ -29,7 +29,7 @@
 #pragma comment(lib, "glfw3.lib    ")
 #pragma comment(lib, "glew32.lib   ")
 #pragma comment(lib, "glu32.lib    ")
-#pragma comment(lib, "audiere.lib  ")
+#pragma comment(lib, "OpenAL32.lib ")
 #pragma comment(lib, "zlibwapi.lib ")
 #pragma comment(lib, "box2d.lib    ")
 

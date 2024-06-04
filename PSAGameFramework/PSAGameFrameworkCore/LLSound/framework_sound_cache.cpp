@@ -40,7 +40,6 @@ namespace PSAGSD_LOWLEVEL {
 
 			// vector free => clear map_item.
 			ResourceRawShoudMap.erase(it);
-
 			PushLogger(LogInfo, PSAG_SOUND_DATA_LABEL, "raw_sound: delete key: %u", key);
 			return true;
 		}

@@ -2,54 +2,62 @@
 
 #ifndef _FRAMEWORK_SOUND_H
 #define _FRAMEWORK_SOUND_H
-#include <audiere.h>
+#include <al.h>
+#include <alc.h>
 // LLSound PSA - L.4 (=> logger).
 #include "../LLLogger/framework_logger.hpp"
 
-#define PSAG_BASS_CONFIG_DEVICE -1
-#define PSAG_BASS_CONFIG_FREQ    44100
-
-/*
-bool PSAG_FUNC_BASS_GLOBAL_INIT();
-bool PSAG_FUNC_BASS_GLOBAL_FREE();
-
 namespace PSAG_SOUND_PLAYER {
 	StaticStrLABEL PSAG_SOUND_LABEL = "PSAG_SOUND";
+	namespace system {
+		class __PsagSoundDeviceHandle {
+		private:
+			static ALCdevice*  SoundDevicePtr;
+			static ALCcontext* SoundContextPtr;
+		protected:
+			bool CreateSoundDevice();
+			bool DeleteSoundDevice();
+		};
+	}
 
-	// enable 3d_sound.
-	struct Sound3DConfig {
-		bool EnableFlag;
-		Vector2T<float> SoundLimit; // x:min, y:max.
-	};
-
-	class PsagSoundHandleLoader {
+	class PsagSoundDataResource {
 	protected:
-		HSTREAM BassStreamObject = {};
+		ALuint BufferObjectHandle = NULL;
+		// create openal buffer_object handle.
+		bool CreateBufHandle(ALuint& handle);
 	public:
-		bool SoundLoaderRawStream(const RawSoundStream& rawdata);
-		bool SoundLoaderFile(const std::string& filename);
+		PsagSoundDataResource(const RawSoundStream& rawdata);
+		~PsagSoundDataResource();
 
-		HSTREAM _MS_GETRES();
+		ALuint _MS_GETRES() {
+			return BufferObjectHandle;
+		}
 	};
 
-	class PsagSoundPlayerHandle {
+	class PsagSoundDataPlayer {
 	protected:
-		HSTREAM BassStreamObject = {};
+		ALuint BufferObjectHandle = NULL;
+		ALuint SourceObjectHandle = NULL;
 		bool Sound3DEnabelFlag = false;
 	public:
-		PsagSoundPlayerHandle(PsagSoundHandleLoader& loader, const Sound3DConfig& s3d = {});
-		~PsagSoundPlayerHandle();
+		PsagSoundDataPlayer(PsagSoundDataResource& loader);
+		~PsagSoundDataPlayer();
 
-		bool PlayerSound();
-		bool PauseSound();
-		bool SetPlayerPosition(float second);
+		void SoundPlayer();
+	    void SoundPause();
+		void SetPlayerBegin();
 
 		bool PlayerEndedFlag();
 
-		bool Set3DSoundListenerPosition(const Vector3T<float>& pos);
+		void SoundSet3DPosition(const Vector3T<float>& position);   // 播放位置.
+		void SoundSet3DDirection(const Vector3T<float>& direction); // 播放方向.
+		void SoundSet3DGain(float gain); // 播放音频增益.
+
+		// 用于模拟"Doppler"效应.
+		void SoundSet3DVelocity(const Vector3T<float>& velocity);           // 播放速度.
+		void SoundSet3DVelocityListener(const Vector3T<float>& listener_v); // 听者速度.
 	};
 }
-*/
 
 // psag sound low_level, resource.
 namespace PSAGSD_LOWLEVEL {
@@ -62,7 +70,6 @@ namespace PSAGSD_LOWLEVEL {
 	protected:
 		std::unordered_map<ResUnique, RawSoundStream> ResourceRawShoudMap = {};
 		std::mutex ResourceRawShoudMutex = {};
-
 	public:
 		~PSAG_SOUND_LLRES();
 
