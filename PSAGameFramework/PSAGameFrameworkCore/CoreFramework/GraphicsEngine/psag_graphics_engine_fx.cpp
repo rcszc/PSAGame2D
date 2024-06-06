@@ -108,10 +108,10 @@ namespace GraphicsEnginePVFX {
 			return;
 		}
 		// set uniform params name.
-		VirTextureUniform.TexParamSampler  = "ParticleVirTex";
-		VirTextureUniform.TexParamLayer    = "ParticleVirTexLayer";
-		VirTextureUniform.TexParamCropping = "ParticleVirTexCropping";
-		VirTextureUniform.TexParamSize     = "ParticleVirTexSize";
+		VirTextureUniform.TexParamSampler  = "SequeVirTex";
+		VirTextureUniform.TexParamLayer    = "SequeVirTexLayer";
+		VirTextureUniform.TexParamCropping = "SequeVirTexCropping";
+		VirTextureUniform.TexParamSize     = "SequeVirTexSize";
 
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system init.");
 	}
@@ -125,10 +125,8 @@ namespace GraphicsEnginePVFX {
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
-
 		ShaderRender.RenderBindShader(ShaderTemp);
-		VerStcOperFrameDraw(GetPresetRect());
-
+		
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);
 		ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime", RenderTimer);
@@ -159,6 +157,8 @@ namespace GraphicsEnginePVFX {
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
+		// frame draw(command).
+		VerStcOperFrameDraw(GetPresetRect());
 		ShaderRender.RenderUnbindShader();
 
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL;

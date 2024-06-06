@@ -316,6 +316,8 @@ namespace GraphicsEngineDataset {
 	}
 
 	VirTextureParam* GLEngineSmpTextureData::FindTexIndexItems(ResUnique rukey) {
+		// unqiue number != 0(null).
+		if (rukey == NULL) return nullptr;
 		return (TexIndexItems.find(rukey) != TexIndexItems.end()) ? &TexIndexItems[rukey] : nullptr;
 	}
 

@@ -517,6 +517,7 @@ namespace PSAG_OGL_MAG {
 	// Update: 2023_12_30. RCSZ
 	std::atomic<bool> ATC_UNIFORM_ERROR_FLAG = false;
 
+	// 弃用 Shader句柄有效性检查. [20240606]
 	bool PsagUniformOGL::ProgramHandle(GLuint program, const char* label) {
 		if (program) {
 			return DEF_PSAGSTAT_SUCCESS;
@@ -527,52 +528,45 @@ namespace PSAG_OGL_MAG {
 	}
 
 	void PsagUniformOGL::UniformMatrix3x3(PsagShader program, const char* name, const PsagMatrix3& matrix) {
-		if (ProgramHandle(program, "mat3x3")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniformMatrix3fv(UniformLocation, 1, false, matrix.matrix);
-		}
+		// uniform upload matrix.3x3
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniformMatrix3fv(UniformLocation, 1, false, matrix.matrix);
 	}
 
 	void PsagUniformOGL::UniformMatrix4x4(PsagShader program, const char* name, const PsagMatrix4& matrix) {
-		if (ProgramHandle(program, "mat4x4")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniformMatrix4fv(UniformLocation, 1, false, matrix.matrix);
-		}
+		// uniform upload matrix.4x4
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniformMatrix4fv(UniformLocation, 1, false, matrix.matrix);
 	}
 
 	void PsagUniformOGL::UniformInteger(PsagShader program, const char* name, const int32_t& value) {
-		if (ProgramHandle(program, "int")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniform1i(UniformLocation, value);
-		}
+		// uniform upload matrix.int32
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniform1i(UniformLocation, value);
 	}
 
 	void PsagUniformOGL::UniformFloat(PsagShader program, const char* name, const float& value) {
-		if (ProgramHandle(program, "float")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniform1f(UniformLocation, value);
-		}
+		// uniform upload matrix.float32
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniform1f(UniformLocation, value);
 	}
 
 	void PsagUniformOGL::UniformVec2(PsagShader program, const char* name, const Vector2T<float>& value) {
-		if (ProgramHandle(program, "vec2f")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniform2f(UniformLocation, value.vector_x, value.vector_y);
-		}
+		// uniform upload matrix.vec2(float32: xy)
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniform2f(UniformLocation, value.vector_x, value.vector_y);
 	}
 
 	void PsagUniformOGL::UniformVec3(PsagShader program, const char* name, const Vector3T<float>& value) {
-		if (ProgramHandle(program, "vec3f")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniform3f(UniformLocation, value.vector_x, value.vector_y, value.vector_z);
-		}
+		// uniform upload matrix.vec3(float32: xyz)
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniform3f(UniformLocation, value.vector_x, value.vector_y, value.vector_z);
 	}
 
 	void PsagUniformOGL::UniformVec4(PsagShader program, const char* name, const Vector4T<float>& value) {
-		if (ProgramHandle(program, "vec4f")) {
-			int32_t UniformLocation = glGetUniformLocation(program, name);
-			glUniform4f(UniformLocation, value.vector_x, value.vector_y, value.vector_z, value.vector_w);
-		}
+		// uniform upload matrix.vec4(float32: xyzw)
+		GLint UniformLocation = glGetUniformLocation(program, name);
+		glUniform4f(UniformLocation, value.vector_x, value.vector_y, value.vector_z, value.vector_w);
 	}
 }
 

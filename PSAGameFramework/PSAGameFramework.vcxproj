@@ -155,7 +155,8 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_tables.cpp" />
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp" />
     <ClCompile Include="PSAGameFramework.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_random.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_data.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_fx.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_particle.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_rectpack.h" />
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_textedit.h" />
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_truetype.h" />
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\PhysicsEngine\psag_physics_engine.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h" />

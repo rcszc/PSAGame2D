@@ -175,13 +175,12 @@ namespace GraphicsEngineParticle {
 				ParticleDispVector(ParticleTemp, RandomLimitVector);
 				ParticleTemp.ParticleVector.vector_y = abs(RandomLimitVector.vector_x);
 
-				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
+				ParticleTemp.ParticleLife = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
 				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
 				ParticlesGenCache.push_back(ParticleTemp);
 			}
 			break;
-		}
-		}
+		}}
 		// create particles dataset.
 		data.insert(data.end(), ParticlesGenCache.begin(), ParticlesGenCache.end());
 	}
@@ -265,6 +264,7 @@ namespace GraphicsEngineParticle {
 		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
 		memcpy_s(RenderMatrix.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
+		VirTextureItem = GenResourceID.PsagGenTimeKey();
 		// virtual texture item alloc.
 		if (image.ImagePixels.empty())
 			VirTextureItemAllocEmpty(VirTextureItem, Vector2T<uint32_t>(512, 512));
@@ -298,18 +298,19 @@ namespace GraphicsEngineParticle {
 	void PsagGLEngineParticle::RenderParticleFX() {
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
 		ShaderRender.RenderBindShader(ShaderTemp);
-		// draw particles vertex.
-		VerDyOperFrameDraw(DyVertexSysItem);
 
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);
-		ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime", RenderTimer);
 
-		ShaderUniform.UniformVec2(ShaderTemp, "RenderMove",  RenderMove);
-		ShaderUniform.UniformVec2(ShaderTemp, "RenderScale", RenderScale);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",  RenderTimer);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",  RenderMove);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderScale", RenderScale);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTwist", RenderTwist);
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
+		// draw particles vertex.
+		VerDyOperFrameDraw(DyVertexSysItem);
 
 		ShaderRender.RenderUnbindShader();
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL * GraphicsEngineTimeStep;

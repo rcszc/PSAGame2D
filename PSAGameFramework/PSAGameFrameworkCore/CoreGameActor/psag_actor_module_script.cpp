@@ -5,8 +5,8 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-namespace ActorShaderScript {
-	const char* PsagShaderScriptPublicVS = R"(
+namespace GameActorScript {
+	const char* PsagShaderPublicVS = R"(
 #version 460 core
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec4 VertexColor;
@@ -24,21 +24,37 @@ out vec2 FxCoord;
 
 void main()
 {
-    mat2 Rotation2DMatrix = mat2(
-        cos(ActorRot), -sin(ActorRot),
-        sin(ActorRot),  cos(ActorRot)
-    );
-
-	mat2 Scale2DMatrix = mat2(
-		ActorSize.x, 0.0,
-		0.0, ActorSize.y
-	);
+	// rotate & scale matrix2x2.
+    mat2 Rotation2DMatrix = mat2(cos(ActorRot), -sin(ActorRot), sin(ActorRot),  cos(ActorRot));
+	mat2 Scale2DMatrix    = mat2(ActorSize.x, 0.0, 0.0, ActorSize.y);
 
 	// scale => rotate => move.
 	vec2 VerPos = vec2(VertexPosition.xy * Scale2DMatrix * Rotation2DMatrix + ActorPos);
 	gl_Position = MvpMatrix * vec4(vec3(VerPos.x, VerPos.y, VertexPosition.z), 1.0);
-	FxColor     = VertexColor;
-	FxCoord     = VertexTexture;
+
+	FxColor = VertexColor;
+	FxCoord = VertexTexture;
+}
+)";
+	const char* PsagShaderBrickPrivateFS = R"(
+#version 460 core
+
+in vec4 FxColor;
+in vec2 FxCoord;
+
+uniform vec2  RenderResolution;
+uniform float RenderTime;
+
+uniform sampler2DArray VirTexture;
+uniform int            VirTextureLayer;
+uniform vec2           VirTextureCropping;
+uniform vec2           VirTextureSize;
+
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = texture(VirTexture, vec3(FxCoord, float(VirTextureLayer)));
 }
 )";
 }

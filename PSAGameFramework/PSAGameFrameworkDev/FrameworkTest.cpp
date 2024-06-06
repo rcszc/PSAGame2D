@@ -28,7 +28,7 @@ void DevTestClass::CreateNpcActor(float max_hp) {
     // config actor.
     GameActorCore::GameActorActuatorDESC ConfigActors;
 
-    ConfigActors.ActorPhysicsWorld     = "MyPhyWorld";
+    ConfigActors.ActorPhysicsWorld   = "MyPhyWorld";
     ConfigActors.ActorShaderResource = ActorShaderNPC;
 
     ConfigActors.ControlFricMove   = 2.0f;
@@ -127,8 +127,8 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
         DecRawImage.DecodeImageRawData(LoadSequence.GetDataBinary()), SequenceParams
     );
 
-    PsagLow::PsagSupFilesysLoaderBin SoundBin("Test/TestSoundMC.ogg");
-    PsagLow::PsagSupSoundData TestSoundDat(PsagSupSoundRawCVT(SoundBin.GetDataBinary()));
+    //PsagLow::PsagSupFilesysLoaderBin SoundBin("Test/TestSoundMC.ogg");
+    //PsagLow::PsagSupSoundData TestSoundDat(PsagSupSoundRawCVT(SoundBin.GetDataBinary()));
 
     // ******************************** TEST ACTORS ********************************
 
@@ -143,7 +143,9 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ActorShaderPawn   = new GameActorCore::GameActorShader(ActorFragPawn, WinSize);   ActorShaderPawn->CreateShaderRes();
     ActorShaderBullet = new GameActorCore::GameActorShader(ActorFragBullet, WinSize); ActorShaderBullet->CreateShaderRes();
     ActorShaderNPC    = new GameActorCore::GameActorShader(ActorFragNPC, WinSize);    ActorShaderNPC->CreateShaderRes();
-    ActorShaderWall   = new GameActorCore::GameActorShader(ActorFragWall, WinSize);   ActorShaderWall->CreateShaderRes();
+    ActorShaderWall   = new GameActorCore::GameActorShader(GameActorScript::PsagShaderBrickPrivateFS, WinSize);   ActorShaderWall->CreateShaderRes();
+
+    ActorShaderWall->ShaderLoadImage(DecRawImage.DecodeImageRawData(LoadParticle.GetDataBinary()));
 
     GameBrickCore::GameBrickActuatorDESC ConfigBrick = {};
 

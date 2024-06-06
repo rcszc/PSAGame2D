@@ -1,29 +1,31 @@
 ﻿  PSAGameFramework.cpp
-  psag_graphics_engine.cpp
+  psag_collect_engine_random.cpp
+  psag_graphics_engine_system.cpp
   psag_graphics_engine_data.cpp
   psag_graphics_engine_fx.cpp
   psag_graphics_engine_particle.cpp
   psag_graphics_engine_script.cpp
   psag_physics_engine.cpp
+  psag_mainevent_support_core.cpp
   psag_mainevent_support.cpp
   psag_mainevent_support_class.cpp
-  psag_mainevent_support_core.cpp
   psag_mainevent_support_regobj.cpp
   psag_actor_module.cpp
   psag_actor_module_brick.cpp
   psag_actor_module_debug.cpp
   psag_actor_module_manager.cpp
   psag_actor_module_script.cpp
-  framework_sound_cache.cpp
-  framework_sound_player.cpp
   framework_init_config.cpp
   framework_register.cpp
+  psaglow_opengl_manager.cpp
+  framework_sound_cache.cpp
+  framework_sound_player.cpp
   FrameworkTest.cpp
   FrameworkTestShader.cpp
     正在创建库 F:\C++Project\RCSZ_CPP\PSAGameFramework\x64\Release\PSAGameFramework.lib 和对象 F:\C++Project\RCSZ_CPP\PSAGameFramework\x64\Release\PSAGameFramework.exp
   正在生成代码
-  151 of 7045 functions ( 2.1%) were compiled, the rest were copied from previous compilation.
-    77 functions were new in current compilation
-    87 functions had inline decision re-evaluated but remain unchanged
+  488 of 6989 functions ( 7.0%) were compiled, the rest were copied from previous compilation.
+    82 functions were new in current compilation
+    427 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   PSAGameFramework.vcxproj -> F:\C++Project\RCSZ_CPP\PSAGameFramework\x64\Release\PSAGameFramework.exe

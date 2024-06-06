@@ -8,7 +8,7 @@ in vec4 FxColor;
 in vec2 FxCoord;
 
 uniform vec2  RenderResolution;
-uniform float ActorTime;
+uniform float RenderTime;
 
 out vec4 FragColor;
 
@@ -61,7 +61,7 @@ in vec4 FxColor;
 in vec2 FxCoord;
 
 uniform vec2  RenderResolution;
-uniform float ActorTime;
+uniform float RenderTime;
 
 out vec4 FragColor;
 
@@ -83,7 +83,7 @@ in vec4 FxColor;
 in vec2 FxCoord;
 
 uniform vec2  RenderResolution;
-uniform float ActorTime;
+uniform float RenderTime;
 
 out vec4 FragColor;
 
@@ -128,7 +128,7 @@ in vec4 FxColor;
 in vec2 FxCoord;
 
 uniform vec2  RenderResolution;
-uniform float ActorTime;
+uniform float RenderTime;
 
 out vec4 FragColor;
 

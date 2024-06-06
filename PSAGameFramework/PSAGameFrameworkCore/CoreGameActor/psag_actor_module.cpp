@@ -35,7 +35,7 @@ namespace GameActorCore {
 
 	GameActorShader::GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION) {
 		// system actor default vert_shader.
-		ShaderScript.vector_x = ActorShaderScript::PsagShaderScriptPublicVS;
+		ShaderScript.vector_x = GameActorScript::PsagShaderPublicVS;
 		ShaderScript.vector_y = SHADER_FRAG;
 
 		__RENDER_RESOLUTION = RESOLUTION;
@@ -46,7 +46,7 @@ namespace GameActorCore {
 		// delete virtual static vertex_dataset.
 		VerStcDataItemFree(__ACTOR_VERTEX_ITEM);
 		// 引用虚拟纹理情况下, 不由"GameActorShader"回收.
-		if (!ReferVirTextureFlag)
+		if (!ReferVirTextureFlag && __VIR_TEXTURE_ITEM != NULL)
 			VirTextureItemFree(__VIR_TEXTURE_ITEM);
 		// delete opengl shader.
 		LLRES_Shaders->ResourceDelete(__ACTOR_SHADER_ITEM);
@@ -98,9 +98,7 @@ namespace GameActorCore {
 			VerStcDataItemAlloc(__ACTOR_VERTEX_ITEM, DatasetTemp);
 		}
 		else {
-			vector<float> PresetTemp = {};
-			PresetTemp.assign(PSAG_OGL_MAG::ShaderTemplateRect, PSAG_OGL_MAG::ShaderTemplateRect + PSAG_OGL_MAG::ShaderTemplateRectLen);
-			VerStcDataItemAlloc(__ACTOR_VERTEX_ITEM, PresetTemp);
+			__ACTOR_VERTEX_ITEM = GetPresetRect();
 		}
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource create.");
 		return true;
@@ -215,20 +213,26 @@ namespace GameActorCore {
 			const Vector2T<float>& position, const Vector2T<float>& scale, float rotate, float time_count
 		) {
 			auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderIndex);
-
 			ShaderRender.RenderBindShader(ShaderTemp);
-			VerStcOperFrameDraw(VertexGroupIndex);
 
 			// framework preset uniform.
 			ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        RenderMatrix);
 			ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderResolution);
+			ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime",       time_count);
 
-			ShaderUniform.UniformFloat(ShaderTemp, "ActorTime", time_count);
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",  position);
 			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  rotate);
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize", scale);
-
+			
+			RenderingTextureFunc();
+			VerStcOperFrameDraw(VertexGroupIndex);
 			ShaderRender.RenderUnbindShader();
+		}
+
+		void ActorRendering::UpdateActorRenderingTexture() {
+			auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderIndex);
+			// draw virtual texture.
+			VirTextureItemDraw(VirTexItem, ShaderTemp, VirTexUniform);
 		}
 	}
 
@@ -258,6 +262,14 @@ namespace GameActorCore {
 			ActorCompRendering->ShaderIndex      = ActorResource->__ACTOR_SHADER_ITEM;
 			ActorCompRendering->VertexGroupIndex = ActorResource->__ACTOR_VERTEX_ITEM;
 			ActorCompRendering->RenderMatrix     = ActorResource->__ACTOR_MATRIX_ITEM;
+			
+			// load rendering texture.
+			if (VirTextureExist(ActorResource->__VIR_TEXTURE_ITEM)) {
+				// rendering_tex_func, vir_tex_unqiue, unifrom.
+				ActorCompRendering->RenderingTextureFunc = [this]() { ActorCompRendering->UpdateActorRenderingTexture(); };
+				ActorCompRendering->VirTexItem           = ActorResource->__VIR_TEXTURE_ITEM;
+				ActorCompRendering->VirTexUniform        = ActorResource->__VIR_UNIFORM_ITEM;
+			}
 		}
 
 		if (PhysicsWorldFind(INIT_DESC.ActorPhysicsWorld) == nullptr) {

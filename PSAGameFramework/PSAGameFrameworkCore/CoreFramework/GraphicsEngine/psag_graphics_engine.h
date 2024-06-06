@@ -1,4 +1,4 @@
-// psag_graphics_engine. RCSZ. [middle_level_engine]
+// psag_graphics_engine_system. RCSZ. [middle_level_engine]
 
 #ifndef __PSAG_GRAPHICS_ENGINE_H
 #define __PSAG_GRAPHICS_ENGINE_H
@@ -456,8 +456,9 @@ namespace GraphicsEngineParticle {
 		float       RenderTimer  = 0.0f;
 		PsagMatrix4 RenderMatrix = {};
 
-		Vector2T<float> RenderMove  = {};
-		Vector2T<float> RenderScale = Vector2T<float>(1.0f, 1.0f);
+		Vector2T<float> RenderMove    = {};
+		Vector2T<float> RenderScale   = Vector2T<float>(1.0f, 1.0f);
+		float           RenderTwist = 0.0f;
 
 		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
@@ -472,6 +473,10 @@ namespace GraphicsEngineParticle {
 
 		ParticleSystemState				 GetParticleState();
 		std::vector<ParticleAttributes>* GetParticleDataset();
+
+		void SetParticleTwisted(float value) {
+			RenderTwist = value;
+		}
 
 		void UpdateParticleData();
 		void RenderParticleFX();

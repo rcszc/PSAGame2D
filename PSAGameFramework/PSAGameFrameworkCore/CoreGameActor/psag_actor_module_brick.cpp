@@ -32,6 +32,14 @@ namespace GameBrickCore {
 			BirckCompRendering->ShaderIndex      = BrickResource->__ACTOR_SHADER_ITEM;
 			BirckCompRendering->VertexGroupIndex = BrickResource->__ACTOR_VERTEX_ITEM;
 			BirckCompRendering->RenderMatrix     = BrickResource->__ACTOR_MATRIX_ITEM;
+
+			// load rendering texture.
+			if (VirTextureExist(BrickResource->__VIR_TEXTURE_ITEM)) {
+				// rendering_tex_func, vir_tex_unqiue, unifrom.
+				BirckCompRendering->RenderingTextureFunc = [this]() { BirckCompRendering->UpdateActorRenderingTexture(); };
+				BirckCompRendering->VirTexItem           = BrickResource->__VIR_TEXTURE_ITEM;
+				BirckCompRendering->VirTexUniform        = BrickResource->__VIR_UNIFORM_ITEM;
+			}
 		}
 
 		if (PhysicsWorldFind(INIT_DESC.BrickPhysicsWorld) == nullptr) {

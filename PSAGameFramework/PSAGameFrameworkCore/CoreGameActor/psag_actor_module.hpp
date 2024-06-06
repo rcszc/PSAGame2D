@@ -2,9 +2,10 @@
 
 #ifndef __PSAG_ACTOR_MODULE_HPP
 #define __PSAG_ACTOR_MODULE_HPP
-// graphics & physics engine => actor_module.
+// graphics & physics & collect engine => actor_module.
 #include "../CoreFramework/GraphicsEngine/psag_graphics_engine.h"
 #include "../CoreFramework/PhysicsEngine/psag_physics_engine.h"
+#include "../CoreFramework/CollectEngine/psag_collect_engine.h"
 
 class __ACTOR_MODULES_TIMESTEP {
 protected:
@@ -16,8 +17,10 @@ protected:
 	static Vector2T<float> ActorModulesCameraPos;
 };
 
-namespace ActorShaderScript {
-	extern const char* PsagShaderScriptPublicVS;
+namespace GameActorScript {
+	// public: 'actor', 'brick'.
+	extern const char* PsagShaderPublicVS;
+	extern const char* PsagShaderBrickPrivateFS;
 }
 
 namespace GameActorCore {
@@ -56,30 +59,15 @@ namespace GameActorCore {
 		bool OperFlag = false;
 	};
 
-	/* Actor Fragment ShaderDemo:
-		#version 460 core
-
-		in vec4 FxColor;
-		in vec2 FxCoord;
-
-		uniform vec2  RenderResolution;
-		uniform float ActorTime;
-
-		uniform vec2  ActorMove;
-		uniform float ActorRotate;
-		uniform vec2  ActorScale;
-
+	/* Actor Fragment ShaderTexture:
+		
 		uniform sampler2DArray ActorTexture;
 		uniform int            ActorTextureLayer;
 		uniform vec2           ActorTextureCropping;
 		uniform vec2           ActorTextureSize;
 
-		out vec4 FragColor;
-
-		void main()
-		{
-			FragColor = vec4(1.0);
-		}
+		// sample virtual_texture demo:
+		texture(ActorTexture, vec3(FxCoord, float(ActorTextureLayer)));
 	*/
 
 	struct GameActorShaderVerticesDESC {
@@ -110,10 +98,10 @@ namespace GameActorCore {
 		GraphicsEngineDataset::VirTextureUniformName SystemPresetUname() {
 			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
 			// preset shader uniform name.
-			U_NAME.TexParamSampler  = "ActorTexture";
-			U_NAME.TexParamLayer    = "ActorTextureLayer";
-			U_NAME.TexParamCropping = "ActorTextureCropping";
-			U_NAME.TexParamSize     = "ActorTextureSize";
+			U_NAME.TexParamSampler  = "VirTexture";
+			U_NAME.TexParamLayer    = "virTextureLayer";
+			U_NAME.TexParamCropping = "virTextureCropping";
+			U_NAME.TexParamSize     = "VirTextureSize";
 			return U_NAME;
 		}
 		bool CheckRepeatTex(VirTextureUnqiue virtex);
@@ -139,11 +127,11 @@ namespace GameActorCore {
 		// create virtual texture.
 		bool ShaderLoadImage(const ImageRawData& image);
 
-		ResUnique                                    __VIR_TEXTURE_ITEM = {};
+		ResUnique                                    __VIR_TEXTURE_ITEM = NULL;
 		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM = {};
 		
-		ResUnique   __ACTOR_SHADER_ITEM = {};
-		ResUnique   __ACTOR_VERTEX_ITEM = {};
+		ResUnique   __ACTOR_SHADER_ITEM = NULL;
+		ResUnique   __ACTOR_VERTEX_ITEM = NULL;
 		PsagMatrix4 __ACTOR_MATRIX_ITEM = {};
 
 		Vector2T<uint32_t> __RENDER_RESOLUTION = {};
@@ -271,7 +259,10 @@ namespace GameActorCore {
 			void UpdateActorHealthTrans(const HealthFuncParams& params);
 		};
 
-		class ActorRendering : public GraphicsEngineDataset::GLEngineStcVertexData {
+		class ActorRendering : 
+			public GraphicsEngineDataset::GLEngineStcVertexData,
+			public GraphicsEngineDataset::GLEngineSmpTextureData
+		{
 		protected:
 			PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender  = {};
 			PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                 ShaderUniform = {};
@@ -282,14 +273,20 @@ namespace GameActorCore {
 			Vector2T<float> RenderResolution = {};
 			PsagMatrix4     RenderMatrix     = {};
 
+			std::function<void()> RenderingTextureFunc = [&]() {};
+			ResUnique VirTexItem = NULL;
+			GraphicsEngineDataset::VirTextureUniformName VirTexUniform = {};
+
 			void UpdateActorRendering(
 				const Vector2T<float>& position, const Vector2T<float>& scale, float rotate, float time_count
 			);
+			void UpdateActorRenderingTexture();
 		};
 	}
 
 	// 游戏 Actor (实体)执行器.
 	class GameActorActuator :
+		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
 		public __ACTOR_MODULES_TIMESTEP,
 		public __ACTOR_MODULES_CAMERAPOS
@@ -356,6 +353,17 @@ namespace GameActorCore {
 // 用于构建静态场景, 比静态'Actor'更加轻量, 但是使用了一些共同组件.
 namespace GameBrickCore {
 	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
+
+	/* Brick Fragment ShaderTexture:
+
+		uniform sampler2DArray BrickTexture;
+		uniform int            BrickTextureLayer;
+		uniform vec2           BrickTextureCropping;
+		uniform vec2           BrickTextureSize;
+
+		// sample virtual_texture demo:
+		texture(BrickTexture, vec3(FxCoord, float(BrickTextureLayer)));
+	*/
 
 	struct GameBrickActuatorDESC {
 		GameActorCore::GameActorShader* BrickShaderResource;

@@ -79,6 +79,9 @@
     <Filter Include="源文件\PSAGameFrameworkCore\CoreShaderScript\public">
       <UniqueIdentifier>{f92f791f-ddfc-486e-9637-f9bf67c29c5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine">
+      <UniqueIdentifier>{f0db884c-4f61-4683-8c7d-cc48786ce092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -147,7 +150,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_class.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_system.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_particle.cpp">
@@ -212,6 +215,9 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_random.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -345,6 +351,9 @@
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_truetype.h">
       <Filter>资源文件\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine.h">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@ uniform vec2  ParticleVirTexCropping;
 uniform vec2  ParticleVirTexSize;
 
 uniform float RenderTime;
+uniform float RenderTwist;
 
 const vec2 Pivot = vec2(0.5, 0.5);
 
@@ -18,8 +19,8 @@ void main()
 
 	vec2 uv = RotatedTexCoord;
 	
-	uv.x += sin(uv.y * 10.0 + RenderTime + RandomValue * 10) / 25.0;
-	uv.y += cos(uv.x * 10.0 + RenderTime + RandomValue * 10) / 25.0;
+	uv.x += sin(uv.y * 10.0 + RenderTime + RandomValue * 10) / 25.0 * RenderTwist;
+	uv.y += cos(uv.x * 10.0 + RenderTime + RandomValue * 10) / 25.0 * RenderTwist;
 	
 	vec4 Color = texture(ParticleVirTex, vec3(uv, float(ParticleVirTexLayer)));
 
