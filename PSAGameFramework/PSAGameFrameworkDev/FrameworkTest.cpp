@@ -110,6 +110,8 @@ bool DevTestClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecRawImage;
     PsagLow::PsagSupFilesysLoaderBin LoadParticle("Test/ParticleImgTest.png");
+    AshesParticles = new 
+        GraphicsEngineParticle::PsagGLEngineParticle(WinSize, DecRawImage.DecodeImageRawData(LoadParticle.GetDataBinary()));
 
     // ******************************** TEST –Ú¡–÷°Ã˘Õº ********************************
 
