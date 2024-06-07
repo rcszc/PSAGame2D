@@ -6,22 +6,38 @@ using namespace PSAG_LOGGER;
 
 namespace TActor = GameActorCore::Type;
 
-void TestClassStar::CreateBulletActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed) {
-    GameActorCore::GameActorActuatorDESC ConfigBullet;
+void TestClassStar::CreateStarActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed) {
+    // ******************************** TEST Star Actor 对象 ********************************
+    GameActorCore::GameActorActuatorDESC ConfigStarActor;
 
-    ConfigBullet.ActorPhysicsWorld   = "MyPhyWorld";
-    ConfigBullet.ActorShaderResource = ActorShaderNPC;
+    ConfigStarActor.ActorPhysicsWorld   = "MyPhyWorld";
+    ConfigStarActor.ActorShaderResource = ActorShaderStar;
 
-    ConfigBullet.ControlFricMove   = 0.1f;
-    ConfigBullet.ControlFricRotate = 1.0f;
-    ConfigBullet.ControlFricScale  = 1.0f;
+    ConfigStarActor.ControlFricMove   = 0.1f;
+    ConfigStarActor.ControlFricRotate = 1.0f;
+    ConfigStarActor.ControlFricScale  = 1.0f;
 
-    ConfigBullet.InitialPhysics  = Vector2T<float>(7.0f, 2.0f);
-    ConfigBullet.InitialPosition = PosBegin;
-    ConfigBullet.InitialScale    = Vector2T<float>(0.2f, 0.2f);
-    ConfigBullet.InitialSpeed    = PosSpeed;
+    ConfigStarActor.InitialPhysics  = Vector2T<float>(7.0f, 2.0f);
+    ConfigStarActor.InitialPosition = PosBegin;
+    ConfigStarActor.InitialScale    = Vector2T<float>(0.2f, 0.2f);
+    ConfigStarActor.InitialSpeed    = PosSpeed;
     
-    TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_bullet"), ConfigBullet);
+    TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_star"), ConfigStarActor);
+}
+
+void TestClassStar::CreateRandomStarActors(size_t number) {
+    // ******************************** TEST Star Actors 对象 ********************************
+
+    GameToolsCore::Random::GenerateRandom2D RandomCreate;
+
+    auto StarRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-320.0f, 320.0f), Vector2T<float>(-320.0f, 320.0f));
+    
+    RandomCreate.RandomSeedMode(GameToolsCore::Random::TimeSeedMicroseconds);
+    RandomCreate.CreateRandomDataset(number, StarRandomParam, 10.0f);
+    RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
+
+    for (const auto& StarPos : RandomCreate.RandomCoordGroup)
+        CreateStarActor(StarPos, Vector2T<float>());
 }
 
 bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
@@ -49,6 +65,7 @@ bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     PsagLow::PsagSupFilesysLoaderBin ParticleTexture("Test/ParticleImgTest.png");
     AshesParticles = new
         GraphicsEngineParticle::PsagGLEngineParticle(WinSize, DecodeRawImage.DecodeImageRawData(ParticleTexture.GetDataBinary()));
+    AshesParticles->SetParticleTwisted(1.0f);
 
     // ******************************** TEST Physics & Graphics 资源 ********************************
 
@@ -56,7 +73,7 @@ bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     // 创建Actor着色器资源.
     ActorShaderPawn = new GameActorCore::GameActorShader(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderRes();
-    ActorShaderNPC  = new GameActorCore::GameActorShader(ActorFragNPC, WinSize);  ActorShaderNPC->CreateShaderRes();
+    ActorShaderStar = new GameActorCore::GameActorShader(ActorFragStar, WinSize); ActorShaderStar->CreateShaderRes();
 
     PsagLow::PsagSupFilesysLoaderBin BrickTexture("Test/TEST_BOX.png");
 
@@ -68,8 +85,7 @@ bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_pawn");
     TActor::ActorTypeAllotter.ActorTypeCreate("actor_npc");
-    TActor::ActorTypeAllotter.ActorTypeCreate("actor_bullet");
-    TActor::ActorTypeAllotter.ActorTypeCreate("actor_wall");
+    TActor::ActorTypeAllotter.ActorTypeCreate("actor_star");
 
     // ******************************** TEST PawnActor对象 ********************************
 
@@ -78,7 +94,7 @@ bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ConfigPawnActor.ActorPhysicsWorld   = "MyPhyWorld";
     ConfigPawnActor.ActorShaderResource = ActorShaderPawn;
 
-    ConfigPawnActor.ControlFricMove   = 4.8f;
+    ConfigPawnActor.ControlFricMove   = 7.2f;
     ConfigPawnActor.ControlFricRotate = 2.4f;
     ConfigPawnActor.ControlFricScale  = 1.0f;
 
@@ -92,14 +108,32 @@ bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     PawnActorCode = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_pawn"), ConfigPawnActor);
 
+    // ******************************** TEST NPC Actor对象 ********************************
+
+    GameActorCore::GameActorActuatorDESC ConfigNpcActor;
+
+    ConfigNpcActor.ActorPhysicsWorld = "MyPhyWorld";
+    ConfigNpcActor.ActorShaderResource = ActorShaderStar;
+
+    ConfigNpcActor.ControlFricMove   = 0.1f;
+    ConfigNpcActor.ControlFricRotate = 1.0f;
+    ConfigNpcActor.ControlFricScale  = 1.0f;
+
+    ConfigNpcActor.InitialPhysics  = Vector2T<float>(7.0f, 2.0f);
+    ConfigNpcActor.InitialPosition = Vector2T<float>(15.0f, 15.0f);
+    ConfigNpcActor.InitialScale    = Vector2T<float>(0.2f, 0.2f);
+    ConfigNpcActor.InitialSpeed    = Vector2T<float>();
+
+    TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_npc"), ConfigNpcActor);
+
     // ******************************** TEST 静态地图'Brick'对象 ********************************
 
     GameToolsCore::Random::GenerateRandom2D RandomCreate;
 
-    auto BrickRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-300.0f, 300.0f), Vector2T<float>(-300.0f, 300.0f));
+    auto BrickRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-500.0f, 500.0f), Vector2T<float>(-500.0f, 500.0f));
 
     RandomCreate.RandomSeedMode(GameToolsCore::Random::TimeSeedMicroseconds);
-    RandomCreate.CreateRandomDataset(40, BrickRandomParam, 50.0f);
+    RandomCreate.CreateRandomDataset(72, BrickRandomParam, 50.0f);
     RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
 
     GameBrickCore::GameBrickActuatorDESC BricksDESC;
@@ -113,23 +147,14 @@ bool TestClassStar::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     for (const auto& BrickPos : RandomCreate.RandomCoordGroup) {
         // set brick scale_size.
         BricksDESC.InitialScale = 
-            Vector2T<float>(RandomSizeCreate.CreateRandomValue(1.0f, 1.6f), RandomSizeCreate.CreateRandomValue(1.0f, 1.6f));
+            Vector2T<float>(RandomSizeCreate.CreateRandomValue(1.0f, 2.0f), RandomSizeCreate.CreateRandomValue(1.0f, 2.0f));
+        BricksDESC.InitialRotate = RandomSizeCreate.CreateRandomValue(-90.0f, 90.0f);
         // set brick position.
         BricksDESC.InitialPosition = BrickPos;
         TestGameBricks.CreateGameActor(BricksDESC);
     }
 
-    // ******************************** TEST NPC Actor 对象 ********************************
-
-    auto NpcRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-200.0f, 200.0f), Vector2T<float>(-200.0f, 200.0f));
-
-    RandomCreate.RandomCoordGroup.clear();
-    RandomCreate.CreateRandomDataset(40, NpcRandomParam, 10.0f);
-    RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
-
-    for (const auto& NpcPos : RandomCreate.RandomCoordGroup)
-        CreateBulletActor(NpcPos, Vector2T<float>());
-    
+    CreateRandomStarActors(100);
     return true;
 }
 
@@ -138,7 +163,7 @@ void TestClassStar::LogicCloseFree() {
     GameActorCore::GameActorPhysicalWorld DeletePhyWorld("MyPhyWorld", 2);
 
     delete ActorShaderPawn;
-    delete ActorShaderNPC;
+    delete ActorShaderStar;
     delete BrickShader;
 
     delete AshesParticles;
@@ -149,9 +174,9 @@ bool TestClassStar::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
     AshesParticles->UpdateParticleData();
     AshesParticles->RenderParticleFX();
 
-    for (auto& Bullet : *TestGameActors.GetSourceData()) {
-        if (Bullet.second->ActorGetCollision().ActorUniqueCode != NULL &&
-            Bullet.second->ActorGetPrivate().ActorTypeCode == TActor::ActorTypeAllotter.ActorTypeIs("actor_bullet")
+    for (auto& Star : *TestGameActors.GetSourceData()) {
+        if (Star.second->ActorGetCollision().ActorUniqueCode != NULL &&
+            Star.second->ActorGetPrivate().ActorTypeCode == TActor::ActorTypeAllotter.ActorTypeIs("actor_star")
             ) {
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
             CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcPoints);
@@ -165,29 +190,26 @@ bool TestClassStar::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
             CreatePartc.ConfigRandomDispersion(
                 Vector2T<float>(-1.0f, 1.0f),
                 Vector2T<float>(0.0f, 0.0f),
-                Vector3T<float>(Bullet.second->ActorGetPosition().vector_x, Bullet.second->ActorGetPosition().vector_y, 0.0f)
+                Vector3T<float>(Star.second->ActorGetPosition().vector_x, Star.second->ActorGetPosition().vector_y, 0.0f)
             );
             AshesParticles->ParticleCreate(&CreatePartc);
-            TestGameActors.DeleteGameActor(Bullet.second->ActorGetPrivate().ActorUniqueCode);
+            TestGameActors.DeleteGameActor(Star.second->ActorGetPrivate().ActorUniqueCode);
 
-            ++EatNpcCount;
+            auto CollisionPtr = TestGameActors.FindGameActor(Star.second->ActorGetCollision().ActorUniqueCode);
+
+            if (CollisionPtr != nullptr) {
+                if (CollisionPtr->ActorGetPrivate().ActorTypeCode == TActor::ActorTypeAllotter.ActorTypeIs("actor_pawn")) {
+                    ++EatStarCount;
+                    ++EatStarCountTotal;
+                }
+            }
         }
     }
 
     // 吃掉 10 个随机生成 12 个.
-    if (EatNpcCount > 10) {
-        GameToolsCore::Random::GenerateRandom2D RandomCreate;
-        RandomCreate.RandomSeedMode(GameToolsCore::Random::TimeSeedMicroseconds);
-
-        auto RandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-200.0f, 200.0f), Vector2T<float>(-200.0f, 200.0f));
-
-        RandomCreate.RandomCoordGroup.clear();
-        RandomCreate.CreateRandomDataset(12, RandomParam, 10.0f);
-        RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
-
-        for (const auto& NpcPos : RandomCreate.RandomCoordGroup)
-            CreateBulletActor(NpcPos, Vector2T<float>());
-        EatNpcCount = NULL;
+    if (EatStarCount > 10) {
+        CreateRandomStarActors(12);
+        EatStarCount = NULL;
     }
 
     TestGameBricks.RunAllGameActor();
@@ -195,9 +217,29 @@ bool TestClassStar::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
     TestGameActors.RunAllGameActor();
     TestGameActors.UpdateManagerData();
 
-    RunningState.BackShaderParams->BackgroundVisibility = Visibility;
-    RunningState.PostShaderParams->GameSceneBloomRadius = (uint32_t)BloomRadius;
+    RunningState.BackShaderParams->BackgroundColor = Vector4T<float>(0.0f, 1.0f, 0.92f, 1.0f);
+    RunningState.BackShaderParams->BackgroundVisibility = 0.642f;
+    RunningState.PostShaderParams->GameSceneFilterAVG   = 0.254f;
+    RunningState.PostShaderParams->GameSceneBloomRadius = 18;
+
     return true;
+}
+
+void GuiTitleNumber(Vector2T<float> position, size_t star_count) {
+    ImGui::SetNextWindowPos(ImVec2(position.vector_x, position.vector_y));
+    ImGui::SetNextWindowSize(ImVec2(320.0f, 160.0f));
+
+    ImGui::Begin("StarNumWindow", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+    {
+        ImGui::SetWindowFontScale(5.0f);
+        ImVec2 TextWidth = ImGui::CalcTextSize(std::to_string(star_count).c_str());
+        float CenterPosition = (ImGui::GetWindowSize().x - TextWidth.x) * 0.5f;
+
+        ImGui::Indent(CenterPosition);
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "%u", star_count);
+        ImGui::Unindent(CenterPosition);
+    }
+    ImGui::End();
 }
 
 bool TestClassStar::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) {
@@ -217,44 +259,36 @@ bool TestClassStar::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
             GameTestMaxFPS = ImGui::GetIO().Framerate;
 
         ImGui::Text("FPS: %.1f MaxFPS: %.2f", ImGui::GetIO().Framerate, GameTestMaxFPS);
-        ImGui::Text("Particles: %u", AshesParticles->GetParticleState().DarwParticlesNumber);
-
-        ImGui::ColorEdit4 ("COLOR", RunningState.BackShaderParams->BackgroundColor.data());
-        ImGui::SliderFloat("BLOOM", &BloomRadius, 1.0f, 32.0f);
-        ImGui::SliderFloat("VISIB", &Visibility, 0.1f, 2.0f);
-
-        ImGui::SliderFloat3("Filter RGB", RunningState.PostShaderParams->GameSceneFilterCOL.data(), 0.0f, 2.0f);
-        ImGui::SliderFloat ("Filter AVG", &RunningState.PostShaderParams->GameSceneFilterAVG, 0.0f, 2.0f);
     }
     ImGui::End();
 
     auto PawnActorObj = TestGameActors.FindGameActor(PawnActorCode);
 
-    GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
+    //GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
     GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
 
     auto MoveSpeed   = PawnActorObj->ActorMappingMoveSpeed();
     auto RotateSpeed = PawnActorObj->ActorMappingRotateSpeed();
 
-    CameraScale = 0.84f;
+    CameraScale = 0.7f;
 
     if (ImGui::IsKeyDown(ImGuiKey_W)) {
-        MoveSpeed->vector_y -= 0.5f * RunningState.GameRunTimeStep;
-        CameraScale = 1.72f;
+        MoveSpeed->vector_y -= 0.7f * RunningState.GameRunTimeStep;
+        CameraScale = 1.8f;
     }
     if (ImGui::IsKeyDown(ImGuiKey_S)) {
-        MoveSpeed->vector_y += 0.5f * RunningState.GameRunTimeStep;
-        CameraScale = 1.72f;
+        MoveSpeed->vector_y += 0.7f * RunningState.GameRunTimeStep;
+        CameraScale = 1.8f;
     }
     if (ImGui::IsKeyDown(ImGuiKey_A)) {
-        MoveSpeed->vector_x -= 0.5f * RunningState.GameRunTimeStep;
-        *RotateSpeed -= 0.01f * RunningState.GameRunTimeStep;
-        CameraScale = 1.25f;
+        MoveSpeed->vector_x -= 0.7f * RunningState.GameRunTimeStep;
+        *RotateSpeed -= 0.02f * RunningState.GameRunTimeStep;
+        CameraScale = 1.0f;
     }
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
-        MoveSpeed->vector_x += 0.5f * RunningState.GameRunTimeStep;
-        *RotateSpeed += 0.01f * RunningState.GameRunTimeStep;
-        CameraScale = 1.25f;
+        MoveSpeed->vector_x += 0.7f * RunningState.GameRunTimeStep;
+        *RotateSpeed += 0.02f * RunningState.GameRunTimeStep;
+        CameraScale = 1.0f;
     }
 
     auto ToWindowCoord = PawnActorObj->ActorConvertVirCoord(RunningState.WindowResolution);
@@ -272,10 +306,11 @@ bool TestClassStar::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
         CameraPosition.vector_y -= abs(MoveSpeed->vector_y) * RunningState.GameRunTimeStep;
     
     RunningState.CameraParams->MatrixScale.vector_x +=
-        (CameraScale - RunningState.CameraParams->MatrixScale.vector_x) * 0.001f;
+        (CameraScale - RunningState.CameraParams->MatrixScale.vector_x) * 0.0025f;
     RunningState.CameraParams->MatrixScale.vector_y = RunningState.CameraParams->MatrixScale.vector_x;
     RunningState.CameraParams->MatrixPosition = CameraPosition;
 
+    GuiTitleNumber(Vector2T<float>(ImGui::GetIO().DisplaySize.x / 2.0f - 160.0f, 72.0f), EatStarCountTotal);
     ImGui::PopStyleColor(8);
     return true;
 }

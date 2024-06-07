@@ -471,7 +471,7 @@ namespace GraphicsEngineParticle {
 		float           RenderTimer   = 0.0f;
 		Vector2T<float> RenderMove    = {};
 		Vector2T<float> RenderScale   = Vector2T<float>(1.0f, 1.0f);
-		float           RenderTwist = 0.0f;
+		float           RenderTwist   = 0.0f;
 
 		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};

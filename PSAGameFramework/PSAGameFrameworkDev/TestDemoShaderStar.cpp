@@ -54,6 +54,30 @@ void main()
 }
 )";
 
+const char* ActorFragStar = R"(
+#version 460 core
+
+in vec4 FxColor;
+in vec2 FxCoord;
+
+uniform vec2  RenderResolution;
+uniform float RenderTime;
+
+out vec4 FragColor;
+
+void main()
+{
+    float Gradient = (FxCoord.x + FxCoord.y) * 0.5;
+
+    vec3 Color1 = vec3(0.0, 0.5, 1.0);
+    vec3 Color2 = vec3(0.0, 1.0, 0.5);
+
+    vec3 GradientColor = mix(Color1, Color2, Gradient);
+
+    FragColor = vec4(GradientColor, 0.92);
+}
+)";
+
 const char* ActorFragNPC = R"(
 #version 460 core
 
@@ -89,6 +113,7 @@ void main()
     vec4 OutColor = vec4(0.0);
 
     OutColor += DrawSquare(FxCoord, vec2(0.5, 0.5), 1.0, vec4(0.0, 0.0, 0.0, 0.92));
+    OutColor += DrawSquare(FxCoord, vec2(0.5, 0.5), 0.7, vec4(0.0, 0.0, 0.0, 0.08));
     
     if (OutColor.a == 1.0) {
         FragColor = vec4(0.0);

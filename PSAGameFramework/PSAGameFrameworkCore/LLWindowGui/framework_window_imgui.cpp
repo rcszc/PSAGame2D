@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-#define SYSTEM_DEFAULT_FONTS_SC 0.72f
+#define SYSTEM_DEFAULT_FONTS_SC 0.42f
 namespace PSAG_WINDOW_IMGUI {
 
     void SpcaImGuiEvent::ImGuiInit(GLFWwindow* window_object, ImGuiConfig cfgdata) {

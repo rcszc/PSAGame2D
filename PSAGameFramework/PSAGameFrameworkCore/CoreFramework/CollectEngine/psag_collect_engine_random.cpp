@@ -36,13 +36,13 @@ namespace CollectEngineRandom {
 	}
 
 	bool GenerateRandom2D::IsMinDistanceSafe(size_t number, const Vector2T<Vector2T<float>>& limit, float min_dist, float& max) {
-		float RectWidth  = limit.vector_y.vector_x - limit.vector_x.vector_x;
-		float RectHeight = limit.vector_y.vector_y - limit.vector_x.vector_y;
+		float RectWidth  = limit.vector_x.vector_y - limit.vector_x.vector_x;
+		float RectHeight = limit.vector_y.vector_y - limit.vector_y.vector_x;
 		// max points.
 		float MaxPoints = (RectWidth / min_dist + 1.0f) * (RectHeight / min_dist + 1.0f);
 		MaxPoints *= 0.7f; // safe-factor [20240606]
 		max = MaxPoints;
-		return MaxPoints <= (float)number;
+		return MaxPoints > (float)number;
 	}
 
 	bool GenerateRandom2D::IsPointInRectangle(const Vector2T<float>& point, const Vector2T<float>& min, const Vector2T<float>& max) {
@@ -65,7 +65,7 @@ namespace CollectEngineRandom {
 		// 范围内生成数量与稀疏度安全.
 		if (!IsMinDistanceSafe(number, limit, min_distance, SafeMax))
 			PushLogger(LogWarning, PSAGM_COLENGINE_RAND_LABEL, "random(2d) system: number: %u safe_max: %.2f", number, SafeMax);
-
+		
 		// generate 2d points.
 		while (RandomCoordGroup.size() < number) {
 			Vector2T<float> NewPoint = Vector2T<float>(

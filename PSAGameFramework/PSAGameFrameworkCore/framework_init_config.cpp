@@ -22,7 +22,7 @@ namespace PsagFrameworkCore {
 
 		ImGuiInitConfig.FontsFilepath    = "PSAGameSystemFiles/JetBrainsMonoBold.ttf";
 		ImGuiInitConfig.FontsGlobalColor = Vector4T<float>(0.0f, 1.0f, 1.0f, 0.92f);
-		ImGuiInitConfig.FontsGlobalSize  = 26.5f;
+		ImGuiInitConfig.FontsGlobalSize  = 46.0f;
 
 		// use system default.
 		FrameworkGraphicsParams = INIT_PARAMETERS();
