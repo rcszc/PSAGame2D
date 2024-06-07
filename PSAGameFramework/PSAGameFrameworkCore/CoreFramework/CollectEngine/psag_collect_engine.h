@@ -47,7 +47,7 @@ namespace CollectEngineRandom {
 		// limit: x.x: x.min, x.y: x.max, y.x: y.min, y.y: y.max.
 		bool CreateRandomDataset(size_t number, const Vector2T<Vector2T<float>>& limit, float min_distance);
 
-		bool DatasetCropCircle(const Vector2T<float>& center, float radius);
+		bool DatasetCropCircle(const Vector2T<float>& center, float radius, bool flag = false);
 		bool DatasetCropRectangle(const Vector2T<float>& min_point, const Vector2T<float>& max_point);
 	};
 }

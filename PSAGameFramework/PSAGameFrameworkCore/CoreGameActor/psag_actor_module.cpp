@@ -5,9 +5,7 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-float           __ACTOR_MODULES_TIMESTEP::ActorModulesTimeStep   = 1.0f;
-Vector2T<float> __ACTOR_MODULES_CAMERAPOS::ActorModulesCameraPos = {};
-
+float __ACTOR_MODULES_TIMESTEP::ActorModulesTimeStep = 1.0f;
 namespace GameActorCore {
 	namespace Type {
 		uint32_t GameActorTypeBind::ActorTypeIs(const string& type_name) {
@@ -69,19 +67,9 @@ namespace GameActorCore {
 			return false;
 		}
 
-		float RenderScale = (float)__RENDER_RESOLUTION.vector_x / (float)__RENDER_RESOLUTION.vector_y;
-		// porj matrix & scale ortho.
-		glm::mat4 ProjectionMatrix = glm::ortho(
-			-SystemRenderingOrthoSpace * RenderScale, SystemRenderingOrthoSpace * RenderScale,
-			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
-		);
-		// convert: glm matrix => psag matrix.
-		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
-		memcpy_s(__ACTOR_MATRIX_ITEM.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
-
 		__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
 		if (VerPosition != nullptr) {
-
+			// vertex coord => shader vertex_group.
 			vector<float> DatasetTemp = {};
 			for (size_t i = 0; i < VerPosition->size(); ++i) {
 				// vertex group, std: GL_VERT_01.
@@ -216,7 +204,7 @@ namespace GameActorCore {
 			ShaderRender.RenderBindShader(ShaderTemp);
 
 			// framework preset uniform.
-			ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        RenderMatrix);
+			ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",        *RenderMatrix);
 			ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderResolution);
 			ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime",       time_count);
 
@@ -261,7 +249,7 @@ namespace GameActorCore {
 			ActorCompRendering->RenderResolution = RenderingResolution;
 			ActorCompRendering->ShaderIndex      = ActorResource->__ACTOR_SHADER_ITEM;
 			ActorCompRendering->VertexGroupIndex = ActorResource->__ACTOR_VERTEX_ITEM;
-			ActorCompRendering->RenderMatrix     = ActorResource->__ACTOR_MATRIX_ITEM;
+			ActorCompRendering->RenderMatrix     = &MatrixDataWindow;
 			
 			// load rendering texture.
 			if (VirTextureExist(ActorResource->__VIR_TEXTURE_ITEM)) {
@@ -354,12 +342,12 @@ namespace GameActorCore {
 		
 		// actor_position - camera_position.
 		Vector2T<float> ActorMapping(
-			ActorStatePosition.vector_x + ActorModulesCameraPos.vector_x / ValueScale,
-			ActorStatePosition.vector_y + ActorModulesCameraPos.vector_y
+			ActorStatePosition.vector_x + MatrixWorldCamera.MatrixPosition.vector_x / 10.0f,
+			ActorStatePosition.vector_y - MatrixWorldCamera.MatrixPosition.vector_y / 10.0f
 		);
 		return Vector2T<float>(
-			ActorMapping.vector_x * ValueScale / SystemRenderingOrthoSpace * LossWidth + LossWidth,
-			ActorMapping.vector_y / SystemRenderingOrthoSpace * LossHeight + LossHeight
+			ActorMapping.vector_x * ValueScale / (SystemRenderingOrthoSpace * MatrixWorldCamera.MatrixScale.vector_x) * LossWidth + LossWidth,
+			ActorMapping.vector_y / (SystemRenderingOrthoSpace * MatrixWorldCamera.MatrixScale.vector_y) * LossHeight + LossHeight
 		);
 	}
 

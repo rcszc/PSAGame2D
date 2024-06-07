@@ -5,6 +5,50 @@ using namespace std;
 using namespace PSAG_LOGGER;
 using namespace GraphicsShaderCode;
 
+namespace GraphicsEngineMatrix {
+	MatrixTransParams PsagGLEngineMatrix::MatrixWorldCamera = {};
+	PsagMatrix4       PsagGLEngineMatrix::MatrixDataRect    = {};
+	PsagMatrix4       PsagGLEngineMatrix::MatrixDataWindow  = {};
+
+	glm::mat4 PsagGLEngineMatrix::GetOrthoProjMatrix(float scale_size) {
+		return glm::ortho(
+			-SystemRenderingOrthoSpace * scale_size, SystemRenderingOrthoSpace * scale_size,
+			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
+		);
+	}
+
+	glm::mat4 PsagGLEngineMatrix::UpdateCalcMatrix(const glm::mat4& in_matrix, const MatrixTransParams& params) {
+		glm::mat4 MatrixCalcTemp = in_matrix;
+		// camera position trans.
+		MatrixCalcTemp = glm::translate(
+			MatrixCalcTemp, glm::vec3(
+				-params.MatrixPosition.vector_x * 0.1f,
+				 params.MatrixPosition.vector_y * 0.1f,
+				0.0f
+			));
+		// camera rotate trans.
+		MatrixCalcTemp = glm::rotate(MatrixCalcTemp, params.MatrixRotate, glm::vec3(0.0f, 0.0f, 1.0f));
+		// camera scale trans.
+		MatrixCalcTemp = glm::scale(
+			MatrixCalcTemp, glm::vec3(
+				params.MatrixScale.vector_x,
+				params.MatrixScale.vector_x,
+				1.0f
+			));
+		return MatrixCalcTemp;
+	}
+
+	PsagMatrix4 PsagGLEngineMatrix::UpdateEncodeMatrix(const glm::mat4& matrix, float scale) {
+		PsagMatrix4 EncMatrixTemp = {};
+		// matrix_calc: porj * view.
+		glm::mat4 CameraMatrix = GetOrthoProjMatrix(scale) * glm::inverse(matrix);
+		// convert: glm matrix => psag matrix.
+		const float* glmmatptr = glm::value_ptr(CameraMatrix);
+		memcpy_s(EncMatrixTemp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+		return EncMatrixTemp;
+	}
+}
+
 float __GRAPHICS_ENGINE_TIMESETP::GraphicsEngineTimeStep = 1.0f;
 namespace GraphicsEnginePost {
 
@@ -22,7 +66,7 @@ namespace GraphicsEnginePost {
 		ShaderRender.RenderBindShader(FilterShader);
 		{
 			// framework preset uniform.
-			ShaderUniform.UniformMatrix4x4(FilterShader, "MvpMatrix", BloomShaderMvp);
+			ShaderUniform.UniformMatrix4x4(FilterShader, "MvpMatrix", RenderingMatrixMvp);
 			ShaderVertexDefaultParams(FilterShader);
 
 			ShaderUniform.UniformVec3 (FilterShader, "PostFilterColor", RenderParameters.GameSceneFilterCOL);
@@ -50,7 +94,7 @@ namespace GraphicsEnginePost {
 			ShaderRender.RenderBindShader(ShaderTemp[i]);
 			{
 				// framework preset uniform.
-				ShaderUniform.UniformMatrix4x4(ShaderTemp[i], "MvpMatrix", BloomShaderMvp);
+				ShaderUniform.UniformMatrix4x4(ShaderTemp[i], "MvpMatrix", RenderingMatrixMvp);
 				ShaderVertexDefaultParams(ShaderTemp[i]);
 
 				ShaderUniform.UniformInteger(ShaderTemp[i], "PostBloomRadius", RenderParameters.GameSceneBloomRadius);
@@ -66,31 +110,6 @@ namespace GraphicsEnginePost {
 			ShaderRender.RenderUnbindFrameBuffer();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
-	}
-
-	void PsagGLEnginePost::CameraMatrixTrans() {
-		MatrixView = glm::mat4(1.0f);
-		// camera position trans.
-		MatrixView = glm::translate(
-			MatrixView, glm::vec3(
-				-RenderParameters.GameCameraTrans.CameraOffset.vector_x * 0.1f,
-				RenderParameters.GameCameraTrans.CameraOffset.vector_y * 0.1f,
-				0.0f
-			));
-		// camera rotate trans.
-		MatrixView = glm::rotate(MatrixView, RenderParameters.GameCameraTrans.CameraRotate, glm::vec3(0.0f, 0.0f, 1.0f));
-		// camera scale trans.
-		MatrixView = glm::scale(
-			MatrixView, glm::vec3(
-				RenderParameters.GameCameraTrans.CameraLens.vector_x,
-				RenderParameters.GameCameraTrans.CameraLens.vector_x,
-				1.0f
-			));
-		// matrix_calc: porj * view.
-		glm::mat4 CameraMatrix = MatrixPorj * glm::inverse(MatrixView);
-		// convert: glm matrix => psag matrix.
-		const float* glmmatptr = glm::value_ptr(CameraMatrix);
-		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 	}
 
 	PsagGLEnginePost::PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution) {
@@ -157,7 +176,7 @@ namespace GraphicsEnginePost {
 		// convert: glm matrix => psag matrix.
 		// non-view matrix.
 		const float* glmmatptr = glm::value_ptr(MatrixPorj);
-		memcpy_s(BloomShaderMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
+		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
 		// **************** create texture & FBO ****************
 		
@@ -243,8 +262,6 @@ namespace GraphicsEnginePost {
 	}
 
 	bool PsagGLEnginePost::RenderingPostModule() {
-		// trans camera_matrix => bloom process.
-		CameraMatrixTrans();
 		BloomShaderProcessHV();
 
 		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
@@ -290,12 +307,12 @@ namespace GraphicsEngineBackground {
 			ShaderProgramItem = GenResourceID.PsagGenTimeKey();
 			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
 		}
-
 		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
 
-		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
-		// convert: glm matrix => imfx matrix.
-		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
+		glm::mat4x4 MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
+		// convert: glm matrix => psag matrix.
+		// non-view matrix.
+		const float* glmmatptr = glm::value_ptr(MatrixPorj);
 		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
 		// **************** load multiple backgrounds ****************

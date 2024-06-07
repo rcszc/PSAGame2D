@@ -214,16 +214,35 @@ protected:
 	static float GraphicsEngineTimeStep;
 };
 
+namespace GraphicsEngineMatrix {
+	// matrix_trans params => world matrix calc.
+	struct MatrixTransParams {
+		Vector2T<float> MatrixPosition;
+		Vector2T<float> MatrixScale;
+		float           MatrixRotate;
+
+		MatrixTransParams() : 
+			MatrixPosition(Vector2T<float>(0.0f, 0.0f)),
+			MatrixScale   (Vector2T<float>(1.0f, 1.0f)), 
+			MatrixRotate  (0.0f)
+		{}
+	};
+
+	class PsagGLEngineMatrix {
+	private:
+		glm::mat4 GetOrthoProjMatrix(float scale_size);
+	protected:
+		static MatrixTransParams MatrixWorldCamera;
+		static PsagMatrix4       MatrixDataRect;
+		static PsagMatrix4       MatrixDataWindow;
+
+		glm::mat4 UpdateCalcMatrix(const glm::mat4& in_matrix, const MatrixTransParams& params);
+		PsagMatrix4 UpdateEncodeMatrix(const glm::mat4& matrix, float scale);
+	};
+}
+
 namespace GraphicsEnginePost {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
-
-	struct GameCamera {
-		Vector2T<float> CameraOffset; // camera offset. (move)
-		Vector2T<float> CameraLens;   // camera lens. (scale)
-		float           CameraRotate; // camera rotate. (angle)
-
-		GameCamera() : CameraOffset({}), CameraLens(Vector2T<float>(1.0f, 1.0f)), CameraRotate(0.0f) {}
-	};
 
 	struct PostFxParameters {
 		Vector3T<float> GameSceneFilterCOL; // lv1-filter.
@@ -232,15 +251,12 @@ namespace GraphicsEnginePost {
 		uint32_t GameSceneBloomRadius;
 		// bloom_blend x:source, y:blur.
 		Vector2T<float> GameSceneBloomBlend;
-		// game global scene camera.
-		GameCamera GameCameraTrans;
-
+		
 		PostFxParameters() :
 			GameSceneFilterCOL  (Vector3T<float>()),
 			GameSceneFilterAVG  (0.0f),
 			GameSceneBloomRadius(1), 
-			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),
-			GameCameraTrans     ({})
+			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f))
 		{}
 	};
 
@@ -256,7 +272,6 @@ namespace GraphicsEnginePost {
 
 		// bloom shader hv mvp != scene mvp.
 		PsagMatrix4 RenderingMatrixMvp = {};
-		PsagMatrix4 BloomShaderMvp     = {};
 		// scene => filter => bloom_h + bloom_v => post_shader.
 		ResUnique ShaderProgramItem = {};
 		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
@@ -272,7 +287,6 @@ namespace GraphicsEnginePost {
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);
 		void BloomShaderProcessHV();
-		void CameraMatrixTrans();
 	public:
 		PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution);
 		~PsagGLEnginePost();
@@ -314,8 +328,8 @@ namespace GraphicsEngineBackground {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
+		PsagMatrix4     RenderingMatrixMvp  = {};
 
-		PsagMatrix4 RenderingMatrixMvp = {};
 		// x:tex_idx[1,n-1], y:tex_idx[n].
 		ResUnique ShaderProgramItem = {};
 
@@ -441,6 +455,7 @@ namespace GraphicsEngineParticle {
 	class PsagGLEngineParticle :
 		public GraphicsEngineDataset::GLEngineDyVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	protected:
@@ -453,9 +468,7 @@ namespace GraphicsEngineParticle {
 		ResUnique ShaderProgramItem = {};
 		ResUnique DyVertexSysItem   = {};
 
-		float       RenderTimer  = 0.0f;
-		PsagMatrix4 RenderMatrix = {};
-
+		float           RenderTimer   = 0.0f;
 		Vector2T<float> RenderMove    = {};
 		Vector2T<float> RenderScale   = Vector2T<float>(1.0f, 1.0f);
 		float           RenderTwist = 0.0f;

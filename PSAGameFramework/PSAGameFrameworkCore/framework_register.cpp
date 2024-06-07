@@ -1,16 +1,16 @@
 // framework_register.
 #include"CoreFramework/psag_mainevent_support.h"
 // include dev game_logic header.
-#include "../PSAGameFrameworkDev/FrameworkTest.h"
+#include "../PSAGameFrameworkDev/TestDemoStar.h"
 
 // reg_class: 'PSAGCLASS()'
-PSAGCLASS(DevTestClass);
+PSAGCLASS(TestClassStar);
 
 namespace PsagFrameworkCore {
 	void PSAGame2DFramework::InitializeRegistrationDev() {
 		// use: 'RegDev::GAMEREF.ReflectionObjectCreate'
 		// register,create class,object...
 
-		RegisterDevClass::GAMEREF.ReflectionObjectCreate("DevTestClass", "TestObject");
+		RegisterDevClass::GAMEREF.ReflectionObjectCreate("TestClassStar", "TestObject");
 	}
 }

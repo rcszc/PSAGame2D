@@ -31,7 +31,7 @@ namespace GameBrickCore {
 			BirckCompRendering->RenderResolution = RenderingResolution;
 			BirckCompRendering->ShaderIndex      = BrickResource->__ACTOR_SHADER_ITEM;
 			BirckCompRendering->VertexGroupIndex = BrickResource->__ACTOR_VERTEX_ITEM;
-			BirckCompRendering->RenderMatrix     = BrickResource->__ACTOR_MATRIX_ITEM;
+			BirckCompRendering->RenderMatrix     = &MatrixDataWindow;
 
 			// load rendering texture.
 			if (VirTextureExist(BrickResource->__VIR_TEXTURE_ITEM)) {

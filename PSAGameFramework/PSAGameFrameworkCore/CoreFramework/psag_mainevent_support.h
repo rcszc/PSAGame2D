@@ -16,6 +16,7 @@
 namespace GameLogic {
     // framework run parameters.
     struct FrameworkParams {
+        GraphicsEngineMatrix::MatrixTransParams*    CameraParams;
         GraphicsEnginePost::PostFxParameters*       PostShaderParams;
         GraphicsEngineBackground::BackFxParameters* BackShaderParams;
 
@@ -142,6 +143,8 @@ namespace PsagFrameworkCore {
         public PsagLow::PsagSupSoundSystem::__PsagSoundDeviceHandle,
         public PsagLow::PsagSupWindowGuiEventOglfw,
         public PsagLow::PsagSupWindowGuiEventImGui,
+        // update global matrix.
+        public GraphicsEngineMatrix::PsagGLEngineMatrix,
         // public PsagLow::PsagSupGraphicsLLRES, (Óë"GLEngineVertexDyData"³åÍ»)
         // init vertex_group_mag(vao,vbo) & vir_texture system.
         public GraphicsEngineDataset::GLEngineDyVertexData,   // dyamic vertex.
@@ -151,22 +154,22 @@ namespace PsagFrameworkCore {
         public PhysicsEngine::PhyEngineCoreDataset,
         // system time step.
         public __GRAPHICS_ENGINE_TIMESETP,
-        public __ACTOR_MODULES_TIMESTEP,
-        // system camera position get.
-        public __ACTOR_MODULES_CAMERAPOS
+        public __ACTOR_MODULES_TIMESTEP
         // public __PHYSICS_ENGINE_TIMESETP, (Óë"PhysicsEngine::PhyEngineCoreDataset"³åÍ»)
     {
     private:
         static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;
         static GraphicsEngineBackground::PsagGLEngineBackground* RendererBackFX;
+        // 'RendererBackFX' = nullptr => 'FrameworkParams'.
+        GraphicsEngineBackground::BackFxParameters BackDefaultParams = {};
 
-        GraphicsEngineBackground::BackFxParameters BackgroundParams = {};
+        static GameLogic::FrameworkParams FrameworkParams;
 
         // friend class:
         friend class PsagManage::SysBackground;
     protected:
-        INIT_PARAMETERS FrameworkGraphicsParams = {}; // graphics init parameters.
-        GameLogic::FrameworkParams FrameworkParams = {};
+        // graphics init parameters.
+        INIT_PARAMETERS FrameworkGraphicsParams = {};
         // user registration game_logic class data.
         std::unordered_map<std::string, GameLogic::INTERFACE_DEVCLASS_GAME*> GAME_CORE_CLASS = {};
 

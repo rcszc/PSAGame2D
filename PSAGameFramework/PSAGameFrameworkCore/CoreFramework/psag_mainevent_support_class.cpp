@@ -23,6 +23,7 @@ namespace PsagFrameworkCore {
 			RendererBackFX = new GraphicsEngineBackground::PsagGLEngineBackground(
 				resolution, LayersRawImages
 			);
+			FrameworkParams.BackShaderParams = &RendererBackFX->RenderParameters;
 			PushLogger(LogInfo, PSAGM_FRAME_COREMAG_LABEL, "background create, layers: %u", LayersRawImages.size());
 		}
 	}

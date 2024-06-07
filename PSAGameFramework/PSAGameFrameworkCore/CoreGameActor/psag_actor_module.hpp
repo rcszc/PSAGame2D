@@ -11,11 +11,10 @@ class __ACTOR_MODULES_TIMESTEP {
 protected:
 	static float ActorModulesTimeStep;
 };
-// 主要用于Actor位置映射屏幕位置, 做参数计算.
-class __ACTOR_MODULES_CAMERAPOS {
-protected:
-	static Vector2T<float> ActorModulesCameraPos;
-};
+
+namespace GameToolsCore {
+	namespace Random = CollectEngineRandom;
+}
 
 namespace GameActorScript {
 	// public: 'actor', 'brick'.
@@ -132,7 +131,6 @@ namespace GameActorCore {
 		
 		ResUnique   __ACTOR_SHADER_ITEM = NULL;
 		ResUnique   __ACTOR_VERTEX_ITEM = NULL;
-		PsagMatrix4 __ACTOR_MATRIX_ITEM = {};
 
 		Vector2T<uint32_t> __RENDER_RESOLUTION = {};
 
@@ -271,7 +269,8 @@ namespace GameActorCore {
 			ResUnique VertexGroupIndex = NULL;
 
 			Vector2T<float> RenderResolution = {};
-			PsagMatrix4     RenderMatrix     = {};
+			// referencing global static_pointer(matrix).
+			PsagMatrix4* RenderMatrix = nullptr;
 
 			std::function<void()> RenderingTextureFunc = [&]() {};
 			ResUnique VirTexItem = NULL;
@@ -288,8 +287,8 @@ namespace GameActorCore {
 	class GameActorActuator :
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
-		public __ACTOR_MODULES_TIMESTEP,
-		public __ACTOR_MODULES_CAMERAPOS
+		public GraphicsEngineMatrix::PsagGLEngineMatrix,
+		public __ACTOR_MODULES_TIMESTEP
 	{
 	protected:
 		std::chrono::steady_clock::time_point ActorTimer      = std::chrono::steady_clock::now();
@@ -392,6 +391,7 @@ namespace GameBrickCore {
 	class GameBrickActuator :
 		public GraphicsEngineDataset::GLEngineStcVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:

@@ -254,16 +254,6 @@ namespace GraphicsEngineParticle {
 		DyVertexSysItem = GenResourceID.PsagGenTimeKey();
 		VerDyDataItemAlloc(DyVertexSysItem);
 
-		float RenderScale = (float)render_resolution.vector_x / (float)render_resolution.vector_y;
-		float RenderSpace = SystemRenderingOrthoSpace;
-		// porj matrix + scale.
-		glm::mat4 ProjectionMatrix = glm::ortho(
-			-RenderSpace * RenderScale, RenderSpace * RenderScale, -RenderSpace, RenderSpace, -RenderSpace, RenderSpace
-		);
-		// convert: glm matrix => imfx matrix.
-		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
-		memcpy_s(RenderMatrix.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
-
 		VirTextureItem = GenResourceID.PsagGenTimeKey();
 		// virtual texture item alloc.
 		if (image.ImagePixels.empty())
@@ -300,7 +290,7 @@ namespace GraphicsEngineParticle {
 		ShaderRender.RenderBindShader(ShaderTemp);
 
 		// system parset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);
+		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  MatrixDataWindow);
 
 		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",  RenderTimer);
 		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",  RenderMove);

@@ -14,8 +14,10 @@ namespace PsagFrameworkCore {
 
     // **************** core static init ****************
 
-    GraphicsEnginePost::PsagGLEnginePost* PSAGame2DFramework::RendererPostFX             = nullptr;
+    GraphicsEnginePost::PsagGLEnginePost*             PSAGame2DFramework::RendererPostFX = nullptr;
     GraphicsEngineBackground::PsagGLEngineBackground* PSAGame2DFramework::RendererBackFX = nullptr;
+
+    GameLogic::FrameworkParams PSAGame2DFramework::FrameworkParams = {};
 
     void PSAGame2DFramework::FrameworkRendererLowinit(const string& gl_version) {
         PsagLow::PsagSupGraphicsOper::PsagGraphicsSysinit GLINIT;
@@ -48,21 +50,19 @@ namespace PsagFrameworkCore {
     bool PSAGame2DFramework::CoreFrameworkEvent() {
         bool CoreErrorFlag = PSAG_FALSE;
         ClacFrameTimeStepBegin();
-        // state submit.
-        FrameworkParams.PostShaderParams = &RendererPostFX->RenderParameters;
-        if (RendererBackFX == nullptr)
-            FrameworkParams.BackShaderParams = &BackgroundParams;
-        else
-            FrameworkParams.BackShaderParams = &RendererBackFX->RenderParameters;
-        FrameworkParams.WindowResolution = RenderingWinSize;
-
+        
         // update time_step.
         GraphicsEngineTimeStep = FrameworkParams.GameRunTimeStep;
         PhysicsEngineTimeStep  = FrameworkParams.GameRunTimeStep;
         ActorModulesTimeStep   = FrameworkParams.GameRunTimeStep;
         PhysicsSystemUpdateState();
-        // main_scene camera pos => actor modules.
-        ActorModulesCameraPos = RendererPostFX->RenderParameters.GameCameraTrans.CameraOffset;
+        
+        FrameworkParams.CameraParams = &MatrixWorldCamera;
+
+        float RoatioValue = (float)RenderingWinSize.vector_x / (float)RenderingWinSize.vector_y;
+        // global: calc_camera matrix(world_coord).
+        MatrixDataRect   = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), 1.0f);
+        MatrixDataWindow = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), RoatioValue);
 
         // opengl render_event loop.
         RenderContextAbove();
@@ -132,6 +132,12 @@ namespace PsagFrameworkCore {
         // init imgui_core system.
         ImGuiInit(MainWindowObject, ImGuiInitConfig);
 
+        // load pointer.
+        FrameworkParams.PostShaderParams = &RendererPostFX->RenderParameters;
+        FrameworkParams.WindowResolution = RenderingWinSize;
+        // non-create using default values.
+        FrameworkParams.BackShaderParams = &BackDefaultParams;
+       
         // registration dev_class, objects.
         InitializeRegistrationDev();
         // imit gui_logic(scene,gui).
@@ -139,6 +145,7 @@ namespace PsagFrameworkCore {
             it->second->LogicInitialization(RenderingWinSize);
 
         *RenderingFrameColorPtr = DefaultFrameColor;
+
         PushLogger(LogTrace, PSAGM_FRAME_CORE_LABEL, "pomelo_star game2d version: %.8lf", version);
         // return init_items sum_flag.
         return !CoreInitErrorFlag;

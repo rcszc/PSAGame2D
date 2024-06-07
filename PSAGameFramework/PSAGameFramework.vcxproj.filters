@@ -144,9 +144,6 @@
     <ClCompile Include="PSAGameFrameworkCore\framework_register.cpp">
       <Filter>源文件\PSAGameFrameworkCore\A-Config-Reg</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\FrameworkTest.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_class.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
@@ -183,9 +180,6 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_manager.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\FrameworkTestShader.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
-    </ClCompile>
     <ClCompile Include="ExternalLibrary\FiletoolsLibrary\Base64\base64\base64.cpp">
       <Filter>资源文件\Base64</Filter>
     </ClCompile>
@@ -218,6 +212,12 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_random.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\TestDemoShaderStar.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\TestDemoStar.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -304,9 +304,6 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkDev\FrameworkTest.h">
-      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
-    </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imvec.h">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
     </ClInclude>
@@ -354,6 +351,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\TestDemoStar.h">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

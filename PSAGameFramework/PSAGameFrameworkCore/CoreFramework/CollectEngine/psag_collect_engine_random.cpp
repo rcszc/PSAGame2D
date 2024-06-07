@@ -86,7 +86,7 @@ namespace CollectEngineRandom {
 		return true;
 	}
 
-	bool GenerateRandom2D::DatasetCropCircle(const Vector2T<float>& center, float radius) {
+	bool GenerateRandom2D::DatasetCropCircle(const Vector2T<float>& center, float radius, bool flag) {
 		if (RandomCoordGroup.empty()) {
 			PushLogger(LogWarning, PSAGM_COLENGINE_RAND_LABEL, "random(2d) system: crop: dataset empty.");
 			return false;
@@ -96,10 +96,15 @@ namespace CollectEngineRandom {
 			return false;
 		}
 		// point > circle_radius => erase.
-		for (auto it = RandomCoordGroup.begin(); it != RandomCoordGroup.end(); ++it) {
-			if (CalcDistanceLength(*it, center) > radius)
-				RandomCoordGroup.erase(it);
-		}
+		auto it = partition(RandomCoordGroup.begin(), RandomCoordGroup.end(), 
+			[&](Vector2T<float> value) {
+				float DisLen = CalcDistanceLength(value, center);
+				// mode type: true: swap value.
+				if (flag) swap(DisLen, radius);
+				return !(DisLen < radius);
+			}
+		);
+		RandomCoordGroup.erase(it, RandomCoordGroup.end());
 		return true;
 	}
 
