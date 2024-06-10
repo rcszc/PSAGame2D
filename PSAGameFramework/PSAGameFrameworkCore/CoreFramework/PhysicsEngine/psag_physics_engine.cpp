@@ -7,6 +7,31 @@ using namespace PSAG_LOGGER;
 float __PHYSICS_ENGINE_TIMESETP::PhysicsEngineTimeStep = 1.0f;
 namespace PhysicsEngine {
 
+	void __PsagPhyContactListener::BeginContact(b2Contact* contact) {
+		// get collision.begin fixture a,b.
+		b2Fixture* FixtureA = contact->GetFixtureA();
+		b2Fixture* FixtureB = contact->GetFixtureB();
+
+		b2Body* BodyA = FixtureA->GetBody();
+		b2Body* BodyB = FixtureB->GetBody();
+
+		// collision a,b =find=> unique_code.
+		PhysicsCollision[__PsagPhyCollisionKey(BodyA, BodyB)] =
+			PhysicsCollisionCode(PhysicsDataset[BodyA].BindUniqueCode, PhysicsDataset[BodyB].BindUniqueCode);
+	}
+
+	void __PsagPhyContactListener::EndContact(b2Contact* contact) {
+		// get collision.end fixture a,b.
+		b2Fixture* FixtureA = contact->GetFixtureA();
+		b2Fixture* FixtureB = contact->GetFixtureB();
+
+		b2Body* BodyA = FixtureA->GetBody();
+		b2Body* BodyB = FixtureB->GetBody();
+
+		// delete collision item.
+		PhysicsCollision.erase(__PsagPhyCollisionKey(BodyA, BodyB));
+	}
+
 	unordered_map<string, PhysiceWorldData> PhyEngineCoreDataset::PhysicsWorlds = {};
 	// global cycles calc iterations.
 	Vector2T<float> PhyEngineCoreDataset::PhysicsIterations = Vector2T<float>(16.0f, 8.0f);
@@ -27,14 +52,14 @@ namespace PhysicsEngine {
 		return DatasetTemp;
 	}
 
-	bool PhyEngineCoreDataset::PhyBodyItemAlloc(string world, ResUnique rukey, PhysicsBodyConfig config) {
+	bool PhyEngineCoreDataset::PhyBodyItemAlloc(string world, PhyBodyKey* rukey, PhysicsBodyConfig config) {
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr) {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
 			return false;
 		}
-		auto it = WorldPointer->PhysicsDataset.find(rukey);
-		if (it != WorldPointer->PhysicsDataset.end()) {
+		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(*rukey);
+		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
 			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
@@ -68,7 +93,9 @@ namespace PhysicsEngine {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc, data = nullptr.");
 			return false;
 		}
-		WorldPointer->PhysicsDataset[rukey] = PhysicsBodyData(config.IndexUniqueCode, BodyData);
+		// key = body_data pointer.
+		*rukey = BodyData;
+		WorldPointer->PhysicsContact->PhysicsDataset[*rukey] = PhysicsBodyData(config.IndexUniqueCode, BodyData);
 
 		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
 		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %u", rukey);
@@ -76,17 +103,17 @@ namespace PhysicsEngine {
 		return true;
 	}
 
-	bool PhyEngineCoreDataset::PhyBodyItemFree(string world, ResUnique rukey) {
+	bool PhyEngineCoreDataset::PhyBodyItemFree(string world, PhyBodyKey rukey) {
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr) {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
 			return false;
 		}
-		auto it = WorldPointer->PhysicsDataset.find(rukey);
-		if (it != WorldPointer->PhysicsDataset.end()) {
+		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
 			// free ersae data.
 			WorldPointer->PhysicsWorld->DestroyBody(it->second.Box2dActorPtr);
-			WorldPointer->PhysicsDataset.erase(it);
+			WorldPointer->PhysicsContact->PhysicsDataset.erase(it);
 			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
 			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %u", rukey);
 			return true;
@@ -95,14 +122,14 @@ namespace PhysicsEngine {
 		return false;
 	}
 
-	void PhyEngineCoreDataset::PhyBodyItemResetBox(string world, ResUnique rukey, Vector2T<float> size, float density, float friction) {
+	void PhyEngineCoreDataset::PhyBodyItemResetBox(string world, PhyBodyKey rukey, Vector2T<float> size, float density, float friction) {
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr) {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
 			return;
 		}
-		auto it = WorldPointer->PhysicsDataset.find(rukey);
-		if (it != WorldPointer->PhysicsDataset.end()) {
+		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
 			auto BodyTemp = it->second.Box2dActorPtr;
 
 			b2Fixture* Fixture = BodyTemp->GetFixtureList();
@@ -123,13 +150,13 @@ namespace PhysicsEngine {
 		}
 	}
 
-	PhysicsRunState PhyEngineCoreDataset::PhyBodyItemGet(string world, ResUnique rukey) {
+	PhysicsRunState PhyEngineCoreDataset::PhyBodyItemGet(string world, PhyBodyKey rukey) {
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr)
 			return PhysicsRunState();
 
-		auto it = WorldPointer->PhysicsDataset.find(rukey);
-		if (it != WorldPointer->PhysicsDataset.end()) {
+		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
+		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
 			return PhysicsRunState(
 				it->second.Box2dActorPtr->GetAngle(),
 				Vector2T<float>(it->second.Box2dActorPtr->GetPosition().x, it->second.Box2dActorPtr->GetPosition().y),
@@ -139,7 +166,7 @@ namespace PhysicsEngine {
 		return PhysicsRunState();
 	}
 
-	size_t PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, ResUnique rukey) {
+	size_t PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, PhyBodyKey rukey) {
 		size_t ReturnUnqiueIndex = NULL;
 		b2Body* BodyCollided = nullptr;
 
@@ -147,20 +174,18 @@ namespace PhysicsEngine {
 		if (WorldPointer == nullptr)
 			return ReturnUnqiueIndex;
 
-		auto it = WorldPointer->PhysicsDataset.find(rukey);
-		if (it != WorldPointer->PhysicsDataset.end()) {
-			auto ThisBody = it->second.Box2dActorPtr;
-			// ±éÀú²éÑ¯Box2DÅö×²¶Ô [box2d_api]
-			for (b2Contact* Contact = WorldPointer->PhysicsWorld->GetContactList(); Contact; Contact = Contact->GetNext()) {
-				if (Contact->IsTouching() && (Contact->GetFixtureA()->GetBody() == ThisBody || Contact->GetFixtureB()->GetBody() == ThisBody)) {
-					BodyCollided = Contact->GetFixtureA()->GetBody() == 
-						ThisBody ? Contact->GetFixtureB()->GetBody() : Contact->GetFixtureA()->GetBody();
-					break;
-				}
+		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
+		for (const auto& COLL : WorldPointer->PhysicsContact->PhysicsCollision) {
+
+			if (COLL.first.CollisionBodyA == it->second.Box2dActorPtr ||
+				COLL.first.CollisionBodyB == it->second.Box2dActorPtr
+				) {
+				if (COLL.second.BindUniqueCodeA == it->second.BindUniqueCode)
+					ReturnUnqiueIndex = COLL.second.BindUniqueCodeB;
+				else
+					ReturnUnqiueIndex = COLL.second.BindUniqueCodeA;
+				break;
 			}
-			for (const auto& PhyItem : WorldPointer->PhysicsDataset)
-				if (PhyItem.second.Box2dActorPtr == BodyCollided)
-					ReturnUnqiueIndex = PhyItem.second.BindUniqueCode;
 		}
 		return ReturnUnqiueIndex;
 	}
@@ -173,7 +198,11 @@ namespace PhysicsEngine {
 		PhysiceWorldData CreatePhyWorld = {};
 		// create physics world.
 		b2Vec2 ConfigGravity(gravity_vector.vector_x, gravity_vector.vector_y);
-		CreatePhyWorld.PhysicsWorld = new b2World(ConfigGravity);
+
+		CreatePhyWorld.PhysicsWorld   = new b2World(ConfigGravity);
+		CreatePhyWorld.PhysicsContact = new __PsagPhyContactListener();
+		// register object.
+		CreatePhyWorld.PhysicsWorld->SetContactListener(CreatePhyWorld.PhysicsContact);
 
 		PhysicsWorlds[strkey] = CreatePhyWorld;
 		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "physics_world item: alloc key: %s", strkey.c_str());
@@ -185,11 +214,13 @@ namespace PhysicsEngine {
 		if (it != PhysicsWorlds.end()) {
 			// free ersae data.
 			size_t BodiesCount = NULL;
-			for (auto& BodyItem : it->second.PhysicsDataset) {
+			for (auto& BodyItem : it->second.PhysicsContact->PhysicsDataset) {
 				// free all bodies.
 				it->second.PhysicsWorld->DestroyBody(BodyItem.second.Box2dActorPtr);
 				++BodiesCount;
 			}
+			// del contact => del world => del item.
+			delete it->second.PhysicsContact;
 			delete it->second.PhysicsWorld;
 			PhysicsWorlds.erase(it);
 

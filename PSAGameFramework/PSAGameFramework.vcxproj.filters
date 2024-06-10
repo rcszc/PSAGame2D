@@ -219,6 +219,9 @@
     <ClCompile Include="PSAGameFrameworkDev\TestDemoStar.cpp">
       <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\ModuleDebug.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -353,6 +356,9 @@
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkDev\TestDemoStar.h">
+      <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\ModuleDebug.h">
       <Filter>源文件\PSAGameFrameworkCore\A-PSAGameFrameworkDev</Filter>
     </ClInclude>
   </ItemGroup>

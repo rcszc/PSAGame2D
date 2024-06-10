@@ -16,6 +16,7 @@ protected:
 	static float PhysicsEngineTimeStep;
 };
 
+using PhyBodyKey = b2Body*;
 // physics engine: box2d. [20240518]
 namespace PhysicsEngine {
 	StaticStrLABEL PSAGM_PHYENGINE_LABEL = "PSAG_PHYSICS";
@@ -61,13 +62,58 @@ namespace PhysicsEngine {
 		{}
 	};
 
-	struct PhysiceWorldData {
-		// physics world & body_dataset.
-		b2World* PhysicsWorld;
-		std::unordered_map<ResUnique, PhysicsBodyData> PhysicsDataset;
+	// collision pairs(A,B) unique_key.
+	struct PhysicsCollisionData {
+		b2Body* CollisionBodyA = nullptr;
+		b2Body* CollisionBodyB = nullptr;
 
-		PhysiceWorldData() : PhysicsWorld(nullptr), PhysicsDataset({}) {}
+		PhysicsCollisionData(b2Body* CA, b2Body* CB) : CollisionBodyA(CA), CollisionBodyB(CB) {}
+
+		bool operator==(const PhysicsCollisionData& other) const {
+			return (CollisionBodyA == other.CollisionBodyA) && (CollisionBodyB == other.CollisionBodyB) || 
+				(CollisionBodyA == other.CollisionBodyB && CollisionBodyB == other.CollisionBodyA);
+		}
 	};
+
+	struct PhysicsCollisionCode {
+		// bind actor_unique_code, [a,b].
+		size_t BindUniqueCodeA;
+		size_t BindUniqueCodeB;
+
+		PhysicsCollisionCode() : BindUniqueCodeA(NULL), BindUniqueCodeB(NULL) {}
+		PhysicsCollisionCode(size_t CA, size_t CB) : BindUniqueCodeA(CA), BindUniqueCodeB(CB) {}
+	};
+
+	using __PsagPhyCollisionKey = PhysicsCollisionData;
+	// unique_key hash.
+	struct __PsagPhyCollisionKeyHash {
+		size_t operator()(const __PsagPhyCollisionKey& key) const {
+			auto HASH1 = std::hash<b2Body*>()(key.CollisionBodyA);
+			auto HASH2 = std::hash<b2Body*>()(key.CollisionBodyB);
+			// clac key_hash value.
+			if (HASH1 > HASH2) std::swap(HASH1, HASH2);
+			return HASH1 ^ (HASH2 << 1);
+		}
+	};
+
+	using CollisionHashMap = std::unordered_map<__PsagPhyCollisionKey, PhysicsCollisionCode, __PsagPhyCollisionKeyHash>;
+	class __PsagPhyContactListener :public b2ContactListener {
+	public:
+		std::unordered_map<PhyBodyKey, PhysicsBodyData> PhysicsDataset = {};
+		CollisionHashMap PhysicsCollision = {};
+
+		void BeginContact(b2Contact* contact) override;
+		void EndContact(b2Contact* contact) override;
+	};
+
+	struct PhysiceWorldData {
+		// physics world & contact object.
+		b2World* PhysicsWorld;
+		__PsagPhyContactListener* PhysicsContact;
+
+		PhysiceWorldData() : PhysicsWorld(nullptr), PhysicsContact(nullptr) {}
+	};
+
 	// box2d worlds bodies manager.
 	class PhyEngineCoreDataset :public __PHYSICS_ENGINE_TIMESETP {
 	protected:
@@ -75,12 +121,12 @@ namespace PhysicsEngine {
 		// x:velocity_iterations, y:position_iterations.
 		static Vector2T<float> PhysicsIterations;
 
-		bool PhyBodyItemAlloc(std::string world, ResUnique rukey, PhysicsBodyConfig config);
-		bool PhyBodyItemFree(std::string world, ResUnique rukey);
+		bool PhyBodyItemAlloc(std::string world, PhyBodyKey* rukey, PhysicsBodyConfig config);
+		bool PhyBodyItemFree(std::string world, PhyBodyKey rukey);
 
-		void PhyBodyItemResetBox(std::string world, ResUnique rukey, Vector2T<float> size, float density, float friction);
-		PhysicsRunState PhyBodyItemGet(std::string world, ResUnique rukey);
-		size_t PhyBodyItemGetCollision(std::string world, ResUnique rukey);
+		void PhyBodyItemResetBox(std::string world, PhyBodyKey rukey, Vector2T<float> size, float density, float friction);
+		PhysicsRunState PhyBodyItemGet(std::string world, PhyBodyKey rukey);
+		size_t PhyBodyItemGetCollision(std::string world, PhyBodyKey rukey);
 
 		// physics system: framework oper.
 		bool PhysicsWorldCreate(std::string strkey, Vector2T<float> gravity_vector);

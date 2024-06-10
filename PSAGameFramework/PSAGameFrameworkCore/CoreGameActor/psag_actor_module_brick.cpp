@@ -41,7 +41,11 @@ namespace GameBrickCore {
 				BirckCompRendering->VirTexUniform        = BrickResource->__VIR_UNIFORM_ITEM;
 			}
 		}
-
+		else {
+			BirckCompRendering =
+				new GameActorCore::system::null::ActorRenderingNULL();
+		}
+		// birck => load physics world_item.
 		if (PhysicsWorldFind(INIT_DESC.BrickPhysicsWorld) == nullptr) {
 			PushLogger(LogError, PSAGM_BRICK_CORE_LABEL, "game_brick unable find world: %s", INIT_DESC.BrickPhysicsWorld.c_str());
 			return;
@@ -68,8 +72,8 @@ namespace GameBrickCore {
 		ActorPhyConfig.PhyBodyDensity  = INIT_DESC.InitialPhysics.vector_x;
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
-		BcickPhysicsItem = GenResourceID.PsagGenTimeKey();
-		PhyBodyItemAlloc(BrickPhysicsWorld, BcickPhysicsItem, ActorPhyConfig);
+		// 'key'由物理引擎分配.
+		PhyBodyItemAlloc(BrickPhysicsWorld, &BcickPhysicsItem, ActorPhyConfig);
 
 		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item create.");
 	}
@@ -78,7 +82,10 @@ namespace GameBrickCore {
 		if (BirckCompRendering == nullptr)
 			return;
 		// rendering brick shader_data.
-		BirckCompRendering->UpdateActorRendering(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, VirTimerCount);
+		BirckCompRendering->UpdateActorRendering(
+			GameActorCore::system::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate), 
+			VirTimerCount
+		);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
 	}
 }

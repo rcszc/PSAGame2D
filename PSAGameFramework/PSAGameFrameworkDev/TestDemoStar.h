@@ -9,12 +9,13 @@ extern const char* ActorFragPawn;
 extern const char* ActorFragStar;
 extern const char* ActorFragNPC;
 
-class TestClassStar :public GameLogic::INTERFACE_DEVCLASS_GAME, public PsagLow::PsagSupGraphicsLLRES {
+class StarDemoClass :public GameLogic::INTERFACE_DEVCLASS_GAME {
 protected:
     Vector2T<float> CameraPosition = {};
 
     float GameTestMaxFPS = 0.0f;
     float CameraScale = 1.0f;
+    float FramerateParams[3] = {};
 
     uint32_t EatStarCount      = NULL;
     size_t   EatStarCountTotal = NULL;

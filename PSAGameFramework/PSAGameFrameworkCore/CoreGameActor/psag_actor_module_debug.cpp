@@ -29,14 +29,11 @@ namespace GameDebugGuiWindow {
 
 			float ControlWidth = ImGui::GetWindowWidth() - IMGUI_ITEM_SPAC * 2.0f;
 			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::SliderFloat2("##SCALE", actor->ActorMappingScaleModify()->data(), 0.2f, 5.0f);
+			ImGui::SliderFloat2("##SCALE", actor->ActorGetScale().data(), 0.2f, 5.0f, "%.2f", ImGuiSliderFlags_NoInput);
 			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::SliderFloat2("##MOVE", actor->ActorMappingMoveSpeed()->data(), -10.0f, 10.0f);
-
-			if (ImGui::Button("RE")) *actor->ActorMappingRotateSpeed() = 0.0f;
-			ImGui::SameLine();
+			ImGui::SliderFloat2("##MOVE", actor->ActorGetMoveSpeed().data(), -10.0f, 10.0f, "%.2f", ImGuiSliderFlags_NoInput);
 			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::SliderFloat("##ROTATE", actor->ActorMappingRotateSpeed(), -5.0f, 5.0f);
+			ImGui::ProgressBar(actor->ActorGetRotate() * 0.1f + 0.5f);
 		}
 		ImGui::End();
 	}
@@ -66,6 +63,23 @@ namespace GameDebugGuiWindow {
 			++CountItemID;
 			ImGui::EndChild(); ImGui::PopID();
 			ImGui::PopStyleColor();
+		}
+		ImGui::End();
+	}
+
+	void DebugWindowGuiFPS(const char* name, float framerate_params[3]) {
+		ImGui::Begin(name, (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
+		{
+			framerate_params[0] = ImGui::GetIO().Framerate;
+			float FrameCount = (float)ImGui::GetFrameCount();
+			framerate_params[1] = (framerate_params[1] * FrameCount + framerate_params[0]) / (FrameCount + 1.0f);
+
+			if (framerate_params[0] > framerate_params[2])
+				framerate_params[2] = framerate_params[0];
+
+			ImGui::Text("GameFramerate Run: %.2f", framerate_params[0]);
+			ImGui::Text("GameFramerate Avg: %.2f", framerate_params[1]);
+			ImGui::Text("GameFramerate Max: %.2f", framerate_params[2]);
 		}
 		ImGui::End();
 	}
