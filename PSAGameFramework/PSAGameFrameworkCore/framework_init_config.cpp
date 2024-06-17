@@ -39,6 +39,7 @@ namespace PsagFrameworkCore {
 		GraphShaders.PrivateShaders.ShaderFragBloomV      = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_bloom_v.frag");
 		GraphShaders.PrivateShaders.ShaderFragFinalPhase  = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final.frag");
 		GraphShaders.PrivateShaders.ShaderFragBackground  = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_background.frag");
+		GraphShaders.PrivateShaders.ShaderFragLight       = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_vollight.frag");
 		GraphShaders.PrivateShaders.ShaderFragParticle    = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_particle.frag");
 		GraphShaders.PrivateShaders.ShaderFragFxSequence  = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_fx_sequence.frag");
 		

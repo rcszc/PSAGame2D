@@ -70,7 +70,7 @@ namespace PsagFrameworkCore {
             if (RendererPostFX != nullptr) {
                 CoreErrorFlag |= !RendererPostFX->CaptureGameScene([&]() { return FrameworkRenderingGameScene(); });
                 // render_pipline out_render.
-                CoreErrorFlag |= !RendererPostFX->RenderingPostModule();
+                RendererPostFX->RenderingPostModule();
             }
             RenderGuiContextA();
             CoreErrorFlag |= !FrameworkRenderingGameGui();
@@ -126,8 +126,9 @@ namespace PsagFrameworkCore {
         // physics system create. default(debug?) world.
         CoreInitErrorFlag |= !PhysicsWorldCreate("SYSTEM_PHY_WORLD", Vector2T<float>());
 
-        // create game2d post-shader.
-        RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
+        // create game2d post-shader & light-shader.
+        RendererPostFX  = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
+        //RendererLightFX = new GraphicsEngineVoluLight::PsagGLEngineVoluLightNULL(RenderingWinSize);
 
         // init imgui_core system.
         ImGuiInit(MainWindowObject, ImGuiInitConfig);
@@ -155,8 +156,8 @@ namespace PsagFrameworkCore {
         bool CoreInitErrorFlag = PSAG_FALSE;
         // free framework oper...
 
-        if (RendererBackFX != nullptr) delete RendererBackFX;
-        if (RendererPostFX != nullptr) delete RendererPostFX;
+        if (RendererBackFX != nullptr)  delete RendererBackFX;
+        if (RendererPostFX != nullptr)  delete RendererPostFX;
 
         for (auto& ObjectItem : GAME_CORE_CLASS)
             delete ObjectItem.second;

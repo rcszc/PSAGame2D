@@ -18,5 +18,5 @@ vec4 BloomEffectH(sampler2DArray TexSample, vec2 TexCoords, float Layer)
 
 void main()
 {
-	FragColor = BloomEffectH(PostTextures, FxCoord, 1.0);
+	FragColor = BloomEffectH(PostTextures, FxCoord, 2.0);
 }

@@ -64,9 +64,6 @@
     <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine">
       <UniqueIdentifier>{649e98ba-866f-4a0b-be25-cd43e5f621e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\PhysicsEngine">
-      <UniqueIdentifier>{402f484e-2d0b-4f4a-8ac4-9b6ad301d9ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\PSAGameFrameworkCore\CoreGameActor">
       <UniqueIdentifier>{f22824c0-318a-40ed-b6d5-ac7848232d50}</UniqueIdentifier>
     </Filter>
@@ -81,6 +78,9 @@
     </Filter>
     <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine">
       <UniqueIdentifier>{f0db884c-4f61-4683-8c7d-cc48786ce092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\PhysicsEngine">
+      <UniqueIdentifier>{402f484e-2d0b-4f4a-8ac4-9b6ad301d9ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +255,9 @@
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\public</Filter>
     </None>
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_colorfilter.frag">
+      <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
+    </None>
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_vollight.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
     </None>
   </ItemGroup>

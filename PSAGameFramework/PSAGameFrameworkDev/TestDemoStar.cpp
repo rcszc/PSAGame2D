@@ -39,7 +39,7 @@ void StarDemoClass::CreateRandomStarActors(size_t number) {
 }
 
 bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
-    // ******************************** TEST 全局背景处理 ********************************
+   // ******************************** TEST 全局背景处理 ********************************
 
     PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat DecodeRawImage;
 
@@ -257,6 +257,10 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
         PawnActorObj->ActorApplyForceMove(Vector2T<float>(-10.0f, 0.0f));
         PawnActorObj->ActorApplyForceRotate(-2.0f);
         CameraScale = 1.0f;
+    }
+
+    if (ImGui::IsMouseDown(0)) {
+        RunningState.PostShaderParams->LightPosition = Vector2T<float>(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
     }
 
     auto ToWindowCoord = PawnActorObj->ActorConvertVirCoord(RunningState.WindowResolution);

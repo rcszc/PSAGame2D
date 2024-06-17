@@ -186,6 +186,7 @@ namespace GraphicsShaderCode {
 		std::string ShaderFragBloomV;      // [post_sh_group]
 		std::string ShaderFragFinalPhase;  // [post_sh_group]
 		std::string ShaderFragBackground;
+		std::string ShaderFragLight;
 		std::string ShaderFragParticle;
 		std::string ShaderFragFxSequence;
 	};
@@ -251,12 +252,22 @@ namespace GraphicsEnginePost {
 		uint32_t GameSceneBloomRadius;
 		// bloom_blend x:source, y:blur.
 		Vector2T<float> GameSceneBloomBlend;
+
+		Vector2T<float> LightPosition;
+		Vector3T<float> LightColor;
+		float           LightIntensityDecay;
+		uint32_t        LightSampleStep;
 		
 		PostFxParameters() :
-			GameSceneFilterCOL  (Vector3T<float>()),
-			GameSceneFilterAVG  (0.0f),
-			GameSceneBloomRadius(1), 
-			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f))
+			GameSceneFilterCOL(Vector3T<float>()),
+			GameSceneFilterAVG(0.0f),
+			GameSceneBloomRadius(1),
+			GameSceneBloomBlend(Vector2T<float>(1.0f, 1.0f)),
+
+			LightPosition      (Vector2T<float>()),
+			LightColor         (Vector3T<float>(1.0f, 1.0f, 1.0f)),
+			LightIntensityDecay(0.92f),
+		    LightSampleStep    (72)
 		{}
 	};
 
@@ -272,21 +283,28 @@ namespace GraphicsEnginePost {
 
 		// bloom shader hv mvp != scene mvp.
 		PsagMatrix4 RenderingMatrixMvp = {};
-		// scene => filter => bloom_h + bloom_v => post_shader.
+		// scene => volumetric_light.
 		ResUnique ShaderProgramItem = {};
+		ResUnique ShaderVoluLight = {};
+
+		// filter => bloom_h + bloom_v => post_shader.
 		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
 		
 		ResUnique GameSceneFrameBuffer = {};
+		ResUnique LightFrameBuffer     = {};
 		ResUnique FilterFrameBuffer    = {};
 		// 0:framebuffer_h, 1:framebuffer_v.
 		ResUnique BloomFrameBuffers[2] = {};
 
-		// texture_cube: 0: color_filter, 1:frame_buffer_tex, 2:bloom_h_tex, 3:bloom_v_tex
+		// texture_array(5-layers):
+		// 0: light_process
+		// 1: color_filter, 2:frame_buffer_tex, 3:bloom_h_tex, 4:bloom_v_tex
 		ResUnique ProcessTextures = {};
 
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);
-		void BloomShaderProcessHV();
+		void ShaderRenderingLight();
+		void ShaderRenderingBloomHV();
 	public:
 		PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution);
 		~PsagGLEnginePost();
@@ -295,7 +313,7 @@ namespace GraphicsEnginePost {
 		bool CaptureGameScene(const std::function<bool()>& rendering_func);
 
 		// rendering-event.
-		bool RenderingPostModule();
+		void RenderingPostModule();
 		PostFxParameters RenderParameters = {};
 	};
 }
@@ -314,11 +332,11 @@ namespace GraphicsEngineBackground {
 		Vector2T<float> BackgroundScale;
 
 		BackFxParameters() :
-			BackgroundVisibility (1.0f), 
-			BackgroundColor      (Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
-			BackgroundStrength   (Vector2T<float>(1.0f, 1.0f)),
-			BackgroundMove       (Vector2T<float>(0.0f, 0.0f)),
-			BackgroundScale      (Vector2T<float>(1.0f, 1.0f))
+			BackgroundVisibility(1.0f), 
+			BackgroundColor     (Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
+			BackgroundStrength  (Vector2T<float>(1.0f, 1.0f)),
+			BackgroundMove      (Vector2T<float>(0.0f, 0.0f)),
+			BackgroundScale     (Vector2T<float>(1.0f, 1.0f))
 		{}
 	};
 
@@ -330,11 +348,10 @@ namespace GraphicsEngineBackground {
 		Vector2T<float> RenderingResolution = {};
 		PsagMatrix4     RenderingMatrixMvp  = {};
 
-		// x:tex_idx[1,n-1], y:tex_idx[n].
 		ResUnique ShaderProgramItem = {};
 
-		float TextureTopLayer = {};
-		// texture_array(n * layers).
+		float TextureTopLayer = 0.0f;
+		// texture_array(n * layers), x:tex_idx[1,n-1], y:tex_idx[n].
 		ResUnique BackgroundTextures = {};
 	public:
 		PsagGLEngineBackground(
@@ -343,7 +360,7 @@ namespace GraphicsEngineBackground {
 		~PsagGLEngineBackground();
 
 		// rendering-event.
-		bool RenderingBackgroundModule();
+		void RenderingBackgroundModule();
 		BackFxParameters RenderParameters = {};
 	};
 }

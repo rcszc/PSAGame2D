@@ -133,9 +133,9 @@ namespace PsagFrameworkStart {
 
 namespace PsagFrameworkCore {
     StaticStrLABEL PSAGM_FRAME_CORE_LABEL = "PSAG_M_CORE";
+    // global framework components.
     namespace PsagManage {
         class SysBackground;
-        class SysFrontMask;
     }
 
     class PSAGame2DFramework :public PsagFrameworkStart::CoreMidFrameworkBase,
@@ -158,8 +158,9 @@ namespace PsagFrameworkCore {
         // public __PHYSICS_ENGINE_TIMESETP, (Óë"PhysicsEngine::PhyEngineCoreDataset"³åÍ»)
     {
     private:
-        static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;
+        static GraphicsEnginePost::PsagGLEnginePost*             RendererPostFX;
         static GraphicsEngineBackground::PsagGLEngineBackground* RendererBackFX;
+
         // 'RendererBackFX' = nullptr => 'FrameworkParams'.
         GraphicsEngineBackground::BackFxParameters BackDefaultParams = {};
 
@@ -208,7 +209,8 @@ namespace PsagFrameworkCore {
 
     namespace PsagManage {
         StaticStrLABEL PSAGM_FRAME_COREMAG_LABEL = "PSAG_M_COREMAG";
-        // non-eventloop.
+
+        // create game background_system.
         class SysBackground :protected PSAGame2DFramework {
         protected:
             std::vector<ImageRawData> LayersRawImages = {};

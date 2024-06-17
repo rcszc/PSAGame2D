@@ -4,7 +4,7 @@ uniform float PostFilterAvg;   // [二级]RGB均值过滤.
 
 void main() 
 {
-	vec4 Lv1_FILTER = FilterColor(texture(PostTextures, vec3(FxCoord, 0.0)), PostFilterColor);
+	vec4 Lv1_FILTER = FilterColor(texture(PostTextures, vec3(FxCoord, 1.0)), PostFilterColor);
 	vec4 Lv2_FILTER = FilterColorAvg(Lv1_FILTER, PostFilterAvg);
 
 	FragColor = Lv2_FILTER;

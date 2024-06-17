@@ -249,7 +249,7 @@ namespace GameActorCore {
 			float  ActorPawnRotateValue  = 0.0f;
 			float  ActorStateRotateSpeed = 0.0f;
 
-			void UpdateActorTrans(Vector2T<float>& position, float& rotate);
+			virtual void UpdateActorTrans(Vector2T<float>& position, float& rotate);
 		};
 
 		class ActorHealthTrans : public __ACTOR_MODULES_TIMESTEP {
@@ -263,7 +263,7 @@ namespace GameActorCore {
 			// actor hp_state system. 0:set_state, 1:actor_state, 2:inter_speed.
 			float ActorHealthState[3][PSAG_HEALTH_STATE_NUM] = {};
 
-			void UpdateActorHealthTrans(const HealthFuncParams& params);
+			virtual void UpdateActorHealthTrans(const HealthFuncParams& params);
 		};
 
 		struct RenderingParams {
@@ -296,8 +296,8 @@ namespace GameActorCore {
 			ResUnique VirTexItem = NULL;
 			GraphicsEngineDataset::VirTextureUniformName VirTexUniform = {};
 
-			void UpdateActorRendering(const RenderingParams& params, float time_count);
-			void UpdateActorRenderingTexture();
+			virtual void UpdateActorRendering(const RenderingParams& params, float time_count);
+			virtual void UpdateActorRenderingTexture();
 		};
 
 		namespace null {
@@ -305,19 +305,19 @@ namespace GameActorCore {
 			class ActorSpaceTransNULL :public ActorSpaceTrans {
 			public:
 				ActorSpaceTransNULL(const std::string& phy_world, PhyBodyKey phy_body) : ActorSpaceTrans(phy_world, phy_body) {}
-				void UpdateActorTrans(Vector2T<float>& position, float& rotate) {};
+				void UpdateActorTrans(Vector2T<float>& position, float& rotate) override {};
 			};
 			// NULL_OBJ: 'ActorHealthTrans'.
 			class ActorHealthTransNULL : public ActorHealthTrans {
 			public:
 				ActorHealthTransNULL(const std::function<void(const HealthFuncParams&)>& func) : ActorHealthTrans(func) {}
-				void UpdateActorHealthTrans(const HealthFuncParams& params) {};
+				void UpdateActorHealthTrans(const HealthFuncParams& params) override {};
 			};
 			// NULL_OBJ: 'ActorRendering'.
 			class ActorRenderingNULL : public ActorRendering {
 			public:
-				void UpdateActorRendering(const RenderingParams& params, float time_count) {};
-				void UpdateActorRenderingTexture() {};
+				void UpdateActorRendering(const RenderingParams& params, float time_count) override {};
+				void UpdateActorRenderingTexture() override {};
 			};
 		}
 	}
