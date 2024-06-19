@@ -46,6 +46,6 @@ __开发进度:__ ████████░░ 77%
 
 [__BiliBili视频__](https://www.bilibili.com/video/BV1NS411N7ZS/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b)
 
-<img src="PSAGameDesigns/PSAGame2Dv20240608.png"/>
+<img src="PSAGameDesigns/PSAGame2Dv20240619.png"/>
 
 > __PS:__ "PSA"是为了致敬咱的工作室PomeloStar, 为什么不是引擎而是框架? 凭我一个菜鸟的实力根本搓不出引擎 (只能是框架
