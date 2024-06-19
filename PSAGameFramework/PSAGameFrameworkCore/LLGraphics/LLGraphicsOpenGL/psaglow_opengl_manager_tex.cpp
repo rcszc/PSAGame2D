@@ -112,6 +112,7 @@ namespace PSAG_OGL_MAG {
 	}
 
 	// **************************************** texture(array) oper_load ****************************************
+	// [纹理数组]
 	// PSA-V0.1.2 GL-TEX 标准. [GL_TEX_01]: UNISGNED_BYTES [GL_TEX_02]: RGBA8888, [GL_VERT_03]: AhplaChannelsFill.
 
 	bool PsagTextureOGL::SetTextureParam(uint32_t width, uint32_t height, TextureFilterMode mode) {
@@ -240,7 +241,65 @@ namespace PSAG_OGL_MAG {
 		return TextureAttrCreate;
 	}
 
+	// **************************************** texture2d depth oper_load ****************************************
+	// [深度测试纹理]
+	
+	bool PsagTextureDepthOGL::CreateBindTextureDep(PsagTexture& texture) {
+		// opengl generate texture handle.
+		if (texture == NULL) {
+			glGenTextures(GEN_TEXTURE_COUNT, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+
+			// opengl handle index > OPENGL_INVALID_HANDEL.
+			if (texture) { PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "texture.2d(depth) handle create.");   return DEF_PSAGSTAT_SUCCESS; }
+			else { PsagLowLog(LogWarning, PSAG_OGLMAG_LABEL, "texture.2d(depth) failed handle create."); return DEF_PSAGSTAT_FAILED; }
+		}
+		else {
+			// handle duplicate creation.
+			PsagLowLog(LogWarning, PSAG_OGLMAG_LABEL, "texture.2d(depth) duplicate handle create.");
+			return DEF_PSAGSTAT_FAILED;
+		}
+	}
+
+	bool PsagTextureDepthOGL::CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) {
+		if (CreateBindTextureDep(TextureAttrCreate.Texture)) {
+			// depth_texture params.
+			TextureAttrCreate.Layers   = 1;
+			TextureAttrCreate.Channels = 1;
+
+			TextureAttrCreate.Width  = width;
+			TextureAttrCreate.Height = height;
+
+			if (TextureAttrCreate.TextureSamplerCount < 1) {
+				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "texture_dep create, sampler_count err.");
+				return DEF_PSAGSTAT_FAILED;
+			}
+			// config texture2d. surround,filter.
+			ConfigSurroundTex2DParams(GL_TEXTURE_2D);
+			// ConfigTextureFilter(mode, GL_TEXTURE_2D);
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			// unbind texture handle.
+			glBindTexture(GL_TEXTURE_2D, NULL);
+
+			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "texture_dep create, succ: size: %u x %u",
+				TextureAttrCreate.Width, TextureAttrCreate.Height
+			);
+			// return flag & set resource flag.
+			ReturnResFlag = DEFRES_FLAG_NORMAL;
+			return DEF_PSAGSTAT_SUCCESS;
+		}
+		PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "texture_dep create, opengl_api err.");
+		return DEF_PSAGSTAT_FAILED;
+	}
+
+	PsagTextureAttrib PsagTextureDepthOGL::_MS_GETRES(ResourceFlag& flag) {
+		flag = ReturnResFlag;
+		return TextureAttrCreate;
+	}
+
 	// **************************************** texture2d view oper_load ****************************************
+	// [视图纹理(In-ImGui)]
 	// PSA-V0.1.2 GL-TEX-ATTR 标准. [GL_TEX_ATTR_02].
 
 	bool PsagTextureViewOGL::CreateBindTextureView(PsagTexture& texture) {

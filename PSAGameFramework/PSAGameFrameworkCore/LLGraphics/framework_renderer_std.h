@@ -67,6 +67,14 @@ public:
 	virtual PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
+// depth texture, single_channel.
+class PsagGLmanagerTextureDepth {
+public:
+	virtual bool CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) = 0;
+
+	virtual PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) = 0;
+};
+
 //  PSA-V0.1.2 GL-TEX-ATTR ±ê×¼. [GL_TEX_ATTR_02]
 // texture view, static.
 struct PsagTextureView {
@@ -129,6 +137,8 @@ public:
 	virtual bool CreateFrameBuffer() = 0;
 
 	virtual bool TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment) = 0;
+	virtual bool TextureDepBindFBO(const PsagTextureAttrib& texture) = 0;
+
 	virtual bool RenderBufferBindFBO(PsagRenderBufferAttrib buffer) = 0;
 
 	virtual PsagFrameBuffer _MS_GETRES(ResourceFlag& flag) = 0;

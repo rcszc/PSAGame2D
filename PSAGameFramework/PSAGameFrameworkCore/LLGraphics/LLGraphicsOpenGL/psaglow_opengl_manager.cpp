@@ -435,7 +435,7 @@ namespace PSAG_OGL_MAG {
 		return DEF_PSAGSTAT_FAILED;
 	}
 
-	bool PsagFramebufferOGL::TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment) {
+	bool PsagFramebufferOGL::TextureBaseBind(const PsagTextureAttrib& texture, uint32_t attachment, bool dep_flag) {
 		bool ResultFlag = false;
 
 		if (attachment > DEF_GL_COLOR_ATTACHMENT_MAX) {
@@ -446,8 +446,17 @@ namespace PSAG_OGL_MAG {
 		glBindFramebuffer(GL_FRAMEBUFFER, FrameBuffer);
 		glBindTexture(GL_TEXTURE_2D, texture.Texture);
 		{
-			if (texture.Texture > OPENGL_INVALID_HANDEL)
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, texture.Texture, NULL);
+			if (texture.Texture > OPENGL_INVALID_HANDEL) {
+				if (!dep_flag) {
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, texture.Texture, NULL);
+					PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "frame_buffer std_texture.");
+				}
+				if (dep_flag) {
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.Texture, NULL);
+					glDrawBuffer(GL_NONE); // non-color_buffer.
+					PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "frame_buffer dep_texture.");
+				}
+			}
 			else {
 				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "invalid handle texture.");
 				return DEF_PSAGSTAT_FAILED;
@@ -458,6 +467,14 @@ namespace PSAG_OGL_MAG {
 		glBindTexture(GL_TEXTURE_2D, NULL);
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 		return ResultFlag;
+	}
+
+	bool PsagFramebufferOGL::TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment) {
+		return TextureBaseBind(texture, attachment, false);
+	}
+
+	bool PsagFramebufferOGL::TextureDepBindFBO(const PsagTextureAttrib& texture) {
+		return TextureBaseBind(texture, NULL, true);
 	}
 
 	bool PsagFramebufferOGL::RenderBufferBindFBO(PsagRenderBufferAttrib buffer) {

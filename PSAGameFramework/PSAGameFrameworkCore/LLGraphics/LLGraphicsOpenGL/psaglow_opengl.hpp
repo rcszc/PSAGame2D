@@ -107,10 +107,15 @@ namespace PSAG_OGL_MAG {
 
 		bool CreateBindFamebuffer(PsagFrameBuffer& framebuf);
 		bool CheckFramebuffer(PsagFrameBuffer& framebuf, ResourceFlag& flag);
+		// texture & depth_texture bind, dep_flag: false: std, true: dep.
+		bool TextureBaseBind(const PsagTextureAttrib& texture, uint32_t attachment, bool dep_flag);
 
 	public:
 		bool CreateFrameBuffer() override;
+
 		bool TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment = 0) override;
+		bool TextureDepBindFBO(const PsagTextureAttrib& texture) override;
+
 		bool RenderBufferBindFBO(PsagRenderBufferAttrib buffer) override;
 
 		// bind => texture_array: layer, ext.20240507
@@ -168,6 +173,19 @@ namespace PSAG_OGL_MAG {
 		bool PushCreateTexLoader(const TextureParam& param, const std::string& file) override;
 
 		bool CreateTexture() override;
+
+		PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) override;
+	};
+
+	class PsagTextureDepthOGL :public PsagOGLsystemLogger, public PsagGLmanagerTextureDepth {
+	private:
+		PsagTextureAttrib TextureAttrCreate = {};
+		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
+
+		bool CreateBindTextureDep(PsagTexture& texture);
+
+	public:
+		bool CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) override;
 
 		PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) override;
 	};

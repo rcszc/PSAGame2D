@@ -235,7 +235,13 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
     //GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
     GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
 
-    CameraScale = 0.7f;
+    CameraScale = 2.7f;
+
+    ImGui::Begin("TestSample");
+    RunningState.PostShaderParams->LightSampleStep = 256;
+    ImGui::SliderFloat("DEC", &RunningState.PostShaderParams->LightIntensity, 0.0f, 1.0f);
+    ImGui::SliderFloat("IDEC", &RunningState.PostShaderParams->LightIntensityDecay, 0.0f, 1.0f);
+    ImGui::End();
 
     PawnActorObj->ActorApplyForceMove(Vector2T<float>());
     PawnActorObj->ActorApplyForceRotate(0.0f);

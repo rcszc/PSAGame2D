@@ -255,6 +255,7 @@ namespace GraphicsEnginePost {
 
 		Vector2T<float> LightPosition;
 		Vector3T<float> LightColor;
+		float           LightIntensity;
 		float           LightIntensityDecay;
 		uint32_t        LightSampleStep;
 		
@@ -265,9 +266,10 @@ namespace GraphicsEnginePost {
 			GameSceneBloomBlend(Vector2T<float>(1.0f, 1.0f)),
 
 			LightPosition      (Vector2T<float>()),
-			LightColor         (Vector3T<float>(1.0f, 1.0f, 1.0f)),
+			LightColor         (Vector3T<float>(1.0f, 0.52f, 0.0f)),
+			LightIntensity     (0.18f),
 			LightIntensityDecay(0.92f),
-		    LightSampleStep    (72)
+		    LightSampleStep    (100)
 		{}
 	};
 

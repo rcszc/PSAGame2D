@@ -58,31 +58,32 @@ namespace GraphicsEnginePost {
 	}
 
 	void PsagGLEnginePost::ShaderRenderingLight() {
-		auto FilterShader = LLRES_Shaders->ResourceFind(ShaderVoluLight);
+		auto LightShader = LLRES_Shaders->ResourceFind(ShaderVoluLight);
 
 		// 2D体积光处理.
 		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(LightFrameBuffer), 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		ShaderRender.RenderBindShader(FilterShader);
+		ShaderRender.RenderBindShader(LightShader);
 		{
 			// framework preset uniform.
-			ShaderUniform.UniformMatrix4x4(FilterShader, "MvpMatrix", RenderingMatrixMvp);
-			ShaderVertexDefaultParams(FilterShader);
+			ShaderUniform.UniformMatrix4x4(LightShader, "MvpMatrix", RenderingMatrixMvp);
+			ShaderVertexDefaultParams(LightShader);
 
 			Vector2T<float> LightTexPosition(
 				RenderParameters.LightPosition.vector_x / RenderingResolution.vector_x,
 				RenderParameters.LightPosition.vector_y / RenderingResolution.vector_y
 			);
-			ShaderUniform.UniformVec2(FilterShader, "LightPosition", LightTexPosition);
-			ShaderUniform.UniformVec3(FilterShader, "LightColor",    RenderParameters.LightColor);
+			ShaderUniform.UniformVec2(LightShader, "LightPosition", LightTexPosition);
+			ShaderUniform.UniformVec3(LightShader, "LightColor",    RenderParameters.LightColor);
 
-			ShaderUniform.UniformFloat  (FilterShader, "LightIntensityDecay", RenderParameters.LightIntensityDecay);
-			ShaderUniform.UniformInteger(FilterShader, "LightSampleStep", (int32_t)RenderParameters.LightSampleStep);
+			ShaderUniform.UniformFloat  (LightShader, "LightIntensity",      RenderParameters.LightIntensity);
+			ShaderUniform.UniformFloat  (LightShader, "LightIntensityDecay", RenderParameters.LightIntensityDecay);
+			ShaderUniform.UniformInteger(LightShader, "LightSampleStep", (int32_t)RenderParameters.LightSampleStep);
 
 			auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
 			ShaderRender.RenderBindTexture(TextureTempScene);
 			// bind texture context => sampler(tmu) => unbind.
-			ShaderUniform.UniformInteger(FilterShader, "PostTextures", TextureTempScene.TextureSamplerCount);
+			ShaderUniform.UniformInteger(LightShader, "PostTextures", TextureTempScene.TextureSamplerCount);
 			// frame draw(command).
 			VerStcOperFrameDraw(GetPresetRect());
 		}
