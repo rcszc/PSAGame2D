@@ -264,6 +264,8 @@ namespace PSAG_OGL_MAG {
 	bool PsagTextureDepthOGL::CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) {
 		if (CreateBindTextureDep(TextureAttrCreate.Texture)) {
 			// depth_texture params.
+			TextureAttrCreate.TextureSamplerCount = sampler_count;
+
 			TextureAttrCreate.Layers   = 1;
 			TextureAttrCreate.Channels = 1;
 

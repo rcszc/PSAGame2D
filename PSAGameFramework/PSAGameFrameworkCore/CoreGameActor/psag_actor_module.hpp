@@ -196,6 +196,7 @@ namespace GameActorCore {
 		std::string      ActorPhysicsWorld;
 		ActorPhyMode     ActorPhysicalMode;
 
+		bool ForceClacEnable;
 		// params: x:phy_density, y:phy_friction.
 		Vector2T<float> InitialPhysics;
 		Vector2T<float> InitialPosition;
@@ -212,6 +213,8 @@ namespace GameActorCore {
 			ActorShaderResource(nullptr),
 			ActorPhysicsWorld  ("SYSTEM_PHY_WORLD"),
 			ActorPhysicalMode  (PhyMoveActor),
+
+			ForceClacEnable(false),
 
 			InitialPhysics (Vector2T<float>(1.0f, 0.7f)),
 			InitialPosition(Vector2T<float>(0.0f, 0.0f)),

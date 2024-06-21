@@ -90,9 +90,12 @@ namespace PsagFrameworkCore {
         FrameworkInitConfig(EngineGLSL);
         RenderingWinSize = Vector2T<uint32_t>(WindowInitConfig.WindowSizeWidth, WindowInitConfig.WindowSizeHeight);
 
+        // enable opengl profile config.
+        FrameworkGraphicsParams.PROFILE_CONFIG = PSAG_FALSE;
+
         PushLogger(LogTrace, PSAGM_FRAME_CORE_LABEL, "core framework init,config...");
         // init => create => set_icon => vsync => sys_callback.
-        CoreInitErrorFlag |= !GLFWwindowInit(GLFWversionArray, RendererMSAA, PSAG_FALSE, RendererWindowFixed);
+        CoreInitErrorFlag |= !GLFWwindowInit(GLFWversionArray, RendererMSAA, FrameworkGraphicsParams.PROFILE_CONFIG, RendererWindowFixed);
         CoreInitErrorFlag |= !GLFWwindowCreate(WindowInitConfig);
 
         GLFWwindowSetIcon(EngineIconImage);

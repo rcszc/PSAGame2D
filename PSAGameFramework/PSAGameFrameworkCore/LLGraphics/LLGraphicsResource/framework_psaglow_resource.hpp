@@ -50,6 +50,7 @@ namespace PSAGGL_LOWLEVEL {
 		using PsagGraphicsSysinit      = PSAG_OGL_MAG::PsagInitOGL;
 		using PsagGraphicsShader       = PSAG_OGL_MAG::PsagShadersOGL;
 		using PsagGraphicsTexture      = PSAG_OGL_MAG::PsagTextureOGL;
+		using PsagGraphicsDepTexture   = PSAG_OGL_MAG::PsagTextureDepthOGL;
 		using PsagGraphicsModel        = PSAG_OGL_MAG::PsagModelOGL;
 		using PsagGraphicsRenderBuffer = PSAG_OGL_MAG::PasgRenderbufferOGL;
 		using PsagGraphicsFrameBuffer  = PSAG_OGL_MAG::PsagFramebufferOGL;

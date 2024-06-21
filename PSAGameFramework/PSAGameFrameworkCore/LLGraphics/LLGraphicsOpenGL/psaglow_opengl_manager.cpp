@@ -51,21 +51,44 @@ namespace PSAG_OGL_VERATT {
 }
 
 namespace PSAG_OGL_MAG {
+	std::vector<float> ShaderTemplateRectDep(float zlayer) {
+		float ShaderTemplateRect[72] = {
+			-10.0f, -10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
+			 10.0f, -10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f,0.0f,
+			 10.0f,  10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
+
+			-10.0f, -10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
+			 10.0f,  10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
+			-10.0f,  10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,0.0f,0.0f
+		};
+		return std::vector<float>(ShaderTemplateRect, ShaderTemplateRect + 72);
+	}
+
 	// renderer framework init config opengl api.
 	INIT_RETURN PsagInitOGL::RendererInit(INIT_PARAMETERS init_param, const std::string& version) {
 		GLEWshaderVersion = version;
-		// opengl init params.
-		// GL_DONT_CARE(默认) OGL.0x1100, GL_FASTEST(性能优先) OGL.0x1101, GL_NICEST(质量优先) OGL.0x1102
-		glHint(GL_TEXTURE_COMPRESSION_HINT,        GL_DONT_CARE + (GLint)init_param.TextureCompress);
-		glHint(GL_GENERATE_MIPMAP_HINT,            GL_DONT_CARE + (GLint)init_param.MipmapGenerate);
-		glHint(GL_LINE_SMOOTH_HINT,                GL_DONT_CARE + (GLint)init_param.ElementsSmooth);
-		glHint(GL_POLYGON_SMOOTH_HINT,             GL_DONT_CARE + (GLint)init_param.ElementsSmooth);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT,     GL_DONT_CARE + (GLint)init_param.SceneViewCalculate);
-		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_DONT_CARE + (GLint)init_param.FragmentDerivative);
 		// GLEW API. init opengl core.
 		INIT_RETURN ReturnValue = glewInit();
-		PsagLowLog(LogTrace, PSAG_OGLMAG_LABEL, "framework_graphics config init.");
+		PsagLowLog(LogTrace, PSAG_OGLMAG_LABEL, "framework_graphics config init...");
 
+		// opengl enable comp.
+		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_TRUE);
+
+		// opengl init params.
+		// GL_DONT_CARE(默认) OGL.0x1100, GL_FASTEST(性能优先) OGL.0x1101, GL_NICEST(质量优先) OGL.0x1102
+		if (!init_param.PROFILE_CONFIG) {
+			glHint(GL_TEXTURE_COMPRESSION_HINT,        GL_DONT_CARE + (GLint)init_param.TextureCompress);
+			glHint(GL_GENERATE_MIPMAP_HINT,            GL_DONT_CARE + (GLint)init_param.MipmapGenerate);
+			glHint(GL_LINE_SMOOTH_HINT,                GL_DONT_CARE + (GLint)init_param.ElementsSmooth);
+			glHint(GL_POLYGON_SMOOTH_HINT,             GL_DONT_CARE + (GLint)init_param.ElementsSmooth);
+			glHint(GL_PERSPECTIVE_CORRECTION_HINT,     GL_DONT_CARE + (GLint)init_param.SceneViewCalculate);
+			glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_DONT_CARE + (GLint)init_param.FragmentDerivative);
+		}
 		GLenum OpenGLErrCode = glGetError();
 		if (OpenGLErrCode != GL_NO_ERROR)
 			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "framework_graphics config init err_code: %u", OpenGLErrCode);
@@ -422,7 +445,7 @@ namespace PSAG_OGL_MAG {
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 			glDeleteRenderbuffers(1, &framebuf);
 
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "incomplete framebuffer.");
+			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "incomplete framebuffer, err_code: %u", glGetError());
 			return DEF_PSAGSTAT_FAILED;
 		}
 		flag = DEFRES_FLAG_NORMAL;
@@ -451,9 +474,9 @@ namespace PSAG_OGL_MAG {
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, texture.Texture, NULL);
 					PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "frame_buffer std_texture.");
 				}
-				if (dep_flag) {
+				else {
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.Texture, NULL);
-					glDrawBuffer(GL_NONE); // non-color_buffer.
+					// glDrawBuffer(GL_NONE); // non-color_buffer.
 					PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "frame_buffer dep_texture.");
 				}
 			}
@@ -520,7 +543,7 @@ namespace PSAG_OGL_MAG {
 		// unbind fbo,texture_array.
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-
+		
 		return ResultFlag;
 	}
 

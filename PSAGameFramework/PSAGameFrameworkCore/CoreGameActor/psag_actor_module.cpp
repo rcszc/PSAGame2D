@@ -340,7 +340,7 @@ namespace GameActorCore {
 		
 		// config space_trans. ture: non-fixed.
 		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.EnablePawn) {
-			ActorCompSpaceTrans = new system::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem);
+			ActorCompSpaceTrans = new system::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem, INIT_DESC.ForceClacEnable);
 			// init move(speed_vec), rotate, scale.
 			ActorCompSpaceTrans->ActorPawnMoveValue   = INIT_DESC.InitialSpeed;
 			ActorCompSpaceTrans->ActorPawnRotateValue = INIT_DESC.InitialRotate;

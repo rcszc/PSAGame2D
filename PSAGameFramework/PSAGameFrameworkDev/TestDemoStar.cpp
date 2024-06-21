@@ -91,6 +91,7 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ConfigPawnActor.ActorPhysicsWorld   = "MyPhyWorld";
     ConfigPawnActor.ActorShaderResource = ActorShaderPawn;
 
+    ConfigPawnActor.ForceClacEnable = true;
     // Ê¹ÓÃÄ¬ÈÏÅäÖÃ.
     GameActorCore::GameActorHealthDESC PawnActorHealthDESC = {};
     // config hp system.
@@ -238,9 +239,14 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
     CameraScale = 2.7f;
 
     ImGui::Begin("TestSample");
-    RunningState.PostShaderParams->LightSampleStep = 256;
-    ImGui::SliderFloat("DEC", &RunningState.PostShaderParams->LightIntensity, 0.0f, 1.0f);
-    ImGui::SliderFloat("IDEC", &RunningState.PostShaderParams->LightIntensityDecay, 0.0f, 1.0f);
+
+    ImGui::SliderInt("STEP", &LightSamplerStep, 1, 384);
+    RunningState.PostShaderParams->LightSampleStep = LightSamplerStep;
+
+    ImGui::SliderFloat("LIGHT", &RunningState.PostShaderParams->LightIntensity, 0.0f, 1.0f);
+    ImGui::SliderFloat("DECAY", &RunningState.PostShaderParams->LightIntensityDecay, 0.0f, 1.0f);
+
+    ImGui::ColorEdit3("COLOR", RunningState.PostShaderParams->LightColor.data());
     ImGui::End();
 
     PawnActorObj->ActorApplyForceMove(Vector2T<float>());
@@ -265,7 +271,7 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
         CameraScale = 1.0f;
     }
 
-    if (ImGui::IsMouseDown(0)) {
+    if (ImGui::IsMouseDown(1)) {
         RunningState.PostShaderParams->LightPosition = Vector2T<float>(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
     }
 

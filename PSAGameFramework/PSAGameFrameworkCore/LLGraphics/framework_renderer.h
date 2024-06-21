@@ -37,6 +37,7 @@ enum OPENGL_INIT_PARAM {
 	GLINIT_MODE_PERF    = 2  // 性能优先.
 };
 struct OpenGLInitParams {
+	bool PROFILE_CONFIG;
 	// parameters items:
 	// 贴图压缩, Mipmap纹理生成, 图元平滑, 视图(透视正交)计算, 片段(着色器)自动微分.
 	OPENGL_INIT_PARAM TextureCompress;
@@ -46,6 +47,7 @@ struct OpenGLInitParams {
 	OPENGL_INIT_PARAM FragmentDerivative;
 
 	OpenGLInitParams() :
+		PROFILE_CONFIG     (true),
 		TextureCompress    (GLINIT_MODE_NORMAL),
 		MipmapGenerate     (GLINIT_MODE_NORMAL),
 		ElementsSmooth     (GLINIT_MODE_NORMAL),

@@ -80,10 +80,18 @@ namespace GraphicsEnginePost {
 			ShaderUniform.UniformFloat  (LightShader, "LightIntensityDecay", RenderParameters.LightIntensityDecay);
 			ShaderUniform.UniformInteger(LightShader, "LightSampleStep", (int32_t)RenderParameters.LightSampleStep);
 
-			auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
-			ShaderRender.RenderBindTexture(TextureTempScene);
+			// COLOR_BUFFER.
+			auto ColorTextureTemp = LLRES_Textures->ResourceFind(ProcessTextures);
+			ShaderRender.RenderBindTexture(ColorTextureTemp);
 			// bind texture context => sampler(tmu) => unbind.
-			ShaderUniform.UniformInteger(LightShader, "PostTextures", TextureTempScene.TextureSamplerCount);
+			ShaderUniform.UniformInteger(LightShader, "PostTextures", ColorTextureTemp.TextureSamplerCount);
+
+			// DEPTH_BUFFER.
+			auto DepthTextureTemp = LLRES_Textures->ResourceFind(ProcessDepthTexture);
+			ShaderRender.RenderBindTexture(DepthTextureTemp);
+			// bind texture context => sampler(tmu) => unbind.
+			ShaderUniform.UniformInteger(LightShader, "PostDepTexture", DepthTextureTemp.TextureSamplerCount);
+
 			// frame draw(command).
 			VerStcOperFrameDraw(GetPresetRect());
 		}
@@ -226,6 +234,24 @@ namespace GraphicsEnginePost {
 		const float* glmmatptr = glm::value_ptr(MatrixPorj);
 		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
+		// **************** create scene depth_texture ****************
+		// 分离深度捕获FBO, 测试. 20240621.
+		
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsDepTexture  DepTextureCreate;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboGameSceneDep;
+
+		if (DepTextureCreate.CreateDepthTexture(render_resolution.vector_x, render_resolution.vector_y, LLRES_Samplers->AllocTmuCount())) {
+			ProcessDepthTexture = GenResourceID.PsagGenTimeKey();
+			LLRES_Textures->ResourceStorage(ProcessDepthTexture, &DepTextureCreate);
+		}
+		
+		if (FboGameSceneDep.CreateFrameBuffer()) {
+			GameSceneDepFrameBuffer = GenResourceID.PsagGenTimeKey();
+			// bind scene color_buffer & depth_buffer.
+			FboGameSceneDep.TextureDepBindFBO(LLRES_Textures->ResourceFind(ProcessDepthTexture));
+			LLRES_FrameBuffers->ResourceStorage(GameSceneDepFrameBuffer, &FboGameSceneDep);
+		}
+
 		// **************** create texture & FBO ****************
 		
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture     TextureCreate;
@@ -246,6 +272,7 @@ namespace GraphicsEnginePost {
 		// 游戏场景 (捕获输入)
 		if (FboGameScene.CreateFrameBuffer()) {
 			GameSceneFrameBuffer = GenResourceID.PsagGenTimeKey();
+			// bind scene color_buffer & depth_buffer.
 			FboGameScene.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 0);
 			LLRES_FrameBuffers->ResourceStorage(GameSceneFrameBuffer, &FboGameScene);
 		}
@@ -289,6 +316,9 @@ namespace GraphicsEnginePost {
 		LLRES_FrameBuffers->ResourceDelete(BloomFrameBuffers[1]);
 		LLRES_FrameBuffers->ResourceDelete(FilterFrameBuffer);
 		LLRES_FrameBuffers->ResourceDelete(GameSceneFrameBuffer);
+
+		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(ProcessDepthTexture).TextureSamplerCount);
+		LLRES_Textures->ResourceDelete(ProcessDepthTexture);
 
 		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(ProcessTextures).TextureSamplerCount);
 		LLRES_Textures->ResourceDelete(ProcessTextures);
@@ -361,7 +391,10 @@ namespace GraphicsEngineBackground {
 			ShaderProgramItem = GenResourceID.PsagGenTimeKey();
 			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
 		}
+
 		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
+		BackgroundModel = GenResourceID.PsagGenTimeKey();
+		VerStcDataItemAlloc(BackgroundModel, PSAG_OGL_MAG::ShaderTemplateRectDep(-10.0f));
 
 		glm::mat4x4 MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 		// convert: glm matrix => psag matrix.
@@ -421,7 +454,7 @@ namespace GraphicsEngineBackground {
 		ShaderUniform.UniformInteger(ShaderTemp, "MultipleBackTex", TextureTemp.TextureSamplerCount);
 
 		// frame draw(command).
-		VerStcOperFrameDraw(GetPresetRect());
+		VerStcOperFrameDraw(BackgroundModel);
 		ShaderRender.RenderUnbindShader();
 	}
 }

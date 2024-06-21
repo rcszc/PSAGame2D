@@ -96,7 +96,7 @@ namespace PSAG_OGL_RES {
 		return (ResourceTextureMap.find(key) != ResourceTextureMap.end()) ? ResourceTextureMap[key] : PsagTextureAttrib();
 	}
 
-	bool PsagResTextureOGL::ResourceStorage(ResUnique key, PsagGLmanagerTexture* res) {
+	bool PsagResTextureOGL::ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) {
 		std::lock_guard<std::mutex> Lock(ResourceTextureMutex);
 
 		auto it = ResourceTextureMap.find(key);

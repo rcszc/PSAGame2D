@@ -16,17 +16,12 @@ protected: static RendererLogger PsagLowLog;
 namespace PSAG_OGL_MAG {
 	StaticStrLABEL PSAG_OGLMAG_LABEL = "PSAG_OGL_MAG";
 
-	// system.persets data, 2 * triangle_att dataset.
-	constexpr float ShaderTemplateRect[72] = {
-		-10.0f, -10.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
-		 10.0f, -10.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f,0.0f,
-		 10.0f,  10.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
-
-		-10.0f, -10.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
-		 10.0f,  10.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
-		-10.0f,  10.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,0.0f,0.0f
-	};
-	constexpr size_t ShaderTemplateRectLen = 72;
+	/* ÆúÓÃ:
+	* system.persets data, 2 * triangle_att dataset.
+	* constexpr float ShaderTemplateRect[72] = { ... };
+	*/
+	// depth_rect. [20240621]
+	std::vector<float> ShaderTemplateRectDep(float zlayer = 0.0f);
 
 	class PsagInitOGL :public PsagOGLsystemLogger, public PSAGGL_GLOBAL_INIT {
 	protected:
@@ -156,7 +151,9 @@ namespace PSAG_OGL_MAG {
 		__SystemCreateTex(const RawDataStream& data, const TextureParam& param) : IamgeRawData(data), Param(param) {}
 	};
 	// psag texture system, texture(array).
-	class PsagTextureOGL :public TextureSystemBase, public PsagGLmanagerTexture {
+	class PsagTextureOGL :public TextureSystemBase, public PsagGLmanagerTexture, 
+		public PsagGLmangerTextureStorage 
+	{
 	private:
 		std::vector<__SystemCreateTex> CreateDataIndex = {};
 		bool SetTextureAttrFlag = false;
@@ -177,13 +174,14 @@ namespace PSAG_OGL_MAG {
 		PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) override;
 	};
 
-	class PsagTextureDepthOGL :public PsagOGLsystemLogger, public PsagGLmanagerTextureDepth {
+	class PsagTextureDepthOGL :public PsagOGLsystemLogger, public PsagGLmanagerTextureDepth, 
+		public PsagGLmangerTextureStorage 
+	{
 	private:
 		PsagTextureAttrib TextureAttrCreate = {};
 		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
 
 		bool CreateBindTextureDep(PsagTexture& texture);
-
 	public:
 		bool CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) override;
 
@@ -325,7 +323,7 @@ namespace PSAG_OGL_RES {
 
 	public:
 		PsagTextureAttrib ResourceFind(ResUnique key) override;
-		bool ResourceStorage(ResUnique key, PsagGLmanagerTexture* res) override;
+		bool ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) override;
 		bool ResourceDelete(ResUnique key) override;
 		
 		size_t ResourceSize() override {

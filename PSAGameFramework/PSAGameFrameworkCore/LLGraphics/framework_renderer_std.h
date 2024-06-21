@@ -52,6 +52,13 @@ struct PsagTextureAttrib {
 	{}
 };
 
+// texture std storage_interface.
+// 'PsagGLmanagerTexture', 'PsagGLmanagerTextureDepth'.
+class PsagGLmangerTextureStorage {
+public:
+	virtual PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) = 0;
+};
+
 // texture(group) create, layers_size equal.
 class PsagGLmanagerTexture {
 public:
@@ -63,16 +70,12 @@ public:
 	virtual bool PushCreateTexLoader(const TextureParam& param, const std::string& file) = 0;
 
 	virtual bool CreateTexture() = 0;
-
-	virtual PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
 // depth texture, single_channel.
 class PsagGLmanagerTextureDepth {
 public:
 	virtual bool CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) = 0;
-
-	virtual PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
 //  PSA-V0.1.2 GL-TEX-ATTR ±ê×¼. [GL_TEX_ATTR_02]
@@ -193,7 +196,7 @@ public:
 class PsagGLresourceTexture {
 public:
 	virtual PsagTextureAttrib ResourceFind(ResUnique key) = 0;
-	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerTexture* res) = 0;
+	virtual bool ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) = 0;
 	virtual bool ResourceDelete(ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;

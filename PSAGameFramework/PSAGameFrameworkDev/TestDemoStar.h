@@ -17,6 +17,8 @@ protected:
     float CameraScale = 1.0f;
     float FramerateParams[3] = {};
 
+    int LightSamplerStep = 100;
+
     uint32_t EatStarCount      = NULL;
     size_t   EatStarCountTotal = NULL;
 

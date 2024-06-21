@@ -33,7 +33,7 @@ namespace GameDebugGuiWindow {
 			ImGui::SetNextItemWidth(ControlWidth);
 			ImGui::SliderFloat2("##MOVE", actor->ActorGetMoveSpeed().data(), -10.0f, 10.0f, "%.2f", ImGuiSliderFlags_NoInput);
 			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::ProgressBar(actor->ActorGetRotate() * 0.1f + 0.5f);
+			ImGui::ProgressBar(actor->ActorGetRotateSpeed() * 0.1f + 0.5f);
 		}
 		ImGui::End();
 	}

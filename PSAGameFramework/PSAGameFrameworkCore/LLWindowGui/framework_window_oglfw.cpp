@@ -126,12 +126,6 @@ namespace PSAG_WINDOW_OGLFW {
         }
         glfwMakeContextCurrent(MainWindowObject);
 
-        glEnable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDepthFunc(GL_LESS);
-
         return true;
     }
 
@@ -157,6 +151,7 @@ namespace PSAG_WINDOW_OGLFW {
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         }
+        glfwWindowHint(GLFW_DEPTH_BITS, 24);                     // depth buffer.
         glfwWindowHint(GLFW_RESIZABLE, !fixedsize);              // fixed window size.
         glfwWindowHint(GLFW_SAMPLES, MSAA);                      // samples MSAA.
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE); // ´°¿ÚÍ¸Ã÷.
@@ -242,6 +237,8 @@ namespace PSAG_WINDOW_OGLFW {
         glViewport(NULL, NULL, RenderBuffer.vector_x, RenderBuffer.vector_y);
 
         glClearColor(RenderBgColor.vector_x, RenderBgColor.vector_y, RenderBgColor.vector_z, RenderBgColor.vector_w);
+        glClearDepth(1.0f);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 

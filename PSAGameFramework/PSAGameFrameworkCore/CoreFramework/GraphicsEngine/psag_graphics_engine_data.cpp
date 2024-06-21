@@ -131,7 +131,7 @@ namespace GraphicsEngineDataset {
 		// alloc system preset.
 		SystemPresetRectangle = GenResourceID.PsagGenTimeKey();
 		vector<float> DataTemp = {};
-		DataTemp.assign(PSAG_OGL_MAG::ShaderTemplateRect, PSAG_OGL_MAG::ShaderTemplateRect + PSAG_OGL_MAG::ShaderTemplateRectLen);
+		DataTemp = PSAG_OGL_MAG::ShaderTemplateRectDep(-1.0f);
 		VerStcDataItemAlloc(SystemPresetRectangle, DataTemp);
 
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "static vertex data manager_create.");

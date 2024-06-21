@@ -292,7 +292,9 @@ namespace GraphicsEnginePost {
 		// filter => bloom_h + bloom_v => post_shader.
 		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
 		
-		ResUnique GameSceneFrameBuffer = {};
+		ResUnique GameSceneFrameBuffer    = {};
+		ResUnique GameSceneDepFrameBuffer = {};
+
 		ResUnique LightFrameBuffer     = {};
 		ResUnique FilterFrameBuffer    = {};
 		// 0:framebuffer_h, 1:framebuffer_v.
@@ -302,6 +304,8 @@ namespace GraphicsEnginePost {
 		// 0: light_process
 		// 1: color_filter, 2:frame_buffer_tex, 3:bloom_h_tex, 4:bloom_v_tex
 		ResUnique ProcessTextures = {};
+		// game scene depth_texture.
+		ResUnique ProcessDepthTexture = {};
 
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);
@@ -355,6 +359,7 @@ namespace GraphicsEngineBackground {
 		float TextureTopLayer = 0.0f;
 		// texture_array(n * layers), x:tex_idx[1,n-1], y:tex_idx[n].
 		ResUnique BackgroundTextures = {};
+		ResUnique BackgroundModel = {};
 	public:
 		PsagGLEngineBackground(
 			const Vector2T<uint32_t>& render_resolution, const std::vector<ImageRawData>& imgdataset

@@ -1,4 +1,5 @@
 uniform sampler2DArray PostTextures;
+uniform sampler2D PostDepTexture;
 
 uniform vec2  LightPosition;
 uniform vec3  LightColor;
