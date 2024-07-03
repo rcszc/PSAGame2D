@@ -44,7 +44,7 @@ __开发进度:__ ████████░░ 78%
 
 ## 开发中ing...
 
-[__BiliBili视频__](https://www.bilibili.com/video/BV1NS411N7ZS/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b)
+[__BiliBili视频__](https://www.bilibili.com/video/BV1ew4m1e7fW/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b)
 
 <img src="PSAGameDesigns/PSAGame2Dv20240619.png"/>
 
