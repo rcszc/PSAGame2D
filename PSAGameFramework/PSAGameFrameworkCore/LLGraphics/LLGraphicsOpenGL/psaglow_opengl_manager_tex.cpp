@@ -91,10 +91,11 @@ namespace PSAG_OGL_MAG {
 		if (channels == 4) PixelFormat = GL_RGBA;
 
 		// opengl api, create texture_array. [GL_TEX_01]
+		// internal_format = pixel_format. [20240704]
 		if (ModeType == GL_TEXTURE_2D_ARRAY)
-			glTexImage3D(ModeType, NULL, channels, width, height, layers, border, PixelFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage3D(ModeType, NULL, PixelFormat, width, height, layers, border, PixelFormat, GL_UNSIGNED_BYTE, data);
 		if (ModeType == GL_TEXTURE_2D)
-			glTexImage2D(ModeType, NULL, channels, width, height, border, PixelFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(ModeType, NULL, PixelFormat, width, height, border, PixelFormat, GL_UNSIGNED_BYTE, data);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// config texture2d. surround,filter.
