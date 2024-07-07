@@ -611,24 +611,26 @@ namespace PSAG_OGL_MAG {
 }
 
 namespace RenderingSupport {
-	OpenGLApiContext PsagOpenGLApiRenderOper::GlobalThisContextStat = NullContext;
+	OpenGLApiContext PsagOpenGLApiRenderOper::ApiThisStateContext = NullContext;
 
 	void PsagOpenGLApiRenderOper::RenderBindShader(const PsagShader& program) {
 		// rendering context enable shader_program.
 		glUseProgram(program);
-		GlobalThisContextStat = ShaderContext;
+		ApiThisStateContext = ShaderContext;
 	}
 
 	void PsagOpenGLApiRenderOper::RenderBindTexture(const PsagTextureAttrib& texture) {
 		glActiveTexture(GL_TEXTURE0 + texture.TextureSamplerCount);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texture.Texture);
-		GlobalThisContextStat = TextureContext;
+		ApiThisStateContext = TextureContext;
 	}
 
 	void PsagOpenGLApiRenderOper::RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
-		GlobalThisContextStat = FrameContext;
+		// clear color_buffer & depth_buffer.
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		ApiThisStateContext = FrameContext;
 	}
 
 	void PsagOpenGLApiRenderOper::DrawVertexGroup(const PsagVertexBufferAttrib& model) {
@@ -687,15 +689,15 @@ namespace RenderingSupport {
 
 	void PsagOpenGLApiRenderOper::RenderUnbindShader() {
 		glUseProgram(NULL);
-		GlobalThisContextStat = NullContext;
+		ApiThisStateContext = NullContext;
 	}
 	void PsagOpenGLApiRenderOper::RenderUnbindTexture() {
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
-		GlobalThisContextStat = NullContext;
+		ApiThisStateContext = NullContext;
 	}
 	void PsagOpenGLApiRenderOper::RenderUnbindFrameBuffer() {
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-		GlobalThisContextStat = NullContext;
+		ApiThisStateContext = NullContext;
 	}
 }
 

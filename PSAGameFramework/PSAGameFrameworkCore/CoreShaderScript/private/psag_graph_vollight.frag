@@ -1,5 +1,5 @@
 uniform sampler2DArray PostTextures;
-uniform sampler2D PostDepTexture;
+uniform sampler2D      PostTextureDep;
 
 uniform vec2  LightPosition;
 uniform vec3  LightColor;
@@ -39,4 +39,6 @@ void main()
     // Êä³ö»ìºÏÆ¬¶ÎÑÕÉ«.
     vec4 OriginalColor = texture(PostTextures, vec3(FxCoord, 0.0));
     FragColor = OriginalColor + vec4(LightColor, 1.0) * AverageLightIntensity;
+
+    // FragColor = vec4(1.0) * texture(PostTextureDep, FxCoord).r;
 }

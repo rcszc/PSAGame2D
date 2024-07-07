@@ -21,6 +21,12 @@
 #include <functional>
 #include <typeinfo> // RTTI.
 
+#if defined(_DEBUG) || defined(DEBUG)
+#define PSAG_COMPILE_MODE 1 // mode: debug(code: 1)
+#else
+#define PSAG_COMPILE_MODE 0 // mode: release(code: 0)
+#endif
+
 // warring old_function.
 #if defined(_MSC_VER) // MSVC.
 #define OLD_FUNCTION __declspec(deprecated)

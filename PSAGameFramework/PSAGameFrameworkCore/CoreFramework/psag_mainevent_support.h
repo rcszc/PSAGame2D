@@ -158,11 +158,8 @@ namespace PsagFrameworkCore {
         // public __PHYSICS_ENGINE_TIMESETP, (Óë"PhysicsEngine::PhyEngineCoreDataset"³åÍ»)
     {
     private:
-        static GraphicsEnginePost::PsagGLEnginePost*             RendererPostFX;
-        static GraphicsEngineBackground::PsagGLEngineBackground* RendererBackFX;
-
-        // 'RendererBackFX' = nullptr => 'FrameworkParams'.
-        GraphicsEngineBackground::BackFxParameters BackDefaultParams = {};
+        static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;
+        static GraphicsEngineBackground::PsagGLEngineBackgroundBase* RendererBackFX;
 
         static GameLogic::FrameworkParams FrameworkParams;
 

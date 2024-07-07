@@ -20,6 +20,7 @@ void main()
 	// vertex position trans.
 	vec2 Vertex2D = vec2(VertexPosition.xy * RenderScale + RenderMove);
 	gl_Position   = MvpMatrix * vec4(vec3(Vertex2D.x, Vertex2D.y, VertexPosition.z), 1.0);
+
 	// vertex out fragment shader.
 	FxColor = VertexColor;
 	FxCoord = VertexTexture;

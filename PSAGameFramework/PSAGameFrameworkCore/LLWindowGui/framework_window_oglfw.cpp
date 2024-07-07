@@ -252,8 +252,9 @@ namespace PSAG_WINDOW_OGLFW {
     float SpcaWindowEvent::CalcFrameTime       = 0.0f;
     float SpcaWindowEvent::CalcStepTimeTemp[2] = { 1.0f,1.0f };
 
-    constexpr float SAMPLER_TIME_MS   = 500.0f;
-    constexpr float INTER_SPEED_VALUE = 0.032f; // [20240528.1644]
+    constexpr float SAMPLER_TIME_MS = 500.0f;
+    // value: 0.032f [20240528.1644], value: 0.045f [20240707.1749]
+    constexpr float INTER_SPEED_VALUE = 0.045f;
 
     void SpcaWindowEvent::ClacFrameTimeStepBegin() {
         // frame timer start(begin).

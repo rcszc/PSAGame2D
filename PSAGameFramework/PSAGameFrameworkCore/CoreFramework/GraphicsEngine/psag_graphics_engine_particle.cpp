@@ -35,19 +35,38 @@ inline void ParticleDispVector(GraphicsEngineParticle::ParticleAttributes& ptc, 
 }
 
 inline void ParticleColorsys(
-	GraphicsEngineParticle::ParticleAttributes& ptc, const Vector3T<Vector2T<float>>& colorsys,
-	bool enable_gray
+	GraphicsEngineParticle::ParticleAttributes& ptc, const Vector3T<Vector2T<float>>& color_system,
+	bool gray_enable
 ) {
 	float ColorAhpla = float(rand() % (1500 - 500 + 1) + 500) / 1000.0f;
-	if (enable_gray) {
-		float ColorGray = RandomTimeSeedFP32(colorsys.vector_x.vector_x, colorsys.vector_x.vector_y);
+	if (gray_enable) {
+		float ColorGray = RandomTimeSeedFP32(color_system.vector_x.vector_x, color_system.vector_x.vector_y);
 		ptc.ParticleColor = Vector4T<float>(ColorGray, ColorGray, ColorGray, ColorAhpla);
 		return;
 	}
-	ptc.ParticleColor.vector_x = RandomTimeSeedFP32(colorsys.vector_x.vector_x, colorsys.vector_x.vector_y);
-	ptc.ParticleColor.vector_y = RandomTimeSeedFP32(colorsys.vector_y.vector_x, colorsys.vector_y.vector_y);
-	ptc.ParticleColor.vector_z = RandomTimeSeedFP32(colorsys.vector_z.vector_x, colorsys.vector_z.vector_y);
+	ptc.ParticleColor.vector_x = RandomTimeSeedFP32(color_system.vector_x.vector_x, color_system.vector_x.vector_y);
+	ptc.ParticleColor.vector_y = RandomTimeSeedFP32(color_system.vector_y.vector_x, color_system.vector_y.vector_y);
+	ptc.ParticleColor.vector_z = RandomTimeSeedFP32(color_system.vector_z.vector_x, color_system.vector_z.vector_y);
 	ptc.ParticleColor.vector_w = ColorAhpla;
+}
+
+inline vector<float> ParticleBaseElement(const Vector3T<float>& position, const Vector4T<float>& color, float size) {
+	vector<float> DefaultParticleRect = {
+		-size + position.vector_x, -size + position.vector_y, 0.0f + position.vector_z,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,0.0f, 0.0f,0.0f,0.0f,
+		size + position.vector_x, -size + position.vector_y, 0.0f + position.vector_z,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,0.0f, 0.0f,0.0f,0.0f,
+		size + position.vector_x,  size + position.vector_y, 0.0f + position.vector_z,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,1.0f, 0.0f,0.0f,0.0f,
+
+		-size + position.vector_x, -size + position.vector_y, 0.0f + position.vector_z,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,0.0f, 0.0f,0.0f,0.0f,
+		size + position.vector_x,  size + position.vector_y, 0.0f + position.vector_z,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,1.0f, 0.0f,0.0f,0.0f,
+		-size + position.vector_x,  size + position.vector_y, 0.0f + position.vector_z,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,1.0f, 0.0f,0.0f,0.0f
+	};
+	return DefaultParticleRect;
 }
 
 namespace GraphicsEngineParticle {
@@ -202,35 +221,13 @@ namespace GraphicsEngineParticle {
 	}
 
 	void PsagGLEngineParticle::VertexDataConvert(const vector<ParticleAttributes>& src, vector<float>& cvt) {
-		Vector3T<float> PositionTemp = {};
-		Vector4T<float> ColorTemp    = {};
-
 		// clear vertex srcdata_cache => convert.
 		cvt.clear();
 		for (const auto& Item : src) {
-			// create particle: position,color,size.
-			PositionTemp   = Item.ParticlePosition;
-			ColorTemp      = Item.ParticleColor;
-			float SizeTemp = Item.ParticleScaleSize;
-
 			// format: vertex[vec3], color[vec4], uv(coord)[vec2], normal[vec3].
-			float DefaultParticle[72] = {
-				-SizeTemp + PositionTemp.vector_x, -SizeTemp + PositionTemp.vector_y, 0.0f + PositionTemp.vector_z,
-				 0.0f + ColorTemp.vector_x, 0.0f + ColorTemp.vector_y, 0.0f + ColorTemp.vector_z, 0.0f + ColorTemp.vector_w, 0.0f,0.0f, 0.0f,0.0f,0.0f,
-				 SizeTemp + PositionTemp.vector_x, -SizeTemp + PositionTemp.vector_y, 0.0f + PositionTemp.vector_z,
-				 0.0f + ColorTemp.vector_x, 0.0f + ColorTemp.vector_y, 0.0f + ColorTemp.vector_z, 0.0f + ColorTemp.vector_w, 1.0f,0.0f, 0.0f,0.0f,0.0f,
-				 SizeTemp + PositionTemp.vector_x,  SizeTemp + PositionTemp.vector_y, 0.0f + PositionTemp.vector_z,
-				 0.0f + ColorTemp.vector_x, 0.0f + ColorTemp.vector_y, 0.0f + ColorTemp.vector_z, 0.0f + ColorTemp.vector_w, 1.0f,1.0f, 0.0f,0.0f,0.0f,
-
-				-SizeTemp + PositionTemp.vector_x, -SizeTemp + PositionTemp.vector_y, 0.0f + PositionTemp.vector_z,
-				 0.0f + ColorTemp.vector_x, 0.0f + ColorTemp.vector_y, 0.0f + ColorTemp.vector_z, 0.0f + ColorTemp.vector_w, 0.0f,0.0f, 0.0f,0.0f,0.0f,
-				 SizeTemp + PositionTemp.vector_x,  SizeTemp + PositionTemp.vector_y, 0.0f + PositionTemp.vector_z,
-				 0.0f + ColorTemp.vector_x, 0.0f + ColorTemp.vector_y, 0.0f + ColorTemp.vector_z, 0.0f + ColorTemp.vector_w, 1.0f,1.0f, 0.0f,0.0f,0.0f,
-				-SizeTemp + PositionTemp.vector_x,  SizeTemp + PositionTemp.vector_y, 0.0f + PositionTemp.vector_z,
-				 0.0f + ColorTemp.vector_x, 0.0f + ColorTemp.vector_y, 0.0f + ColorTemp.vector_z, 0.0f + ColorTemp.vector_w, 0.0f,1.0f, 0.0f,0.0f,0.0f
-			};
-			// src => particle vert => cvt
-			cvt.insert(cvt.end(), DefaultParticle, DefaultParticle + ParticleVertLen);
+			auto PTC_TEMP = ParticleBaseElement(Item.ParticlePosition, Item.ParticleColor, Item.ParticleScaleSize);
+			// (add)push_back partiel.
+			cvt.insert(cvt.end(), PTC_TEMP.begin(), PTC_TEMP.end());
 		}
 	}
 
@@ -246,8 +243,8 @@ namespace GraphicsEngineParticle {
 
 		// create & storage particles_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderProgramItem = GenResourceID.PsagGenTimeKey();
-			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
+			ShaderPostProgram = GenResourceID.PsagGenTimeKey();
+			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
 		// => mag"GraphicsEngineDataset::GLEngineStcVertexData".
@@ -274,7 +271,7 @@ namespace GraphicsEngineParticle {
 		// free graphics particle resource.
 		VirTextureItemFree(VirTextureItem);
 		VerDyDataItemFree(DyVertexSysItem);
-		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
+		LLRES_Shaders->ResourceDelete(ShaderPostProgram);
 	}
 
 	void PsagGLEngineParticle::UpdateParticleData() {
@@ -286,7 +283,7 @@ namespace GraphicsEngineParticle {
 	}
 
 	void PsagGLEngineParticle::RenderParticleFX() {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
+		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderPostProgram);
 		ShaderRender.RenderBindShader(ShaderTemp);
 
 		// system parset uniform.
@@ -321,7 +318,7 @@ namespace GraphicsEngineParticle {
 	}
 
 	vector<ParticleAttributes>* PsagGLEngineParticle::GetParticleDataset() {
-		// particle_system ptc_data pointer.
+		// particle_system data pointer.
 		return &DataParticles;
 	}
 }

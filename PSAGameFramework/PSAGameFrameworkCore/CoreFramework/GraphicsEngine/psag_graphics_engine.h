@@ -257,13 +257,13 @@ namespace GraphicsEnginePost {
 		Vector3T<float> LightColor;
 		float           LightIntensity;
 		float           LightIntensityDecay;
-		uint32_t        LightSampleStep;
+		int32_t         LightSampleStep;
 		
 		PostFxParameters() :
-			GameSceneFilterCOL(Vector3T<float>()),
-			GameSceneFilterAVG(0.0f),
+			GameSceneFilterCOL  (Vector3T<float>()),
+			GameSceneFilterAVG  (0.0f),
 			GameSceneBloomRadius(1),
-			GameSceneBloomBlend(Vector2T<float>(1.0f, 1.0f)),
+			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),
 
 			LightPosition      (Vector2T<float>()),
 			LightColor         (Vector3T<float>(1.0f, 0.52f, 0.0f)),
@@ -285,18 +285,17 @@ namespace GraphicsEnginePost {
 
 		// bloom shader hv mvp != scene mvp.
 		PsagMatrix4 RenderingMatrixMvp = {};
+		ResUnique ShaderPostProgram = {};
 		// scene => volumetric_light.
-		ResUnique ShaderProgramItem = {};
-		ResUnique ShaderVoluLight = {};
+		ResUnique ShaderVolumLight = {};
 
 		// filter => bloom_h + bloom_v => post_shader.
 		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
 		
-		ResUnique GameSceneFrameBuffer    = {};
-		ResUnique GameSceneDepFrameBuffer = {};
+		ResUnique GameSceneFrameBuffer = {};
 
-		ResUnique LightFrameBuffer     = {};
-		ResUnique FilterFrameBuffer    = {};
+		ResUnique LightFrameBuffer  = {};
+		ResUnique FilterFrameBuffer = {};
 		// 0:framebuffer_h, 1:framebuffer_v.
 		ResUnique BloomFrameBuffers[2] = {};
 
@@ -310,7 +309,9 @@ namespace GraphicsEnginePost {
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);
 		void ShaderRenderingLight();
-		void ShaderRenderingBloomHV();
+		void ShaderRenderingBloom();
+
+		PostFxParameters RenderParameters = {};
 	public:
 		PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution);
 		~PsagGLEnginePost();
@@ -320,7 +321,7 @@ namespace GraphicsEnginePost {
 
 		// rendering-event.
 		void RenderingPostModule();
-		PostFxParameters RenderParameters = {};
+		PostFxParameters* GetRenderParameters() { return &RenderParameters; }
 	};
 }
 
@@ -346,7 +347,17 @@ namespace GraphicsEngineBackground {
 		{}
 	};
 
-	class PsagGLEngineBackground :public GraphicsEngineDataset::GLEngineStcVertexData {
+	class PsagGLEngineBackgroundBase {
+	public:
+		virtual ~PsagGLEngineBackgroundBase() = default;
+		virtual BackFxParameters* GetRenderParameters() = 0;
+		virtual void RenderingBackgroundModule() = 0;
+	};
+
+	class PsagGLEngineBackground :
+		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public PsagGLEngineBackgroundBase
+	{
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
@@ -354,21 +365,33 @@ namespace GraphicsEngineBackground {
 		Vector2T<float> RenderingResolution = {};
 		PsagMatrix4     RenderingMatrixMvp  = {};
 
-		ResUnique ShaderProgramItem = {};
+		ResUnique ShaderPostProgram = {};
 
 		float TextureTopLayer = 0.0f;
 		// texture_array(n * layers), x:tex_idx[1,n-1], y:tex_idx[n].
 		ResUnique BackgroundTextures = {};
-		ResUnique BackgroundModel = {};
+		ResUnique BackgroundRect = {};
+
+		BackFxParameters RenderParameters = {};
 	public:
 		PsagGLEngineBackground(
 			const Vector2T<uint32_t>& render_resolution, const std::vector<ImageRawData>& imgdataset
 		);
-		~PsagGLEngineBackground();
+		~PsagGLEngineBackground() override;
+		BackFxParameters* GetRenderParameters() override { return &RenderParameters; }
 
 		// rendering-event.
-		void RenderingBackgroundModule();
+		void RenderingBackgroundModule() override;
+	};
+
+	class PsagGLEngineBackgroundNULL :public PsagGLEngineBackgroundBase {
+	protected:
 		BackFxParameters RenderParameters = {};
+	public:
+		~PsagGLEngineBackgroundNULL() override {};
+		BackFxParameters* GetRenderParameters() override { return &RenderParameters; }
+
+		void RenderingBackgroundModule() override {};
 	};
 }
 
@@ -489,7 +512,7 @@ namespace GraphicsEngineParticle {
 		std::vector<ParticleAttributes> DataParticles = {};
 		std::vector<float>              DataVertices  = {};
 
-		ResUnique ShaderProgramItem = {};
+		ResUnique ShaderPostProgram = {};
 		ResUnique DyVertexSysItem   = {};
 
 		float           RenderTimer   = 0.0f;
@@ -572,7 +595,7 @@ namespace GraphicsEnginePVFX {
 		Vector2T<float> PlayerPosition = {};
 		float           PlayerTimer    = 0.0f;
 
-		ResUnique   ShaderProgramItem = {};
+		ResUnique   ShaderPostProgram = {};
 		float       RenderTimer       = 0.0f;
 		PsagMatrix4 RenderMatrix      = {};
 

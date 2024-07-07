@@ -9,7 +9,7 @@ float Gaussian(float Gx, float Sigma)
     return exp(-(Gx * Gx) / (2.0 * Sigma * Sigma)) / (sqrt(2.0 * SHADER_FRAG_MS_PI) * Sigma);
 }
 
-// component_filter color, RGB.
+// component filter color, RGB.
 vec4 FilterColor(vec4 InColor, vec3 Value)
 {
     if ((InColor.r >= Value.r) && (InColor.g >= Value.g) && (InColor.b >= Value.b)) {
@@ -20,7 +20,7 @@ vec4 FilterColor(vec4 InColor, vec3 Value)
     }
 }
 
-// average_filter color, RGB.
+// average filter color, RGB.
 vec4 FilterColorAvg(vec4 InColor, float Value)
 {
     float ColorAverage = (InColor.r + InColor.g + InColor.b) / 3.0;

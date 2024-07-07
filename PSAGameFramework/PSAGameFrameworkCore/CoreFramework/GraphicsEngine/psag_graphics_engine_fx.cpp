@@ -57,13 +57,11 @@ namespace GraphicsEnginePVFX {
 	void PsagGLEngineFxCaptureView::CaptureContextBind() {
 		// opengl api context bind.
 		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void PsagGLEngineFxCaptureView::CaptureContextUnBind() {
 		// opengl api context unbind.
 		ShaderRender.RenderUnbindFrameBuffer();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	PsagGLEngineFxCaptureView::~PsagGLEngineFxCaptureView() {
@@ -90,8 +88,8 @@ namespace GraphicsEnginePVFX {
 
 		// create & storage fx_sequence_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderProgramItem = GenResourceID.PsagGenTimeKey();
-			LLRES_Shaders->ResourceStorage(ShaderProgramItem, &ShaderProcess);
+			ShaderPostProgram = GenResourceID.PsagGenTimeKey();
+			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
 		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
@@ -119,12 +117,12 @@ namespace GraphicsEnginePVFX {
 	PsagGLEngineFxSequence::~PsagGLEngineFxSequence() {
 		// free graphics sequence resource.
 		VirTextureItemFree(VirTextureItem);
-		LLRES_Shaders->ResourceDelete(ShaderProgramItem);
+		LLRES_Shaders->ResourceDelete(ShaderPostProgram);
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "graphics_engine free post_shader(system).");
 	}
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderProgramItem);
+		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderPostProgram);
 		ShaderRender.RenderBindShader(ShaderTemp);
 		
 		// system parset uniform.

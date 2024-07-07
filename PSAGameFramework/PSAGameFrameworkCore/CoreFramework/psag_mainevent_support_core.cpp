@@ -14,8 +14,8 @@ namespace PsagFrameworkCore {
 
     // **************** core static init ****************
 
-    GraphicsEnginePost::PsagGLEnginePost*             PSAGame2DFramework::RendererPostFX = nullptr;
-    GraphicsEngineBackground::PsagGLEngineBackground* PSAGame2DFramework::RendererBackFX = nullptr;
+    GraphicsEnginePost::PsagGLEnginePost*                 PSAGame2DFramework::RendererPostFX = nullptr;
+    GraphicsEngineBackground::PsagGLEngineBackgroundBase* PSAGame2DFramework::RendererBackFX = nullptr;
 
     GameLogic::FrameworkParams PSAGame2DFramework::FrameworkParams = {};
 
@@ -28,8 +28,7 @@ namespace PsagFrameworkCore {
 
     bool PSAGame2DFramework::FrameworkRenderingGameScene() {
         // rendering background-shader sys.
-        if (RendererBackFX != nullptr)
-            RendererBackFX->RenderingBackgroundModule();
+        RendererBackFX->RenderingBackgroundModule();
 
         // run game_logic(game_scene).
         for (auto it = GAME_CORE_CLASS.begin(); it != GAME_CORE_CLASS.end(); ++it)
@@ -127,20 +126,20 @@ namespace PsagFrameworkCore {
         // sound system create.
         CoreInitErrorFlag |= !CreateSoundDevice();
         // physics system create. default(debug?) world.
-        CoreInitErrorFlag |= !PhysicsWorldCreate("SYSTEM_PHY_WORLD", Vector2T<float>());
+        CoreInitErrorFlag |= !PhysicsWorldCreate("DEFAULT_PHY_WORLD", Vector2T<float>());
 
-        // create game2d post-shader & light-shader.
-        RendererPostFX  = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
-        //RendererLightFX = new GraphicsEngineVoluLight::PsagGLEngineVoluLightNULL(RenderingWinSize);
+        // create game2d post-shader & background(null)-shader.
+        RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
+        RendererBackFX = new GraphicsEngineBackground::PsagGLEngineBackgroundNULL();
 
         // init imgui_core system.
         ImGuiInit(MainWindowObject, ImGuiInitConfig);
 
         // load pointer.
-        FrameworkParams.PostShaderParams = &RendererPostFX->RenderParameters;
+        FrameworkParams.PostShaderParams = RendererPostFX->GetRenderParameters();
         FrameworkParams.WindowResolution = RenderingWinSize;
         // non-create using default values.
-        FrameworkParams.BackShaderParams = &BackDefaultParams;
+        FrameworkParams.BackShaderParams = RendererBackFX->GetRenderParameters();
        
         // registration dev_class, objects.
         InitializeRegistrationDev();
@@ -173,7 +172,7 @@ namespace PsagFrameworkCore {
         // sound system delete.
         CoreInitErrorFlag |= !DeleteSoundDevice();
         // physics system delete.
-        CoreInitErrorFlag |= !PhysicsWorldDelete("SYSTEM_PHY_WORLD");
+        CoreInitErrorFlag |= !PhysicsWorldDelete("DEFAULT_PHY_WORLD");
 
         ImGuiFree();
         CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStcVertexData::LowLevelResourceFree();

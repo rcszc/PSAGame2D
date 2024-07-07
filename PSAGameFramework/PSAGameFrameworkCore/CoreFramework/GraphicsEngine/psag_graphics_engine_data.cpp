@@ -5,27 +5,29 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace IMAGE_TOOLS {
-	// fmt image size.
-	void TOOL_FILL_IMAGE(std::vector<uint8_t>& image, Vector2T<uint32_t> src_size, Vector2T<uint32_t> fill_size, uint32_t channels) {
-		std::vector<uint8_t> FillImageTemp(fill_size.vector_x * fill_size.vector_y * channels, NULL);
+	// fmt image size. (ZERO_FILL)
+	void IMAGE_TOOL_FILL(
+		vector<uint8_t>& image, const Vector2T<uint32_t>& src_size, const Vector2T<uint32_t>& fill_size, uint32_t channels
+	) {
+		vector<uint8_t> FillImageTemp(fill_size.vector_x * fill_size.vector_y * channels, 0x00);
 		// image raw_pixel fill.
 		for (uint32_t y = 0; y < src_size.vector_y; ++y)
 			for (uint32_t x = 0; x < src_size.vector_x; ++x)
 				for (uint32_t c = 0; c < channels; ++c)
 					FillImageTemp[(y * fill_size.vector_x + x) * channels + c] = image[(y * src_size.vector_x + x) * channels + c];
 		// src => fill(dst).
-		image = std::move(FillImageTemp);
+		image = move(FillImageTemp);
 	}
 
 	// fmt image channels(rgb) => channels(rgba).
-	void TOOL_CHANNELS_IMAGE(std::vector<uint8_t>& image) {
+	void IMAGE_TOOL_CHANNELS(vector<uint8_t>& image) {
 		RawDataStream ConvertChannelsTemp = {};
 		// rgb_pixel data => fill => rgba_pixel data, step = 3.
 		for (size_t i = 0; i < image.size(); i += 3) {
 			ConvertChannelsTemp.insert(ConvertChannelsTemp.end(), image.begin() + i, image.begin() + i + 3);
 			ConvertChannelsTemp.push_back(0xff);
 		}
-		image = std::move(ConvertChannelsTemp);
+		image = move(ConvertChannelsTemp);
 	}
 }
 
@@ -363,7 +365,7 @@ namespace GraphicsEngineDataset {
 		if (!ImgDataTemp.ImagePixels.empty()) {
 
 			// 格式化填充纹理数据. src => fmt_size.
-			IMAGE_TOOLS::TOOL_FILL_IMAGE(
+			IMAGE_TOOLS::IMAGE_TOOL_FILL(
 				ImgDataTemp.ImagePixels,
 				Vector2T<uint32_t>(ImgDataTemp.Width, ImgDataTemp.Height),
 				TextureIndex->TextureResolution,
@@ -371,7 +373,7 @@ namespace GraphicsEngineDataset {
 			);
 			// AHPLA 通道填充.
 			if (ImgDataTemp.Channels == DEF_IMG_CHANNEL_RGB)
-				IMAGE_TOOLS::TOOL_CHANNELS_IMAGE(ImgDataTemp.ImagePixels);
+				IMAGE_TOOLS::IMAGE_TOOL_CHANNELS(ImgDataTemp.ImagePixels);
 
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: src: %u x %u, fmt_fill: %u x %u",
 				ImgDataTemp.Width, ImgDataTemp.Height, TextureIndex->TextureResolution.vector_x, TextureIndex->TextureResolution.vector_y);
