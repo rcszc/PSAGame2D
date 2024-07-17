@@ -375,27 +375,40 @@ namespace PSAG_OGL_MAG {
 	}
 
 #define RBO_PIXEL_SIZE 4
-	bool PasgRenderbufferOGL::CreateRenderBuffer(uint32_t width, uint32_t height) {
+	bool PasgRenderbufferOGL::CreateConfigRenderbuffer(uint32_t width, uint32_t height, bool depth) {
 		if (CreateBindRenderbuffer(RenderBuffer.RenderBuffer)) {
 			// GL_DEPTH24_STENCIL8 - d.24bit s.8bit 32bit(4byte)
 			// alloc rbo memory(set render size).
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, (int)width, (int)height);
-
-			RenderBuffer.Width = width;
-			RenderBuffer.Height = height;
-			RenderBuffer.Channels = 4;
+			if (depth) {
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RenderBuffer.RenderBuffer);
+				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "renderbuffer.config depth.");
+			}
+			RenderBuffer.Width        = width;
+			RenderBuffer.Height       = height;
+			RenderBuffer.Channels     = 4;
 			RenderBuffer.TextureBytes = RenderBuffer.Width * RenderBuffer.Height * RBO_PIXEL_SIZE;
 
 			// render buffer pixel memory_size(mib)
 			float PixelMemory = (float)width * (float)height * RBO_PIXEL_SIZE / 1048576.0f;
 			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "alloc renderbuffer_mem %u x %u, size: %.3f mib.", width, height, PixelMemory);
 
-			// unbind rbo.
+			// unbind render_buffer.
 			glBindRenderbuffer(GL_RENDERBUFFER, NULL);
+
+			ReturnResFlag = DEFRES_FLAG_NORMAL;
 			return DEF_PSAGSTAT_SUCCESS;
 		}
 		else
 			return DEF_PSAGSTAT_FAILED;
+	}
+
+	bool PasgRenderbufferOGL::CreateRenderBufferDepth(uint32_t width, uint32_t height) {
+		return CreateConfigRenderbuffer(width, height, true);
+	}
+
+	bool PasgRenderbufferOGL::CreateRenderBuffer(uint32_t width, uint32_t height) {
+		return CreateConfigRenderbuffer(width, height, false);
 	}
 
 	ImageRawData PasgRenderbufferOGL::ReadRenderBuffer(PsagRenderBufferAttrib buffer) {
@@ -487,8 +500,9 @@ namespace PSAG_OGL_MAG {
 			ResultFlag = CheckFramebuffer(FrameBuffer, ReturnResFlag);
 		}
 		// unbind fbo,texture.
-		glBindTexture(GL_TEXTURE_2D, NULL);
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+		glBindTexture(GL_TEXTURE_2D, NULL);
+
 		return ResultFlag;
 	}
 
@@ -515,8 +529,8 @@ namespace PSAG_OGL_MAG {
 			ResultFlag = CheckFramebuffer(FrameBuffer, ReturnResFlag);
 		}
 		// unbind fbo,rbo.
-		glBindRenderbuffer(GL_RENDERBUFFER, NULL);
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+		glBindRenderbuffer(GL_RENDERBUFFER, NULL);
 
 		return ResultFlag;
 	}
@@ -541,8 +555,8 @@ namespace PSAG_OGL_MAG {
 			ResultFlag = CheckFramebuffer(FrameBuffer, ReturnResFlag);
 		}
 		// unbind fbo,texture_array.
-		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
 		
 		return ResultFlag;
 	}

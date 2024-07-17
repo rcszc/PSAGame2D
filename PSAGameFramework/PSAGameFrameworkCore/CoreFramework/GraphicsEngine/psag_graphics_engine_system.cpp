@@ -85,12 +85,6 @@ namespace GraphicsEnginePost {
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(LightShader, "PostTextures", ColorTextureTemp.TextureSamplerCount);
 
-			// DEPTH_BUFFER.
-			auto DepthTextureTemp = LLRES_Textures->ResourceFind(ProcessDepthTexture);
-			ShaderRender.RenderBindTexture(DepthTextureTemp);
-			// bind texture context => sampler(tmu) => unbind.
-			ShaderUniform.UniformInteger(LightShader, "PostTextureDep", DepthTextureTemp.TextureSamplerCount);
-
 			// frame draw(command).
 			VerStcOperFrameDraw(GetPresetRect());
 		}
@@ -228,16 +222,16 @@ namespace GraphicsEnginePost {
 		const float* glmmatptr = glm::value_ptr(MatrixPorj);
 		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
-		// **************** create scene depth_texture ****************
+		// **************** create scene(fbo) depth_rbo ****************
 		
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsDepTexture  DepTextureCreate;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsRenderBuffer DepRenderBufferCreate;
 
-		if (DepTextureCreate.CreateDepthTexture(render_resolution.vector_x, render_resolution.vector_y, LLRES_Samplers->AllocTmuCount())) {
-			ProcessDepthTexture = GenResourceID.PsagGenTimeKey();
-			LLRES_Textures->ResourceStorage(ProcessDepthTexture, &DepTextureCreate);
+		if (DepRenderBufferCreate.CreateRenderBufferDepth(render_resolution.vector_x, render_resolution.vector_y)) {
+			GameSceneRenderBuffer = GenResourceID.PsagGenTimeKey();
+			LLRES_RenderBuffers->ResourceStorage(GameSceneRenderBuffer, &DepRenderBufferCreate);
 		}
 		
-		// **************** create texture & FBO ****************
+		// **************** create texture & framebuffer ****************
 		
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture     TextureCreate;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboGameScene;
@@ -257,20 +251,21 @@ namespace GraphicsEnginePost {
 		// 游戏场景 (捕获输入)
 		if (FboGameScene.CreateFrameBuffer()) {
 			GameSceneFrameBuffer = GenResourceID.PsagGenTimeKey();
-			// bind scene color_buffer & depth_buffer.
-			FboGameScene.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 0); // color.
-			FboGameScene.TextureDepBindFBO  (LLRES_Textures->ResourceFind(ProcessDepthTexture));        // depth.
+			// bind scene color_buffer & render_buffer(depth).
+			// depth_info get: "gl_FragCoord.z"
+			FboGameScene.RenderBufferBindFBO(LLRES_RenderBuffers->ResourceFind(GameSceneRenderBuffer));
+			FboGameScene.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 0);
 
 			LLRES_FrameBuffers->ResourceStorage(GameSceneFrameBuffer, &FboGameScene);
 		}
 
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboVoluLight;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboVolumLight;
 
 		// 2D灯光处理 (体积光)
-		if (FboVoluLight.CreateFrameBuffer()) {
+		if (FboVolumLight.CreateFrameBuffer()) {
 			LightFrameBuffer = GenResourceID.PsagGenTimeKey();
-			FboVoluLight.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 1);
-			LLRES_FrameBuffers->ResourceStorage(LightFrameBuffer, &FboVoluLight);
+			FboVolumLight.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 1);
+			LLRES_FrameBuffers->ResourceStorage(LightFrameBuffer, &FboVolumLight);
 		}
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboColorFilter;
@@ -299,13 +294,12 @@ namespace GraphicsEnginePost {
 
 	PsagGLEnginePost::~PsagGLEnginePost() {
 		// free graphics post resource.
+		LLRES_RenderBuffers->ResourceDelete(GameSceneRenderBuffer);
+
 		LLRES_FrameBuffers->ResourceDelete(BloomFrameBuffers[0]);
 		LLRES_FrameBuffers->ResourceDelete(BloomFrameBuffers[1]);
 		LLRES_FrameBuffers->ResourceDelete(FilterFrameBuffer);
 		LLRES_FrameBuffers->ResourceDelete(GameSceneFrameBuffer);
-
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(ProcessDepthTexture).TextureSamplerCount);
-		LLRES_Textures->ResourceDelete(ProcessDepthTexture);
 
 		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(ProcessTextures).TextureSamplerCount);
 		LLRES_Textures->ResourceDelete(ProcessTextures);
@@ -378,7 +372,7 @@ namespace GraphicsEngineBackground {
 
 		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
 		BackgroundRect = GenResourceID.PsagGenTimeKey();
-		VerStcDataItemAlloc(BackgroundRect, PSAG_OGL_MAG::ShaderTemplateRectDep(-10.0f));
+		VerStcDataItemAlloc(BackgroundRect, PSAG_OGL_MAG::ShaderTemplateRectDep(10.0f));
 
 		glm::mat4x4 MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 		// convert: glm matrix => psag matrix.

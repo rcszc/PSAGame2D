@@ -87,12 +87,14 @@ namespace PSAG_OGL_MAG {
 		PsagRenderBufferAttrib RenderBuffer = {};
 
 		bool CreateBindRenderbuffer(PsagRenderBuffer& renderbuf);
-
+		bool CreateConfigRenderbuffer(uint32_t width, uint32_t height, bool depth);
 	public:
-		bool CreateRenderBuffer(uint32_t width, uint32_t height);
-		ImageRawData ReadRenderBuffer(PsagRenderBufferAttrib buffer);
+		bool CreateRenderBufferDepth(uint32_t width, uint32_t height) override;
 
-		PsagRenderBufferAttrib _MS_GETRES(ResourceFlag& flag);
+		bool CreateRenderBuffer(uint32_t width, uint32_t height) override;
+		ImageRawData ReadRenderBuffer(PsagRenderBufferAttrib buffer) override;
+
+		PsagRenderBufferAttrib _MS_GETRES(ResourceFlag& flag) override;
 	};
 
 	class PsagFramebufferOGL :public PsagOGLsystemLogger, public PsagGLmanagerFrameBuffer {
@@ -215,7 +217,7 @@ namespace RenderingSupport {
 
 	class PsagOpenGLApiRenderOper {
 	protected:
-		static OpenGLApiContext GlobalThisContextStat;
+		static OpenGLApiContext ApiThisStateContext;
 	public:
 		void RenderBindShader(const PsagShader& program);
 		void RenderBindTexture(const PsagTextureAttrib& texture);
@@ -241,7 +243,7 @@ namespace RenderingSupport {
 		void RenderUnbindFrameBuffer();
 
 		// global state: opengl context. (non-thread-safe)
-		OpenGLApiContext GET_THIS_CONTEXT() { return GlobalThisContextStat; };
+		OpenGLApiContext GET_THIS_CONTEXT() { return ApiThisStateContext; };
 	};
 }
 

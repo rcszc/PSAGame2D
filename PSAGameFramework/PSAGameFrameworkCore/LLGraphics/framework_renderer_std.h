@@ -155,6 +155,8 @@ struct ImageRawData {
 
 class PsagGLmanagerRenderBuffer {
 public:
+	virtual bool CreateRenderBufferDepth(uint32_t width, uint32_t height) = 0;
+
 	virtual bool CreateRenderBuffer(uint32_t width, uint32_t height) = 0;
 	virtual ImageRawData ReadRenderBuffer(PsagRenderBufferAttrib buffer) = 0;
 

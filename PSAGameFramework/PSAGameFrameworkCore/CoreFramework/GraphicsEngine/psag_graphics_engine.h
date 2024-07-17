@@ -246,8 +246,9 @@ namespace GraphicsEnginePost {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
 	struct PostFxParameters {
-		Vector3T<float> GameSceneFilterCOL; // lv1-filter.
-		float           GameSceneFilterAVG; // lv2-filter.
+		Vector3T<float> GameSceneFilterCOL; // lv1: color_channels.
+		float           GameSceneFilterAVG; // lv2: color_avg.
+
 		// bloom_radius [1-32] calc & filter avg_color.
 		uint32_t GameSceneBloomRadius;
 		// bloom_blend x:source, y:blur.
@@ -266,10 +267,10 @@ namespace GraphicsEnginePost {
 			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),
 
 			LightPosition      (Vector2T<float>()),
-			LightColor         (Vector3T<float>(1.0f, 0.52f, 0.0f)),
-			LightIntensity     (0.18f),
-			LightIntensityDecay(0.92f),
-		    LightSampleStep    (100)
+			LightColor         (Vector3T<float>(1.0f, 1.0f, 1.0f)),
+			LightIntensity     (0.0f),
+			LightIntensityDecay(0.0f),
+		    LightSampleStep    (1)
 		{}
 	};
 
@@ -292,7 +293,8 @@ namespace GraphicsEnginePost {
 		// filter => bloom_h + bloom_v => post_shader.
 		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
 		
-		ResUnique GameSceneFrameBuffer = {};
+		ResUnique GameSceneFrameBuffer  = {};
+		ResUnique GameSceneRenderBuffer = {};
 
 		ResUnique LightFrameBuffer  = {};
 		ResUnique FilterFrameBuffer = {};
@@ -303,8 +305,6 @@ namespace GraphicsEnginePost {
 		// 0: light_process
 		// 1: color_filter, 2:frame_buffer_tex, 3:bloom_h_tex, 4:bloom_v_tex
 		ResUnique ProcessTextures = {};
-		// game scene depth_texture.
-		ResUnique ProcessDepthTexture = {};
 
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);

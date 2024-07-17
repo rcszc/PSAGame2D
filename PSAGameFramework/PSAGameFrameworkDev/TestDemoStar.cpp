@@ -238,6 +238,7 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
 
     CameraScale = 2.7f;
 
+    /*
     ImGui::Begin("TestSample");
 
     ImGui::SliderInt("STEP", &LightSamplerStep, 1, 384);
@@ -248,6 +249,7 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
 
     ImGui::ColorEdit3("COLOR", RunningState.PostShaderParams->LightColor.data());
     ImGui::End();
+    */
 
     PawnActorObj->ActorApplyForceMove(Vector2T<float>());
     PawnActorObj->ActorApplyForceRotate(0.0f);

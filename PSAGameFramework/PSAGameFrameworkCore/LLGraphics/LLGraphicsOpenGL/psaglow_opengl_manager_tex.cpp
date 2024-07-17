@@ -87,15 +87,16 @@ namespace PSAG_OGL_MAG {
 		// error channels != 'DEF_IMG_CHANNEL_RGBA' and 'DEF_IMG_CHANNEL_RGB'
 		if (channels > 4 || channels < 3) return false;
 
-		GLenum PixelFormat = GL_RGB;
-		if (channels == 4) PixelFormat = GL_RGBA;
+		GLenum InputFormat = GL_RGB;
+		if (channels == 4) InputFormat = GL_RGBA;
 
 		// opengl api, create texture_array. [GL_TEX_01]
 		// internal_format = pixel_format. [20240704]
+		// internal_format RGBA12 (HDR12), pixel_format RGBA8888. [20240717]
 		if (ModeType == GL_TEXTURE_2D_ARRAY)
-			glTexImage3D(ModeType, NULL, PixelFormat, width, height, layers, border, PixelFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage3D(ModeType, NULL, GL_RGBA12, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
 		if (ModeType == GL_TEXTURE_2D)
-			glTexImage2D(ModeType, NULL, PixelFormat, width, height, border, PixelFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(ModeType, NULL, GL_RGBA12, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// config texture2d. surround,filter.
@@ -281,8 +282,10 @@ namespace PSAG_OGL_MAG {
 				return DEF_PSAGSTAT_FAILED;
 			}
 			// config texture2d. surround,filter.
-			ConfigSurroundTex2DParams(GL_TEXTURE_2D);
-			// ConfigTextureFilter(mode, GL_TEXTURE_2D);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 			// unbind texture handle.
