@@ -305,6 +305,8 @@ namespace GraphicsEnginePost {
 		// 0: light_process
 		// 1: color_filter, 2:frame_buffer_tex, 3:bloom_h_tex, 4:bloom_v_tex
 		ResUnique ProcessTextures = {};
+		// topmost, fmt: -1.0f
+		ResUnique RenderRect = {};
 
 		// vertex default: move,scale.
 		void ShaderVertexDefaultParams(PsagShader shader);
@@ -370,6 +372,7 @@ namespace GraphicsEngineBackground {
 		float TextureTopLayer = 0.0f;
 		// texture_array(n * layers), x:tex_idx[1,n-1], y:tex_idx[n].
 		ResUnique BackgroundTextures = {};
+		// lowest_layer, fmt: 1.0f
 		ResUnique BackgroundRect = {};
 
 		BackFxParameters RenderParameters = {};
@@ -505,6 +508,12 @@ namespace GraphicsEngineParticle {
 		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
+	private:
+		static void CalcUpdateParticlesOMP(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+		static void CalcUpdateParticles   (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+
+		std::function<void(std::vector<ParticleAttributes>&, float, float)>
+			UPDATE_CALC_FUNC = {};
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
@@ -523,13 +532,13 @@ namespace GraphicsEngineParticle {
 		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
-		void CalcUpdateParticles(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
 		void VertexDataConvert(const std::vector<ParticleAttributes>& src, std::vector<float>& cvt);
 	public:
 		PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image = {});
 		~PsagGLEngineParticle();
 
 		void ParticleCreate(ParticleGeneratorBase* generator);
+		void ParticleEnableOMP(bool openmp_switch, int threads = 4);
 
 		ParticleSystemState				 GetParticleState();
 		std::vector<ParticleAttributes>* GetParticleDataset();

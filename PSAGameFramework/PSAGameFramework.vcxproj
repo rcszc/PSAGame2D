@@ -115,6 +115,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -238,7 +239,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLSound\framework_sound.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
-    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imvec.h" />
+    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imms.h" />
     <ClInclude Include="PSAGameFrameworkDev\ModuleDebug.h" />
     <ClInclude Include="PSAGameFrameworkDev\TestDemoStar.h" />
   </ItemGroup>

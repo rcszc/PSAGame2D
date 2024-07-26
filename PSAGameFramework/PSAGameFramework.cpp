@@ -13,8 +13,8 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_06_10.
-#define PSAG2D_ENGINE_VER 12.20240610
+// Engine Update: 2024_07_27.
+#define PSAG2D_ENGINE_VER 12.20240727
 /*
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX

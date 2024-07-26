@@ -18,6 +18,7 @@ uniform mat4 MvpMatrix;
 uniform vec2  ActorPos;
 uniform float ActorRot;
 uniform vec2  ActorSize;
+uniform float ActorZ;
 
 out vec4 FxColor;
 out vec2 FxCoord;
@@ -30,7 +31,7 @@ void main()
 
 	// scale => rotate => move.
 	vec2 VerPos = vec2(VertexPosition.xy * Scale2DMatrix * Rotation2DMatrix + ActorPos);
-	gl_Position = MvpMatrix * vec4(vec3(VerPos.x, VerPos.y, VertexPosition.z), 1.0);
+	gl_Position = MvpMatrix * vec4(vec3(VerPos.x, VerPos.y, ActorZ), 1.0);
 
 	FxColor = VertexColor;
 	FxCoord = VertexTexture;

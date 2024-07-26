@@ -42,8 +42,8 @@ namespace GameBrickCore {
 			}
 		}
 		else {
-			BirckCompRendering =
-				new GameActorCore::system::null::ActorRenderingNULL();
+			// comp(empty_object): rendering.
+			BirckCompRendering = new GameActorCore::system::null::ActorRenderingNULL();
 		}
 		// birck => load physics world_item.
 		if (PhysicsWorldFind(INIT_DESC.BrickPhysicsWorld) == nullptr) {
@@ -55,6 +55,9 @@ namespace GameBrickCore {
 		BrickStaticPosition = INIT_DESC.InitialPosition;
 		BrickStaticScale    = INIT_DESC.InitialScale;
 		BrickStaticRotate   = INIT_DESC.InitialRotate;
+		BrickStaticLayer    = INIT_DESC.InitialLayer;
+		// actor space_z value_clamp.
+		BrickStaticLayer = PsagClamp(BrickStaticLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
@@ -83,7 +86,7 @@ namespace GameBrickCore {
 			return;
 		// rendering brick shader_data.
 		BirckCompRendering->UpdateActorRendering(
-			GameActorCore::system::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate), 
+			GameActorCore::system::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, BrickStaticLayer),
 			VirTimerCount
 		);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;

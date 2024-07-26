@@ -86,6 +86,7 @@ namespace PhysicsEngine {
 		DefineFixture.shape    = &CollisionBox;
 		DefineFixture.density  = config.PhyBodyDensity;
 		DefineFixture.friction = config.PhyBodyFriction;
+
 		BodyData->CreateFixture(&DefineFixture);
 		BodyData->SetBullet(true);
 
@@ -166,13 +167,13 @@ namespace PhysicsEngine {
 		return PhysicsRunState();
 	}
 
-	size_t PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, PhyBodyKey rukey) {
-		size_t ReturnUnqiueIndex = NULL;
+	vector<size_t> PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, PhyBodyKey rukey) {
+		vector<size_t> TotalUnqiueIndex = {};
 		b2Body* BodyCollided = nullptr;
 
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr)
-			return ReturnUnqiueIndex;
+			return TotalUnqiueIndex;
 
 		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
 		for (const auto& COLL : WorldPointer->PhysicsContact->PhysicsCollision) {
@@ -181,13 +182,36 @@ namespace PhysicsEngine {
 				COLL.first.CollisionBodyB == it->second.Box2dActorPtr
 				) {
 				if (COLL.second.BindUniqueCodeA == it->second.BindUniqueCode)
-					ReturnUnqiueIndex = COLL.second.BindUniqueCodeB;
+					TotalUnqiueIndex.push_back(COLL.second.BindUniqueCodeB);
 				else
-					ReturnUnqiueIndex = COLL.second.BindUniqueCodeA;
+					TotalUnqiueIndex.push_back(COLL.second.BindUniqueCodeA);
+			}
+		}
+		return TotalUnqiueIndex;
+	}
+
+	size_t PhyEngineCoreDataset::PhyBodyItemGetCollisionFirst(string world, PhyBodyKey rukey) {
+		size_t FirstUnqiueIndex = NULL;
+		b2Body* BodyCollided = nullptr;
+
+		auto WorldPointer = PhysicsWorldFind(world);
+		if (WorldPointer == nullptr)
+			return FirstUnqiueIndex;
+
+		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
+		for (const auto& COLL : WorldPointer->PhysicsContact->PhysicsCollision) {
+
+			if (COLL.first.CollisionBodyA == it->second.Box2dActorPtr ||
+				COLL.first.CollisionBodyB == it->second.Box2dActorPtr
+				) {
+				if (COLL.second.BindUniqueCodeA == it->second.BindUniqueCode)
+					FirstUnqiueIndex = COLL.second.BindUniqueCodeB;
+				else
+					FirstUnqiueIndex = COLL.second.BindUniqueCodeA;
 				break;
 			}
 		}
-		return ReturnUnqiueIndex;
+		return FirstUnqiueIndex;
 	}
 
 	bool PhyEngineCoreDataset::PhysicsWorldCreate(string strkey, Vector2T<float> gravity_vector) {

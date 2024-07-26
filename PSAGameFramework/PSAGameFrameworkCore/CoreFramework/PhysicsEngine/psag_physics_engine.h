@@ -126,7 +126,9 @@ namespace PhysicsEngine {
 
 		void PhyBodyItemResetBox(std::string world, PhyBodyKey rukey, Vector2T<float> size, float density, float friction);
 		PhysicsRunState PhyBodyItemGet(std::string world, PhyBodyKey rukey);
-		size_t PhyBodyItemGetCollision(std::string world, PhyBodyKey rukey);
+
+		std::vector<size_t> PhyBodyItemGetCollision     (std::string world, PhyBodyKey rukey);
+		size_t              PhyBodyItemGetCollisionFirst(std::string world, PhyBodyKey rukey);
 
 		// physics system: framework oper.
 		bool PhysicsWorldCreate(std::string strkey, Vector2T<float> gravity_vector);

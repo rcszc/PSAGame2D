@@ -44,4 +44,6 @@ struct PsagMatrix2 { float matrix[2 * 2]; };
 struct PsagMatrix3 { float matrix[3 * 3]; };
 struct PsagMatrix4 { float matrix[4 * 4]; };
 
+#define PsagClamp(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
+
 #endif

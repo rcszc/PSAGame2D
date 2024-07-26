@@ -79,14 +79,17 @@ namespace GraphicsEnginePost {
 			ShaderUniform.UniformFloat  (LightShader, "LightIntensityDecay", RenderParameters.LightIntensityDecay);
 			ShaderUniform.UniformInteger(LightShader, "LightSampleStep",     RenderParameters.LightSampleStep);
 
-			// COLOR_BUFFER.
+			// COLOR_BUFFER_TEX.
 			auto ColorTextureTemp = LLRES_Textures->ResourceFind(ProcessTextures);
 			ShaderRender.RenderBindTexture(ColorTextureTemp);
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(LightShader, "PostTextures", ColorTextureTemp.TextureSamplerCount);
 
+			// DEPTH_BUFFER_TEX.
+			// non- failed_load.
+			
 			// frame draw(command).
-			VerStcOperFrameDraw(GetPresetRect());
+			VerStcOperFrameDraw(RenderRect);
 		}
 		ShaderRender.RenderUnbindShader();
 		ShaderRender.RenderUnbindFrameBuffer();
@@ -111,7 +114,7 @@ namespace GraphicsEnginePost {
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(FilterShader, "PostTextures", TextureTempScene.TextureSamplerCount);
 			// frame draw(command).
-			VerStcOperFrameDraw(GetPresetRect());
+			VerStcOperFrameDraw(RenderRect);
 		}
 		ShaderRender.RenderUnbindShader();
 		ShaderRender.RenderUnbindFrameBuffer();
@@ -136,7 +139,7 @@ namespace GraphicsEnginePost {
 				// bind texture context => sampler(tmu) => unbind.
 				ShaderUniform.UniformInteger(ShaderTemp[i], "PostTextures", TextureTempScene.TextureSamplerCount);
 				// frame draw(command).
-				VerStcOperFrameDraw(GetPresetRect());
+				VerStcOperFrameDraw(RenderRect);
 			}
 			ShaderRender.RenderUnbindShader();
 			ShaderRender.RenderUnbindFrameBuffer();
@@ -214,7 +217,9 @@ namespace GraphicsEnginePost {
 			LLRES_Shaders->ResourceStorage(ShaderBloomV, &ShaderBloomVPCS);
 		}
 
-		// => mag"GraphicsEngineDataset::GLEngineStcVertexData". 
+		RenderRect = GenResourceID.PsagGenTimeKey();
+		// fmt: 1.0f, lowest layer.
+		VerStcDataItemAlloc(RenderRect, PSAG_OGL_MAG::ShaderTemplateRectDep(-10.0f));
 
 		MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 		// convert: glm matrix => psag matrix.
@@ -345,7 +350,7 @@ namespace GraphicsEnginePost {
 		ShaderUniform.UniformInteger(ShaderTemp, "PostTextures", TextureTempScene.TextureSamplerCount);
 
 		// frame draw(command).
-		VerStcOperFrameDraw(GetPresetRect());
+		VerStcOperFrameDraw(RenderRect);
 		ShaderRender.RenderUnbindShader();
 	}
 }
@@ -370,8 +375,8 @@ namespace GraphicsEngineBackground {
 			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
-		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
 		BackgroundRect = GenResourceID.PsagGenTimeKey();
+		// fmt: 1.0f, lowest layer.
 		VerStcDataItemAlloc(BackgroundRect, PSAG_OGL_MAG::ShaderTemplateRectDep(10.0f));
 
 		glm::mat4x4 MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);

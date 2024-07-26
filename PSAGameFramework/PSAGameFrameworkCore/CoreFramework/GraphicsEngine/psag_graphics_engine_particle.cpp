@@ -1,4 +1,5 @@
 // psag_graphics_engine_particle.
+#include <omp.h> // openmp calc.
 #include "psag_graphics_engine.h"
 
 using namespace std;
@@ -205,8 +206,27 @@ namespace GraphicsEngineParticle {
 	}
 
 #define DEFAULT_SPEED 1.0f
-	void PsagGLEngineParticle::CalcUpdateParticles(vector<ParticleAttributes>& particles, float speed, float lifesub) {
-		// calc particles.
+	void PsagGLEngineParticle::CalcUpdateParticlesOMP(vector<ParticleAttributes>& particles, float speed, float lifesub) {
+		// calc particles position.
+#pragma omp parallel for
+		for (int i = 0; i < (int)particles.size(); ++i) {
+			// update position.
+			particles[i].ParticlePosition.vector_x += particles[i].ParticleVector.vector_x * DEFAULT_SPEED * speed;
+			particles[i].ParticlePosition.vector_y += particles[i].ParticleVector.vector_y * DEFAULT_SPEED * speed;
+			particles[i].ParticlePosition.vector_z += particles[i].ParticleVector.vector_z * DEFAULT_SPEED * speed;
+		}
+		
+		// calc particles life.
+		for (size_t i = 0; i < particles.size(); ++i) {
+			particles[i].ParticleLife -= DEFAULT_SPEED * lifesub;
+			// delete particle.
+			if (particles[i].ParticleLife <= 0.0f)
+				particles.erase(particles.begin() + i);
+		}
+	}
+
+	void PsagGLEngineParticle::CalcUpdateParticles(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {
+		// calc particles position & life.
 		for (size_t i = 0; i < particles.size(); ++i) {
 			// update position.
 			particles[i].ParticlePosition.vector_x += particles[i].ParticleVector.vector_x * DEFAULT_SPEED * speed;
@@ -233,7 +253,7 @@ namespace GraphicsEngineParticle {
 
 	PsagGLEngineParticle::PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image) {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
-
+		
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
 
@@ -262,6 +282,9 @@ namespace GraphicsEngineParticle {
 		VirTextureUniform.TexParamLayer    = "ParticleVirTexLayer";
 		VirTextureUniform.TexParamCropping = "ParticleVirTexCropping";
 		VirTextureUniform.TexParamSize     = "ParticleVirTexSize";
+
+		UPDATE_CALC_FUNC = CalcUpdateParticles;
+		omp_set_num_threads(1);
 
 		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system init.");
 		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system render_resolution: %u x %u", render_resolution.vector_x, render_resolution.vector_y);
@@ -315,6 +338,17 @@ namespace GraphicsEngineParticle {
 	void PsagGLEngineParticle::ParticleCreate(ParticleGeneratorBase* generator) {
 		// generator => particle_system.
 		generator->CreateAddParticleDataset(DataParticles);
+	}
+
+	void PsagGLEngineParticle::ParticleEnableOMP(bool openmp_switch, int threads) {
+		if (openmp_switch) {
+			UPDATE_CALC_FUNC = CalcUpdateParticlesOMP;
+			omp_set_num_threads(threads);
+			return;
+		}
+		// default calc_comp.
+		UPDATE_CALC_FUNC = CalcUpdateParticles;
+		omp_set_num_threads(1);
 	}
 
 	vector<ParticleAttributes>* PsagGLEngineParticle::GetParticleDataset() {

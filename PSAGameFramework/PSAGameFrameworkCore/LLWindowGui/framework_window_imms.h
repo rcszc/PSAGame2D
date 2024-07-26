@@ -1,9 +1,9 @@
-// framework_window_imvec. RCSZ.
+// framework_window_imms. RCSZ.
 // version: [x] NORMAL [ ] SIMD [ ] INTEL_SIMD [ ] AMD_SIMD
 // update: 2024.05.01, v0.12
 
-#ifndef _FRAMEWORK_WINDOW_IMVEC_H
-#define _FRAMEWORK_WINDOW_IMVEC_H
+#ifndef _FRAMEWORK_WINDOW_IMMS_H
+#define _FRAMEWORK_WINDOW_IMMS_H
 
 #include "imgui_glfw3/imgui.h"
 #include "imgui_glfw3/imgui_internal.h"

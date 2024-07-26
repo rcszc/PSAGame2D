@@ -1,5 +1,7 @@
 uniform sampler2DArray PostTextures;
-uniform sampler2D      PostTextureDep;
+
+// err: failed load depth_texture. [2024.0701]
+// uniform sampler2D PostTextureDep;
 
 uniform vec2  LightPosition;
 uniform vec3  LightColor;

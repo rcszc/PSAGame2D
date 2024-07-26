@@ -256,6 +256,7 @@ namespace GameActorCore {
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",  params.RenderPosition);
 			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  params.RenderRotate);
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize", params.RenderScale);
+			ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",    params.RenderLayerValue);
 			
 			RenderingTextureFunc();
 			VerStcOperFrameDraw(VertexGroupIndex);
@@ -305,8 +306,8 @@ namespace GameActorCore {
 			}
 		}
 		else {
-			ActorCompRendering = 
-				new system::null::ActorRenderingNULL();
+			// comp(empty_object): rendering.
+			ActorCompRendering = new system::null::ActorRenderingNULL();
 		}
 		// actor => load physics world_item.
 		if (PhysicsWorldFind(INIT_DESC.ActorPhysicsWorld) == nullptr) {
@@ -346,12 +347,16 @@ namespace GameActorCore {
 			ActorCompSpaceTrans->ActorPawnRotateValue = INIT_DESC.InitialRotate;
 		}
 		else {
-			ActorCompSpaceTrans = 
-				new system::null::ActorSpaceTransNULL(ActorPhysicsWorld, ActorPhysicsItem);
+			// comp(empty_object): space_trans.
+			ActorCompSpaceTrans = new system::null::ActorSpaceTransNULL(ActorPhysicsWorld, ActorPhysicsItem);
 		}
-		ActorStatePosition   = INIT_DESC.InitialPosition;
-		ActorPawnRotateValue = INIT_DESC.InitialRotate;
-		ActorPawnScale       = INIT_DESC.InitialScale;
+
+		ActorPawnPosition = INIT_DESC.InitialPosition;
+		ActorPawnScale    = INIT_DESC.InitialScale;
+		ActorPawnRotateValue   = INIT_DESC.InitialRotate;
+		ActorPawnLayer    = INIT_DESC.InitialLayer;
+		// actor space_z value_clamp.
+		ActorPawnLayer = PsagClamp(ActorPawnLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
 		// create hp comp.
 		if (INIT_DESC.EnableHealth) {
@@ -364,8 +369,8 @@ namespace GameActorCore {
 			memcpy(ActorCompHealthTrans->ActorHealthState[2], INIT_DESC.ActorHealthSystem.InitialHealthSpeed, Bytes);
 		}
 		else {
-			ActorCompHealthTrans = 
-				new system::ActorHealthTrans(INIT_DESC.ActorHealthSystem.HealthHandlerFunc);
+			// comp(empty_object): health_trans.
+			ActorCompHealthTrans = new system::ActorHealthTrans(INIT_DESC.ActorHealthSystem.HealthHandlerFunc);
 		}
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor item create.");
 	}
@@ -393,8 +398,8 @@ namespace GameActorCore {
 		
 		// actor_position - camera_position.
 		Vector2T<float> ActorMapping(
-			ActorStatePosition.vector_x + MatrixWorldCamera.MatrixPosition.vector_x / 10.0f,
-			ActorStatePosition.vector_y - MatrixWorldCamera.MatrixPosition.vector_y / 10.0f
+			ActorPawnPosition.vector_x + MatrixWorldCamera.MatrixPosition.vector_x / 10.0f,
+			ActorPawnPosition.vector_y - MatrixWorldCamera.MatrixPosition.vector_y / 10.0f
 		);
 		return Vector2T<float>(
 			ActorMapping.vector_x * ValueScale / (SystemRenderingOrthoSpace * MatrixWorldCamera.MatrixScale.vector_x) * LossWidth + LossWidth,
@@ -411,7 +416,7 @@ namespace GameActorCore {
 		FuncParams.ActorHealthStates = ActorCompHealthTrans->ActorHealthState[0];
 		FuncParams.ActorHealthLength = PSAG_HEALTH_STATE_NUM;
 
-		FuncParams.ActorPosition = ActorStatePosition;
+		FuncParams.ActorPosition = ActorPawnPosition;
 		FuncParams.ActorSpeed = 
 			ActorCompSpaceTrans == nullptr ? Vector2T<float>(0.0f, 0.0f) : ActorCompSpaceTrans->ActorPawnMoveValue;
 
@@ -419,19 +424,19 @@ namespace GameActorCore {
 	}
 
 	void GameActorActuator::ActorUpdate() {
-		ActorCompSpaceTrans->UpdateActorTrans(ActorStatePosition, ActorPawnRotateValue);
+		ActorCompSpaceTrans->UpdateActorTrans(ActorPawnPosition, ActorPawnRotateValue);
 
 		ActorPrivateINFO CollisionItem = {};
 		// update collision info.
 		CollisionItem.ActorTypeCode   = Type::ActorTypeNULL;
-		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollision(ActorPhysicsWorld, ActorPhysicsItem);
+		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollisionFirst(ActorPhysicsWorld, ActorPhysicsItem);
 		ActorCollisionInfo = CollisionItem;
 	}
 
 	void GameActorActuator::ActorRendering() {
 		// rendering actor shader_data.
 		ActorCompRendering->UpdateActorRendering(
-			system::RenderingParams(ActorStatePosition, ActorPawnScale, ActorPawnRotateValue), 
+			system::RenderingParams(ActorPawnPosition, ActorPawnScale, ActorPawnRotateValue, ActorPawnLayer),
 			VirTimerCount
 		);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;

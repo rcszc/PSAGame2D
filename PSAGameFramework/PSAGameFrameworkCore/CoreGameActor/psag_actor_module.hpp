@@ -94,8 +94,7 @@ namespace GameActorCore {
 		public GraphicsEngineDataset::GLEngineSmpTextureData
 	{
 	private:
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform 
-			ShaderUniformLoader = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniformLoader = {};
 	protected:
 		GraphicsEngineDataset::VirTextureUniformName SystemPresetUname() {
 			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
@@ -203,6 +202,7 @@ namespace GameActorCore {
 		Vector2T<float> InitialScale;
 		Vector2T<float> InitialSpeed;
 		float           InitialRotate;
+		float           InitialLayer;
 
 		// system core comp switch_flags.
 		bool EnablePawn = true, EnableHealth = true, EnableRendering = true;
@@ -221,6 +221,7 @@ namespace GameActorCore {
 			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
 			InitialSpeed   (Vector2T<float>(0.0f, 0.0f)),
 			InitialRotate  (0.0f),
+			InitialLayer   (50.0f),
 
 			ActorHealthSystem({})
 		{}
@@ -273,10 +274,11 @@ namespace GameActorCore {
 			Vector2T<float> RenderPosition;
 			Vector2T<float> RenderScale;
 			float           RenderRotate;
+			float           RenderLayerValue;
 
-			RenderingParams() : RenderPosition({}), RenderScale({}), RenderRotate(0.0f) {}
-			RenderingParams(const Vector2T<float>& rp, const Vector2T<float>& rs, float rr) :
-				RenderPosition(rp), RenderScale(rs), RenderRotate(rr)
+			RenderingParams() : RenderPosition({}), RenderScale({}), RenderRotate(0.0f), RenderLayerValue(-1.0f) {}
+			RenderingParams(const Vector2T<float>& rp, const Vector2T<float>& rs, float rr, float rz) :
+				RenderPosition(rp), RenderScale(rs), RenderRotate(rr), RenderLayerValue(rz)
 			{}
 		};
 
@@ -347,9 +349,10 @@ namespace GameActorCore {
 		Vector2T<float> RenderingResolution = {};
 		
 		ActorPrivateINFO ActorCollisionInfo = {};
-		Vector2T<float>  ActorStatePosition = {};
+		Vector2T<float>  ActorPawnPosition  = {};
 		Vector2T<float>  ActorPawnScale     = {};
-		float            ActorPawnRotateValue    = {};
+		float            ActorPawnRotateValue    = 0.0f;
+		float            ActorPawnLayer     = 0.0f;
 
 		// Actor»ù´¡×é¼þ.
 		system::ActorSpaceTrans*  ActorCompSpaceTrans  = nullptr;
@@ -371,12 +374,14 @@ namespace GameActorCore {
 		// timer: accuracy: ms, unit: s.
 		float ActorGetLifeTime();
 		// actor get_state: position & scale & rotate.
-		Vector2T<float> ActorGetPosition() { return ActorStatePosition; };
+		Vector2T<float> ActorGetPosition() { return ActorPawnPosition; };
 		Vector2T<float> ActorGetScale()    { return ActorPawnScale; }
 		float           ActorGetRotate()   { return ActorPawnRotateValue; };
 
 		Vector2T<float> ActorGetMoveSpeed()   { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
 		float           ActorGetRotateSpeed() { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
+
+		float* ActorLayerValuePtr() { return &ActorPawnLayer; }
 
 		void ActorApplyForceRotate(float vec)                { ActorCompSpaceTrans->ActorPawnRotateValue = vec; };
 		void ActorApplyForceMove(const Vector2T<float>& vec) { ActorCompSpaceTrans->ActorPawnMoveValue = vec; };
@@ -416,6 +421,7 @@ namespace GameBrickCore {
 		Vector2T<float> InitialPosition;
 		Vector2T<float> InitialScale;
 		float           InitialRotate;
+		float           InitialLayer;
 
 		// system core comp switch_flags.
 		bool EnableRendering = true;
@@ -427,7 +433,8 @@ namespace GameBrickCore {
 			InitialPhysics (Vector2T<float>(1.0f, 0.7f)),
 			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
 			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
-			InitialRotate  (0.0f)
+			InitialRotate  (0.0f),
+			InitialLayer   (1.0f)
 		{}
 	};
 
@@ -453,7 +460,8 @@ namespace GameBrickCore {
 
 		Vector2T<float> BrickStaticPosition = {};
 		Vector2T<float> BrickStaticScale    = {};
-		float           BrickStaticRotate   = {};
+		float           BrickStaticRotate   = 0.0f;
+		float           BrickStaticLayer    = 0.0f;
 
 		GameActorCore::system::ActorRendering* BirckCompRendering = nullptr;
 	public:

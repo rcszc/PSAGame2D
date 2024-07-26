@@ -310,7 +310,7 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imvec.h">
+    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imms.h">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.h">
