@@ -2,18 +2,26 @@
 
 #ifndef __PSAG_ACTOR_MODULE_HPP
 #define __PSAG_ACTOR_MODULE_HPP
-// graphics & physics & collect engine => actor_module.
+// graphics & physics engine => actor_module.
 #include "../CoreFramework/GraphicsEngine/psag_graphics_engine.h"
 #include "../CoreFramework/PhysicsEngine/psag_physics_engine.h"
-#include "../CoreFramework/CollectEngine/psag_collect_engine.h"
 
 class __ACTOR_MODULES_TIMESTEP {
 protected:
 	static float ActorModulesTimeStep;
 };
 
-namespace GameToolsCore {
-	namespace Random = CollectEngineRandom;
+namespace GamePhysicsOper {
+	// name, mode, params = {}
+	// mode: 1:create, 2:delete params: x:gravity_vec_x, y:gravity_vec_y
+	class GamePhysicalWorld :public PhysicsEngine::PhyEngineCoreDataset {
+	public:
+		GamePhysicalWorld(std::string name_key, int mode, Vector2T<float> params = {}) {
+			if (mode == 1) OperFlag = PhysicsWorldCreate(name_key, params);
+			if (mode == 2) OperFlag = PhysicsWorldDelete(name_key);
+		}
+		bool OperFlag = false;
+	};
 }
 
 namespace GameActorScript {
@@ -45,17 +53,6 @@ namespace GameActorCore {
 	struct ActorPrivateINFO {
 		size_t   ActorUniqueCode;
 		uint32_t ActorTypeCode;
-	};
-
-	// name, mode, params = {}
-	// mode: 1:create, 2:delete params: x:gravity_vec_x, y:gravity_vec_y
-	class GameActorPhysicalWorld :public PhysicsEngine::PhyEngineCoreDataset {
-	public:
-		GameActorPhysicalWorld(std::string name_key, int mode, Vector2T<float> params = {}) {
-			if (mode == 1) OperFlag = PhysicsWorldCreate(name_key, params);
-			if (mode == 2) OperFlag = PhysicsWorldDelete(name_key);
-		}
-		bool OperFlag = false;
 	};
 
 	/* Actor Fragment ShaderTexture:

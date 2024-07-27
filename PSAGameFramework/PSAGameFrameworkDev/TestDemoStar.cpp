@@ -26,11 +26,11 @@ void StarDemoClass::CreateStarActor(Vector2T<float> PosBegin, Vector2T<float> Po
 void StarDemoClass::CreateRandomStarActors(size_t number) {
     // ******************************** TEST Star Actors 对象 ********************************
 
-    GameToolsCore::Random::GenerateRandom2D RandomCreate;
+    CollectEngineRandom::GenerateRandom2D RandomCreate;
 
     auto StarRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-320.0f, 320.0f), Vector2T<float>(-320.0f, 320.0f));
     
-    RandomCreate.RandomSeedMode(GameToolsCore::Random::TimeSeedMicroseconds);
+    RandomCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
     RandomCreate.CreateRandomDataset(number, StarRandomParam, 10.0f);
     RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
 
@@ -67,7 +67,7 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     // ******************************** TEST Physics & Graphics 资源 ********************************
 
-    GameActorCore::GameActorPhysicalWorld CreatePhyWorld("MyPhyWorld", 1);
+    GamePhysicsOper::GamePhysicalWorld CreatePhyWorld("MyPhyWorld", 1);
 
     // 创建Actor着色器资源.
     ActorShaderPawn = new GameActorCore::GameActorShader(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderRes();
@@ -104,11 +104,11 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     // ******************************** TEST 静态地图'Brick'对象 ********************************
 
-    GameToolsCore::Random::GenerateRandom2D RandomCreate;
+    CollectEngineRandom::GenerateRandom2D RandomCreate;
 
     auto BrickRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-500.0f, 500.0f), Vector2T<float>(-500.0f, 500.0f));
 
-    RandomCreate.RandomSeedMode(GameToolsCore::Random::TimeSeedMicroseconds);
+    RandomCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
     RandomCreate.CreateRandomDataset(72, BrickRandomParam, 50.0f);
     RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
 
@@ -117,8 +117,8 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     BricksDESC.BrickPhysicsWorld   = "MyPhyWorld";
     BricksDESC.BrickShaderResource = BrickShader;
 
-    GameToolsCore::Random::GenerateRandom1D RandomSizeCreate;
-    RandomSizeCreate.RandomSeedMode(GameToolsCore::Random::TimeSeedMicroseconds);
+    CollectEngineRandom::GenerateRandom1D RandomSizeCreate;
+    RandomSizeCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
 
     for (const auto& BrickPos : RandomCreate.RandomCoordGroup) {
         // set brick scale_size.
@@ -136,7 +136,7 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 void StarDemoClass::LogicCloseFree() {
 
-    GameActorCore::GameActorPhysicalWorld DeletePhyWorld("MyPhyWorld", 2);
+    GamePhysicsOper::GamePhysicalWorld DeletePhyWorld("MyPhyWorld", 2);
 
     delete ActorShaderPawn;
     delete ActorShaderStar;

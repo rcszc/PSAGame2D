@@ -10,8 +10,9 @@
 #define ENABLE_LOWMODULE_THREAD
 #define ENABLE_LOWMODULE_WINDOWGUI
 #include "psag_lowlevel_support.h"
-// framework core actor.
+// framework core actor & manager.
 #include "../CoreGameActor/psag_actor_module.hpp"
+#include "../CoreGameManager/psag_manager_module.hpp"
 
 namespace GameLogic {
     // framework run parameters.

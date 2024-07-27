@@ -38,8 +38,8 @@ namespace GameDebugGuiWindow {
 		ImGui::End();
 	}
 
-	void DebugWindowGuiActors(unordered_map<size_t, GameActorCore::GameActorActuator*>* actors) {
-		ImGui::Begin("DebugActors", (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
+	void DebugWindowGuiActors(const char* name, unordered_map<size_t, GameActorCore::GameActorActuator*>* actors) {
+		ImGui::Begin(name, (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
 		ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 0.92f), "Actors Number: %u", actors->size());
 
 		int CountItemID = NULL;

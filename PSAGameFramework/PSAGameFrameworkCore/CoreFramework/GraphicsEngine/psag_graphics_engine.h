@@ -502,6 +502,12 @@ namespace GraphicsEngineParticle {
 		void CreateAddParticleDataset(std::vector<ParticleAttributes>& Data) override;
 	};
 
+	enum ParticleCalcMode {
+		CalcDefault   = 1 << 1,
+		CalcOpenMP    = 1 << 2,
+		CalcEmptyOper = 1 << 3
+	};
+
 	class PsagGLEngineParticle :
 		public GraphicsEngineDataset::GLEngineDyVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
@@ -509,8 +515,9 @@ namespace GraphicsEngineParticle {
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	private:
-		static void CalcUpdateParticlesOMP(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
-		static void CalcUpdateParticles   (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+		static void CalcUpdateParticlesOMP (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+		static void CalcUpdateParticlesNULL(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {};
+		static void CalcUpdateParticles    (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
 
 		std::function<void(std::vector<ParticleAttributes>&, float, float)>
 			UPDATE_CALC_FUNC = {};
@@ -538,10 +545,10 @@ namespace GraphicsEngineParticle {
 		~PsagGLEngineParticle();
 
 		void ParticleCreate(ParticleGeneratorBase* generator);
-		void ParticleEnableOMP(bool openmp_switch, int threads = 4);
+		void ParticleClacMode(ParticleCalcMode mode, int threads = 4);
 
-		ParticleSystemState				 GetParticleState();
 		std::vector<ParticleAttributes>* GetParticleDataset();
+		ParticleSystemState				 GetParticleState();
 
 		void SetParticleTwisted(float value) {
 			RenderTwist = value;

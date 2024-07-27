@@ -340,15 +340,17 @@ namespace GraphicsEngineParticle {
 		generator->CreateAddParticleDataset(DataParticles);
 	}
 
-	void PsagGLEngineParticle::ParticleEnableOMP(bool openmp_switch, int threads) {
-		if (openmp_switch) {
+	void PsagGLEngineParticle::ParticleClacMode(ParticleCalcMode mode, int threads) {
+		// particles calc(update) func_load.
+		switch (mode) {
+		case(CalcDefault): { UPDATE_CALC_FUNC = CalcUpdateParticles; break; }
+		case(CalcOpenMP): { 
 			UPDATE_CALC_FUNC = CalcUpdateParticlesOMP;
 			omp_set_num_threads(threads);
-			return;
+			break;
 		}
-		// default calc_comp.
-		UPDATE_CALC_FUNC = CalcUpdateParticles;
-		omp_set_num_threads(1);
+		case(CalcEmptyOper): { UPDATE_CALC_FUNC = CalcUpdateParticlesNULL; break; }
+		}
 	}
 
 	vector<ParticleAttributes>* PsagGLEngineParticle::GetParticleDataset() {
