@@ -11,6 +11,8 @@ namespace GameManagerCore {
 	namespace GameFX {
 		StaticStrLABEL PSAGM_MANAGER_FX_LABEL = "PSAG_MANAGER_FX";
 
+		// ******************************** FX-Particle ********************************
+
 		struct GameFxCreateParticleDESC {
 			float PariclesNumber;
 
@@ -30,9 +32,9 @@ namespace GameManagerCore {
 			GraphicsEngineParticle::EmittersMode ParticlesLaunchMode;
 
 			GameFxCreateParticleDESC() :
-				ParticlesColorMode (GraphicsEngineParticle::ChannelsRGB),
-				ParticlesLaunchMode(GraphicsEngineParticle::PrtcPoints),
-				PariclesNumber     (10.0f),
+				ParticlesColorMode  (GraphicsEngineParticle::ChannelsRGB),
+				ParticlesLaunchMode (GraphicsEngineParticle::PrtcPoints),
+				PariclesNumber      (10.0f),
 
 				ParticlesLifeRandom(Vector2T<float>(128.0f, 256.0f)),
 				ParticlesSizeRandom(Vector2T<float>(1.0f, 2.0f)),
@@ -59,13 +61,19 @@ namespace GameManagerCore {
 			ImageRawData       ParticleRenderTexture;
 
 			ParticleUpdateMode ParticleUpdateCalcMode;
+			// particles texture_coord disturbance.
+			float ParticlesDisturbance;
 
 			GameFxParticleDESC() :
 				ParticleRenderResolution(Vector2T<uint32_t>(1080.0f, 1920.0f)),
 				ParticleRenderTexture   ({}),
-				ParticleUpdateCalcMode  (UpdateDefault)
+				ParticleUpdateCalcMode  (UpdateDefault),
+				ParticlesDisturbance    (0.0f)
 			{}
 		};
+
+		using ParticleAttributes = GraphicsEngineParticle::ParticleAttributes;
+		using ParticlesDataset = std::vector<ParticleAttributes>;
 
 		class GameFxParticle {
 		protected:
@@ -74,9 +82,44 @@ namespace GameManagerCore {
 			GameFxParticle(const GameFxParticleDESC& INIT_DESC);
 			~GameFxParticle();
 
-			bool FxParticleCreateGroup(const GameFxCreateParticleDESC& CREATE_DESC);
+			bool FxParticlesGroupCreate(const GameFxCreateParticleDESC& CREATE_DESC);
+
+			bool FxParticlesAdd       (const ParticleAttributes& ADD_PARTICLE);
+			bool FxParticlesAddDataset(const ParticlesDataset& ADD_PARTICLES);
+
+			size_t GetFxParticlesNumber()    { return FxParticleObject->GetParticleState().DarwParticlesNumber; }
+			size_t GetFxParticlesDataCount() { return FxParticleObject->GetParticleState().DarwDatasetSize; }
+
+			ParticlesDataset* FxParticleSourceData() {
+				// particle system src_dataset (attributes_struct) ptr.
+				return FxParticleObject->GetParticleDataset();
+			}
 
 			void FxParticleRendering();
+		};
+
+		// ******************************** FX-SpriteSheet ********************************
+
+		struct GameFxSpriteSheetDESC {
+			float           SpriteSheetPlaySpeed;
+			Vector2T<float> SpriteSheetNumber;
+
+			ImageRawData RenderTexture;
+
+			GameFxSpriteSheetDESC() :
+				SpriteSheetPlaySpeed(1.0f),
+				SpriteSheetNumber   (Vector2T<float>(1.0f, 1.0f)),
+
+				RenderTexture({})
+			{}
+		};
+
+		class GameFxSpriteSheet {
+		protected:
+			GraphicsEnginePVFX::PsagGLEngineFxSequence* FxSpriteSheetObject = nullptr;
+		public:
+			GameFxSpriteSheet(const GameFxSpriteSheetDESC& INIT_DESC);
+			~GameFxSpriteSheet();
 		};
 	}
 }

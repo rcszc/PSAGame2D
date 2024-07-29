@@ -14,16 +14,17 @@ namespace GameManagerCore {
 			FxParticleObject->ParticleClacMode(
 				(GraphicsEngineParticle::ParticleCalcMode)INIT_DESC.ParticleUpdateCalcMode
 			);
+			FxParticleObject->SetParticleTwisted(INIT_DESC.ParticlesDisturbance);
 			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_particle init.");
 		}
 
 		GameFxParticle::~GameFxParticle() {
 			delete FxParticleObject;
 
-			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_particle init.");
+			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_particle free.");
 		}
 
-		bool GameFxParticle::FxParticleCreateGroup(const GameFxCreateParticleDESC& CREATE_DESC) {
+		bool GameFxParticle::FxParticlesGroupCreate(const GameFxCreateParticleDESC& CREATE_DESC) {
 			GraphicsEngineParticle::ParticleGenerator ParticleGroupCreate = {};
 
 			ParticleGroupCreate.ConfigCreateNumber(CREATE_DESC.PariclesNumber);
@@ -46,10 +47,32 @@ namespace GameManagerCore {
 			FxParticleObject->ParticleCreate(&ParticleGroupCreate);
 		}
 
+		bool GameFxParticle::FxParticlesAdd(const ParticleAttributes& ADD_PARTICLE) {
+			FxParticleObject->GetParticleDataset()->push_back(ADD_PARTICLE);
+			return true; // non-err 20240729.
+		}
+
+		bool GameFxParticle::FxParticlesAddDataset(const ParticlesDataset& ADD_PARTICLES) {
+			if (ADD_PARTICLES.empty())
+				return false;
+			FxParticleObject->GetParticleDataset()->insert(
+				FxParticleObject->GetParticleDataset()->end(), ADD_PARTICLES.begin(), ADD_PARTICLES.end()
+			);
+			return true;
+		}
+
 		void GameFxParticle::FxParticleRendering() {
 			// particle system calc(update) => rendering.
 			FxParticleObject->UpdateParticleData();
 			FxParticleObject->RenderParticleFX();
+		}
+
+		GameFxSpriteSheet::GameFxSpriteSheet(const GameFxSpriteSheetDESC& INIT_DESC) {
+
+		}
+
+		GameFxSpriteSheet::~GameFxSpriteSheet() {
+
 		}
 	}
 }
