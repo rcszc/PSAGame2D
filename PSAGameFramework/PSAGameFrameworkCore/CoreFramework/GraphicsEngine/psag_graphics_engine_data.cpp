@@ -9,6 +9,8 @@ namespace IMAGE_TOOLS {
 	void IMAGE_TOOL_FILL(
 		vector<uint8_t>& image, const Vector2T<uint32_t>& src_size, const Vector2T<uint32_t>& fill_size, uint32_t channels
 	) {
+		if (src_size.vector_x == fill_size.vector_x && src_size.vector_y == fill_size.vector_y)
+			return;
 		vector<uint8_t> FillImageTemp(fill_size.vector_x * fill_size.vector_y * channels, 0x00);
 		// image raw_pixel fill.
 		for (uint32_t y = 0; y < src_size.vector_y; ++y)
@@ -363,7 +365,7 @@ namespace GraphicsEngineDataset {
 		uint32_t VirTextureLayer = TextureIndex->LayerAllotter->AllocLayerCount();
 
 		if (!ImgDataTemp.ImagePixels.empty()) {
-
+			// pixels data process.
 			// 格式化填充纹理数据. src => fmt_size.
 			IMAGE_TOOLS::IMAGE_TOOL_FILL(
 				ImgDataTemp.ImagePixels,
@@ -454,8 +456,10 @@ namespace GraphicsEngineDataset {
 		if (TexItemTemp != nullptr) {
 			// find tex => bind context => sampler => uniform(s).
 			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
+#if defined(_DEBUG) || defined(DEBUG)
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
 				return false;
+#endif
 			ShaderRender.RenderBindTexture(TexResourceTemp);
 
 			// bind texture context => sampler(tmu) count.
@@ -520,13 +524,13 @@ namespace GraphicsEngineDataset {
 		TextureCreate1X.SetTextureParam(TexturesSize1X.TextureResolution.vector_x, TexturesSize1X.TextureResolution.vector_y, TexMode);
 
 		// create textures.
-		for (size_t i = 0; i < params.Tex8Xnum; ++i)
+		for (size_t i = 0; i < params.Tex8Xnum; ++i) 
 			TextureCreate8X.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
 		for (size_t i = 0; i < params.Tex4Xnum; ++i)
 			TextureCreate4X.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
 		for (size_t i = 0; i < params.Tex2Xnum; ++i)
 			TextureCreate2X.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
-		for (size_t i = 0; i < params.Tex1Xnum; ++i)
+		for (size_t i = 0; i < params.Tex1Xnum; ++i) 
 			TextureCreate1X.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
 
 		TextureCreate8X.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());

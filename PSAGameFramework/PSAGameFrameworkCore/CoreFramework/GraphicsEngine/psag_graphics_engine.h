@@ -129,7 +129,7 @@ namespace GraphicsEngineDataset {
 		// size: 1/8, 1/4, 1/2, 1/1.
 		size_t Tex1Xnum, Tex2Xnum, Tex4Xnum, Tex8Xnum;
 
-		VirTexturesGenParams() : Tex1Xnum(128), Tex2Xnum(96), Tex4Xnum(72), Tex8Xnum(40) {};
+		VirTexturesGenParams() : Tex1Xnum(100), Tex2Xnum(50), Tex4Xnum(50), Tex8Xnum(25) {};
 		VirTexturesGenParams(size_t t1x, size_t t2x, size_t t4x, size_t t8x) :
 			Tex1Xnum(t1x), Tex2Xnum(t2x), Tex4Xnum(t4x), Tex8Xnum(t8x) 
 		{};
@@ -403,9 +403,10 @@ namespace GraphicsEngineParticle {
 
 	enum EmittersMode {
 		PrtcPoints = 1 << 1, // µãÔÆ [À©É¢]
-		PrtcDrift  = 1 << 2, // Æ®Âä [Ð§¹û]
-		PrtcCircle = 1 << 3, // Ô²ÐÎ [À©É¢]
-		PrtcSquare = 1 << 4, // ¾ØÐÎ [À©É¢]
+		PrtcCircle = 1 << 2, // Ô²ÐÎ [À©É¢]
+		PrtcSquare = 1 << 3, // ¾ØÐÎ [À©É¢]
+		PrtcPoly   = 1 << 4, // »ã¾Û [¾ÛºÏ]
+		PrtcDrift  = 1 << 5  // Æ®Âä [¶¨Ïò]
 	};
 
 	enum ColorChannelMode {

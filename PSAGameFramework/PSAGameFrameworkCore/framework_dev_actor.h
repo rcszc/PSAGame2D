@@ -5,6 +5,7 @@
 #define __FRAMEWORK_DEV_ACTOR_H
 #include "../PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.h"
 
+namespace PsagActorType = GameActorCore::Type;
 namespace PsagActor {
 	namespace DebugTools = GameDebugGuiWindow;
 

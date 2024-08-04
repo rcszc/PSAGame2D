@@ -174,7 +174,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_script.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\framework_register.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\framework_init_register.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.cpp" />
@@ -190,9 +190,9 @@
     <ClCompile Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_oglfw.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\ModuleDebug.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoShaderStar.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\TestDemoStarShader.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\TestDemoStar.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\TestDemoStarFX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_background.frag" />
@@ -244,7 +244,6 @@
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imms.h" />
-    <ClInclude Include="PSAGameFrameworkDev\ModuleDebug.h" />
     <ClInclude Include="PSAGameFrameworkDev\TestDemoStar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

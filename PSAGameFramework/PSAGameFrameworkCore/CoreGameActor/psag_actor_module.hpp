@@ -97,8 +97,8 @@ namespace GameActorCore {
 			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
 			// preset shader uniform name.
 			U_NAME.TexParamSampler  = "VirTexture";
-			U_NAME.TexParamLayer    = "virTextureLayer";
-			U_NAME.TexParamCropping = "virTextureCropping";
+			U_NAME.TexParamLayer    = "VirTextureLayer";
+			U_NAME.TexParamCropping = "VirTextureCropping";
 			U_NAME.TexParamSize     = "VirTextureSize";
 			return U_NAME;
 		}
@@ -126,6 +126,8 @@ namespace GameActorCore {
 		bool ShaderLoadVirTexture(VirTextureUnqiue virtex);
 		// create virtual texture.
 		bool ShaderLoadImage(const ImageRawData& image);
+
+		void UniformSetContext(std::function<void()> context_func);
 
 		void UniformMatrix3x3(const char* name, const PsagMatrix3& matrix);
 		void UniformMatrix4x4(const char* name, const PsagMatrix4& matrix);
@@ -203,6 +205,7 @@ namespace GameActorCore {
 
 		// system core comp switch_flags.
 		bool EnablePawn = true, EnableHealth = true, EnableRendering = true;
+		bool EnableCollision = true;
 
 		GameActorHealthDESC ActorHealthSystem;
 		
@@ -251,6 +254,8 @@ namespace GameActorCore {
 			float  ActorStateRotateSpeed = 0.0f;
 
 			virtual void UpdateActorTrans(Vector2T<float>& position, float& rotate);
+
+			virtual void SetActorPosRotate(const Vector2T<float>& pos, float angle);
 		};
 
 		class ActorHealthTrans : public __ACTOR_MODULES_TIMESTEP {
@@ -308,6 +313,7 @@ namespace GameActorCore {
 			public:
 				ActorSpaceTransNULL(const std::string& phy_world, PhyBodyKey phy_body) : ActorSpaceTrans(phy_world, phy_body) {}
 				void UpdateActorTrans(Vector2T<float>& position, float& rotate) override {};
+				void SetActorPosRotate(const Vector2T<float>& pos, float angle) override {};
 			};
 			// NULL_OBJ: 'ActorHealthTrans'.
 			class ActorHealthTransNULL : public ActorHealthTrans {
@@ -384,6 +390,10 @@ namespace GameActorCore {
 		void ActorApplyForceMove(const Vector2T<float>& vec) { ActorCompSpaceTrans->ActorPawnMoveValue = vec; };
 		// not scale actor collision_box.
 		void ActorModifyScale(const Vector2T<float>& vec) { ActorPawnScale = vec; };
+		// set actor position & angle.
+		void ActorModifyState(const Vector2T<float>& position, float angle) {
+			ActorCompSpaceTrans->SetActorPosRotate(position, angle);
+		}
 
 		// actor virtual(scene) coord =convert=> window coord(pixel).
 		Vector2T<float> ActorConvertVirCoord(Vector2T<uint32_t> window_res);

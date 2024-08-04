@@ -27,8 +27,9 @@ namespace GameManagerCore {
 		bool GameFxParticle::FxParticlesGroupCreate(const GameFxCreateParticleDESC& CREATE_DESC) {
 			GraphicsEngineParticle::ParticleGenerator ParticleGroupCreate = {};
 
-			ParticleGroupCreate.ConfigCreateNumber(CREATE_DESC.PariclesNumber);
-			ParticleGroupCreate.ConfigCreateMode  (CREATE_DESC.ParticlesLaunchMode);
+			if (!ParticleGroupCreate.ConfigCreateNumber(CREATE_DESC.PariclesNumber))
+				return false;
+			ParticleGroupCreate.ConfigCreateMode(CREATE_DESC.ParticlesLaunchMode);
 
 			ParticleGroupCreate.ConfigLifeDispersion(CREATE_DESC.ParticlesLifeRandom);
 			ParticleGroupCreate.ConfigSizeDispersion(CREATE_DESC.ParticlesSizeRandom);
@@ -45,6 +46,7 @@ namespace GameManagerCore {
 			);
 			// particle generator => particle system.
 			FxParticleObject->ParticleCreate(&ParticleGroupCreate);
+			return true;
 		}
 
 		bool GameFxParticle::FxParticlesAdd(const ParticleAttributes& ADD_PARTICLE) {

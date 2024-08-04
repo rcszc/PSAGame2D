@@ -4,15 +4,13 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
-namespace TActor = GameActorCore::Type;
-
 void StarDemoClass::CreateStarActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed) {
     // ******************************** TEST Star Actor 对象 ********************************
-    GameActorCore::GameActorActuatorDESC ConfigStarActor;
+    PsagActor::ActorDESC ConfigStarActor;
 
     ConfigStarActor.EnablePawn = false;
 
-    ConfigStarActor.ActorPhysicsWorld   = "MyPhyWorld";
+    ConfigStarActor.ActorPhysicsWorld   = "TestPhyWorld";
     ConfigStarActor.ActorShaderResource = ActorShaderStar;
 
     ConfigStarActor.InitialPhysics  = Vector2T<float>(7.0f, 2.0f);
@@ -20,19 +18,17 @@ void StarDemoClass::CreateStarActor(Vector2T<float> PosBegin, Vector2T<float> Po
     ConfigStarActor.InitialScale    = Vector2T<float>(0.2f, 0.2f);
     ConfigStarActor.InitialSpeed    = PosSpeed;
     
-    TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_star"), ConfigStarActor);
+    TestGameActors.CreateGameActor(PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_star"), ConfigStarActor);
 }
 
 void StarDemoClass::CreateRandomStarActors(size_t number) {
     // ******************************** TEST Star Actors 对象 ********************************
+    PsagManager::Tools::Random::GenerateRandom2D RandomCreate;
 
-    CollectEngineRandom::GenerateRandom2D RandomCreate;
-
-    auto StarRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-320.0f, 320.0f), Vector2T<float>(-320.0f, 320.0f));
+    auto StarRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-248.0f, 248.0f), Vector2T<float>(-248.0f, 248.0f));
     
-    RandomCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
+    RandomCreate.RandomSeedMode(PsagManager::Tools::Random::TimeSeedMicroseconds);
     RandomCreate.CreateRandomDataset(number, StarRandomParam, 10.0f);
-    RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
 
     for (const auto& StarPos : RandomCreate.RandomCoordGroup)
         CreateStarActor(StarPos, Vector2T<float>());
@@ -46,11 +42,9 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     PsagLow::PsagSupFilesysLoaderBin TestBinLoad1("Test/TEST_BACK1.png");
     PsagLow::PsagSupFilesysLoaderBin TestBinLoad2("Test/TEST_BACK2.png");
     PsagLow::PsagSupFilesysLoaderBin TestBinLoad3("Test/TEST_BACK3.png");
-    PsagLow::PsagSupFilesysLoaderBin TestBinLoad4("Test/TEST_BACK4.png");
 
     PsagGameSys::SysBackground CreateBg;
 
-    CreateBg.LayerDataPush(DecodeRawImage.DecodeImageRawData(TestBinLoad4.GetDataBinary()));
     CreateBg.LayerDataPush(DecodeRawImage.DecodeImageRawData(TestBinLoad3.GetDataBinary()));
     CreateBg.LayerDataPush(DecodeRawImage.DecodeImageRawData(TestBinLoad2.GetDataBinary()));
     CreateBg.LayerDataPush(DecodeRawImage.DecodeImageRawData(TestBinLoad1.GetDataBinary()));
@@ -67,76 +61,87 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     // ******************************** TEST Physics & Graphics 资源 ********************************
 
-    GamePhysicsOper::GamePhysicalWorld CreatePhyWorld("MyPhyWorld", 1);
+    PsagActor::OperPhysicalWorld CreatePhyWorld("TestPhyWorld", 1);
 
     // 创建Actor着色器资源.
-    ActorShaderPawn = new GameActorCore::GameActorShader(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderRes();
-    ActorShaderStar = new GameActorCore::GameActorShader(ActorFragStar, WinSize); ActorShaderStar->CreateShaderRes();
+    ActorShaderPawn = new PsagActor::ActorRender(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderRes();
+    ActorShaderStar = new PsagActor::ActorRender(ActorFragStar, WinSize); ActorShaderStar->CreateShaderRes();
+
+    PsagLow::PsagSupFilesysLoaderBin FxTexture1("Test/TEST_NOISE.png");
+    PsagLow::PsagSupFilesysLoaderBin FxTexture2("Test/TEST_LASER.png");
+
+    // 特效着色器: 能量球.
+    ActorShaderFX1 = new PsagActor::ActorRender(ActorFragFX1, WinSize);
+    ActorShaderFX1->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(FxTexture1.GetDataBinary()));
+    ActorShaderFX1->CreateShaderRes();
+
+    // 特效着色器: 闪电.
+    ActorShaderFX2 = new PsagActor::ActorRender(ActorFragFX2, WinSize);
+    ActorShaderFX2->CreateShaderRes();
+
+    // 特效着色器: 能量束.
+    ActorShaderFX3 = new PsagActor::ActorRender(ActorFragFX3, WinSize);
+    ActorShaderFX3->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(FxTexture2.GetDataBinary()));
+    ActorShaderFX3->CreateShaderRes();
 
     PsagLow::PsagSupFilesysLoaderBin BrickTexture("Test/TEST_BOX.png");
 
-    BrickShader = new GameActorCore::GameActorShader(GameActorScript::PsagShaderBrickPrivateFS, WinSize);
+    BrickShader = new PsagActor::ActorRender(GameActorScript::PsagShaderBrickPrivateFS, WinSize);
     BrickShader->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(BrickTexture.GetDataBinary()));
     BrickShader->CreateShaderRes();
 
     // ******************************** TEST Actor类型名称绑定 ********************************
 
-    TActor::ActorTypeAllotter.ActorTypeCreate("actor_pawn");
-    TActor::ActorTypeAllotter.ActorTypeCreate("actor_star");
+    PsagActorType::ActorTypeAllotter.ActorTypeCreate("actor_pawn");
+    PsagActorType::ActorTypeAllotter.ActorTypeCreate("actor_star");
+    PsagActorType::ActorTypeAllotter.ActorTypeCreate("actor_fx");
 
     // ******************************** TEST PawnActor对象 ********************************
 
-    GameActorCore::GameActorActuatorDESC ConfigPawnActor;
+    PsagActor::ActorDESC ConfigPawnActor;
 
-    ConfigPawnActor.ActorPhysicsWorld   = "MyPhyWorld";
+    ConfigPawnActor.ActorPhysicsWorld   = "TestPhyWorld";
     ConfigPawnActor.ActorShaderResource = ActorShaderPawn;
 
     ConfigPawnActor.ForceClacEnable = true;
     // 使用默认配置.
-    GameActorCore::GameActorHealthDESC PawnActorHealthDESC = {};
+    PsagActor::ActorHpDESC PawnActorHealthDESC = {};
     // config hp system.
     ConfigPawnActor.ActorHealthSystem = PawnActorHealthDESC;
 
     ConfigPawnActor.InitialPhysics  = Vector2T<float>(5.0f, 3.2f);
     ConfigPawnActor.InitialPosition = Vector2T<float>(0.0f, 0.0f);
 
-    PawnActorCode = TestGameActors.CreateGameActor(TActor::ActorTypeAllotter.ActorTypeIs("actor_pawn"), ConfigPawnActor);
-
+    PawnActorCode = TestGameActors.CreateGameActor(PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_pawn"), ConfigPawnActor);
+    
     // ******************************** TEST 静态地图'Brick'对象 ********************************
 
-    CollectEngineRandom::GenerateRandom2D RandomCreate;
+    PsagActor::BrickDESC BricksDESC;
 
-    auto BrickRandomParam = Vector2T<Vector2T<float>>(Vector2T<float>(-500.0f, 500.0f), Vector2T<float>(-500.0f, 500.0f));
-
-    RandomCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
-    RandomCreate.CreateRandomDataset(72, BrickRandomParam, 50.0f);
-    RandomCreate.DatasetCropCircle(Vector2T<float>(0.0f, 0.0f), 10.0f);
-
-    GameBrickCore::GameBrickActuatorDESC BricksDESC;
-
-    BricksDESC.BrickPhysicsWorld   = "MyPhyWorld";
+    BricksDESC.BrickPhysicsWorld   = "TestPhyWorld";
     BricksDESC.BrickShaderResource = BrickShader;
 
     CollectEngineRandom::GenerateRandom1D RandomSizeCreate;
     RandomSizeCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
 
-    for (const auto& BrickPos : RandomCreate.RandomCoordGroup) {
+    // 0.0 - 2.0PI, 0.0 - 360.0
+    for (float i = 0.0f; i < 360.0f; i += 8.0f) {
         // set brick scale_size.
         BricksDESC.InitialScale = 
-            Vector2T<float>(RandomSizeCreate.CreateRandomValue(1.0f, 2.0f), RandomSizeCreate.CreateRandomValue(1.0f, 2.0f));
+            Vector2T<float>(RandomSizeCreate.CreateRandomValue(1.0f, 1.5f), RandomSizeCreate.CreateRandomValue(1.0f, 1.5f));
         BricksDESC.InitialRotate = RandomSizeCreate.CreateRandomValue(-90.0f, 90.0f);
         // set brick position.
-        BricksDESC.InitialPosition = BrickPos;
+        BricksDESC.InitialPosition = Vector2T<float>(sin(i * (PSAG_M_PI / 180.0f)) * 350.0f, cos(i * (PSAG_M_PI / 180.0f)) * 350.0f);
         TestGameBricks.CreateGameActor(BricksDESC);
     }
 
-    CreateRandomStarActors(100);
+    CreateRandomStarActors(72);
     return true;
 }
 
 void StarDemoClass::LogicCloseFree() {
 
-    GamePhysicsOper::GamePhysicalWorld DeletePhyWorld("MyPhyWorld", 2);
+    PsagActor::OperPhysicalWorld DeletePhyWorld("TestPhyWorld", 2);
 
     delete ActorShaderPawn;
     delete ActorShaderStar;
@@ -146,13 +151,10 @@ void StarDemoClass::LogicCloseFree() {
 }
 
 bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
-
-    AshesParticles->UpdateParticleData();
-    AshesParticles->RenderParticleFX();
-
+    
     for (auto& Star : *TestGameActors.GetSourceData()) {
         if (Star.second->ActorGetCollision().ActorUniqueCode != NULL &&
-            Star.second->ActorGetPrivate().ActorTypeCode == TActor::ActorTypeAllotter.ActorTypeIs("actor_star")
+            Star.second->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_star")
             ) {
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
             CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcPoints);
@@ -174,7 +176,7 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
             auto CollisionPtr = TestGameActors.FindGameActor(Star.second->ActorGetCollision().ActorUniqueCode);
 
             if (CollisionPtr != nullptr) {
-                if (CollisionPtr->ActorGetPrivate().ActorTypeCode == TActor::ActorTypeAllotter.ActorTypeIs("actor_pawn")) {
+                if (CollisionPtr->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_pawn")) {
                     ++EatStarCount;
                     ++EatStarCountTotal;
                 }
@@ -193,26 +195,31 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
     TestGameActors.RunAllGameActor();
     TestGameActors.UpdateManagerData();
 
-    RunningState.BackShaderParams->BackgroundColor = Vector4T<float>(0.0f, 1.0f, 0.92f, 1.0f);
-    RunningState.BackShaderParams->BackgroundVisibility = 0.642f;
+    AshesParticles->UpdateParticleData();
+    AshesParticles->RenderParticleFX();
+
+    if (ActorUltimateFX != nullptr)
+        ActorUltimateFX->StarDemoFxRender();
+
+    RunningState.BackShaderParams->BackgroundVisibility = 1.48f;
     RunningState.PostShaderParams->GameSceneFilterAVG   = 0.254f;
     RunningState.PostShaderParams->GameSceneBloomRadius = 18;
 
     return true;
 }
 
-void GuiTitleNumber(Vector2T<float> position, size_t star_count) {
+void GuiTitleNumber(Vector2T<float> position, float value) {
     ImGui::SetNextWindowPos(ImVec2(position.vector_x, position.vector_y));
-    ImGui::SetNextWindowSize(ImVec2(320.0f, 160.0f));
+    ImGui::SetNextWindowSize(ImVec2(640.0f, 160.0f));
 
     ImGui::Begin("StarNumWindow", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
     {
         ImGui::SetWindowFontScale(5.0f);
-        ImVec2 TextWidth = ImGui::CalcTextSize(std::to_string(star_count).c_str());
+        ImVec2 TextWidth = ImGui::CalcTextSize(std::to_string(value).c_str()) * 0.5;
         float CenterPosition = (ImGui::GetWindowSize().x - TextWidth.x) * 0.5f;
 
         ImGui::Indent(CenterPosition);
-        ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "%u", star_count);
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "%.2f", value);
         ImGui::Unindent(CenterPosition);
     }
     ImGui::End();
@@ -236,7 +243,7 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
     //GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
     GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
 
-    CameraScale = 2.7f;
+    CameraScale = 1.8f;
 
     /*
     ImGui::Begin("TestSample");
@@ -249,6 +256,10 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
 
     ImGui::ColorEdit3("COLOR", RunningState.PostShaderParams->LightColor.data());
     ImGui::End();
+
+    if (ImGui::IsMouseDown(1)) {
+        RunningState.PostShaderParams->LightPosition = Vector2T<float>(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+    }
     */
 
     PawnActorObj->ActorApplyForceMove(Vector2T<float>());
@@ -256,29 +267,43 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
 
     if (ImGui::IsKeyDown(ImGuiKey_W)) {
         PawnActorObj->ActorApplyForceMove(Vector2T<float>(0.0f, 10.0f));
-        CameraScale = 1.8f;
+        CameraScale = 1.2f;
     }
     if (ImGui::IsKeyDown(ImGuiKey_S)) {
         PawnActorObj->ActorApplyForceMove(Vector2T<float>(0.0f, -10.0f));
-        CameraScale = 1.8f;
+        CameraScale = 1.2f;
     }
     if (ImGui::IsKeyDown(ImGuiKey_A)) {
         PawnActorObj->ActorApplyForceMove(Vector2T<float>(10.0f, 0.0f));
-        PawnActorObj->ActorApplyForceRotate(2.0f);
-        CameraScale = 1.0f;
+        PawnActorObj->ActorApplyForceRotate(20.0f);
+        CameraScale = 1.2f;
     }
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
         PawnActorObj->ActorApplyForceMove(Vector2T<float>(-10.0f, 0.0f));
-        PawnActorObj->ActorApplyForceRotate(-2.0f);
-        CameraScale = 1.0f;
+        PawnActorObj->ActorApplyForceRotate(-20.0f);
+        CameraScale = 1.2f;
     }
 
-    if (ImGui::IsMouseDown(1)) {
-        RunningState.PostShaderParams->LightPosition = Vector2T<float>(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+    if (ImGui::IsKeyPressed(ImGuiKey_R, false))
+        ActorUltimateFX->StarDemoFxFire();
+
+    ImGui::Begin("TestWindow");
+
+    ImGui::InputFloat2("FIRE POS", UltimateSettingPosition.data());
+    ImGui::InputFloat("FIRE ANGLE", &UltimateSettingRotate);
+
+    if (ImGui::Button("ULTIMATE CREATE") && ActorUltimateFX == nullptr) {
+        ActorUltimateFX = new StarDemoFX(
+            &TestGameActors, Vector3T<PsagActor::ActorRender*>(ActorShaderFX1, ActorShaderFX2, ActorShaderFX3),
+            UltimateSettingPosition, UltimateSettingRotate
+        );
     }
+    ImGui::End();
+
+    RunningState.CameraParams->MatrixRotate += (CameraRotate - RunningState.CameraParams->MatrixRotate) * 0.05f;
 
     auto ToWindowCoord = PawnActorObj->ActorConvertVirCoord(RunningState.WindowResolution);
-    
+
     if (ToWindowCoord.vector_x > RunningState.WindowResolution.vector_x * 0.4f)
         CameraPosition.vector_x -= abs(PawnActorObj->ActorGetMoveSpeed().vector_x) * RunningState.GameRunTimeStep;
 
@@ -291,12 +316,23 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
     if (ToWindowCoord.vector_y < RunningState.WindowResolution.vector_y * 0.6f)
         CameraPosition.vector_y -= abs(PawnActorObj->ActorGetMoveSpeed().vector_y) * RunningState.GameRunTimeStep;
 
+    Vector2T<float> CameraOffset = {};
+    if (ActorUltimateFX != nullptr) {
+
+        CameraOffset = ActorUltimateFX->StarDemoFxCameraOffset(&CameraScale, &CameraRotate);
+        GuiTitleNumber(Vector2T<float>(ImGui::GetIO().DisplaySize.x / 2.0f - 320.0f, 72.0f), ActorUltimateFX->StarDemoFxProgress() * 100.0f);
+
+        CameraPosition.vector_x += (UltimateSettingPosition.vector_x - CameraPosition.vector_x) * 0.002f;
+        CameraPosition.vector_y += (UltimateSettingPosition.vector_y - CameraPosition.vector_y) * 0.002f;
+    }
+
     RunningState.CameraParams->MatrixScale.vector_x +=
         (CameraScale - RunningState.CameraParams->MatrixScale.vector_x) * 0.0025f;
     RunningState.CameraParams->MatrixScale.vector_y = RunningState.CameraParams->MatrixScale.vector_x;
-    RunningState.CameraParams->MatrixPosition = CameraPosition;
 
-    GuiTitleNumber(Vector2T<float>(ImGui::GetIO().DisplaySize.x / 2.0f - 160.0f, 72.0f), EatStarCountTotal);
+    RunningState.CameraParams->MatrixPosition = 
+        Vector2T<float>(CameraPosition.vector_x + CameraOffset.vector_x, CameraPosition.vector_y + CameraOffset.vector_y);
+
     ImGui::PopStyleColor(8);
     return true;
 }

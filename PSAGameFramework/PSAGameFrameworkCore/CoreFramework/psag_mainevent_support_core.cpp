@@ -59,7 +59,7 @@ namespace PsagFrameworkCore {
         FrameworkParams.CameraParams = &MatrixWorldCamera;
 
         float RoatioValue = (float)RenderingWinSize.vector_x / (float)RenderingWinSize.vector_y;
-        // global: calc_camera matrix(world_coord).
+        // global: calc camera & world matrix.
         MatrixDataRect   = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), 1.0f);
         MatrixDataWindow = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), RoatioValue);
 

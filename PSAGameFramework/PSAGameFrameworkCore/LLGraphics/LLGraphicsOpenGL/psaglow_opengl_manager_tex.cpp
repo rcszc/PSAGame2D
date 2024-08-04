@@ -72,8 +72,8 @@ namespace PSAG_OGL_MAG {
 	}
 
 	inline void ConfigSurroundTex2DParams(GLenum MODE_TYPE) {
-		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(MODE_TYPE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(MODE_TYPE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}

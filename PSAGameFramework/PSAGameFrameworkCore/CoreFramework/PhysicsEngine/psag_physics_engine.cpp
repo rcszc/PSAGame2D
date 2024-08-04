@@ -87,6 +87,10 @@ namespace PhysicsEngine {
 		DefineFixture.density  = config.PhyBodyDensity;
 		DefineFixture.friction = config.PhyBodyFriction;
 
+		// ¹Ø±ÕBodyÅö×².
+		if (!config.PhysicsCollisionFlag)
+			DefineFixture.filter.maskBits = NULL;
+
 		BodyData->CreateFixture(&DefineFixture);
 		BodyData->SetBullet(true);
 

@@ -48,6 +48,7 @@ namespace PhysicsEngine {
 
 		// true:dynamic_body, false: static_body.
 		bool PhysicsModeTypeFlag;
+		bool PhysicsCollisionFlag;
 	};
 
 	struct PhysicsRunState {

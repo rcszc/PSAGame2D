@@ -27,13 +27,10 @@ namespace GameDebugGuiWindow {
 			ImGui::SameLine(); ImGui::Text("D"); ImGui::SameLine();
 			LndicatorLED(ImGui::IsKeyDown(ImGuiKey_D), ImVec2(28.0f, 28.0f), H_COLOR, L_COLOR);
 
-			float ControlWidth = ImGui::GetWindowWidth() - IMGUI_ITEM_SPAC * 2.0f;
-			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::SliderFloat2("##SCALE", actor->ActorGetScale().data(), 0.2f, 5.0f, "%.2f", ImGuiSliderFlags_NoInput);
-			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::SliderFloat2("##MOVE", actor->ActorGetMoveSpeed().data(), -10.0f, 10.0f, "%.2f", ImGuiSliderFlags_NoInput);
-			ImGui::SetNextItemWidth(ControlWidth);
-			ImGui::ProgressBar(actor->ActorGetRotateSpeed() * 0.1f + 0.5f);
+			ImGui::Text("Actor Position: %.2f, %.2f", actor->ActorGetPosition().vector_x, actor->ActorGetPosition().vector_y);
+			ImGui::Text("Actor Speed: %.2f, %.2f", actor->ActorGetMoveSpeed().vector_x, actor->ActorGetMoveSpeed().vector_y);
+			ImGui::Text("Actor Scale: %.2f, %.2f", actor->ActorGetScale().vector_x, actor->ActorGetScale().vector_y);
+			ImGui::Text("Actor RotateSpeed: %.3f", actor->ActorGetRotateSpeed());
 		}
 		ImGui::End();
 	}

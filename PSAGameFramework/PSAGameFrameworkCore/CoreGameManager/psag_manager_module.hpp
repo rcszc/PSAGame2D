@@ -65,7 +65,7 @@ namespace GameManagerCore {
 			float ParticlesDisturbance;
 
 			GameFxParticleDESC() :
-				ParticleRenderResolution(Vector2T<uint32_t>(1080.0f, 1920.0f)),
+				ParticleRenderResolution(Vector2T<uint32_t>(1080, 1920)),
 				ParticleRenderTexture   ({}),
 				ParticleUpdateCalcMode  (UpdateDefault),
 				ParticlesDisturbance    (0.0f)

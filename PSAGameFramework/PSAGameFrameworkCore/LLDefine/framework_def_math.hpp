@@ -7,6 +7,8 @@
 // framework const ortho space_coord.
 constexpr float SystemRenderingOrthoSpace = 100.0f;
 
+#define PSAG_M_PI 3.14159265f
+
 // vector 2d x, y.
 template <typename mvec>
 struct Vector2T {

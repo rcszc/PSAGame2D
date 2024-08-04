@@ -124,7 +124,8 @@ namespace GameActorCore {
 	}
 
 	bool GameActorShader::ShaderLoadVirTexture(VirTextureUnqiue virtex) {
-		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM)) return false;
+		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM)) 
+			return false;
 
 		if (VirTextureExist(virtex)) {
 			__VIR_TEXTURE_ITEM = virtex;
@@ -154,6 +155,13 @@ namespace GameActorCore {
 	}
 
 	// **************** upload shader uniform ****************
+
+	void GameActorShader::UniformSetContext(function<void()> context_func) {
+		// opengl api function. [20240804]
+		glUseProgram(OpenGLShaderTemp);
+		context_func();
+		glUseProgram(NULL);
+	}
 	
 	void GameActorShader::UniformMatrix3x3(const char* name, const PsagMatrix3& matrix) {
 		ShaderUniformLoader.UniformMatrix3x3(OpenGLShaderTemp, name, matrix);
@@ -234,6 +242,11 @@ namespace GameActorCore {
 			ActorTransFunc(position, rotate);
 		}
 
+		void ActorSpaceTrans::SetActorPosRotate(const Vector2T<float>& pos, float angle) {
+			auto PhysicsState = PhyBodyItemGet(PhysicsWorld, PhysicsBody);
+			PhysicsState.BodySourcePointer->SetTransform(b2Vec2(pos.vector_x, pos.vector_y), angle);
+		}
+		
 		void ActorHealthTrans::UpdateActorHealthTrans(const HealthFuncParams& params) {
 			// state inter_calc.
 			for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i) {
@@ -254,7 +267,7 @@ namespace GameActorCore {
 			ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime",       time_count);
 
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",  params.RenderPosition);
-			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  params.RenderRotate);
+			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  params.RenderRotate * (PSAG_M_PI / 180.0f));
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize", params.RenderScale);
 			ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",    params.RenderLayerValue);
 			
@@ -325,6 +338,7 @@ namespace GameActorCore {
 		case(PhyMoveActor):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
 		case(PhyFixedActor): { ActorPhyConfig.PhysicsModeTypeFlag = false; break; }
 		}
+		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
 
 		if (INIT_DESC.ActorShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.ActorShaderResource->__GET_VERTICES_RES());
@@ -351,10 +365,10 @@ namespace GameActorCore {
 			ActorCompSpaceTrans = new system::null::ActorSpaceTransNULL(ActorPhysicsWorld, ActorPhysicsItem);
 		}
 
-		ActorPawnPosition = INIT_DESC.InitialPosition;
-		ActorPawnScale    = INIT_DESC.InitialScale;
-		ActorPawnRotateValue   = INIT_DESC.InitialRotate;
-		ActorPawnLayer    = INIT_DESC.InitialLayer;
+		ActorPawnPosition    = INIT_DESC.InitialPosition;
+		ActorPawnScale       = INIT_DESC.InitialScale;
+		ActorPawnRotateValue = INIT_DESC.InitialRotate;
+		ActorPawnLayer       = INIT_DESC.InitialLayer;
 		// actor space_z value_clamp.
 		ActorPawnLayer = PsagClamp(ActorPawnLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
@@ -377,9 +391,9 @@ namespace GameActorCore {
 
 	GameActorActuator::~GameActorActuator() {
 		// free: sysem_components.
-		if (ActorCompSpaceTrans != nullptr)  delete ActorCompSpaceTrans;
+		if (ActorCompSpaceTrans  != nullptr) delete ActorCompSpaceTrans;
 		if (ActorCompHealthTrans != nullptr) delete ActorCompHealthTrans;
-		if (ActorCompRendering != nullptr)   delete ActorCompRendering;
+		if (ActorCompRendering   != nullptr) delete ActorCompRendering;
 
 		// free: physics system item.
 		PhyBodyItemFree(ActorPhysicsWorld, ActorPhysicsItem);

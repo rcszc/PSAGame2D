@@ -180,6 +180,28 @@ namespace GraphicsEngineParticle {
 			}
 			break;
 		}
+		// rand_limit vec2 x,y [speed]
+		// vector vec2 length * vec.
+		case(PrtcPoly): {
+			for (size_t i = 0; i < ParticlesNumber; ++i) {
+				ParticleAttributes ParticleTemp = {};
+
+				ParticleDispPosition(ParticleTemp, RandomLimitPosition, PositionOffset);
+				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
+				
+				float Speed = RandomTimeSeedFP32(RandomLimitVector.vector_x, RandomLimitVector.vector_y);
+
+				ParticleTemp.ParticleVector.vector_x 
+					= (PositionOffset.vector_x - ParticleTemp.ParticlePosition.vector_x) * 0.02f * Speed;
+				ParticleTemp.ParticleVector.vector_y 
+					= (PositionOffset.vector_y - ParticleTemp.ParticlePosition.vector_y) * 0.02f * Speed;
+
+				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
+				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
+				ParticlesGenCache.push_back(ParticleTemp);
+			}
+			break;
+		}
 		// rand_limit vec2 x:abs(y_scale), y [speed]
 		// offset pos vec2 x,y: high(offset)
 		case(PrtcDrift): {
@@ -195,7 +217,7 @@ namespace GraphicsEngineParticle {
 				ParticleDispVector(ParticleTemp, RandomLimitVector);
 				ParticleTemp.ParticleVector.vector_y = abs(RandomLimitVector.vector_x);
 
-				ParticleTemp.ParticleLife = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
+				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
 				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
 				ParticlesGenCache.push_back(ParticleTemp);
 			}

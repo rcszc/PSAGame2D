@@ -162,9 +162,11 @@ namespace PSAG_LOGGER_PROCESS {
 				
 				WriteLogFile << LogMsgTemp.LogString << endl;
 				// print.
+#if defined(_DEBUG) || defined(DEBUG)
 				auto FindLevelColor = HashLogLable.find(LogMsgTemp.LogLabel);
 				if (FindLevelColor != HashLogLable.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
 					cout << FindLevelColor->second << LogMsgTemp.LogString << " \033[0m" << endl;
+#endif
 				// delete logmsg_item.
 				LogWriteQueue.pop();
 			}
