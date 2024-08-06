@@ -271,6 +271,16 @@ public:
 namespace PSAG_OGL_RES {
 	StaticStrLABEL PSAG_OGLRES_LABEL = "PSAG_OGL_RES";
 
+	struct PsagDebugInvalidKeyCount {
+		std::atomic<size_t> ResourceShader  = NULL;
+		std::atomic<size_t> ResourceTexture = NULL;
+		std::atomic<size_t> ResourceVBO     = NULL;
+		std::atomic<size_t> ResourceVAO     = NULL;
+		std::atomic<size_t> ResourceFBO     = NULL;
+		std::atomic<size_t> ResourceRBO     = NULL;
+	};
+	extern PsagDebugInvalidKeyCount GLOBAL_DEBUG_COUNT;
+
 	class PsagResTexSamplerOGL :public PsagOGLsystemLogger, public PsagGLresourceTMU {
 	protected:
 		std::vector<bool> TmuStateFlag  = {};
@@ -389,6 +399,7 @@ namespace PSAG_OGL_RES {
 		std::unordered_map<ResUnique, PsagVertexAttribute> ResourceVertexAttrMap = {};
 		std::mutex ResourceVertexAttrMutex = {};
 
+		size_t CheckCount = NULL;
 	public:
 		PsagVertexAttribute ResourceFind(ResUnique key) override;
 		bool ResourceStorage(ResUnique key, PsagVertexAttribute res) override;
@@ -408,6 +419,10 @@ namespace PSAG_OGL_RES {
 				if (item.second == OPENGL_INVALID_HANDEL)
 					++InvalidCountHD;
 			}
+			// map 初始化后莫名写入一项 OPENGL_INVALID_HANDEL
+			// warning: 导致回收计数错误 (未解决). [20240806]
+			InvalidCountHD -= 1;
+
 			// print_log: free_count, invalid_count.
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(vertex_attribute): %u items", ResourceSize());
 			if (InvalidCountHD)

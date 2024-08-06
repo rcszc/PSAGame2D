@@ -64,8 +64,8 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     PsagActor::OperPhysicalWorld CreatePhyWorld("TestPhyWorld", 1);
 
     // 创建Actor着色器资源.
-    ActorShaderPawn = new PsagActor::ActorRender(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderRes();
-    ActorShaderStar = new PsagActor::ActorRender(ActorFragStar, WinSize); ActorShaderStar->CreateShaderRes();
+    ActorShaderPawn = new PsagActor::ActorRender(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderResource();
+    ActorShaderStar = new PsagActor::ActorRender(ActorFragStar, WinSize); ActorShaderStar->CreateShaderResource();
 
     PsagLow::PsagSupFilesysLoaderBin FxTexture1("Test/TEST_NOISE.png");
     PsagLow::PsagSupFilesysLoaderBin FxTexture2("Test/TEST_LASER.png");
@@ -73,22 +73,22 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     // 特效着色器: 能量球.
     ActorShaderFX1 = new PsagActor::ActorRender(ActorFragFX1, WinSize);
     ActorShaderFX1->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(FxTexture1.GetDataBinary()));
-    ActorShaderFX1->CreateShaderRes();
+    ActorShaderFX1->CreateShaderResource();
 
     // 特效着色器: 闪电.
     ActorShaderFX2 = new PsagActor::ActorRender(ActorFragFX2, WinSize);
-    ActorShaderFX2->CreateShaderRes();
+    ActorShaderFX2->CreateShaderResource();
 
     // 特效着色器: 能量束.
     ActorShaderFX3 = new PsagActor::ActorRender(ActorFragFX3, WinSize);
     ActorShaderFX3->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(FxTexture2.GetDataBinary()));
-    ActorShaderFX3->CreateShaderRes();
+    ActorShaderFX3->CreateShaderResource();
 
     PsagLow::PsagSupFilesysLoaderBin BrickTexture("Test/TEST_BOX.png");
 
     BrickShader = new PsagActor::ActorRender(GameActorScript::PsagShaderBrickPrivateFS, WinSize);
     BrickShader->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(BrickTexture.GetDataBinary()));
-    BrickShader->CreateShaderRes();
+    BrickShader->CreateShaderResource();
 
     // ******************************** TEST Actor类型名称绑定 ********************************
 
@@ -103,7 +103,7 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     ConfigPawnActor.ActorPhysicsWorld   = "TestPhyWorld";
     ConfigPawnActor.ActorShaderResource = ActorShaderPawn;
 
-    ConfigPawnActor.ForceClacEnable = true;
+    ConfigPawnActor.ForceClacEnable = false;
     // 使用默认配置.
     PsagActor::ActorHpDESC PawnActorHealthDESC = {};
     // config hp system.
@@ -125,7 +125,7 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     RandomSizeCreate.RandomSeedMode(CollectEngineRandom::TimeSeedMicroseconds);
 
     // 0.0 - 2.0PI, 0.0 - 360.0
-    for (float i = 0.0f; i < 360.0f; i += 8.0f) {
+    for (float i = 0.0f; i < 360.0f; i += 5.0f) {
         // set brick scale_size.
         BricksDESC.InitialScale = 
             Vector2T<float>(RandomSizeCreate.CreateRandomValue(1.0f, 1.5f), RandomSizeCreate.CreateRandomValue(1.0f, 1.5f));
@@ -157,13 +157,13 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
             Star.second->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_star")
             ) {
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
-            CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcPoints);
+            CreatePartc.ConfigCreateMode(GraphicsEngineParticle::ParticlesGenMode::PrtcPoints);
             CreatePartc.ConfigCreateNumber(20);
             CreatePartc.ConfigLifeDispersion(Vector2T<float>(512.0f, 1024.0f));
             CreatePartc.ConfigSizeDispersion(Vector2T<float>(0.42f, 1.28f));
 
             CreatePartc.ConfigRandomColorSystem(
-                Vector2T<float>(0.0f, 0.0f), Vector2T<float>(0.42f, 1.78f), Vector2T<float>(0.42f, 1.78f), GraphicsEngineParticle::ChannelsRGB
+                Vector2T<float>(0.0f, 0.0f), Vector2T<float>(0.42f, 1.78f), Vector2T<float>(0.42f, 1.78f), GraphicsEngineParticle::ParticlesGenMode::ChannelsRGB
             );
             CreatePartc.ConfigRandomDispersion(
                 Vector2T<float>(-1.0f, 1.0f),

@@ -171,6 +171,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_debug.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_manager.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_render.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_script.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp" />

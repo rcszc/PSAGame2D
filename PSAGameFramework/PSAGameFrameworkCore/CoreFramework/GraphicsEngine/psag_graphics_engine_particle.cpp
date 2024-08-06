@@ -80,7 +80,7 @@ namespace GraphicsEngineParticle {
 		return true;
 	}
 
-	void ParticleGenerator::ConfigCreateMode(EmittersMode mode) {
+	void ParticleGenerator::ConfigCreateMode(ParticlesGenMode::EmittersMode mode) {
 		ParticlesModeType = mode;
 	}
 
@@ -98,13 +98,16 @@ namespace GraphicsEngineParticle {
 		RandomScaleSize = rand_limit_size;
 	}
 
-	void ParticleGenerator::ConfigRandomColorSystem(Vector2T<float> r, Vector2T<float> g, Vector2T<float> b, ColorChannelMode mode) {
+	void ParticleGenerator::ConfigRandomColorSystem(
+		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b, 
+		ParticlesGenMode::ColorChannelMode mode
+	) {
 		switch (mode) {
-		case(Grayscale):  { EnableGrayscale = true; break; }
-		case(ChannelsRG): { b = Vector2T<float>();  break; }
-		case(ChannelsRB): { g = Vector2T<float>();  break; }
-		case(ChannelsGB): { r = Vector2T<float>();  break; }
-		case(ChannelsRGB): { break; }
+		case(ParticlesGenMode::Grayscale):   { EnableGrayscale = true; break; }
+		case(ParticlesGenMode::ChannelsRG):  { b = Vector2T<float>();  break; }
+		case(ParticlesGenMode::ChannelsRB):  { g = Vector2T<float>();  break; }
+		case(ParticlesGenMode::ChannelsGB):  { r = Vector2T<float>();  break; }
+		case(ParticlesGenMode::ChannelsRGB): { break; }
 		}
 		RandomColorSystem = Vector3T<Vector2T<float>>(r, g, b);
 	}
@@ -120,7 +123,7 @@ namespace GraphicsEngineParticle {
 	void ParticleGenerator::CreateAddParticleDataset(vector<ParticleAttributes>& data) {
 		switch (ParticlesModeType) {
 		// rand_limit vec2 x,y [speed]
-		case(PrtcPoints): {
+		case(ParticlesGenMode::PrtcPoints): {
 			for (size_t i = 0; i < ParticlesNumber; ++i) {
 				ParticleAttributes ParticleTemp = {};
 
@@ -135,7 +138,7 @@ namespace GraphicsEngineParticle {
 			break;
 		}
 		// rand_limit vec2 x:cricle_x_scale, y:cricle_y_scale [speed]
-		case(PrtcCircle): {
+		case(ParticlesGenMode::PrtcCircle): {
 			for (size_t i = 0; i < ParticlesNumber; ++i) {
 				ParticleAttributes ParticleTemp = {};
 
@@ -152,7 +155,7 @@ namespace GraphicsEngineParticle {
 			break;
 		}
 		// rand_limit vec2 x:square_side, y:null [speed] 
-		case(PrtcSquare): {
+		case(ParticlesGenMode::PrtcSquare): {
 			const float CenterX = 0.0f, CenterY = 0.0f;
 			vector<Vector3T<float>> PointsSample = {};
 
@@ -182,7 +185,7 @@ namespace GraphicsEngineParticle {
 		}
 		// rand_limit vec2 x,y [speed]
 		// vector vec2 length * vec.
-		case(PrtcPoly): {
+		case(ParticlesGenMode::PrtcPoly): {
 			for (size_t i = 0; i < ParticlesNumber; ++i) {
 				ParticleAttributes ParticleTemp = {};
 
@@ -204,7 +207,7 @@ namespace GraphicsEngineParticle {
 		}
 		// rand_limit vec2 x:abs(y_scale), y [speed]
 		// offset pos vec2 x,y: high(offset)
-		case(PrtcDrift): {
+		case(ParticlesGenMode::PrtcDrift): {
 			for (size_t i = 0; i < ParticlesNumber; ++i) {
 				ParticleAttributes ParticleTemp = {};
 

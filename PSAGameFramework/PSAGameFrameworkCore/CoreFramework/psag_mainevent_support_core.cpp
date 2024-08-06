@@ -58,7 +58,7 @@ namespace PsagFrameworkCore {
         
         FrameworkParams.CameraParams = &MatrixWorldCamera;
 
-        float RoatioValue = (float)RenderingWinSize.vector_x / (float)RenderingWinSize.vector_y;
+        float RoatioValue = (float)RenderingWindowSize.vector_x / (float)RenderingWindowSize.vector_y;
         // global: calc camera & world matrix.
         MatrixDataRect   = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), 1.0f);
         MatrixDataWindow = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), RoatioValue);
@@ -87,7 +87,7 @@ namespace PsagFrameworkCore {
         bool CoreInitErrorFlag = PSAG_FALSE;
         // init_config_func => init...
         FrameworkInitConfig(EngineGLSL);
-        RenderingWinSize = Vector2T<uint32_t>(WindowInitConfig.WindowSizeWidth, WindowInitConfig.WindowSizeHeight);
+        RenderingWindowSize = Vector2T<uint32_t>(WindowInitConfig.WindowSizeWidth, WindowInitConfig.WindowSizeHeight);
 
         // enable opengl profile config.
         FrameworkGraphicsParams.PROFILE_CONFIG = PSAG_FALSE;
@@ -129,7 +129,7 @@ namespace PsagFrameworkCore {
         CoreInitErrorFlag |= !PhysicsWorldCreate("DEFAULT_PHY_WORLD", Vector2T<float>());
 
         // create game2d post-shader & background(null)-shader.
-        RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWinSize);
+        RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWindowSize);
         RendererBackFX = new GraphicsEngineBackground::PsagGLEngineBackgroundNULL();
 
         // init imgui_core system.
@@ -137,7 +137,7 @@ namespace PsagFrameworkCore {
 
         // load pointer.
         FrameworkParams.PostShaderParams = RendererPostFX->GetRenderParameters();
-        FrameworkParams.WindowResolution = RenderingWinSize;
+        FrameworkParams.WindowResolution = RenderingWindowSize;
         // non-create using default values.
         FrameworkParams.BackShaderParams = RendererBackFX->GetRenderParameters();
        
@@ -145,7 +145,7 @@ namespace PsagFrameworkCore {
         InitializeRegistrationDev();
         // imit gui_logic(scene,gui).
         for (auto it = GAME_CORE_CLASS.begin(); it != GAME_CORE_CLASS.end(); ++it)
-            it->second->LogicInitialization(RenderingWinSize);
+            it->second->LogicInitialization(RenderingWindowSize);
 
         *RenderingFrameColorPtr = DefaultFrameColor;
 

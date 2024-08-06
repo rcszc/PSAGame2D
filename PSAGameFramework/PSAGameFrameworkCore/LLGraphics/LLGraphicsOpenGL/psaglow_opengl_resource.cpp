@@ -2,14 +2,15 @@
 #include "psaglow_opengl.hpp"
 
 namespace PSAG_OGL_RES {
+	PsagDebugInvalidKeyCount GLOBAL_DEBUG_COUNT = {};
 
 	inline bool FindTmuStateflag(std::vector<bool>& data, uint32_t& sampler_count) {
 		bool IDLEresources = false;
-		// texture mapping units switch_flag.
 		for (size_t i = 0; i < data.size(); ++i) {
+			// texture mapping units slot_flag.
 			if (data[i] == false) {
-				data[i] = true;
-				IDLEresources = true;
+				// slot => open(ture), idle = ture.
+				data[i] = true; IDLEresources = true;
 				sampler_count = (uint32_t)i;
 				break;
 			}
@@ -24,7 +25,8 @@ namespace PSAG_OGL_RES {
 			std::lock_guard<std::mutex> Lock(TmuStateMutex);
 			FindIdelFlag = FindTmuStateflag(TmuStateFlag, ReturnTmuCount);
 		}
-		ReturnTmuCount += 1; // 不使用0号纹理采样器.
+		// 0号纹理采样器为系统默认(不使用).
+		ReturnTmuCount += 1;
 		if (!FindIdelFlag)
 			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "tmu failed alloc_count idle = 0.");
 		else
@@ -49,7 +51,11 @@ namespace PSAG_OGL_RES {
 
 	PsagShader PsagResShadersOGL::ResourceFind(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceShaderMutex);
-		return (ResourceShaderMap.find(key) != ResourceShaderMap.end()) ? ResourceShaderMap[key] : NULL;
+#if PSAG_DEBUG_MODE
+		if (ResourceShaderMap.find(key) == ResourceShaderMap.end())
+			++GLOBAL_DEBUG_COUNT.ResourceShader;
+#endif
+		return ResourceShaderMap[key];
 	}
 
 	bool PsagResShadersOGL::ResourceStorage(ResUnique key, PsagGLmanagerShader* res) {
@@ -77,7 +83,6 @@ namespace PSAG_OGL_RES {
 
 		auto it = ResourceShaderMap.find(key);
 		if (it != ResourceShaderMap.end()) {
-
 			// delete shader program => clear map_item.
 			glDeleteProgram(it->second);
 			ResourceShaderMap.erase(it);
@@ -93,7 +98,11 @@ namespace PSAG_OGL_RES {
 
 	PsagTextureAttrib PsagResTextureOGL::ResourceFind(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceTextureMutex);
-		return (ResourceTextureMap.find(key) != ResourceTextureMap.end()) ? ResourceTextureMap[key] : PsagTextureAttrib();
+#if PSAG_DEBUG_MODE
+		if (ResourceTextureMap.find(key) == ResourceTextureMap.end())
+			++GLOBAL_DEBUG_COUNT.ResourceTexture;
+#endif
+		return ResourceTextureMap[key];
 	}
 
 	bool PsagResTextureOGL::ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) {
@@ -137,7 +146,11 @@ namespace PSAG_OGL_RES {
 
 	PsagVertexBufferAttrib PsagResVertexBufferOGL::ResourceFind(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceVertexBufferMutex);
-		return (ResourceVertexBufferMap.find(key) != ResourceVertexBufferMap.end()) ? ResourceVertexBufferMap[key] : PsagVertexBufferAttrib();
+#if PSAG_DEBUG_MODE
+		if (ResourceVertexBufferMap.find(key) == ResourceVertexBufferMap.end())
+			++GLOBAL_DEBUG_COUNT.ResourceVBO;
+#endif
+		return ResourceVertexBufferMap[key];
 	}
 
 	bool PsagResVertexBufferOGL::ResourceStorage(ResUnique key, PsagGLmanagerModel* res) {
@@ -162,7 +175,7 @@ namespace PSAG_OGL_RES {
 
 	bool PsagResVertexBufferOGL::ResourceDelete(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceVertexBufferMutex);
-
+		
 		auto it = ResourceVertexBufferMap.find(key);
 		if (it != ResourceVertexBufferMap.end()) {
 
@@ -186,7 +199,11 @@ namespace PSAG_OGL_RES {
 
 	PsagVertexAttribute PsagResVertexAttribOGL::ResourceFind(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceVertexAttrMutex);
-		return (ResourceVertexAttrMap.find(key) != ResourceVertexAttrMap.end()) ? ResourceVertexAttrMap[key] : NULL;
+#if PSAG_DEBUG_MODE
+		if (ResourceVertexAttrMap.find(key) == ResourceVertexAttrMap.end())
+			++GLOBAL_DEBUG_COUNT.ResourceVAO;
+#endif
+		return ResourceVertexAttrMap[key];
 	}
 
 	bool PsagResVertexAttribOGL::ResourceStorage(ResUnique key, PsagVertexAttribute res) {
@@ -197,6 +214,7 @@ namespace PSAG_OGL_RES {
 			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "veratt: failed storage duplicate_key: %u", key);
 			return false;
 		}
+
 		ResourceVertexAttrMap[key] = res;
 		PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "veratt: storage key: %u", key);
 		return true;
@@ -219,12 +237,16 @@ namespace PSAG_OGL_RES {
 		return false;
 	}
 
+	// **************************************** FrameBuffer ****************************************
+
 	PsagFrameBuffer PsagResFrameBufferOGL::ResourceFind(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceFrameBufferMutex);
-		return (ResourceFrameBufferMap.find(key) != ResourceFrameBufferMap.end()) ? ResourceFrameBufferMap[key] : NULL;
+#if PSAG_DEBUG_MODE
+		if (ResourceFrameBufferMap.find(key) == ResourceFrameBufferMap.end())
+			++GLOBAL_DEBUG_COUNT.ResourceFBO;
+#endif
+		return ResourceFrameBufferMap[key];
 	}
-
-	// **************************************** FrameBuffer ****************************************
 
 	bool PsagResFrameBufferOGL::ResourceStorage(ResUnique key, PsagGLmanagerFrameBuffer* res) {
 		std::lock_guard<std::mutex> Lock(ResourceFrameBufferMutex);
@@ -267,7 +289,11 @@ namespace PSAG_OGL_RES {
 
 	PsagRenderBufferAttrib PsagResRenderBufferOGL::ResourceFind(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceRenderBufferMutex);
-		return (ResourceRenderBufferMap.find(key) != ResourceRenderBufferMap.end()) ? ResourceRenderBufferMap[key] : PsagRenderBufferAttrib();
+#if PSAG_DEBUG_MODE
+		if (ResourceRenderBufferMap.find(key) == ResourceRenderBufferMap.end())
+			++GLOBAL_DEBUG_COUNT.ResourceRBO;
+#endif
+		return ResourceRenderBufferMap[key];
 	}
 
 	bool PsagResRenderBufferOGL::ResourceStorage(ResUnique key, PsagGLmanagerRenderBuffer* res) {

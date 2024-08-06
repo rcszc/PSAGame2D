@@ -12,6 +12,13 @@
 namespace GraphicsEngineDataset {
 	StaticStrLABEL PSAGM_GLENGINE_DATA_LABEL = "PSAG_GL_DATASET";
 
+	class GLEngineDataSTATE {
+	protected:
+		static std::atomic<size_t> DataBytesStaticVertex;
+		static std::atomic<size_t> DataBytesDynamicVertex;
+		static std::atomic<size_t> DataBytesOnlineTexture;
+	};
+
 	struct VABO_DATASET_INFO {
 		size_t DatasetLength;
 		size_t DatasetOffsetLength;
@@ -24,7 +31,8 @@ namespace GraphicsEngineDataset {
 	// derive class:
 	// "GraphicsEnginePost::PsagGLEnginePost"
 	// "GraphicsEngineBackground::PsagGLEngineBackground"
-	class GLEngineStcVertexData :public PsagLow::PsagSupGraphicsLLRES {
+	// [Actor] [FX]
+	class GLEngineStcVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
 		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender;
 		// opengl vao,vbo handle(res).
@@ -51,7 +59,7 @@ namespace GraphicsEngineDataset {
 	// => MODULE(update: 20240505):
 	// derive class:
 	// "GraphicsEngineParticle::PsagGLEngineParticle"
-	class GLEngineDyVertexData :public PsagLow::PsagSupGraphicsLLRES {
+	class GLEngineDyVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
 		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender;
 		// opengl vao,vbo handle(res).
@@ -85,6 +93,7 @@ namespace GraphicsEngineDataset {
 			std::vector<bool> TexArrayStateFlag = {};
 		public:
 			TEX_LAYER_ALLOC(size_t tmu_size) {
+				// texture array(virtual tex) init_setting "slot".
 				TexArrayStateFlag.resize(tmu_size);
 			}
 			// texture(array) system: alloc & free, res_count.
@@ -137,7 +146,7 @@ namespace GraphicsEngineDataset {
 	// LLRES => texture(array) data system. (sampler texture data)
 	// => MODULE(update: 20240513):
 	// derive class:
-	class GLEngineSmpTextureData :public PsagLow::PsagSupGraphicsLLRES {
+	class GLEngineSmpTextureData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
 		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender;
 		static PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform;
@@ -401,21 +410,23 @@ namespace GraphicsEngineBackground {
 namespace GraphicsEngineParticle {
 	StaticStrLABEL PSAGM_GLENGINE_PARTICLE_LABEL = "PSAG_GL_PARTICLE";
 
-	enum EmittersMode {
-		PrtcPoints = 1 << 1, // 点云 [扩散]
-		PrtcCircle = 1 << 2, // 圆形 [扩散]
-		PrtcSquare = 1 << 3, // 矩形 [扩散]
-		PrtcPoly   = 1 << 4, // 汇聚 [聚合]
-		PrtcDrift  = 1 << 5  // 飘落 [定向]
-	};
+	namespace ParticlesGenMode {
+		enum EmittersMode {
+			PrtcPoints = 1 << 1, // 点云 [扩散]
+			PrtcCircle = 1 << 2, // 圆形 [扩散]
+			PrtcSquare = 1 << 3, // 矩形 [扩散]
+			PrtcPoly   = 1 << 4, // 汇聚 [聚合]
+			PrtcDrift  = 1 << 5  // 飘落 [定向]
+		};
 
-	enum ColorChannelMode {
-		Grayscale   = 1 << 1, // 灰度(单通道R-RGB)
-		ChannelsRG  = 1 << 2, // R,G 通道
-		ChannelsRB  = 1 << 3, // R,B 通道
-		ChannelsGB  = 1 << 4, // G,B 通道
-		ChannelsRGB = 1 << 5  // R,G,B 通道
-	};
+		enum ColorChannelMode {
+			Grayscale   = 1 << 1, // 灰度(单通道R-RGB)
+			ChannelsRG  = 1 << 2, // R,G 通道
+			ChannelsRB  = 1 << 3, // R,B 通道
+			ChannelsGB  = 1 << 4, // G,B 通道
+			ChannelsRGB = 1 << 5  // R,G,B 通道
+		};
+	}
 
 	struct ParticleAttributes {
 		Vector3T<float> ParticleVector;
@@ -424,7 +435,7 @@ namespace GraphicsEngineParticle {
 
 		float ParticleScaleSize;
 		float ParticleLife;
-		ColorChannelMode ParticleModeType;
+		ParticlesGenMode::ColorChannelMode ParticleModeType;
 
 		constexpr ParticleAttributes() :
 			ParticleVector   ({}),
@@ -432,7 +443,7 @@ namespace GraphicsEngineParticle {
 			ParticleColor    ({}),
 			ParticleScaleSize(1.0f),
 			ParticleLife     (0.0f),
-			ParticleModeType (Grayscale)
+			ParticleModeType (ParticlesGenMode::Grayscale)
 		{}
 	};
 
@@ -448,13 +459,13 @@ namespace GraphicsEngineParticle {
 		// particle generation number[n > 8].
 		virtual bool ConfigCreateNumber(float number) = 0;
 
-		virtual void ConfigCreateMode(EmittersMode mode) = 0;                   // 运算模式.
+		virtual void ConfigCreateMode(ParticlesGenMode::EmittersMode mode) = 0; // 运算模式.
 		virtual void ConfigLifeDispersion(Vector2T<float> rand_limit_life) = 0; // 随机生命.
 		virtual void ConfigSizeDispersion(Vector2T<float> rand_limit_size) = 0; // 随机大小.
 
 		virtual void ConfigRandomColorSystem(
 			Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-			ColorChannelMode mode = Grayscale
+			ParticlesGenMode::ColorChannelMode mode
 		) = 0;
 		// 粒子空间: vector.xy scale[min,max], position.xy scale[min,max].
 		// "OffsetPosition" 创建偏移位置(中心偏移).
@@ -471,8 +482,8 @@ namespace GraphicsEngineParticle {
 	protected:
 		std::vector<ParticleAttributes> ParticlesGenCache = {};
 
-		EmittersMode ParticlesModeType = {};
-		size_t       ParticlesNumber   = 8;
+		ParticlesGenMode::EmittersMode ParticlesModeType = {};
+		size_t ParticlesNumber = 8;
 
 		bool EnableGrayscale = false;
 		Vector3T<Vector2T<float>> RandomColorSystem = {};
@@ -484,14 +495,14 @@ namespace GraphicsEngineParticle {
 
 	public:
 		bool ConfigCreateNumber(float number) override;
-		void ConfigCreateMode(EmittersMode mode) override;
+		void ConfigCreateMode(ParticlesGenMode::EmittersMode mode) override;
 		void ConfigLifeDispersion(Vector2T<float> rand_limit_life) override;
 		void ConfigSizeDispersion(Vector2T<float> rand_limit_size) override;
 
 		// color system(random) channels[0.0,1.0].
 		void ConfigRandomColorSystem(
 			Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-			ColorChannelMode mode = Grayscale
+			ParticlesGenMode::ColorChannelMode mode = ParticlesGenMode::Grayscale
 		) override;
 		void ConfigRandomDispersion(
 			// randomly distributed parameters.

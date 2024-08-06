@@ -60,7 +60,7 @@ namespace PhysicsEngine {
 		}
 		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(*rukey);
 		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
-			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", rukey);
+			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", *rukey);
 			return false;
 		}
 
@@ -160,15 +160,17 @@ namespace PhysicsEngine {
 		if (WorldPointer == nullptr)
 			return PhysicsRunState();
 
+#if PSAG_DEBUG_MODE
 		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
-		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
-			return PhysicsRunState(
-				it->second.Box2dActorPtr->GetAngle(),
-				Vector2T<float>(it->second.Box2dActorPtr->GetPosition().x, it->second.Box2dActorPtr->GetPosition().y),
-				it->second.Box2dActorPtr
-			);
-		}
-		return PhysicsRunState();
+		if (it == WorldPointer->PhysicsContact->PhysicsDataset.end())
+			return PhysicsRunState();
+#endif
+		auto BodyData = WorldPointer->PhysicsContact->PhysicsDataset[rukey];
+		return PhysicsRunState(
+			BodyData.Box2dActorPtr->GetAngle(),
+			Vector2T<float>(BodyData.Box2dActorPtr->GetPosition().x, BodyData.Box2dActorPtr->GetPosition().y),
+			BodyData.Box2dActorPtr
+		);
 	}
 
 	vector<size_t> PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, PhyBodyKey rukey) {
@@ -261,7 +263,7 @@ namespace PhysicsEngine {
 	}
 
 	PhysiceWorldData* PhyEngineCoreDataset::PhysicsWorldFind(string strkey) {
-		return (PhysicsWorlds.find(strkey) != PhysicsWorlds.end()) ? &PhysicsWorlds[strkey] : nullptr;
+		return PhysicsWorlds.find(strkey) != PhysicsWorlds.end() ? &PhysicsWorlds[strkey] : nullptr;
 	}
 
 	void PhyEngineCoreDataset::PhysicsSystemUpdateState() {

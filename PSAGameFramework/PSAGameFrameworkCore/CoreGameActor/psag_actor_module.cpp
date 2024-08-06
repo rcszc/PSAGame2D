@@ -1,5 +1,4 @@
 // psag_actor_module.
-#include <limits>
 #include "psag_actor_module.hpp"
 
 using namespace std;
@@ -30,162 +29,6 @@ namespace GameActorCore {
 		}
 		GameActorTypeBind ActorTypeAllotter = {};
 	}
-
-	GameActorShader::GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION) {
-		// system actor default vert_shader.
-		ShaderScript.vector_x = GameActorScript::PsagShaderPublicVS;
-		ShaderScript.vector_y = SHADER_FRAG;
-
-		__RENDER_RESOLUTION = RESOLUTION;
-		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader create: %u x %u", RESOLUTION.vector_x, RESOLUTION.vector_y);
-	}
-
-	GameActorShader::~GameActorShader() {
-		// delete virtual static vertex_dataset.
-		VerStcDataItemFree(__ACTOR_VERTEX_ITEM);
-		// 引用虚拟纹理情况下, 不由"GameActorShader"回收.
-		if (!ReferVirTextureFlag && __VIR_TEXTURE_ITEM != NULL)
-			VirTextureItemFree(__VIR_TEXTURE_ITEM);
-		// delete opengl shader.
-		LLRES_Shaders->ResourceDelete(__ACTOR_SHADER_ITEM);
-		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader delete.");
-	}
-
-	bool GameActorShader::CreateShaderRes() {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
-
-		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
-		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
-
-		if (ShaderProcess.CreateCompileShader()) {
-			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
-			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
-		}
-		else {
-			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed create.");
-			return false;
-		}
-		// find => shader_handle_temp => uniform.
-		OpenGLShaderTemp = LLRES_Shaders->ResourceFind(__ACTOR_SHADER_ITEM);
-
-		__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
-		if (VerPosition != nullptr) {
-			// vertex coord => shader vertex_group.
-			vector<float> DatasetTemp = {};
-			for (size_t i = 0; i < VerPosition->size(); ++i) {
-				// vertex group, std: GL_VERT_01.
-				vector<float> VertexGroup = {
-					// pos: vec3, color: vec4, uv: vec2, normal: vec3
-					(*VerPosition)[i].vector_x, (*VerPosition)[i].vector_y, 0.0f,
-					ShaderDebugColor.vector_x, ShaderDebugColor.vector_y, ShaderDebugColor.vector_z, ShaderDebugColor.vector_w,
-					(*VerUvCoord)[i].vector_x, (*VerUvCoord)[i].vector_y,
-					0.0f, 0.0f, 0.0f
-				};
-				DatasetTemp.insert(DatasetTemp.begin(), VertexGroup.begin(), VertexGroup.end());
-			}
-			// upload static dataset.
-			VerStcDataItemAlloc(__ACTOR_VERTEX_ITEM, DatasetTemp);
-		}
-		else {
-			__ACTOR_VERTEX_ITEM = GetPresetRect();
-		}
-		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource create.");
-		return true;
-	}
-
-	bool GameActorShader::CheckRepeatTex(VirTextureUnqiue virtex) {
-		if (VirTextureExist(virtex)) {
-			PushLogger(LogWarning, PSAGM_ACTOR_CORE_LABEL, "game_actor shader texture duplicate.");
-			return false;
-		}
-		return true;
-	}
-
-	bool GameActorShader::ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC) {
-		if (VER_DESC.VertexShaderEnable) {
-			if (VER_DESC.VertexShaderScript.empty()) {
-				// vertex shader non-script.
-				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader vert_script empty.");
-				return false;
-			}
-			ShaderScript.vector_x = VER_DESC.VertexShaderScript;
-		}
-		// position num = uv num.
-		if (VER_DESC.ShaderVertexCollision.size() != VER_DESC.ShaderVertexUvCoord.size()) {
-			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader vert: pos_size != uv_num.");
-			return false;
-		}
-		VerPosition = &VER_DESC.ShaderVertexCollision;
-		VerUvCoord  = &VER_DESC.ShaderVertexUvCoord;
-		// shader frag non-texture out color.
-		ShaderDebugColor = VER_DESC.ShaderDebugColor;
-		return true;
-	}
-
-	bool GameActorShader::ShaderLoadVirTexture(VirTextureUnqiue virtex) {
-		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM)) 
-			return false;
-
-		if (VirTextureExist(virtex)) {
-			__VIR_TEXTURE_ITEM = virtex;
-			__VIR_UNIFORM_ITEM = SystemPresetUname();
-			ReferVirTextureFlag = true;
-			return true;
-		}
-		PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader invalid vir_texture.");
-		return false;
-	}
-
-	bool GameActorShader::ShaderLoadImage(const ImageRawData& image) {
-		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM)) return false;
-
-		if (!image.ImagePixels.empty()) {
-			PSAG_SYSGEN_TIME_KEY GenResourceID;
-			__VIR_TEXTURE_ITEM = GenResourceID.PsagGenTimeKey();
-			// alloc virtual sampler texture.
-			if (!VirTextureItemAlloc(__VIR_TEXTURE_ITEM, image)) {
-				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed load_image.");
-				return false;
-			}
-			__VIR_UNIFORM_ITEM = SystemPresetUname();
-			return true;
-		}
-		return false;
-	}
-
-	// **************** upload shader uniform ****************
-
-	void GameActorShader::UniformSetContext(function<void()> context_func) {
-		// opengl api function. [20240804]
-		glUseProgram(OpenGLShaderTemp);
-		context_func();
-		glUseProgram(NULL);
-	}
-	
-	void GameActorShader::UniformMatrix3x3(const char* name, const PsagMatrix3& matrix) {
-		ShaderUniformLoader.UniformMatrix3x3(OpenGLShaderTemp, name, matrix);
-	}
-	void GameActorShader::UniformMatrix4x4(const char* name, const PsagMatrix4& matrix) {
-		ShaderUniformLoader.UniformMatrix4x4(OpenGLShaderTemp, name, matrix);
-	}
-	void GameActorShader::UniformInt32(const char* name, const int32_t& value) {
-		ShaderUniformLoader.UniformInteger(OpenGLShaderTemp, name, value);
-	}
-	void GameActorShader::UniformFP32(const char* name, const float& value) {
-		ShaderUniformLoader.UniformFloat(OpenGLShaderTemp, name, value);
-	}
-	void GameActorShader::UniformVec2(const char* name, const Vector2T<float>& value) {
-		ShaderUniformLoader.UniformVec2(OpenGLShaderTemp, name, value);
-	}
-	void GameActorShader::UniformVec3(const char* name, const Vector3T<float>& value) {
-		ShaderUniformLoader.UniformVec3(OpenGLShaderTemp, name, value);
-	}
-	void GameActorShader::UniformVec4(const char* name, const Vector4T<float>& value) {
-		ShaderUniformLoader.UniformVec4(OpenGLShaderTemp, name, value);
-	}
-
-	// ******************************** GameActorActuator ********************************
 
 	namespace system {
 #define PSAGM_ACTOR_INTER 0.05f
@@ -267,21 +110,22 @@ namespace GameActorCore {
 			ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime",       time_count);
 
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",  params.RenderPosition);
-			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  params.RenderRotate * (PSAG_M_PI / 180.0f));
+			ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  PSAG_M_DEGRAD(params.RenderRotate));
 			ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize", params.RenderScale);
 			ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",    params.RenderLayerValue);
 			
-			RenderingTextureFunc();
+			RenderingTextureFunc(ShaderTemp);
 			VerStcOperFrameDraw(VertexGroupIndex);
 			ShaderRender.RenderUnbindShader();
 		}
 
-		void ActorRendering::UpdateActorRenderingTexture() {
-			auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderIndex);
+		void ActorRendering::UpdateActorRenderingTexture(PsagShader shader) {
 			// draw virtual texture.
-			VirTextureItemDraw(VirTexItem, ShaderTemp, VirTexUniform);
+			VirTextureItemDraw(VirTexItem, shader, VirTexUniform);
 		}
 	}
+
+	// ******************************** game actor_actuator ********************************
 
 	GameActorActuator::GameActorActuator(uint32_t TYPE, const GameActorActuatorDESC& INIT_DESC) {
 		if (TYPE == Type::ActorTypeNULL) {
@@ -312,10 +156,13 @@ namespace GameActorCore {
 			
 			// load rendering texture.
 			if (VirTextureExist(ActorResource->__VIR_TEXTURE_ITEM)) {
-				// rendering_tex_func, vir_tex_unqiue, unifrom.
-				ActorCompRendering->RenderingTextureFunc = [this]() { ActorCompRendering->UpdateActorRenderingTexture(); };
-				ActorCompRendering->VirTexItem           = ActorResource->__VIR_TEXTURE_ITEM;
-				ActorCompRendering->VirTexUniform        = ActorResource->__VIR_UNIFORM_ITEM;
+				// rendering texture func.
+				ActorCompRendering->RenderingTextureFunc = 
+					[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTexture(shader); };
+
+				// virtual texture_unqiue, uniform.
+				ActorCompRendering->VirTexItem    = ActorResource->__VIR_TEXTURE_ITEM;
+				ActorCompRendering->VirTexUniform = ActorResource->__VIR_UNIFORM_ITEM;
 			}
 		}
 		else {
@@ -338,19 +185,19 @@ namespace GameActorCore {
 		case(PhyMoveActor):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
 		case(PhyFixedActor): { ActorPhyConfig.PhysicsModeTypeFlag = false; break; }
 		}
-		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
 
 		if (INIT_DESC.ActorShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.ActorShaderResource->__GET_VERTICES_RES());
 
-		ActorPhyConfig.PhyBoxRotate        = INIT_DESC.InitialRotate;
-		ActorPhyConfig.PhyBoxCollisionSize = INIT_DESC.InitialScale;
-		ActorPhyConfig.PhyBoxPosition      = INIT_DESC.InitialPosition;
+		ActorPhyConfig.PhyBoxRotate         = INIT_DESC.InitialRotate;
+		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
+		ActorPhyConfig.PhyBoxCollisionSize  = INIT_DESC.InitialScale;
+		ActorPhyConfig.PhyBoxPosition       = INIT_DESC.InitialPosition;
 
 		ActorPhyConfig.PhyBodyDensity  = INIT_DESC.InitialPhysics.vector_x;
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
-		// 'key'由物理引擎分配.
+		// ActorPhysicsItem(PhyBodyKey) 由物理引擎分配.
 		PhyBodyItemAlloc(ActorPhysicsWorld, &ActorPhysicsItem, ActorPhyConfig);
 		
 		// config space_trans. ture: non-fixed.

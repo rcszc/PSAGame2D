@@ -117,7 +117,7 @@ namespace GameActorCore {
 		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
 		~GameActorShader();
 		// create actor shader_resource.
-		bool CreateShaderRes();
+		bool CreateShaderResource();
 
 		// load vertices(pos,uv) resource. (warn: ref)
 		bool ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC);
@@ -265,7 +265,6 @@ namespace GameActorCore {
 			ActorHealthTrans(const std::function<void(const HealthFuncParams&)>& func) :
 				ActorHealthHandlerFunc(func)
 			{}
-
 			// actor hp_state system. 0:set_state, 1:actor_state, 2:inter_speed.
 			float ActorHealthState[3][PSAG_HEALTH_STATE_NUM] = {};
 
@@ -299,12 +298,12 @@ namespace GameActorCore {
 			// referencing global static_pointer(matrix).
 			PsagMatrix4* RenderMatrix = nullptr;
 
-			std::function<void()> RenderingTextureFunc = [&]() {};
+			std::function<void(PsagShader)> RenderingTextureFunc = [&](PsagShader) {};
 			ResUnique VirTexItem = NULL;
 			GraphicsEngineDataset::VirTextureUniformName VirTexUniform = {};
 
 			virtual void UpdateActorRendering(const RenderingParams& params, float time_count);
-			virtual void UpdateActorRenderingTexture();
+			virtual void UpdateActorRenderingTexture(PsagShader shader);
 		};
 
 		namespace null {
@@ -325,7 +324,7 @@ namespace GameActorCore {
 			class ActorRenderingNULL : public ActorRendering {
 			public:
 				void UpdateActorRendering(const RenderingParams& params, float time_count) override {};
-				void UpdateActorRenderingTexture() override {};
+				void UpdateActorRenderingTexture(PsagShader shader) override {};
 			};
 		}
 	}
@@ -351,11 +350,11 @@ namespace GameActorCore {
 		// shader rendering size, shader_uniform param.
 		Vector2T<float> RenderingResolution = {};
 		
-		ActorPrivateINFO ActorCollisionInfo = {};
-		Vector2T<float>  ActorPawnPosition  = {};
-		Vector2T<float>  ActorPawnScale     = {};
-		float            ActorPawnRotateValue    = 0.0f;
-		float            ActorPawnLayer     = 0.0f;
+		ActorPrivateINFO ActorCollisionInfo   = {};
+		Vector2T<float>  ActorPawnPosition    = {};
+		Vector2T<float>  ActorPawnScale       = {};
+		float            ActorPawnRotateValue = 0.0f;
+		float            ActorPawnLayer       = 0.0f;
 
 		// Actor»ù´¡×é¼þ.
 		system::ActorSpaceTrans*  ActorCompSpaceTrans  = nullptr;
@@ -432,6 +431,7 @@ namespace GameBrickCore {
 
 		// system core comp switch_flags.
 		bool EnableRendering = true;
+		bool EnableCollision = true;
 
 		GameBrickActuatorDESC() :
 			BrickShaderResource(nullptr),

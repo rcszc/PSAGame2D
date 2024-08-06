@@ -5,11 +5,6 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace GameBrickCore {
-	GameBrickActuator::~GameBrickActuator() {
-		// free: physics system item.
-		PhyBodyItemFree(BrickPhysicsWorld, BcickPhysicsItem);
-		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item delete: %u", BrickUniqueID);
-	}
 
 	GameBrickActuator::GameBrickActuator(const GameBrickActuatorDESC& INIT_DESC) {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
@@ -35,10 +30,13 @@ namespace GameBrickCore {
 
 			// load rendering texture.
 			if (VirTextureExist(BrickResource->__VIR_TEXTURE_ITEM)) {
-				// rendering_tex_func, vir_tex_unqiue, unifrom.
-				BirckCompRendering->RenderingTextureFunc = [this]() { BirckCompRendering->UpdateActorRenderingTexture(); };
-				BirckCompRendering->VirTexItem           = BrickResource->__VIR_TEXTURE_ITEM;
-				BirckCompRendering->VirTexUniform        = BrickResource->__VIR_UNIFORM_ITEM;
+				// rendering texture func.
+				BirckCompRendering->RenderingTextureFunc = 
+					[this](PsagShader shader) { BirckCompRendering->UpdateActorRenderingTexture(shader); };
+
+				// virtual texture_unqiue, unifrom.
+				BirckCompRendering->VirTexItem    = BrickResource->__VIR_TEXTURE_ITEM;
+				BirckCompRendering->VirTexUniform = BrickResource->__VIR_UNIFORM_ITEM;
 			}
 		}
 		else {
@@ -68,22 +66,30 @@ namespace GameBrickCore {
 		if (INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());
 
-		ActorPhyConfig.PhyBoxRotate        = INIT_DESC.InitialRotate;
-		ActorPhyConfig.PhyBoxCollisionSize = INIT_DESC.InitialScale;
-		ActorPhyConfig.PhyBoxPosition      = INIT_DESC.InitialPosition;
+		ActorPhyConfig.PhyBoxRotate         = INIT_DESC.InitialRotate;
+		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
+		ActorPhyConfig.PhyBoxCollisionSize  = INIT_DESC.InitialScale;
+		ActorPhyConfig.PhyBoxPosition       = INIT_DESC.InitialPosition;
 
 		ActorPhyConfig.PhyBodyDensity  = INIT_DESC.InitialPhysics.vector_x;
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
-		// 'key'由物理引擎分配.
+		// BcickPhysicsItem(PhyBodyKey) 由物理引擎分配.
 		PhyBodyItemAlloc(BrickPhysicsWorld, &BcickPhysicsItem, ActorPhyConfig);
 
 		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item create.");
 	}
 
+	GameBrickActuator::~GameBrickActuator() {
+		// free: sysem_components.
+		if (BirckCompRendering != nullptr) delete BirckCompRendering;
+
+		// free: physics system item.
+		PhyBodyItemFree(BrickPhysicsWorld, BcickPhysicsItem);
+		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item delete: %u", BrickUniqueID);
+	}
+
 	void GameBrickActuator::BrickRendering() {
-		if (BirckCompRendering == nullptr)
-			return;
 		// rendering brick shader_data.
 		BirckCompRendering->UpdateActorRendering(
 			GameActorCore::system::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, BrickStaticLayer),

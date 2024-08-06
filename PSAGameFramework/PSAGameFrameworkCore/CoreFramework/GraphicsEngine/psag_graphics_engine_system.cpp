@@ -12,8 +12,8 @@ namespace GraphicsEngineMatrix {
 
 	glm::mat4 PsagGLEngineMatrix::GetOrthoProjMatrix(float scale_size) {
 		return glm::ortho(
-			-SystemRenderingOrthoSpace * scale_size, SystemRenderingOrthoSpace * scale_size,
-			-SystemRenderingOrthoSpace, SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
+			-SystemRenderingOrthoSpace * scale_size, SystemRenderingOrthoSpace * scale_size, -SystemRenderingOrthoSpace,
+			SystemRenderingOrthoSpace, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace
 		);
 	}
 
@@ -86,7 +86,7 @@ namespace GraphicsEnginePost {
 			ShaderUniform.UniformInteger(LightShader, "PostTextures", ColorTextureTemp.TextureSamplerCount);
 
 			// DEPTH_BUFFER_TEX.
-			// non- failed_load.
+			// non: failed_load. [20240705]
 			
 			// frame draw(command).
 			VerStcOperFrameDraw(RenderRect);
@@ -219,7 +219,7 @@ namespace GraphicsEnginePost {
 
 		RenderRect = GenResourceID.PsagGenTimeKey();
 		// fmt: 1.0f, lowest layer.
-		VerStcDataItemAlloc(RenderRect, PSAG_OGL_MAG::ShaderTemplateRectDep(-10.0f));
+		VerStcDataItemAlloc(RenderRect, PSAG_OGL_MAG::ShaderTemplateRectDep(10.0f));
 
 		MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 		// convert: glm matrix => psag matrix.
@@ -377,7 +377,7 @@ namespace GraphicsEngineBackground {
 
 		BackgroundRect = GenResourceID.PsagGenTimeKey();
 		// fmt: 1.0f, lowest layer.
-		VerStcDataItemAlloc(BackgroundRect, PSAG_OGL_MAG::ShaderTemplateRectDep(10.0f));
+		VerStcDataItemAlloc(BackgroundRect, PSAG_OGL_MAG::ShaderTemplateRectDep(-10.0f));
 
 		glm::mat4x4 MatrixPorj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 		// convert: glm matrix => psag matrix.

@@ -58,6 +58,12 @@
 #define PSAG_TRUE  (bool)1
 #define PSAG_FALSE (bool)0
 
+#if defined(_DEBUG) || defined(DEBUG)
+#define PSAG_DEBUG_MODE true
+#else
+#define PSAG_DEBUG_MODE false
+#endif
+
 #define StaticStrLABEL constexpr const char*
 // core framework logger label.
 enum LOGLABEL {

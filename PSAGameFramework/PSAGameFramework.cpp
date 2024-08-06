@@ -13,8 +13,8 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_07_27.
-#define PSAG2D_ENGINE_VER 12.20240727
+// Engine Update: 2024_08_06.
+#define PSAG2D_ENGINE_VER 12.20240806
 /*
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX
@@ -42,7 +42,7 @@ int main() {
 		// add start_item: object.
 		FrameworkStarter.UniqueFrameworkObj(MainPSAGame2D);
 		// start framework(engine)[exe].
-		FrameworkStarter.StartPsaGame(PSAG2D_ENGINE_VER, 125);
+		FrameworkStarter.StartPsaGame(PSAG2D_ENGINE_VER, 200);
 		// framework free exit.
 		FrameworkResult = FrameworkStarter.FreeFramework();
 	}

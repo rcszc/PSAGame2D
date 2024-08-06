@@ -228,6 +228,9 @@
     <ClCompile Include="PSAGameFrameworkDev\TestDemoStarFX.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_render.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">

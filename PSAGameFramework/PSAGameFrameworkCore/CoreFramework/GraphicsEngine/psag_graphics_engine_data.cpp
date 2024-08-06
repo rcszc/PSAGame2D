@@ -34,6 +34,11 @@ namespace IMAGE_TOOLS {
 }
 
 namespace GraphicsEngineDataset {
+	// GLOBAL STATE: 静态顶点组(大小), 动态顶点组(大小), 在线虚拟贴图数量(已加载帖图).
+	std::atomic<size_t> GLEngineDataSTATE::DataBytesStaticVertex  = NULL;
+	std::atomic<size_t> GLEngineDataSTATE::DataBytesDynamicVertex = NULL;
+	std::atomic<size_t> GLEngineDataSTATE::DataBytesOnlineTexture = NULL;
+
 	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper
 		GLEngineStcVertexData::ShaderRender = {};
 
@@ -61,6 +66,8 @@ namespace GraphicsEngineDataset {
 		DatasetTemp.insert(DatasetTemp.begin(), data.begin(), data.end());
 		// cpu =upload=> gpu memory.
 		ShaderRender.UploadVertexDataset(VertexAttrib, DatasetTemp.data(), DatasetTemp.size() * sizeof(float), GL_STATIC_DRAW);
+		// update global_state.
+		DataBytesStaticVertex = DatasetTemp.size();
 
 		IndexItems[rukey] = AllocVertInfo;
 		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetTemp.size());
@@ -93,7 +100,9 @@ namespace GraphicsEngineDataset {
 			}
 			// cpu =upload=> gpu memory.
 			ShaderRender.UploadVertexDataset(VertexAttrib, DatasetRewriting.data(), DatasetRewriting.size() * sizeof(float), GL_STATIC_DRAW);
-			
+			// update global_state: stc.
+			DataBytesStaticVertex = DatasetTemp.size();
+
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetRewriting.size());
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: delete key: %u", rukey);
 			return true;
@@ -103,16 +112,17 @@ namespace GraphicsEngineDataset {
 	}
 
 	bool GLEngineStcVertexData::VerStcOperFrameDraw(ResUnique rukey) {
+#if PSAG_DEBUG_MODE
 		auto it = IndexItems.find(rukey);
-		if (it != IndexItems.end()) {
-			// draw vertex: length,offset.
-			ShaderRender.DrawVertexGroupSeg(
-				LLRES_VertexBuffers->ResourceFind(VertexBuffer),
-				it->second.DatasetLength / (FS_VERTEX_LENGTH), it->second.DatasetOffsetLength / (FS_VERTEX_LENGTH)
-			);
-			return true;
-		}
-		return false;
+		if (it == IndexItems.end())
+			return false;
+#endif
+		// draw vertex: length,offset.
+		ShaderRender.DrawVertexGroupSeg(
+			LLRES_VertexBuffers->ResourceFind(VertexBuffer),
+			IndexItems[rukey].DatasetLength / (FS_VERTEX_LENGTH), IndexItems[rukey].DatasetOffsetLength / (FS_VERTEX_LENGTH)
+		);
+		return true;
 	}
 
 	void GLEngineStcVertexData::StaticVertexDataObjectCreate() {
@@ -187,33 +197,35 @@ namespace GraphicsEngineDataset {
 	}
 
 	bool GLEngineDyVertexData::VerDyOperFramePushData(ResUnique rukey, const vector<float>& data) {
+#if PSAG_DEBUG_MODE
 		auto it = IndexItems.find(rukey);
-		if (it != IndexItems.end()) {
-			// offset => length => push back data.
-			it->second.DatasetOffsetLength = VertexRawDataset.size();
-			it->second.DatasetLength       = data.size();
-			VertexRawDataset.insert(VertexRawDataset.end(), data.data(), data.data() + data.size());
-			// set_flag: 待更新状态.
-			GLOBAL_UPDATE_FLAG = true;
-			return true;
-		}
-		return false;
+		if (it == IndexItems.end())
+			return false;
+#endif
+		// offset => length => push back data.
+		IndexItems[rukey].DatasetOffsetLength = VertexRawDataset.size();
+		IndexItems[rukey].DatasetLength       = data.size();
+		VertexRawDataset.insert(VertexRawDataset.end(), data.data(), data.data() + data.size());
+		// set_flag: 待更新状态.
+		GLOBAL_UPDATE_FLAG = true;
+		return true;
 	}
 
 	bool GLEngineDyVertexData::VerDyOperFrameDraw(ResUnique rukey) {
+#if PSAG_DEBUG_MODE
 		auto it = IndexItems.find(rukey);
-		if (it != IndexItems.end()) {
-			// vertex dataset 未更新 => update_dataset.
-			if (GLOBAL_UPDATE_FLAG)
-				UpdateVertexDyDataset();
-			// draw vertex: length,offset.
-			ShaderRender.DrawVertexGroupSeg(
-				LLRES_VertexBuffers->ResourceFind(VertexBuffer),
-				it->second.DatasetLength / (FS_VERTEX_LENGTH), it->second.DatasetOffsetLength / (FS_VERTEX_LENGTH)
-			);
-			return true;
-		}
-		return false;
+		if (it == IndexItems.end())
+			return false;
+#endif
+		// vertex dataset 未更新 => update_dataset.
+		if (GLOBAL_UPDATE_FLAG)
+			UpdateVertexDyDataset();
+		// draw vertex: length,offset.
+		ShaderRender.DrawVertexGroupSeg(
+			LLRES_VertexBuffers->ResourceFind(VertexBuffer),
+			IndexItems[rukey].DatasetLength / (FS_VERTEX_LENGTH), IndexItems[rukey].DatasetOffsetLength / (FS_VERTEX_LENGTH)
+		);
+		return true;
 	}
 
 	void GLEngineDyVertexData::SystemFrameUpdateNewState() {
@@ -228,6 +240,8 @@ namespace GraphicsEngineDataset {
 		ShaderRender.UploadVertexDataset(
 			LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer), VertexRawDataset.data(), VertexRawDataset.size() * sizeof(float)
 		);
+		// update global_state: dy.
+		DataBytesDynamicVertex = VertexRawDataset.size();
 		// set_flag: 已更新状态.
 		GLOBAL_UPDATE_FLAG = false;
 	}
@@ -378,8 +392,8 @@ namespace GraphicsEngineDataset {
 				IMAGE_TOOLS::IMAGE_TOOL_CHANNELS(ImgDataTemp.ImagePixels);
 
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: src: %u x %u, fmt_fill: %u x %u",
-				ImgDataTemp.Width, ImgDataTemp.Height, TextureIndex->TextureResolution.vector_x, TextureIndex->TextureResolution.vector_y);
-			
+				ImgDataTemp.Width, ImgDataTemp.Height, TextureIndex->TextureResolution.vector_x, TextureIndex->TextureResolution.vector_y
+			);
 			// upload texture layer_data, rgba(default).
 			ShaderRender.UploadTextureLayer(
 				LLRES_Textures->ResourceFind(TextureIndex->TextureArrayIndex).Texture,
@@ -399,7 +413,10 @@ namespace GraphicsEngineDataset {
 		);
 
 		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: alloc key: %u, cropping: %.2f x %.2f, res: %s",
-			rukey, SmpCropping.vector_x, SmpCropping.vector_y, TexResLabel);
+			rukey, SmpCropping.vector_x, SmpCropping.vector_y, TexResLabel
+		);
+		// add texture count.
+		++DataBytesOnlineTexture;
 		return true;
 	}
 
@@ -410,7 +427,11 @@ namespace GraphicsEngineDataset {
 		EmptyImageTemp.Width = size.vector_x; EmptyImageTemp.Height = size.vector_y;
 		EmptyImageTemp.Channels = DEF_IMG_CHANNEL_RGBA;
 		// alloc.
-		return VirTextureItemAlloc(rukey, EmptyImageTemp);
+		if (!VirTextureItemAlloc(rukey, EmptyImageTemp))
+			return false;
+		// add texture count.
+		++DataBytesOnlineTexture;
+		return true;
 	}
 
 	bool GLEngineSmpTextureData::VirTextureItemFree(ResUnique rukey) {
@@ -441,6 +462,8 @@ namespace GraphicsEngineDataset {
 			--TextureIndex->ArraySize.vector_y;
 
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: delete key: %u", rukey);
+			// sub texture count;
+			--DataBytesOnlineTexture;
 			return true;
 		}
 		return false;
@@ -456,7 +479,7 @@ namespace GraphicsEngineDataset {
 		if (TexItemTemp != nullptr) {
 			// find tex => bind context => sampler => uniform(s).
 			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
-#if defined(_DEBUG) || defined(DEBUG)
+#if PSAG_DEBUG_MODE
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
 				return false;
 #endif

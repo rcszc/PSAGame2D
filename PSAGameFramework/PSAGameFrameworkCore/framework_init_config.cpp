@@ -43,6 +43,12 @@ namespace PsagFrameworkCore {
 		GraphShaders.PrivateShaders.ShaderFragParticle    = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_particle.frag");
 		GraphShaders.PrivateShaders.ShaderFragFxSequence  = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_fx_sequence.frag");
 		
+		// config system textures_max, 1x(base:1/8), 2x(base:1/4), 4x(base:1/2), 1x(base:1/1).
+		VirTexturesMax.Tex1Xnum = 16;
+		VirTexturesMax.Tex2Xnum = 32;
+		VirTexturesMax.Tex4Xnum = 32;
+		VirTexturesMax.Tex8Xnum = 48;
+
 		GraphicsShaderCode::GLOBALRES.Set(GraphShaders);
 	}
 }

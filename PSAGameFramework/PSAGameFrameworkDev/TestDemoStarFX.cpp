@@ -53,7 +53,7 @@ StarDemoFX::StarDemoFX(
         Vector2T<uint32_t>(), 
         DecodeRawImage.DecodeImageRawData(ParticleTexture.GetDataBinary())
     );
-    ActorParticles->SetParticleTwisted(1.0f);
+    ActorParticles->SetParticleTwisted(2.0f);
 }
 
 void StarDemoFX::StarDemoFxRender() {
@@ -61,39 +61,24 @@ void StarDemoFX::StarDemoFxRender() {
     auto FxActorObj2 = ActorManager->FindGameActor(FxActorUnique[1]);
 
     // 生成聚合粒子.
-    if (FxActorTimer > 2.5f) {
+    if (FxActorTimer > 1.2f) {
         GraphicsEngineParticle::ParticleGenerator CreatePartc;
         Vector2T<float> ColorSystem = Vector2T<float>(0.05f * FxActorAnimTimer, 0.15f * FxActorAnimTimer);
 
-        if (!FxActorFireFlag) {
-            CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcPoly);
-            CreatePartc.ConfigCreateNumber(FxActorAnimTimer * FxActorAnimTimer + 8.0f);
-            CreatePartc.ConfigLifeDispersion(Vector2T<float>(35.0f, 70.0f));
-            CreatePartc.ConfigSizeDispersion(Vector2T<float>(0.1f * FxActorAnimTimer, 0.25f * FxActorAnimTimer));
-
-            // particles color rand: red,blue.
-            CreatePartc.ConfigRandomColorSystem(ColorSystem, ColorSystem, ColorSystem, GraphicsEngineParticle::ChannelsGB);
-            CreatePartc.ConfigRandomDispersion(
-                Vector2T<float>(0.72f, 1.0f),
-                Vector2T<float>(-28.0f * FxActorAnimTimer, 28.0f * FxActorAnimTimer),
-                Vector3T<float>(FxActorObj1->ActorGetPosition().vector_x, FxActorObj1->ActorGetPosition().vector_y, 0.0f)
-            );
-            ActorParticles->ParticleCreate(&CreatePartc);
-        }
-
-        CreatePartc.ConfigCreateMode(GraphicsEngineParticle::PrtcDrift);
-        CreatePartc.ConfigCreateNumber(2.4f * FxActorAnimTimer + 8.0f + 280.0f * (float)FxActorFireFlag);
-        CreatePartc.ConfigLifeDispersion(Vector2T<float>(512.0f, 1024.0f));
-        CreatePartc.ConfigSizeDispersion(Vector2T<float>(1.6f, 4.8f));
+        CreatePartc.ConfigCreateMode(GraphicsEngineParticle::ParticlesGenMode::PrtcPoly);
+        CreatePartc.ConfigCreateNumber(FxActorAnimTimer * FxActorAnimTimer * 0.5f + 8.0f);
+        CreatePartc.ConfigLifeDispersion(Vector2T<float>(35.0f, 70.0f));
+        CreatePartc.ConfigSizeDispersion(Vector2T<float>(0.1f * FxActorAnimTimer, 0.25f * FxActorAnimTimer));
 
         // particles color rand: red,blue.
-        CreatePartc.ConfigRandomColorSystem(Vector2T<float>(0.32f, 0.72f), ColorSystem, ColorSystem, GraphicsEngineParticle::Grayscale);
+        CreatePartc.ConfigRandomColorSystem(ColorSystem, ColorSystem, ColorSystem, GraphicsEngineParticle::ParticlesGenMode::ChannelsGB);
         CreatePartc.ConfigRandomDispersion(
-            Vector2T<float>(-5.8f, -1.6f),
-            Vector2T<float>(-1000.0f, 1000.0f),
-            Vector3T<float>(0.0f, 0.0f, 55.0f)
+            Vector2T<float>(0.72f, 1.0f),
+            Vector2T<float>(-28.0f * FxActorAnimTimer, 28.0f * FxActorAnimTimer),
+            Vector3T<float>(FxActorObj1->ActorGetPosition().vector_x, FxActorObj1->ActorGetPosition().vector_y, 0.0f)
         );
         ActorParticles->ParticleCreate(&CreatePartc);
+
         // clear cycles_timer.
         FxActorTimer = 0.0f;
     }

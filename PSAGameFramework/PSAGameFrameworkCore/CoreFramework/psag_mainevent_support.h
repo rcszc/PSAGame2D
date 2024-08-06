@@ -173,7 +173,10 @@ namespace PsagFrameworkCore {
         std::unordered_map<std::string, GameLogic::INTERFACE_DEVCLASS_GAME*> GAME_CORE_CLASS = {};
 
         PsagLow::PsagSupWindowGuiConfigWin WindowInitConfig = {};
-        PsagLow::PsagSupWindowGuiConfigGui ImGuiInitConfig = {};
+        PsagLow::PsagSupWindowGuiConfigGui ImGuiInitConfig  = {};
+
+        // virtual textures_level number max.
+        GraphicsEngineDataset::VirTexturesGenParams VirTexturesMax = {};
 
         // renderer init params.
         uint32_t RendererMSAA        = 1;
@@ -181,8 +184,10 @@ namespace PsagFrameworkCore {
 
         // renderer event_loop params.
         Vector4T<float>* RenderingFrameColorPtr = &RenderBgColor;
-        Vector2T<uint32_t> RenderingWinSize = {};
+
+        Vector2T<uint32_t> RenderingWindowSize         = {};
         Vector2T<uint32_t> RenderingVirTextureSizeBase = {};
+
         // time step (fps)benchmark.
         float RenderingBaseFPS = 120.0f;
 
