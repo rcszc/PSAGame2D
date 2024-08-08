@@ -28,7 +28,9 @@ namespace GraphicsEnginePVFX {
 		return TextureViewItem.Texture;
 	};
 
-	PsagGLEngineFxCaptureView::PsagGLEngineFxCaptureView(const Vector2T<uint32_t>& render_resolution) {
+	PsagGLEngineFxCaptureView::PsagGLEngineFxCaptureView(
+		const Vector2T<uint32_t>& render_resolution, bool clear_buffer
+	) {
 		// generate unique_id.
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 
@@ -40,6 +42,13 @@ namespace GraphicsEnginePVFX {
 
 		TextureViewItem = CreateTexView.CreateTexture();
 
+		if (clear_buffer)
+			BindFrameBufferFunc = [&]() { ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0); };
+		BindFrameBufferFunc = [&]() { 
+			// NCC: non-clear (frame)buffer.
+			ShaderRender.RenderBindFrameBufferNCC(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0);
+		};
+		
 		if (CreateFrameBuffer.CreateFrameBuffer()) {
 			FrameBufferItem = GenResourceID.PsagGenTimeKey();
 			// create bind frame_buffer.
@@ -54,12 +63,12 @@ namespace GraphicsEnginePVFX {
 		PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system: failed create fbo.");
 	}
 
-	void PsagGLEngineFxCaptureView::CaptureContextBind() {
+	void PsagGLEngineFxCaptureView::CaptureContextBegin() {
 		// opengl api context bind.
-		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0);
+		BindFrameBufferFunc();
 	}
 
-	void PsagGLEngineFxCaptureView::CaptureContextUnBind() {
+	void PsagGLEngineFxCaptureView::CaptureContextEnd() {
 		// opengl api context unbind.
 		ShaderRender.RenderUnbindFrameBuffer();
 	}
@@ -160,6 +169,10 @@ namespace GraphicsEnginePVFX {
 		ShaderRender.RenderUnbindShader();
 
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
-		return ShaderTemp != OPENGL_INVALID_HANDEL;
+#if PSAG_DEBUG_MODE
+		if (ShaderTemp == OPENGL_INVALID_HANDEL)
+			return false;
+#endif
+		return true;
 	}
 }

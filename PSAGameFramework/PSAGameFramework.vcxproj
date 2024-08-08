@@ -156,6 +156,7 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_tables.cpp" />
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp" />
     <ClCompile Include="PSAGameFramework.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_pawn.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_random.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_data.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_render.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_script.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_register.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.cpp" />

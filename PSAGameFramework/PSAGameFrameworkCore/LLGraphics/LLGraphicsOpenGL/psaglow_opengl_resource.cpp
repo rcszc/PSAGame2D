@@ -55,7 +55,8 @@ namespace PSAG_OGL_RES {
 		if (ResourceShaderMap.find(key) == ResourceShaderMap.end())
 			++GLOBAL_DEBUG_COUNT.ResourceShader;
 #endif
-		return ResourceShaderMap[key];
+		return ResourceShaderMap.find(key) == ResourceShaderMap.end() ? 
+			OPENGL_INVALID_HANDEL : ResourceShaderMap[key];
 	}
 
 	bool PsagResShadersOGL::ResourceStorage(ResUnique key, PsagGLmanagerShader* res) {
@@ -102,7 +103,8 @@ namespace PSAG_OGL_RES {
 		if (ResourceTextureMap.find(key) == ResourceTextureMap.end())
 			++GLOBAL_DEBUG_COUNT.ResourceTexture;
 #endif
-		return ResourceTextureMap[key];
+		return ResourceTextureMap.find(key) == ResourceTextureMap.end() ? 
+			PsagTextureAttrib() : ResourceTextureMap[key];
 	}
 
 	bool PsagResTextureOGL::ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) {
@@ -150,7 +152,8 @@ namespace PSAG_OGL_RES {
 		if (ResourceVertexBufferMap.find(key) == ResourceVertexBufferMap.end())
 			++GLOBAL_DEBUG_COUNT.ResourceVBO;
 #endif
-		return ResourceVertexBufferMap[key];
+		return ResourceVertexBufferMap.find(key) == ResourceVertexBufferMap.end() ? 
+			PsagVertexBufferAttrib() : ResourceVertexBufferMap[key];
 	}
 
 	bool PsagResVertexBufferOGL::ResourceStorage(ResUnique key, PsagGLmanagerModel* res) {
@@ -203,7 +206,8 @@ namespace PSAG_OGL_RES {
 		if (ResourceVertexAttrMap.find(key) == ResourceVertexAttrMap.end())
 			++GLOBAL_DEBUG_COUNT.ResourceVAO;
 #endif
-		return ResourceVertexAttrMap[key];
+		return ResourceVertexAttrMap.find(key) == ResourceVertexAttrMap.end() ? 
+			PsagVertexAttribute() : ResourceVertexAttrMap[key];
 	}
 
 	bool PsagResVertexAttribOGL::ResourceStorage(ResUnique key, PsagVertexAttribute res) {
@@ -245,7 +249,8 @@ namespace PSAG_OGL_RES {
 		if (ResourceFrameBufferMap.find(key) == ResourceFrameBufferMap.end())
 			++GLOBAL_DEBUG_COUNT.ResourceFBO;
 #endif
-		return ResourceFrameBufferMap[key];
+		return ResourceFrameBufferMap.find(key) == ResourceFrameBufferMap.end() ? 
+			OPENGL_INVALID_HANDEL : ResourceFrameBufferMap[key];
 	}
 
 	bool PsagResFrameBufferOGL::ResourceStorage(ResUnique key, PsagGLmanagerFrameBuffer* res) {
@@ -293,7 +298,8 @@ namespace PSAG_OGL_RES {
 		if (ResourceRenderBufferMap.find(key) == ResourceRenderBufferMap.end())
 			++GLOBAL_DEBUG_COUNT.ResourceRBO;
 #endif
-		return ResourceRenderBufferMap[key];
+		return ResourceRenderBufferMap.find(key) == ResourceRenderBufferMap.end() ? 
+			PsagRenderBufferAttrib() : ResourceRenderBufferMap[key];
 	}
 
 	bool PsagResRenderBufferOGL::ResourceStorage(ResUnique key, PsagGLmanagerRenderBuffer* res) {

@@ -38,7 +38,7 @@ namespace GameCoreManager {
 	}
 
 	GameActorCore::GameActorActuator* GameActorActuatorManager::FindGameActor(size_t unique_code) {
-		return (GameActorDataset.find(unique_code) != GameActorDataset.end()) ? GameActorDataset[unique_code] : nullptr;
+		return GameActorDataset.find(unique_code) == GameActorDataset.end() ? nullptr : GameActorDataset[unique_code];
 	}
 
 	void GameActorActuatorManager::UpdateManagerData() {
@@ -70,7 +70,7 @@ namespace GameCoreManager {
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_brick manager system delete.");
 	}
 
-	size_t GameBrickActuatorManager::CreateGameActor(const GameBrickCore::GameBrickActuatorDESC& brick_desc) {
+	size_t GameBrickActuatorManager::CreateGameBrick(const GameBrickCore::GameBrickActuatorDESC& brick_desc) {
 		GameBrickCore::GameBrickActuator* CreateGameBrick = new GameBrickCore::GameBrickActuator(brick_desc);
 		// brick pointer = nullptr.
 		if (CreateGameBrick == nullptr) {
@@ -82,7 +82,7 @@ namespace GameCoreManager {
 		return UniqueCode;
 	}
 
-	bool GameBrickActuatorManager::DeleteGameActor(size_t unique_code) {
+	bool GameBrickActuatorManager::DeleteGameBrick(size_t unique_code) {
 		auto it = GameBrickDataset.find(unique_code);
 		if (it != GameBrickDataset.end()) {
 			delete it->second;
@@ -92,7 +92,7 @@ namespace GameCoreManager {
 		return false;
 	}
 
-	void GameBrickActuatorManager::RunAllGameActor() {
+	void GameBrickActuatorManager::RunAllGameBrick() {
 		for (auto& RunBrickItem : GameBrickDataset)
 			RunBrickItem.second->BrickRendering();
 	}

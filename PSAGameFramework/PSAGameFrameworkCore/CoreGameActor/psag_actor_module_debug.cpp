@@ -14,10 +14,10 @@ namespace GameDebugGuiWindow {
 	constexpr ImVec4 L_COLOR = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	constexpr ImVec4 H_COLOR = ImVec4(0.0f, 1.0f, 0.9f, 1.0f);
 
-	void DebugWindowGuiActor(const char* name, GameActorCore::GameActorActuator* actor) {
+	void DebugWindowGuiActorPawn(const char* name, GameActorCore::GameActorActuator* actor) {
 		ImGui::Begin(name);
 		{
-			ImGui::Text("Actor Type: %u, Code: %u", actor->ActorGetPrivate().ActorTypeCode, actor->ActorGetPrivate().ActorUniqueCode);
+			ImGui::Text("Actor Type: %u, Unique: %u", actor->ActorGetPrivate().ActorTypeCode, actor->ActorGetPrivate().ActorUniqueCode);
 			ImGui::Text("W"); ImGui::SameLine();
 			LndicatorLED(ImGui::IsKeyDown(ImGuiKey_W), ImVec2(28.0f, 28.0f), H_COLOR, L_COLOR);
 			ImGui::SameLine(); ImGui::Text("A"); ImGui::SameLine();
@@ -28,9 +28,9 @@ namespace GameDebugGuiWindow {
 			LndicatorLED(ImGui::IsKeyDown(ImGuiKey_D), ImVec2(28.0f, 28.0f), H_COLOR, L_COLOR);
 
 			ImGui::Text("Actor Position: %.2f, %.2f", actor->ActorGetPosition().vector_x, actor->ActorGetPosition().vector_y);
-			ImGui::Text("Actor Speed: %.2f, %.2f", actor->ActorGetMoveSpeed().vector_x, actor->ActorGetMoveSpeed().vector_y);
-			ImGui::Text("Actor Scale: %.2f, %.2f", actor->ActorGetScale().vector_x, actor->ActorGetScale().vector_y);
-			ImGui::Text("Actor RotateSpeed: %.3f", actor->ActorGetRotateSpeed());
+			ImGui::Text("Actor Speed: %.2f, %.2f",    actor->ActorGetMoveSpeed().vector_x, actor->ActorGetMoveSpeed().vector_y);
+			ImGui::Text("Actor Scale: %.2f, %.2f",    actor->ActorGetScale().vector_x, actor->ActorGetScale().vector_y);
+			ImGui::Text("Actor RotateSpeed: %.3f",    actor->ActorGetRotateSpeed());
 		}
 		ImGui::End();
 	}
@@ -46,7 +46,7 @@ namespace GameDebugGuiWindow {
 			ImGui::BeginChild("INFO", ImVec2(ImGui::GetWindowSize().x - IMGUI_ITEM_SPAC * 2.0f, 64.0f), true);
 
 			ImGui::TextColored(
-				ImVec4(0.0f, 1.0f, 1.0f, 0.92f), "actor: name: %u code: %u",
+				ImVec4(0.0f, 1.0f, 1.0f, 0.92f), "actor: type: %u unique: %u",
 				ActorItem.second->ActorGetPrivate().ActorTypeCode,
 				ActorItem.second->ActorGetPrivate().ActorUniqueCode
 			);
@@ -64,20 +64,33 @@ namespace GameDebugGuiWindow {
 		ImGui::End();
 	}
 
-	void DebugWindowGuiFPS(const char* name, float framerate_params[3]) {
-		ImGui::Begin(name, (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
+	void DebugWindowGuiFPS::RenderingWindowGui() {
+		// 500ms sample min_fps.
+		if (chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - DebugFpsTimer).count() > 3200) {
+			FramerateParams[2] = 0.0f;
+			FramerateParams[3] = 32768.0f;
+			FramerateCount = NULL;
+			DebugFpsTimer = chrono::steady_clock::now();
+		}
+		if (FramerateParams[0] < FramerateParams[3]) FramerateParams[3] = FramerateParams[0];
+		if (FramerateParams[0] > FramerateParams[2]) FramerateParams[2] = FramerateParams[0];
+
+		ImGui::Begin(DebugWindowName, (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
 		{
-			framerate_params[0] = ImGui::GetIO().Framerate;
-			float FrameCount = (float)ImGui::GetFrameCount();
-			framerate_params[1] = (framerate_params[1] * FrameCount + framerate_params[0]) / (FrameCount + 1.0f);
+			FramerateParams[0] = ImGui::GetIO().Framerate;
+			FramerateParams[1] = (FramerateParams[1] * FramerateCount + FramerateParams[0]) / (FramerateCount + 1.0f);
 
-			if (framerate_params[0] > framerate_params[2])
-				framerate_params[2] = framerate_params[0];
+			ImGui::Text("Run:"); ImGui::SameLine(); ImGui::ProgressBar(FramerateParams[0] / FramerateLimitMax);
+			ImGui::Text("Avg:"); ImGui::SameLine(); ImGui::ProgressBar(FramerateParams[1] / FramerateLimitMax);
 
-			ImGui::Text("GameFramerate Run: %.2f", framerate_params[0]);
-			ImGui::Text("GameFramerate Avg: %.2f", framerate_params[1]);
-			ImGui::Text("GameFramerate Max: %.2f", framerate_params[2]);
+			ImGui::Text("Framerate (RT) Run: %.2f", FramerateParams[0]);
+
+			ImGui::Text("Framerate (3200ms) Avg: %.2f", FramerateParams[1]);
+			ImGui::Text("Framerate (3200ms) Max: %.2f", FramerateParams[2]);
+			ImGui::Text("Framerate (3200ms) Min: %.2f", FramerateParams[3]);
+			ImGui::Text("Max - Min: %.2f", FramerateParams[2] - FramerateParams[3]);
 		}
 		ImGui::End();
+		++FramerateCount;
 	}
 }

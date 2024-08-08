@@ -155,8 +155,9 @@ namespace PsagFrameworkCore {
         public PhysicsEngine::PhyEngineCoreDataset,
         // system time step.
         public __GRAPHICS_ENGINE_TIMESETP,
-        public __ACTOR_MODULES_TIMESTEP
+        public __ACTOR_MODULES_TIMESTEP,
         // public __PHYSICS_ENGINE_TIMESETP, (”Î"PhysicsEngine::PhyEngineCoreDataset"≥ÂÕª)
+        public __COLLECT_ENGINE_TIMESETP
     {
     private:
         static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;

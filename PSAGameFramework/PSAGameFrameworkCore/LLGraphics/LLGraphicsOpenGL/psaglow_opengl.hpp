@@ -221,7 +221,9 @@ namespace RenderingSupport {
 	public:
 		void RenderBindShader(const PsagShader& program);
 		void RenderBindTexture(const PsagTextureAttrib& texture);
-		void RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
+
+		void RenderBindFrameBuffer   (const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
+		void RenderBindFrameBufferNCC(const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
 
 		void DrawVertexGroup(const PsagVertexBufferAttrib& model);
 		void DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t vert_len, size_t vert_off);
@@ -283,7 +285,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResTexSamplerOGL :public PsagOGLsystemLogger, public PsagGLresourceTMU {
 	protected:
-		std::vector<bool> TmuStateFlag  = {};
+		std::vector<bool> TmuStateFlag = {};
 		std::mutex TmuStateMutex = {};
 
 	public:
@@ -298,7 +300,7 @@ namespace PSAG_OGL_RES {
 
 	class PsagResShadersOGL :public PsagOGLsystemLogger, public PsagGLresourceShader {
 	protected:
-		std::unordered_map<ResUnique, PsagShader> ResourceShaderMap = {};
+		std::unordered_map<ResUnique, PsagShader> ResourceShaderMap   = {};
 		std::mutex ResourceShaderMutex = {};
 
 	public:
@@ -419,10 +421,6 @@ namespace PSAG_OGL_RES {
 				if (item.second == OPENGL_INVALID_HANDEL)
 					++InvalidCountHD;
 			}
-			// map 初始化后莫名写入一项 OPENGL_INVALID_HANDEL
-			// warning: 导致回收计数错误 (未解决). [20240806]
-			InvalidCountHD -= 1;
-
 			// print_log: free_count, invalid_count.
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(vertex_attribute): %u items", ResourceSize());
 			if (InvalidCountHD)

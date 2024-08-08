@@ -83,6 +83,7 @@ namespace CollectEngineRandom {
 			if (PointIsValid)
 				RandomCoordGroup.push_back(NewPoint);
 		}
+		PushLogger(LogInfo, PSAGM_COLENGINE_RAND_LABEL, "random(2d) system: create: %u", number);
 		return true;
 	}
 
@@ -104,7 +105,12 @@ namespace CollectEngineRandom {
 				return !(DisLen < radius);
 			}
 		);
+		size_t CropPointsNumber = RandomCoordGroup.size();
 		RandomCoordGroup.erase(it, RandomCoordGroup.end());
+		
+		CropPointsNumber -= RandomCoordGroup.size();
+		PushLogger(LogInfo, PSAGM_COLENGINE_RAND_LABEL, "random(2d) system: crop(circle): %u",
+			CropPointsNumber);
 		return true;
 	}
 
@@ -117,11 +123,15 @@ namespace CollectEngineRandom {
 			PushLogger(LogError, PSAGM_COLENGINE_RAND_LABEL, "random(2d) system: crop: rect_min > rect_max.");
 			return false;
 		}
+		size_t CropPointsNumber = RandomCoordGroup.size();
 		// point > rect_border => erase.
 		for (auto it = RandomCoordGroup.begin(); it != RandomCoordGroup.end(); ++it) {
 			if (IsPointInRectangle(*it, min_point, max_point))
 				RandomCoordGroup.erase(it);
 		}
+		CropPointsNumber -= RandomCoordGroup.size();
+		PushLogger(LogInfo, PSAGM_COLENGINE_RAND_LABEL, "random(2d) system: crop(rect): %u",
+			CropPointsNumber);
 		return true;
 	}
 }

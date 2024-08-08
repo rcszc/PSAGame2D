@@ -70,11 +70,28 @@ namespace GameManagerCore {
 		}
 
 		GameFxSpriteSheet::GameFxSpriteSheet(const GameFxSpriteSheetDESC& INIT_DESC) {
+			GraphicsEnginePVFX::SequencePlayer PlayParamsTemp = {};
 
+			PlayParamsTemp.UaxisFrameNumber = INIT_DESC.SpriteSheetNumber.vector_x;
+			PlayParamsTemp.VaxisFrameNumber = INIT_DESC.SpriteSheetNumber.vector_y;
+			PlayParamsTemp.PlayerSpeedScale = INIT_DESC.SpriteSheetPlaySpeed;
+
+			// texture shader blend_color(init).
+			BackgroundColorBlend = INIT_DESC.SpriteSheetInitColorBg;
+
+			FxSpriteSheetObject = new 
+				GraphicsEnginePVFX::PsagGLEngineFxSequence(INIT_DESC.RenderTexture, PlayParamsTemp);
+			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_sprite_sheet init.");
 		}
 
 		GameFxSpriteSheet::~GameFxSpriteSheet() {
+			delete FxSpriteSheetObject;
 
+			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_sprite_sheet free.");
+		}
+
+		void GameFxSpriteSheet::FxSpriteSheetRendering() {
+			FxSpriteSheetObject->DrawFxSequence(BackgroundColorBlend);
 		}
 	}
 }

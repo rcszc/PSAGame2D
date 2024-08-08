@@ -26,19 +26,19 @@ StarDemoFX::StarDemoFX(
         960.0f * sin((Angle + 90.0f) * (PSAG_M_PI / 180.0f)) + Position.vector_x,
         960.0f * cos((Angle + 90.0f) * (PSAG_M_PI / 180.0f)) + Position.vector_y
     );
-    ConfigStarActor.InitialLayer = 51.0f;
+    ConfigStarActor.InitialRenderLayer = 51.0f;
     ConfigStarActor.InitialScale = Vector2T<float>(100.0f, 3.2f);
     FxActorUnique[2] = Manager->CreateGameActor(PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_fx"), ConfigStarActor);
 
     ConfigStarActor.ActorShaderResource = Shader.vector_x;
 
-    ConfigStarActor.InitialLayer    = 52.0f;
+    ConfigStarActor.InitialRenderLayer    = 52.0f;
     ConfigStarActor.InitialScale    = Vector2T<float>(1.0f, 1.0f);
     ConfigStarActor.InitialPosition = Position;
     FxActorUnique[0] = Manager->CreateGameActor(PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_fx"), ConfigStarActor);
 
     ConfigStarActor.ActorShaderResource = Shader.vector_y;
-    ConfigStarActor.InitialLayer = 54.0f;
+    ConfigStarActor.InitialRenderLayer = 54.0f;
     FxActorUnique[1] = Manager->CreateGameActor(PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_fx"), ConfigStarActor);
 
     ActorShader1 = Shader.vector_x;

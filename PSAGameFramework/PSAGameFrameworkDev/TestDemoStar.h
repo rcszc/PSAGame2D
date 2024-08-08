@@ -54,7 +54,8 @@ protected:
     float GameTestMaxFPS = 0.0f;
     float CameraScale  = 1.0f;
     float CameraRotate = 0.0f;
-    float FramerateParams[3] = {};
+
+    GameDebugGuiWindow::DebugWindowGuiFPS* FpsDebug;
 
     int LightSamplerStep = 100;
 
@@ -62,7 +63,8 @@ protected:
     size_t   EatStarCountTotal = NULL;
 
     GraphicsEngineParticle::PsagGLEngineParticle* AshesParticles = nullptr;
-    
+    PsagManager::Tools::Pawn::GamePlayerPawn* PlayerPawn = nullptr;
+
     // ######################## TEST ACTORS ########################
 
     PsagActor::ActorsManager TestGameActors;

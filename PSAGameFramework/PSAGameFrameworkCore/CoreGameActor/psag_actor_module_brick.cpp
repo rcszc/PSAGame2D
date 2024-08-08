@@ -53,7 +53,7 @@ namespace GameBrickCore {
 		BrickStaticPosition = INIT_DESC.InitialPosition;
 		BrickStaticScale    = INIT_DESC.InitialScale;
 		BrickStaticRotate   = INIT_DESC.InitialRotate;
-		BrickStaticLayer    = INIT_DESC.InitialLayer;
+		BrickStaticLayer    = INIT_DESC.InitialRenderLayer;
 		// actor space_z value_clamp.
 		BrickStaticLayer = PsagClamp(BrickStaticLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 

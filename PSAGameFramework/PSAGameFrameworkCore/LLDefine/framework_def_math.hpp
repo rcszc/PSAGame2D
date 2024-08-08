@@ -9,6 +9,7 @@ constexpr float SystemRenderingOrthoSpace = 100.0f;
 
 #define PSAG_M_PI 3.14159265f
 #define PSAG_M_DEGRAD(deg) ((deg) * (PSAG_M_PI / 180.0f))
+#define PSAG_M_RADDEG(rad) ((rad) * (180.0f / PSAG_M_PI))
 
 // vector 2d x, y.
 template <typename mvec>

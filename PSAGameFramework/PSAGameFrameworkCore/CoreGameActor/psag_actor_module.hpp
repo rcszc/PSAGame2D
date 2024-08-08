@@ -57,13 +57,13 @@ namespace GameActorCore {
 
 	/* Actor Fragment ShaderTexture:
 		
-		uniform sampler2DArray ActorTexture;
-		uniform int            ActorTextureLayer;
-		uniform vec2           ActorTextureCropping;
-		uniform vec2           ActorTextureSize;
+		uniform sampler2DArray VirTexture;
+		uniform int            VirTextureLayer;
+		uniform vec2           VirTextureCropping;
+		uniform vec2           VirTextureSize;
 
 		// sample virtual_texture demo:
-		texture(ActorTexture, vec3(FxCoord, float(ActorTextureLayer)));
+		vec4 Frag = texture(VirTexture, vec3(FxCoord, float(VirTextureLayer)));
 	*/
 
 	struct GameActorShaderVerticesDESC {
@@ -155,33 +155,38 @@ namespace GameActorCore {
 	// hp handler function params.
 	struct HealthFuncParams {
 		size_t ThisActorUniqueCode;
-		ActorPrivateINFO ActorCollision;
 
-		float* ActorHealthStates;
-		size_t ActorHealthLength;
+		ActorPrivateINFO    ActorCollision;
+		std::vector<float>* ActorHealth;
+		Vector2T<float>     ActorPosition;
+		Vector2T<float>     ActorSpeed;
 
-		Vector2T<float> ActorPosition;
-		Vector2T<float> ActorSpeed;
+		HealthFuncParams() :
+			ThisActorUniqueCode(NULL),
 
-		HealthFuncParams() { 
-			std::memset(this, NULL, sizeof(HealthFuncParams));
-		}
+			ActorCollision({}),
+			ActorHealth   (nullptr),
+			ActorPosition (Vector2T<float>(0.0f, 0.0f)),
+			ActorSpeed    (Vector2T<float>(1.0f, 1.0f))
+		{}
 	};
-#define PSAG_HEALTH_STATE_NUM 6
+
+	// game actor_hp: [state,speed] calc: out += (state - out) * speed.
+	struct GameActorHP {
+		float HealthSTATE = 0.0f;
+		float HealthSPEED = 0.0f;
+	};
 	struct GameActorHealthDESC {
-		float InitialHealthState[PSAG_HEALTH_STATE_NUM];
-		float InitialHealthSpeed[PSAG_HEALTH_STATE_NUM];
+		std::vector<GameActorHP> InitialActorHealth;
 
 		// process function demo:
 		// demo: void MyHPprocess(const HealthFuncParams& params);
 		std::function<void(const HealthFuncParams& params)> HealthHandlerFunc;
 
-		GameActorHealthDESC() {
-			std::memset(InitialHealthState, 0, PSAG_HEALTH_STATE_NUM * sizeof(float));
-			std::memset(InitialHealthSpeed, 1, PSAG_HEALTH_STATE_NUM * sizeof(float));
-
-			HealthHandlerFunc = [](const HealthFuncParams&) {};
-		}
+		GameActorHealthDESC() :
+			InitialActorHealth({}),
+			HealthHandlerFunc ([](const HealthFuncParams&) {})
+		{}
 	};
 
 	enum ActorPhyMode {
@@ -201,10 +206,10 @@ namespace GameActorCore {
 		Vector2T<float> InitialScale;
 		Vector2T<float> InitialSpeed;
 		float           InitialRotate;
-		float           InitialLayer;
+		float           InitialRenderLayer;
 
 		// system core comp switch_flags.
-		bool EnablePawn = true, EnableHealth = true, EnableRendering = true;
+		bool EnableTrans = true, EnableHealth = true, EnableRendering = true;
 		bool EnableCollision = true;
 
 		GameActorHealthDESC ActorHealthSystem;
@@ -216,12 +221,12 @@ namespace GameActorCore {
 
 			ForceClacEnable(false),
 
-			InitialPhysics (Vector2T<float>(1.0f, 0.7f)),
-			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
-			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
-			InitialSpeed   (Vector2T<float>(0.0f, 0.0f)),
-			InitialRotate  (0.0f),
-			InitialLayer   (50.0f),
+			InitialPhysics    (Vector2T<float>(1.0f, 0.7f)),
+			InitialPosition   (Vector2T<float>(0.0f, 0.0f)),
+			InitialScale      (Vector2T<float>(1.0f, 1.0f)),
+			InitialSpeed      (Vector2T<float>(0.0f, 0.0f)),
+			InitialRotate     (0.0f),
+			InitialRenderLayer(50.0f),
 
 			ActorHealthSystem({})
 		{}
@@ -247,15 +252,14 @@ namespace GameActorCore {
 		public:
 			ActorSpaceTrans(const std::string& phy_world, PhyBodyKey phy_body, bool enable_force = false);
 			
-			Vector2T<float> ActorPawnMoveValue  = {};
+			Vector2T<float> ActorTransMoveValue  = {};
 			Vector2T<float> ActorStateMoveSpeed = {};
 
-			float  ActorPawnRotateValue  = 0.0f;
+			float  ActorTransRotateValue  = 0.0f;
 			float  ActorStateRotateSpeed = 0.0f;
 
 			virtual void UpdateActorTrans(Vector2T<float>& position, float& rotate);
-
-			virtual void SetActorPosRotate(const Vector2T<float>& pos, float angle);
+			virtual void SetActorState(const Vector2T<float>& pos, float angle);
 		};
 
 		class ActorHealthTrans : public __ACTOR_MODULES_TIMESTEP {
@@ -265,8 +269,9 @@ namespace GameActorCore {
 			ActorHealthTrans(const std::function<void(const HealthFuncParams&)>& func) :
 				ActorHealthHandlerFunc(func)
 			{}
-			// actor hp_state system. 0:set_state, 1:actor_state, 2:inter_speed.
-			float ActorHealthState[3][PSAG_HEALTH_STATE_NUM] = {};
+			// actor hp_state system. state: set, speed out: lerp.
+			std::vector<GameActorHP> ActorHealthState    = {};
+			std::vector<float>       ActorHealthStateOut = {};
 
 			virtual void UpdateActorHealthTrans(const HealthFuncParams& params);
 		};
@@ -312,7 +317,7 @@ namespace GameActorCore {
 			public:
 				ActorSpaceTransNULL(const std::string& phy_world, PhyBodyKey phy_body) : ActorSpaceTrans(phy_world, phy_body) {}
 				void UpdateActorTrans(Vector2T<float>& position, float& rotate) override {};
-				void SetActorPosRotate(const Vector2T<float>& pos, float angle) override {};
+				void SetActorState(const Vector2T<float>& pos, float angle) override {};
 			};
 			// NULL_OBJ: 'ActorHealthTrans'.
 			class ActorHealthTransNULL : public ActorHealthTrans {
@@ -343,6 +348,8 @@ namespace GameActorCore {
 
 		std::string ActorPhysicsWorld = {};
 		PhyBodyKey  ActorPhysicsItem  = {};
+		// physical collision: type:null, unique:first.
+		ActorPrivateINFO ActorCollisionInfo = {};
 
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
@@ -350,11 +357,10 @@ namespace GameActorCore {
 		// shader rendering size, shader_uniform param.
 		Vector2T<float> RenderingResolution = {};
 		
-		ActorPrivateINFO ActorCollisionInfo   = {};
-		Vector2T<float>  ActorPawnPosition    = {};
-		Vector2T<float>  ActorPawnScale       = {};
-		float            ActorPawnRotateValue = 0.0f;
-		float            ActorPawnLayer       = 0.0f;
+		Vector2T<float>  ActorTransPosition    = {};
+		Vector2T<float>  ActorTransScale       = {};
+		float            ActorTransRotateValue = 0.0f;
+		float            ActorTransLayer       = 0.0f;
 
 		// Actor»ù´¡×é¼þ.
 		system::ActorSpaceTrans*  ActorCompSpaceTrans  = nullptr;
@@ -368,30 +374,30 @@ namespace GameActorCore {
 		ActorPrivateINFO ActorGetCollision() { return ActorCollisionInfo; }
 
 		float ActorGetHealth(size_t count) {
-			if (count < PSAG_HEALTH_STATE_NUM)
-				return ActorCompHealthTrans == nullptr ? 0.0f : ActorCompHealthTrans->ActorHealthState[1][count];
+			if (count < ActorCompHealthTrans->ActorHealthStateOut.size())
+				return ActorCompHealthTrans == nullptr ? 0.0f : ActorCompHealthTrans->ActorHealthStateOut[count];
 			return 0.0f;
 		}
 
 		// timer: accuracy: ms, unit: s.
 		float ActorGetLifeTime();
 		// actor get_state: position & scale & rotate.
-		Vector2T<float> ActorGetPosition() { return ActorPawnPosition; };
-		Vector2T<float> ActorGetScale()    { return ActorPawnScale; }
-		float           ActorGetRotate()   { return ActorPawnRotateValue; };
+		Vector2T<float> ActorGetPosition() { return ActorTransPosition; };
+		Vector2T<float> ActorGetScale()    { return ActorTransScale; }
+		float           ActorGetRotate()   { return ActorTransRotateValue; };
 
 		Vector2T<float> ActorGetMoveSpeed()   { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
 		float           ActorGetRotateSpeed() { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
 
-		float* ActorLayerValuePtr() { return &ActorPawnLayer; }
+		float* ActorLayerValuePtr() { return &ActorTransLayer; }
 
-		void ActorApplyForceRotate(float vec)                { ActorCompSpaceTrans->ActorPawnRotateValue = vec; };
-		void ActorApplyForceMove(const Vector2T<float>& vec) { ActorCompSpaceTrans->ActorPawnMoveValue = vec; };
+		void ActorApplyForceRotate(float vec)                { ActorCompSpaceTrans->ActorTransRotateValue = vec; };
+		void ActorApplyForceMove(const Vector2T<float>& vec) { ActorCompSpaceTrans->ActorTransMoveValue = vec; };
 		// not scale actor collision_box.
-		void ActorModifyScale(const Vector2T<float>& vec) { ActorPawnScale = vec; };
+		void ActorModifyScale(const Vector2T<float>& vec) { ActorTransScale = vec; };
 		// set actor position & angle.
 		void ActorModifyState(const Vector2T<float>& position, float angle) {
-			ActorCompSpaceTrans->SetActorPosRotate(position, angle);
+			ActorCompSpaceTrans->SetActorState(position, angle);
 		}
 
 		// actor virtual(scene) coord =convert=> window coord(pixel).
@@ -427,7 +433,7 @@ namespace GameBrickCore {
 		Vector2T<float> InitialPosition;
 		Vector2T<float> InitialScale;
 		float           InitialRotate;
-		float           InitialLayer;
+		float           InitialRenderLayer;
 
 		// system core comp switch_flags.
 		bool EnableRendering = true;
@@ -441,7 +447,7 @@ namespace GameBrickCore {
 			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
 			InitialScale   (Vector2T<float>(1.0f, 1.0f)),
 			InitialRotate  (0.0f),
-			InitialLayer   (1.0f)
+			InitialRenderLayer   (1.0f)
 		{}
 	};
 
@@ -524,21 +530,36 @@ namespace GameCoreManager {
 			return &GameBrickDataset;
 		}
 
-		size_t CreateGameActor(const GameBrickCore::GameBrickActuatorDESC& brick_desc);
-		bool   DeleteGameActor(size_t unique_code);
+		size_t CreateGameBrick(const GameBrickCore::GameBrickActuatorDESC& brick_desc);
+		bool   DeleteGameBrick(size_t unique_code);
 		
 		// rendering all brick_object "BrickRendering".
-		void RunAllGameActor();
+		void RunAllGameBrick();
 	};
 }
 
 namespace GameDebugGuiWindow {
 	// debug window [panel], actor. 
-	void DebugWindowGuiActor(const char* name, GameActorCore::GameActorActuator* actor);
+	void DebugWindowGuiActorPawn(const char* name, GameActorCore::GameActorActuator* actor);
 	// debug window [panel], actor_manager(actors). 
 	void DebugWindowGuiActors(std::unordered_map<size_t, GameActorCore::GameActorActuator*>* actors);
-	// debug window [panel], fps_info.
-	void DebugWindowGuiFPS(const char* name, float framerate_params[3]);
+
+	// debug window [panel], framerate_info.
+	class DebugWindowGuiFPS {
+	protected:
+		const char* DebugWindowName = {};
+		std::chrono::steady_clock::time_point DebugFpsTimer = std::chrono::steady_clock::now();
+
+		// params: run, avg, max, min(500ms).
+		float FramerateParams[4] = {};
+		int   FramerateCount     = NULL;
+		float FramerateLimitMax  = 0.0f;
+	public:
+		DebugWindowGuiFPS(const char* name, float max_fps) : 
+			DebugWindowName(name), FramerateLimitMax(max_fps)
+		{};
+		void RenderingWindowGui();
+	};
 }
 
 #endif

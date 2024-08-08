@@ -8,7 +8,9 @@
 namespace PsagManager {
 	namespace Tools {
 		namespace Random = CollectEngineRandom;
+		namespace Pawn = CollectEnginePawn;
 	}
+	namespace Maths = GameManagerCore::GameMathsTools;
 }
 
 #endif

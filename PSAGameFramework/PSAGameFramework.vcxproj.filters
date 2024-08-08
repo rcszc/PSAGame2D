@@ -231,6 +231,12 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_render.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_pawn.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">

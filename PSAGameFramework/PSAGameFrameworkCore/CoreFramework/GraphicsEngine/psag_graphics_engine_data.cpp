@@ -35,9 +35,9 @@ namespace IMAGE_TOOLS {
 
 namespace GraphicsEngineDataset {
 	// GLOBAL STATE: 静态顶点组(大小), 动态顶点组(大小), 在线虚拟贴图数量(已加载帖图).
-	std::atomic<size_t> GLEngineDataSTATE::DataBytesStaticVertex  = NULL;
-	std::atomic<size_t> GLEngineDataSTATE::DataBytesDynamicVertex = NULL;
-	std::atomic<size_t> GLEngineDataSTATE::DataBytesOnlineTexture = NULL;
+	atomic<size_t> GLEngineDataSTATE::DataBytesStaticVertex  = NULL;
+	atomic<size_t> GLEngineDataSTATE::DataBytesDynamicVertex = NULL;
+	atomic<size_t> GLEngineDataSTATE::DataBytesOnlineTexture = NULL;
 
 	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper
 		GLEngineStcVertexData::ShaderRender = {};
@@ -45,11 +45,17 @@ namespace GraphicsEngineDataset {
 	ResUnique GLEngineStcVertexData::VertexAttribute = {};
 	ResUnique GLEngineStcVertexData::VertexBuffer = {};
 
-	std::unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStcVertexData::IndexItems = {};
+	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStcVertexData::IndexItems = {};
 	ResUnique GLEngineStcVertexData::SystemPresetRectangle = {};
+
+	mutex GLEngineStcVertexData::DatasetResMutex = {};
 
 	bool GLEngineStcVertexData::VerStcDataItemAlloc(ResUnique rukey, const vector<float>& data) {
 		VABO_DATASET_INFO AllocVertInfo = {};
+
+		size_t DatasetSizeTemp = NULL;
+		// enable [alloc] TCS, TCS: 线程临界区.
+		lock_guard<mutex> Lock(DatasetResMutex);
 
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
@@ -66,57 +72,64 @@ namespace GraphicsEngineDataset {
 		DatasetTemp.insert(DatasetTemp.begin(), data.begin(), data.end());
 		// cpu =upload=> gpu memory.
 		ShaderRender.UploadVertexDataset(VertexAttrib, DatasetTemp.data(), DatasetTemp.size() * sizeof(float), GL_STATIC_DRAW);
-		// update global_state.
+		// update temp,global_state.
+		DatasetSizeTemp       = DatasetTemp.size();
 		DataBytesStaticVertex = DatasetTemp.size();
 
 		IndexItems[rukey] = AllocVertInfo;
-		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetTemp.size());
+
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetSizeTemp);
 		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: alloc key: %u", rukey);
 		return true;
 	}
 
 	bool GLEngineStcVertexData::VerStcDataItemFree(ResUnique rukey) {
-		auto it = IndexItems.find(rukey);
-		if (it != IndexItems.end()) {
-			IndexItems.erase(it); // delete info_item.
-			auto VertexAttrib = LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer);
-			// 映射GPU显存 => 重写信息 => 重写数据 => 上传GPU显存.
-			vector<float> DatasetTemp = ShaderRender.ReadVertexDatasetFP32(VertexAttrib->DataBuffer);
-			vector<float> DatasetRewriting = {};
+		{ // enable [free] TCS.
+			lock_guard<mutex> Lock(DatasetResMutex);
 
-			size_t DataPointerCount = NULL;
-			for (auto& STCIT : IndexItems) {
-				// 重写信息(属性) & 数据.
-				size_t PreviousCount = DatasetRewriting.size();
-				DataPointerCount += STCIT.second.DatasetLength;
+			auto it = IndexItems.find(rukey);
+			if (it != IndexItems.end()) {
+				IndexItems.erase(it); // delete info_item.
+				auto VertexAttrib = LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer);
+				// 映射GPU显存 => 重写信息 => 重写数据 => 上传GPU显存.
+				vector<float> DatasetTemp = ShaderRender.ReadVertexDatasetFP32(VertexAttrib->DataBuffer);
+				vector<float> DatasetRewriting = {};
 
-				DatasetRewriting.insert(
-					DatasetRewriting.begin(), 
-					DatasetTemp.data() + STCIT.second.DatasetOffsetLength,
-					DatasetTemp.data() + STCIT.second.DatasetOffsetLength + STCIT.second.DatasetLength
-				);
-				STCIT.second.DatasetOffsetLength = PreviousCount;
-				STCIT.second.DatasetLength       = DataPointerCount;
+				size_t DataPointerCount = NULL;
+				for (auto& STCIT : IndexItems) {
+					// 重写信息(属性) & 数据.
+					size_t PreviousCount = DatasetRewriting.size();
+					DataPointerCount += STCIT.second.DatasetLength;
+
+					DatasetRewriting.insert(
+						DatasetRewriting.begin(),
+						DatasetTemp.data() + STCIT.second.DatasetOffsetLength,
+						DatasetTemp.data() + STCIT.second.DatasetOffsetLength + STCIT.second.DatasetLength
+					);
+					STCIT.second.DatasetOffsetLength = PreviousCount;
+					STCIT.second.DatasetLength = DataPointerCount;
+				}
+				// cpu =upload=> gpu memory.
+				ShaderRender.UploadVertexDataset(VertexAttrib, DatasetRewriting.data(), DatasetRewriting.size() * sizeof(float), GL_STATIC_DRAW);
+				// update global_state: stc.
+				DataBytesStaticVertex = DatasetTemp.size();
+
+				PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetRewriting.size());
+				PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: delete key: %u", rukey);
+				return true;
 			}
-			// cpu =upload=> gpu memory.
-			ShaderRender.UploadVertexDataset(VertexAttrib, DatasetRewriting.data(), DatasetRewriting.size() * sizeof(float), GL_STATIC_DRAW);
-			// update global_state: stc.
-			DataBytesStaticVertex = DatasetTemp.size();
-
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetRewriting.size());
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: delete key: %u", rukey);
-			return true;
 		}
 		PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: failed delete, not found key.");
 		return false;
 	}
 
 	bool GLEngineStcVertexData::VerStcOperFrameDraw(ResUnique rukey) {
-#if PSAG_DEBUG_MODE
-		auto it = IndexItems.find(rukey);
-		if (it == IndexItems.end())
+		// enable [draw_cmd] TCS.
+		lock_guard<mutex> Lock(DatasetResMutex);
+
+		if (IndexItems.find(rukey) == IndexItems.end())
 			return false;
-#endif
+
 		// draw vertex: length,offset.
 		ShaderRender.DrawVertexGroupSeg(
 			LLRES_VertexBuffers->ResourceFind(VertexBuffer),
@@ -168,7 +181,12 @@ namespace GraphicsEngineDataset {
 
 	bool GLEngineDyVertexData::GLOBAL_UPDATE_FLAG = false;
 
+	mutex GLEngineDyVertexData::DatasetResMutex = {};
+
 	bool GLEngineDyVertexData::VerDyDataItemAlloc(ResUnique rukey) {
+		// enable [alloc] TCS.
+		lock_guard<mutex> Lock(DatasetResMutex);
+
 		auto it = IndexItems.find(rukey);
 		if (it != IndexItems.end()) {
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy): failed alloc duplicate_key: %u", rukey);
@@ -180,46 +198,53 @@ namespace GraphicsEngineDataset {
 	}
 
 	bool GLEngineDyVertexData::VerDyDataItemFree(ResUnique rukey) {
-		auto it = IndexItems.find(rukey);
-		if (it != IndexItems.end()) {
-			// erase data.
-			const auto& EraseParam = &it->second;
-			VertexRawDataset.erase(
-				VertexRawDataset.begin() + EraseParam->DatasetOffsetLength,
-				VertexRawDataset.begin() + EraseParam->DatasetOffsetLength + EraseParam->DatasetLength
-			);
-			IndexItems.erase(it);
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy) item: delete key: %u", rukey);
-			return true;
-		}
+		// enable [free] TCS.
+		lock_guard<mutex> Lock(DatasetResMutex);
+
+		auto MapIt = IndexItems.find(rukey);
+		if (MapIt == IndexItems.end())
+			return false;
+
+		// erase data.
+		const auto EraseParam = &MapIt->second;
+		VertexRawDataset.erase(
+			VertexRawDataset.begin() + EraseParam->DatasetOffsetLength,
+			VertexRawDataset.begin() + EraseParam->DatasetOffsetLength + EraseParam->DatasetLength
+		);
+		IndexItems.erase(MapIt);
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy) item: delete key: %u", rukey);
+
 		PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(dy) item: failed delete, not found key.");
-		return false;
+		return true;
 	}
 
 	bool GLEngineDyVertexData::VerDyOperFramePushData(ResUnique rukey, const vector<float>& data) {
-#if PSAG_DEBUG_MODE
-		auto it = IndexItems.find(rukey);
-		if (it == IndexItems.end())
+		// enable [free] TCS.
+		lock_guard<mutex> Lock(DatasetResMutex);
+
+		if (IndexItems.find(rukey) == IndexItems.end())
 			return false;
-#endif
+
 		// offset => length => push back data.
 		IndexItems[rukey].DatasetOffsetLength = VertexRawDataset.size();
-		IndexItems[rukey].DatasetLength       = data.size();
+		IndexItems[rukey].DatasetLength = data.size();
 		VertexRawDataset.insert(VertexRawDataset.end(), data.data(), data.data() + data.size());
-		// set_flag: 待更新状态.
+
+		// data => update_gpu flag: [待更新状态].
 		GLOBAL_UPDATE_FLAG = true;
 		return true;
 	}
 
 	bool GLEngineDyVertexData::VerDyOperFrameDraw(ResUnique rukey) {
-#if PSAG_DEBUG_MODE
-		auto it = IndexItems.find(rukey);
-		if (it == IndexItems.end())
+		// enable [draw] TCS.
+		lock_guard<mutex> Lock(DatasetResMutex);
+
+		if (IndexItems.find(rukey) == IndexItems.end())
 			return false;
-#endif
-		// vertex dataset 未更新 => update_dataset.
-		if (GLOBAL_UPDATE_FLAG)
-			UpdateVertexDyDataset();
+
+		// vertex dataset [待更新] => update_dataset.
+		if (GLOBAL_UPDATE_FLAG) UpdateVertexDyDataset();
+		// update_data => gpu draw_command.
 		// draw vertex: length,offset.
 		ShaderRender.DrawVertexGroupSeg(
 			LLRES_VertexBuffers->ResourceFind(VertexBuffer),
@@ -229,6 +254,9 @@ namespace GraphicsEngineDataset {
 	}
 
 	void GLEngineDyVertexData::SystemFrameUpdateNewState() {
+		// enable [new_state] TCS.
+		lock_guard<mutex> Lock(DatasetResMutex);
+
 		// clear dataset => clear data_info.
 		VertexRawDataset.clear();
 		for (auto it = IndexItems.begin(); it != IndexItems.end(); ++it)
@@ -501,8 +529,10 @@ namespace GraphicsEngineDataset {
 		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
 			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
+#if PSAG_DEBUG_MODE
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
 				return false;
+#endif
 			// texture handle & layer index.
 			texture     = TexResourceTemp.Texture;
 			layer_index = TexItemTemp->SampleLayers;

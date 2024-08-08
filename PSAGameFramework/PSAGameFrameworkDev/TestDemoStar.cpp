@@ -8,7 +8,7 @@ void StarDemoClass::CreateStarActor(Vector2T<float> PosBegin, Vector2T<float> Po
     // ******************************** TEST Star Actor ∂‘œÛ ********************************
     PsagActor::ActorDESC ConfigStarActor;
 
-    ConfigStarActor.EnablePawn = false;
+    ConfigStarActor.EnableTrans = false;
 
     ConfigStarActor.ActorPhysicsWorld   = "TestPhyWorld";
     ConfigStarActor.ActorShaderResource = ActorShaderStar;
@@ -132,10 +132,12 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
         BricksDESC.InitialRotate = RandomSizeCreate.CreateRandomValue(-90.0f, 90.0f);
         // set brick position.
         BricksDESC.InitialPosition = Vector2T<float>(sin(i * (PSAG_M_PI / 180.0f)) * 350.0f, cos(i * (PSAG_M_PI / 180.0f)) * 350.0f);
-        TestGameBricks.CreateGameActor(BricksDESC);
+        TestGameBricks.CreateGameBrick(BricksDESC);
     }
 
     CreateRandomStarActors(72);
+    FpsDebug = new GameDebugGuiWindow::DebugWindowGuiFPS("GameFPS", 1200.0f);
+    PlayerPawn = new PsagManager::Tools::Pawn::GamePlayerPawn(Vector2T<float>(128.0f, 128.0f));
     return true;
 }
 
@@ -151,11 +153,13 @@ void StarDemoClass::LogicCloseFree() {
 }
 
 bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
-    
-    for (auto& Star : *TestGameActors.GetSourceData()) {
-        if (Star.second->ActorGetCollision().ActorUniqueCode != NULL &&
-            Star.second->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_star")
-            ) {
+    auto PawnActorObj = TestGameActors.FindGameActor(PawnActorCode);
+
+    auto CollisionActorObj = TestGameActors.FindGameActor(PawnActorObj->ActorGetCollision().ActorUniqueCode);
+
+    if (CollisionActorObj != nullptr) {
+        if (CollisionActorObj->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_star")) {
+
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
             CreatePartc.ConfigCreateMode(GraphicsEngineParticle::ParticlesGenMode::PrtcPoints);
             CreatePartc.ConfigCreateNumber(20);
@@ -163,24 +167,19 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
             CreatePartc.ConfigSizeDispersion(Vector2T<float>(0.42f, 1.28f));
 
             CreatePartc.ConfigRandomColorSystem(
-                Vector2T<float>(0.0f, 0.0f), Vector2T<float>(0.42f, 1.78f), Vector2T<float>(0.42f, 1.78f), GraphicsEngineParticle::ParticlesGenMode::ChannelsRGB
+                Vector2T<float>(0.0f, 0.0f), Vector2T<float>(0.42f, 1.78f), Vector2T<float>(0.42f, 1.78f),
+                GraphicsEngineParticle::ParticlesGenMode::ChannelsRGB
             );
             CreatePartc.ConfigRandomDispersion(
                 Vector2T<float>(-1.0f, 1.0f),
                 Vector2T<float>(0.0f, 0.0f),
-                Vector3T<float>(Star.second->ActorGetPosition().vector_x, Star.second->ActorGetPosition().vector_y, 0.0f)
+                Vector3T<float>(CollisionActorObj->ActorGetPosition().vector_x, CollisionActorObj->ActorGetPosition().vector_y, 0.0f)
             );
             AshesParticles->ParticleCreate(&CreatePartc);
-            TestGameActors.DeleteGameActor(Star.second->ActorGetPrivate().ActorUniqueCode);
+            TestGameActors.DeleteGameActor(CollisionActorObj->ActorGetPrivate().ActorUniqueCode);
 
-            auto CollisionPtr = TestGameActors.FindGameActor(Star.second->ActorGetCollision().ActorUniqueCode);
-
-            if (CollisionPtr != nullptr) {
-                if (CollisionPtr->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_pawn")) {
-                    ++EatStarCount;
-                    ++EatStarCountTotal;
-                }
-            }
+            ++EatStarCount;
+            ++EatStarCountTotal;
         }
     }
 
@@ -190,7 +189,7 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
         EatStarCount = NULL;
     }
 
-    TestGameBricks.RunAllGameActor();
+    TestGameBricks.RunAllGameBrick();
 
     TestGameActors.RunAllGameActor();
     TestGameActors.UpdateManagerData();
@@ -200,6 +199,8 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 
     if (ActorUltimateFX != nullptr)
         ActorUltimateFX->StarDemoFxRender();
+
+    PlayerPawn->PlayerPawnRun(32.0f);
 
     RunningState.BackShaderParams->BackgroundVisibility = 1.48f;
     RunningState.PostShaderParams->GameSceneFilterAVG   = 0.254f;
@@ -236,14 +237,12 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
     ImGui::PushStyleColor(ImGuiCol_TitleBgActive,  ImVec4(0.22f, 0.22f, 0.22f, 0.92f));
     ImGui::PushStyleColor(ImGuiCol_PlotHistogram,  ImVec4(0.58f, 0.58f, 0.58f, 0.92f));
 
-    GameDebugGuiWindow::DebugWindowGuiFPS("PSA-Game2D STAR", FramerateParams);
-
     auto PawnActorObj = TestGameActors.FindGameActor(PawnActorCode);
 
     //GameDebugGuiWindow::DebugWindowGuiActors(TestGameActors.GetSourceData());
-    GameDebugGuiWindow::DebugWindowGuiActor("PawnActor", PawnActorObj);
+    GameDebugGuiWindow::DebugWindowGuiActorPawn("PawnActor", PawnActorObj);
 
-    CameraScale = 1.8f;
+    CameraScale = 1.25f;
 
     /*
     ImGui::Begin("TestSample");
@@ -261,28 +260,14 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
         RunningState.PostShaderParams->LightPosition = Vector2T<float>(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
     }
     */
+    FpsDebug->RenderingWindowGui();
 
     PawnActorObj->ActorApplyForceMove(Vector2T<float>());
     PawnActorObj->ActorApplyForceRotate(0.0f);
 
-    if (ImGui::IsKeyDown(ImGuiKey_W)) {
-        PawnActorObj->ActorApplyForceMove(Vector2T<float>(0.0f, 10.0f));
-        CameraScale = 1.2f;
-    }
-    if (ImGui::IsKeyDown(ImGuiKey_S)) {
-        PawnActorObj->ActorApplyForceMove(Vector2T<float>(0.0f, -10.0f));
-        CameraScale = 1.2f;
-    }
-    if (ImGui::IsKeyDown(ImGuiKey_A)) {
-        PawnActorObj->ActorApplyForceMove(Vector2T<float>(10.0f, 0.0f));
-        PawnActorObj->ActorApplyForceRotate(20.0f);
-        CameraScale = 1.2f;
-    }
-    if (ImGui::IsKeyDown(ImGuiKey_D)) {
-        PawnActorObj->ActorApplyForceMove(Vector2T<float>(-10.0f, 0.0f));
-        PawnActorObj->ActorApplyForceRotate(-20.0f);
-        CameraScale = 1.2f;
-    }
+    PawnActorObj->ActorApplyForceMove(PlayerPawn->ControlMoveVector);
+    //PawnActorObj->ActorApplyForceRotate(20.0f);
+    //PawnActorObj->ActorApplyForceRotate(-20.0f);
 
     if (ImGui::IsKeyPressed(ImGuiKey_R, false))
         ActorUltimateFX->StarDemoFxFire();

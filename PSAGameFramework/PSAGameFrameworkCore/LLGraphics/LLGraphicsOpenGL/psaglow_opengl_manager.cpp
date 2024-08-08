@@ -647,6 +647,12 @@ namespace RenderingSupport {
 		ApiThisStateContext = FrameContext;
 	}
 
+	void PsagOpenGLApiRenderOper::RenderBindFrameBufferNCC(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
+		ApiThisStateContext = FrameContext;
+	}
+
 	void PsagOpenGLApiRenderOper::DrawVertexGroup(const PsagVertexBufferAttrib& model) {
 		glBindVertexArray(model.DataAttrib);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);

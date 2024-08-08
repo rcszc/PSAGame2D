@@ -10,6 +10,11 @@
 #define ENABLE_LOWMODULE_THREAD
 #include "../psag_lowlevel_support.h"
 
+class __COLLECT_ENGINE_TIMESETP {
+protected:
+	static float CollectEngineTimeStep;
+};
+
 namespace CollectEngineRandom {
 	StaticStrLABEL PSAGM_COLENGINE_RAND_LABEL = "PSAG_COLL_RADNOM";
 
@@ -49,6 +54,30 @@ namespace CollectEngineRandom {
 
 		bool DatasetCropCircle(const Vector2T<float>& center, float radius, bool flag = false);
 		bool DatasetCropRectangle(const Vector2T<float>& min_point, const Vector2T<float>& max_point);
+	};
+}
+
+namespace CollectEnginePawn {
+	StaticStrLABEL PSAGM_COLENGINE_PAWN_LABEL = "PSAG_COLL_PAWN";
+
+	class GamePlayerPawn :public __COLLECT_ENGINE_TIMESETP {
+	protected:
+		// imgui keyboard unique mappings.
+		static std::unordered_map<ImGuiKey, Vector2T<float>> KeyboardMappings;
+
+		Vector2T<float> DampingEffectVector = {};
+		Vector2T<float> MoveSpeedTarget = {};
+	public:
+		GamePlayerPawn(Vector2T<float> damping);
+
+		bool MouseButtonPressed_R(bool pulse = false);
+		bool MouseButtonPressed_L(bool pulse = false);
+
+		// control(value): x,y[+-].
+		Vector2T<float> ControlMoveVector    = {};
+		Vector2T<float> ControlMousePosition = {};
+
+		void PlayerPawnRun(float speed_value = 1.0f);
 	};
 }
 

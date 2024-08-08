@@ -14,7 +14,6 @@ namespace GameManagerCore {
 		// ******************************** FX-Particle ********************************
 
 		namespace PartcMode = GraphicsEngineParticle::ParticlesGenMode;
-
 		struct GameFxCreateParticleDESC {
 			float PariclesNumber;
 
@@ -41,9 +40,9 @@ namespace GameManagerCore {
 				ParticlesLifeRandom(Vector2T<float>(128.0f, 256.0f)),
 				ParticlesSizeRandom(Vector2T<float>(1.0f, 2.0f)),
 
-				ParticlesCrRandom (Vector2T<float>(0.0f, 1.0f)),
-				ParticlesCgRandom (Vector2T<float>(0.0f, 1.0f)),
-				ParticlesCbRandom (Vector2T<float>(0.0f, 1.0f)),
+				ParticlesCrRandom(Vector2T<float>(0.0f, 1.0f)),
+				ParticlesCgRandom(Vector2T<float>(0.0f, 1.0f)),
+				ParticlesCbRandom(Vector2T<float>(0.0f, 1.0f)),
 
 				ParticlesVecRandom      (Vector2T<float>(-1.0f, 1.0f)),
 				ParticlesPosRandom      (Vector2T<float>(-1.0f, 1.0f)),
@@ -96,7 +95,6 @@ namespace GameManagerCore {
 				// particle system src_dataset (attributes_struct) ptr.
 				return FxParticleObject->GetParticleDataset();
 			}
-
 			void FxParticleRendering();
 		};
 
@@ -105,12 +103,14 @@ namespace GameManagerCore {
 		struct GameFxSpriteSheetDESC {
 			float           SpriteSheetPlaySpeed;
 			Vector2T<float> SpriteSheetNumber;
+			Vector4T<float> SpriteSheetInitColorBg;
 
 			ImageRawData RenderTexture;
 
 			GameFxSpriteSheetDESC() :
-				SpriteSheetPlaySpeed(1.0f),
-				SpriteSheetNumber   (Vector2T<float>(1.0f, 1.0f)),
+				SpriteSheetPlaySpeed  (1.0f),
+				SpriteSheetNumber     (Vector2T<float>(1.0f, 1.0f)),
+				SpriteSheetInitColorBg(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
 
 				RenderTexture({})
 			{}
@@ -122,7 +122,27 @@ namespace GameManagerCore {
 		public:
 			GameFxSpriteSheet(const GameFxSpriteSheetDESC& INIT_DESC);
 			~GameFxSpriteSheet();
+
+			size_t GetFxSpriteSheetCount() {
+				return FxSpriteSheetObject->PlayerCyclesCount;
+			}
+			Vector4T<float> BackgroundColorBlend = Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f);
+			void FxSpriteSheetRendering();
 		};
+	}
+
+	// game_view: texture => gui.
+	namespace GameView {
+		using TextureViewImage   = GraphicsEnginePVFX::PsagGLEngineFxImageView;
+		using TextureViewCapture = GraphicsEnginePVFX::PsagGLEngineFxCaptureView;
+	}
+
+	namespace GameMathsTools {
+		float CalcFuncPointsAngle(Vector2T<float> basic_point, Vector2T<float> point);
+
+		void CalcFuncLerpVec1(float* ahpla, float* target, float speed);
+		void CalcFuncLerpVec2(Vector2T<float>* ahpla, Vector2T<float>* target, float speed);
+		void CalcFuncLerpVec4(Vector4T<float>* ahpla, Vector4T<float>* target, float speed);
 	}
 }
 

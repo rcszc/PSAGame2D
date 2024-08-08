@@ -9,6 +9,7 @@
 #define PSAGM_VIR_TICKSTEP_GL 0.058f
 
 // 统一数据集管理,单一共享 VAO,VBO,TEXTURE(TMU).
+// THREAD-SAFE.
 namespace GraphicsEngineDataset {
 	StaticStrLABEL PSAGM_GLENGINE_DATA_LABEL = "PSAG_GL_DATASET";
 
@@ -41,14 +42,17 @@ namespace GraphicsEngineDataset {
 
 		static std::unordered_map<ResUnique, VABO_DATASET_INFO> IndexItems;
 		static ResUnique SystemPresetRectangle;
+
+		// dataset thread: vertex(static) resource mutex.
+		static std::mutex DatasetResMutex;
 	protected:
 		// width: +-10.0f, height: +-10.0f
 		ResUnique GetPresetRect() { return SystemPresetRectangle; }
 
-		bool VerStcDataItemAlloc(ResUnique rukey, const std::vector<float>& data);
-		bool VerStcDataItemFree(ResUnique rukey);
+		bool VerStcDataItemAlloc(ResUnique rukey, const std::vector<float>& data); // T-SAFE
+		bool VerStcDataItemFree(ResUnique rukey); // T-SAFE
 
-		bool VerStcOperFrameDraw(ResUnique rukey);
+		bool VerStcOperFrameDraw(ResUnique rukey); // T-SAFE
 
 		// static vertex system: framework oper.
 		void StaticVertexDataObjectCreate();
@@ -71,19 +75,22 @@ namespace GraphicsEngineDataset {
 
 		static bool GLOBAL_UPDATE_FLAG;
 		void UpdateVertexDyDataset();
-	protected:
-		bool VerDyDataItemAlloc(ResUnique rukey);
-		bool VerDyDataItemFree(ResUnique rukey);
 
-		bool VerDyOperFramePushData(ResUnique rukey, const std::vector<float>& data);
-		bool VerDyOperFrameDraw(ResUnique rukey);
+		// dataset thread: vertex(dynamic) resource mutex.
+		static std::mutex DatasetResMutex;
+	protected:
+		bool VerDyDataItemAlloc(ResUnique rukey); // T-SAFE
+		bool VerDyDataItemFree(ResUnique rukey); // T-SAFE
+
+		bool VerDyOperFramePushData(ResUnique rukey, const std::vector<float>& data); // T-SAFE
+		bool VerDyOperFrameDraw(ResUnique rukey); // T-SAFE
 
 		// dynamic vertex system: framework oper.
 		void VertexDataObjectCreate();
 		void VertexDataObjectDelete();
 
 		// framework core system_update.
-		void SystemFrameUpdateNewState();
+		void SystemFrameUpdateNewState(); // T-SAFE
 	};
 
 	// 纹理数层组分配器 => "VirTexturesGenParams".
@@ -591,12 +598,16 @@ namespace GraphicsEnginePVFX {
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
 		PsagTextureView TextureViewItem = {};
 		ResUnique FrameBufferItem = {};
+
+		std::function<void()> BindFrameBufferFunc = [&]() {};
 	public:
-		PsagGLEngineFxCaptureView(const Vector2T<uint32_t>& render_resolution);
+		PsagGLEngineFxCaptureView(
+			const Vector2T<uint32_t>& render_resolution, bool clear_buffer = true
+		);
 		~PsagGLEngineFxCaptureView();
 
-		void CaptureContextBind();
-		void CaptureContextUnBind();
+		void CaptureContextBegin();
+		void CaptureContextEnd();
 
 		PsagTexture GetCaptureTexView();
 	};
@@ -607,7 +618,8 @@ namespace GraphicsEnginePVFX {
 		float UaxisFrameNumber;
 		float VaxisFrameNumber;
 	};
-	// 特效序列贴图.
+
+	// 特效序列帧贴图.
 	class PsagGLEngineFxSequence :
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public GraphicsEngineDataset::GLEngineStcVertexData,
@@ -634,7 +646,7 @@ namespace GraphicsEnginePVFX {
 		~PsagGLEngineFxSequence();
 
 		bool DrawFxSequence(const Vector4T<float>& blend_color);
-		uint32_t PlayerCyclesCount = NULL;
+		size_t PlayerCyclesCount = NULL;
 	};
 }
 

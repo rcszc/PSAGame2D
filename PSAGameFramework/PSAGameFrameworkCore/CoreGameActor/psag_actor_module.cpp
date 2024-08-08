@@ -44,8 +44,8 @@ namespace GameActorCore {
 		void ActorSpaceTrans::UpdateActorTransVelocity(Vector2T<float>& position, float& rotate) {
 			auto PhysicsState = PhyBodyItemGet(PhysicsWorld, PhysicsBody);
 
-			b2Vec2 BodyLinear  = b2Vec2(-ActorPawnMoveValue.vector_x * 3.2f, -ActorPawnMoveValue.vector_y * 3.2f);
-			float  BodyAngular = -ActorPawnRotateValue * 0.7f;
+			b2Vec2 BodyLinear  = b2Vec2(-ActorTransMoveValue.vector_x * 3.2f, -ActorTransMoveValue.vector_y * 3.2f);
+			float  BodyAngular = -ActorTransRotateValue * 0.7f;
 
 			// apply force & torque (move,rotate).
 			PhysicsState.BodySourcePointer->SetLinearVelocity(BodyLinear);
@@ -63,11 +63,11 @@ namespace GameActorCore {
 			auto PhysicsState = PhyBodyItemGet(PhysicsWorld, PhysicsBody);
 
 			b2Vec2 BodyForce  = b2Vec2(
-				-ActorPawnMoveValue.vector_x * PhysicsState.BodySourcePointer->GetMass(), 
-				-ActorPawnMoveValue.vector_y * PhysicsState.BodySourcePointer->GetMass()
+				-ActorTransMoveValue.vector_x * PhysicsState.BodySourcePointer->GetMass(), 
+				-ActorTransMoveValue.vector_y * PhysicsState.BodySourcePointer->GetMass()
 			);
 			b2Vec2 BodyCenter = PhysicsState.BodySourcePointer->GetWorldCenter();
-			float  BodyTorque = -ActorPawnRotateValue * PhysicsState.BodySourcePointer->GetMass();
+			float  BodyTorque = -ActorTransRotateValue * PhysicsState.BodySourcePointer->GetMass();
 
 			// apply force & torque (move,rotate).
 			PhysicsState.BodySourcePointer->ApplyForce(BodyForce, BodyCenter, true);
@@ -85,16 +85,16 @@ namespace GameActorCore {
 			ActorTransFunc(position, rotate);
 		}
 
-		void ActorSpaceTrans::SetActorPosRotate(const Vector2T<float>& pos, float angle) {
+		void ActorSpaceTrans::SetActorState(const Vector2T<float>& pos, float angle) {
 			auto PhysicsState = PhyBodyItemGet(PhysicsWorld, PhysicsBody);
 			PhysicsState.BodySourcePointer->SetTransform(b2Vec2(pos.vector_x, pos.vector_y), angle);
 		}
 		
 		void ActorHealthTrans::UpdateActorHealthTrans(const HealthFuncParams& params) {
-			// state inter_calc.
-			for (size_t i = 0; i < PSAG_HEALTH_STATE_NUM; ++i) {
-				ActorHealthState[1][i] += (ActorHealthState[0][i] - ActorHealthState[1][i])
-					* PSAGM_ACTOR_INTER * ActorHealthState[2][i] * ActorModulesTimeStep;
+			// state lerp_calc. out += (stat - out) * speed * s.
+			for (size_t i = 0; i < ActorHealthState.size(); ++i) {
+				ActorHealthStateOut[i] += (ActorHealthState[i].HealthSTATE - ActorHealthStateOut[i])
+					* PSAGM_ACTOR_INTER * ActorHealthState[i].HealthSPEED * ActorModulesTimeStep;
 			}
 			// calling hp processing functions.
 			ActorHealthHandlerFunc(params);
@@ -201,33 +201,31 @@ namespace GameActorCore {
 		PhyBodyItemAlloc(ActorPhysicsWorld, &ActorPhysicsItem, ActorPhyConfig);
 		
 		// config space_trans. ture: non-fixed.
-		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.EnablePawn) {
+		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.EnableTrans) {
 			ActorCompSpaceTrans = new system::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem, INIT_DESC.ForceClacEnable);
 			// init move(speed_vec), rotate, scale.
-			ActorCompSpaceTrans->ActorPawnMoveValue   = INIT_DESC.InitialSpeed;
-			ActorCompSpaceTrans->ActorPawnRotateValue = INIT_DESC.InitialRotate;
+			ActorCompSpaceTrans->ActorTransMoveValue   = INIT_DESC.InitialSpeed;
+			ActorCompSpaceTrans->ActorTransRotateValue = INIT_DESC.InitialRotate;
 		}
 		else {
 			// comp(empty_object): space_trans.
 			ActorCompSpaceTrans = new system::null::ActorSpaceTransNULL(ActorPhysicsWorld, ActorPhysicsItem);
 		}
 
-		ActorPawnPosition    = INIT_DESC.InitialPosition;
-		ActorPawnScale       = INIT_DESC.InitialScale;
-		ActorPawnRotateValue = INIT_DESC.InitialRotate;
-		ActorPawnLayer       = INIT_DESC.InitialLayer;
+		ActorTransPosition    = INIT_DESC.InitialPosition;
+		ActorTransScale       = INIT_DESC.InitialScale;
+		ActorTransRotateValue = INIT_DESC.InitialRotate;
+		ActorTransLayer       = INIT_DESC.InitialRenderLayer;
 		// actor space_z value_clamp.
-		ActorPawnLayer = PsagClamp(ActorPawnLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
+		ActorTransLayer = PsagClamp(ActorTransLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
 		// create hp comp.
 		if (INIT_DESC.EnableHealth) {
 			ActorCompHealthTrans = new system::ActorHealthTrans(INIT_DESC.ActorHealthSystem.HealthHandlerFunc);
 
 			// config health system.
-			size_t Bytes = PSAG_HEALTH_STATE_NUM * sizeof(float);
-			memcpy(ActorCompHealthTrans->ActorHealthState[0], INIT_DESC.ActorHealthSystem.InitialHealthState, Bytes);
-			memcpy(ActorCompHealthTrans->ActorHealthState[1], INIT_DESC.ActorHealthSystem.InitialHealthState, Bytes);
-			memcpy(ActorCompHealthTrans->ActorHealthState[2], INIT_DESC.ActorHealthSystem.InitialHealthSpeed, Bytes);
+			for (const auto& state : ActorCompHealthTrans->ActorHealthState)
+				ActorCompHealthTrans->ActorHealthStateOut.push_back(state.HealthSTATE);
 		}
 		else {
 			// comp(empty_object): health_trans.
@@ -259,8 +257,8 @@ namespace GameActorCore {
 		
 		// actor_position - camera_position.
 		Vector2T<float> ActorMapping(
-			ActorPawnPosition.vector_x + MatrixWorldCamera.MatrixPosition.vector_x / 10.0f,
-			ActorPawnPosition.vector_y - MatrixWorldCamera.MatrixPosition.vector_y / 10.0f
+			ActorTransPosition.vector_x + MatrixWorldCamera.MatrixPosition.vector_x / 10.0f,
+			ActorTransPosition.vector_y - MatrixWorldCamera.MatrixPosition.vector_y / 10.0f
 		);
 		return Vector2T<float>(
 			ActorMapping.vector_x * ValueScale / (SystemRenderingOrthoSpace * MatrixWorldCamera.MatrixScale.vector_x) * LossWidth + LossWidth,
@@ -272,20 +270,18 @@ namespace GameActorCore {
 		// in func parameters.
 		HealthFuncParams FuncParams = {};
 		FuncParams.ThisActorUniqueCode = ActorUniqueInfo.ActorUniqueCode;
-		FuncParams.ActorCollision      = ActorCollisionInfo;
 
-		FuncParams.ActorHealthStates = ActorCompHealthTrans->ActorHealthState[0];
-		FuncParams.ActorHealthLength = PSAG_HEALTH_STATE_NUM;
-
-		FuncParams.ActorPosition = ActorPawnPosition;
+		FuncParams.ActorCollision = ActorCollisionInfo;
+		FuncParams.ActorHealth    = &ActorCompHealthTrans->ActorHealthStateOut;
+		FuncParams.ActorPosition  = ActorTransPosition;
 		FuncParams.ActorSpeed = 
-			ActorCompSpaceTrans == nullptr ? Vector2T<float>(0.0f, 0.0f) : ActorCompSpaceTrans->ActorPawnMoveValue;
+			ActorCompSpaceTrans == nullptr ? Vector2T<float>(0.0f, 0.0f) : ActorCompSpaceTrans->ActorTransMoveValue;
 
 		ActorCompHealthTrans->UpdateActorHealthTrans(FuncParams);
 	}
 
 	void GameActorActuator::ActorUpdate() {
-		ActorCompSpaceTrans->UpdateActorTrans(ActorPawnPosition, ActorPawnRotateValue);
+		ActorCompSpaceTrans->UpdateActorTrans(ActorTransPosition, ActorTransRotateValue);
 
 		ActorPrivateINFO CollisionItem = {};
 		// update collision info.
@@ -297,7 +293,7 @@ namespace GameActorCore {
 	void GameActorActuator::ActorRendering() {
 		// rendering actor shader_data.
 		ActorCompRendering->UpdateActorRendering(
-			system::RenderingParams(ActorPawnPosition, ActorPawnScale, ActorPawnRotateValue, ActorPawnLayer),
+			system::RenderingParams(ActorTransPosition, ActorTransScale, ActorTransRotateValue, ActorTransLayer),
 			VirTimerCount
 		);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
