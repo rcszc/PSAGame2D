@@ -64,6 +64,10 @@ namespace PsagFrameworkStart {
             CoreFramewokObj->CoreFrameworkInit(version);
             while (!ExitFlag) {
                 ExitFlag = !CoreFramewokObj->CoreFrameworkEvent();
+#if ENABLE_DEBUG_MODE
+                // update debug_frame. [20240817]
+                FTDthread::FTDprocessingThread.MainUpdateFrame();
+#endif
             }
             bool ResultTemp = CoreFramewokObj->CoreFrameworkCloseFree() == true ?
                 PSAGM_FLAG_FRAMEWORK :

@@ -21,6 +21,10 @@
 #include <functional>
 #include <typeinfo> // RTTI.
 
+#define ENABLE_FTD false
+// FrameDebug => FrameworkLow. [20240817]
+#include "../DebugFrameTime/psag_ft_debug.hpp"
+
 #if defined(_DEBUG) || defined(DEBUG)
 #define PSAG_COMPILE_MODE 1 // mode: debug(code: 1)
 #else

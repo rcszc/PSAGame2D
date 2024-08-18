@@ -47,3 +47,7 @@
 *.pdb
 *.idb
 *.lastbuildstate
+
+*.ftbp
+*.ftbt
+*.ftbf

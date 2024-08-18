@@ -219,17 +219,18 @@ namespace GraphicsEngineDataset {
 	}
 
 	bool GLEngineDyVertexData::VerDyOperFramePushData(ResUnique rukey, const vector<float>& data) {
-		// enable [free] TCS.
-		lock_guard<mutex> Lock(DatasetResMutex);
+		{
+			// enable [free] TCS.
+			lock_guard<mutex> Lock(DatasetResMutex);
 
-		if (IndexItems.find(rukey) == IndexItems.end())
-			return false;
+			if (IndexItems.find(rukey) == IndexItems.end())
+				return false;
 
-		// offset => length => push back data.
-		IndexItems[rukey].DatasetOffsetLength = VertexRawDataset.size();
-		IndexItems[rukey].DatasetLength = data.size();
-		VertexRawDataset.insert(VertexRawDataset.end(), data.data(), data.data() + data.size());
-
+			// offset => length => push back data.
+			IndexItems[rukey].DatasetOffsetLength = VertexRawDataset.size();
+			IndexItems[rukey].DatasetLength = data.size();
+			VertexRawDataset.insert(VertexRawDataset.end(), data.data(), data.data() + data.size());
+		}
 		// data => update_gpu flag: [´ý¸üÐÂ×´Ì¬].
 		GLOBAL_UPDATE_FLAG = true;
 		return true;

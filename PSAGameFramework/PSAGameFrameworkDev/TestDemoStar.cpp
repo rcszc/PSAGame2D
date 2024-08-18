@@ -159,8 +159,8 @@ bool StarDemoClass::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 
     if (CollisionActorObj != nullptr) {
         if (CollisionActorObj->ActorGetPrivate().ActorTypeCode == PsagActorType::ActorTypeAllotter.ActorTypeIs("actor_star")) {
-
             GraphicsEngineParticle::ParticleGenerator CreatePartc;
+
             CreatePartc.ConfigCreateMode(GraphicsEngineParticle::ParticlesGenMode::PrtcPoints);
             CreatePartc.ConfigCreateNumber(20);
             CreatePartc.ConfigLifeDispersion(Vector2T<float>(512.0f, 1024.0f));

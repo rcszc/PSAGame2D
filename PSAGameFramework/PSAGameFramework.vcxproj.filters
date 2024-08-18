@@ -85,6 +85,9 @@
     <Filter Include="源文件\PSAGameFrameworkCore\DevSupport">
       <UniqueIdentifier>{43b8c5eb-d94c-4be0-89de-2d78f2909925}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\FTDmodule">
+      <UniqueIdentifier>{e9083aa4-28b4-4361-8f1a-c09f69804619}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -237,6 +240,12 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_capture.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_thread.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -384,6 +393,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

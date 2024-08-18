@@ -9,7 +9,15 @@ namespace GameBrickCore {
 	GameBrickActuator::GameBrickActuator(const GameBrickActuatorDESC& INIT_DESC) {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 		BrickUniqueID = GenResourceID.PsagGenTimeKey();
-		
+
+#if ENABLE_DEBUG_MODE
+		FTDcapture::CaptureContext CapPoint;
+
+		CapPoint.CaptureSettingFilter(FTD_TagLv2);
+		CapPoint.CaptureSettingPointer(this);
+		CapPoint.CaptureSettingTagging("brick create.");
+		CapPoint.CaptureBegin();
+#endif
 		if (INIT_DESC.BrickShaderResource == nullptr) {
 			PushLogger(LogError, PSAGM_BRICK_CORE_LABEL, "game_brick shader_resource = nullptr.");
 			return;

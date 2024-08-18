@@ -136,6 +136,14 @@ namespace GameActorCore {
 		ActorUniqueInfo.ActorUniqueCode = GenResourceID.PsagGenTimeKey();
 		ActorUniqueInfo.ActorTypeCode   = TYPE;
 
+#if ENABLE_DEBUG_MODE
+		FTDcapture::CaptureContext CapPoint;
+
+		CapPoint.CaptureSettingFilter(FTD_TagLv3);
+		CapPoint.CaptureSettingPointer(this);
+		CapPoint.CaptureSettingTagging("actor create.");
+		CapPoint.CaptureBegin();
+#endif
 		if (INIT_DESC.ActorShaderResource == nullptr) {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader_resource = nullptr.");
 			return;
@@ -288,6 +296,17 @@ namespace GameActorCore {
 		CollisionItem.ActorTypeCode   = Type::ActorTypeNULL;
 		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollisionFirst(ActorPhysicsWorld, ActorPhysicsItem);
 		ActorCollisionInfo = CollisionItem;
+
+#if ENABLE_DEBUG_MODE
+		if (CollisionItem.ActorUniqueCode != NULL) {
+			FTDcapture::CaptureContext CapPoint;
+
+			CapPoint.CaptureSettingFilter(FTD_TagLv4);
+			CapPoint.CaptureSettingPointer(this);
+			CapPoint.CaptureSettingTagging("actor collision_flag.");
+			CapPoint.CaptureBegin();
+		}
+#endif
 	}
 
 	void GameActorActuator::ActorRendering() {

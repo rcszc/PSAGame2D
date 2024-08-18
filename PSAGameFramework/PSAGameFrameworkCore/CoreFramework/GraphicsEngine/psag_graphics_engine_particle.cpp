@@ -361,6 +361,14 @@ namespace GraphicsEngineParticle {
 	}
 
 	void PsagGLEngineParticle::ParticleCreate(ParticleGeneratorBase* generator) {
+#if ENABLE_DEBUG_MODE
+		FTDcapture::CaptureContext CapPoint;
+
+		CapPoint.CaptureSettingFilter(FTD_TagLv4);
+		CapPoint.CaptureSettingPointer(this);
+		CapPoint.CaptureSettingTagging("particles create.");
+		CapPoint.CaptureBegin();
+#endif
 		// generator => particle_system.
 		generator->CreateAddParticleDataset(DataParticles);
 	}

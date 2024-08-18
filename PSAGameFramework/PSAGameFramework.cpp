@@ -13,8 +13,8 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_08_06.
-#define PSAG2D_ENGINE_VER 12.20240806
+// Engine Update: 2024_08_017.
+#define PSAG2D_ENGINE_VER 12.20240817
 /*
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX
@@ -35,8 +35,15 @@
 
 int main() {
 	int FrameworkResult = -1;
+	// start(debug) logger thread & debug thread.
+	// FTD update: "PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.cpp"
+	// RCSZ. [20240817]
 	PSAG_LOGGER_PROCESS::StartLogProcessing("PSAGameSystemLogs/");
+#if ENABLE_DEBUG_MODE
+	FTDthread::FTDprocessingThread.CreateProcessingThread("PSAGameSystemDebug/", "PSAG2D_GAME");
+#endif
 	{
+		// create framework object.
 		PsagFrameworkCore::PSAGame2DFramework* MainPSAGame2D = new PsagFrameworkCore::PSAGame2DFramework();
 		PsagFrameworkStart::CorePsagMainStart FrameworkStarter = {};
 		// add start_item: object.
@@ -46,6 +53,10 @@ int main() {
 		// framework free exit.
 		FrameworkResult = FrameworkStarter.FreeFramework();
 	}
+#if ENABLE_DEBUG_MODE
+	FTDthread::FTDprocessingThread.DeleteProcessingThread();
+#endif
 	PSAG_LOGGER_PROCESS::FreeLogProcessing();
+
 	return FrameworkResult;
 }
