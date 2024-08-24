@@ -40,7 +40,7 @@ void PsaGameV1Demo::GameCreateNPC(const Vector2T<float>& position) {
 			float SetHP = ThisActor->ActorGetHealth(0) <= 0.0f ?
 				0.0f :
 				ThisActor->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFunc(220.0f, 240.0f);
-			ThisActor->ActorSetHealth(0, SetHP);
+			ThisActor->ActorModifyHealth(0, SetHP);
 		}
 	};
 

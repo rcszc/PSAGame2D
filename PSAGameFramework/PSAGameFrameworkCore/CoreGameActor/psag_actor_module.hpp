@@ -427,7 +427,7 @@ namespace GameActorCore {
 #endif
 		}
 
-		float ActorSetHealth(size_t count, float value) {
+		void ActorModifyHealth(size_t count, float value) {
 			ActorCompHealthTrans->SetActorHealth(count, value);
 		}
 
