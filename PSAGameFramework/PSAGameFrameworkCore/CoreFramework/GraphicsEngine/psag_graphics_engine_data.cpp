@@ -275,7 +275,7 @@ namespace GraphicsEngineDataset {
 		GLOBAL_UPDATE_FLAG = false;
 	}
 
-	void GLEngineDyVertexData::VertexDataObjectCreate() {
+	void GLEngineDyVertexData::DynamicVertexDataObjectCreate() {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
 
@@ -293,7 +293,7 @@ namespace GraphicsEngineDataset {
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "dynamic vertex data manager_create.");
 	}
 
-	void GLEngineDyVertexData::VertexDataObjectDelete() {
+	void GLEngineDyVertexData::DynamicVertexDataObjectDelete() {
 		// opengl free vao,vbo handle.
 		LLRES_VertexAttributes->ResourceDelete(VertexAttribute);
 		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);

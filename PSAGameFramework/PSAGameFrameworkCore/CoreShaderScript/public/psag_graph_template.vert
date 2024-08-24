@@ -14,6 +14,7 @@ uniform vec2 RenderScale;
 
 out vec4 FxColor;
 out vec2 FxCoord;
+out vec3 FxNvec3;
 
 void main()
 {
@@ -24,4 +25,5 @@ void main()
 	// vertex out fragment shader.
 	FxColor = VertexColor;
 	FxCoord = VertexTexture;
+	FxNvec3 = VertexNormal;
 }

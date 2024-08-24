@@ -5,6 +5,7 @@
 
 in vec4 FxColor;
 in vec2 FxCoord;
+in vec3 FxNvec3;
 
 // output fragment color(rgba).
 out vec4 FragColor;

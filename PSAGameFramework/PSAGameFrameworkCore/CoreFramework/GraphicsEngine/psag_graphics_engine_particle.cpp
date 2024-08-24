@@ -1,5 +1,4 @@
 // psag_graphics_engine_particle.
-#include <omp.h> // openmp calc.
 #include "psag_graphics_engine.h"
 
 using namespace std;
@@ -14,6 +13,9 @@ using namespace GraphicsShaderCode;
 constexpr size_t ParticleVertAtt = 12;
 constexpr size_t ParticleVertLen = 72;
 
+// std: 2d_framework const z(layer). [20240824]
+constexpr float STD_PARTICLES_Z = 75.0f;
+
 inline float RandomTimeSeedFP32(float value_min, float value_max) {
 	// seed: time(microseconds) => MT19937.
 	mt19937 MtGen((uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now().time_since_epoch()).count());
@@ -25,14 +27,15 @@ inline void ParticleDispPosition(GraphicsEngineParticle::ParticleAttributes& ptc
 	// position dispersion.
 	ptc.ParticlePosition.vector_x = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + off.vector_x;
 	ptc.ParticlePosition.vector_y = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + off.vector_y;
-	ptc.ParticlePosition.vector_z = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + off.vector_z;
+	ptc.ParticlePosition.vector_z = STD_PARTICLES_Z + off.vector_z;
 }
 
 inline void ParticleDispVector(GraphicsEngineParticle::ParticleAttributes& ptc, Vector2T<float>& vec) {
 	// vector dispersion.
 	ptc.ParticleVector.vector_x = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
 	ptc.ParticleVector.vector_y = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
-	ptc.ParticleVector.vector_z = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
+	// ptc.ParticleVector.vector_z = RandomTimeSeedFP32(vec.vector_x, vec.vector_y); // z-non-speed [20240819]
+	ptc.ParticleVector.vector_z = 0.0f;
 }
 
 inline void ParticleColorsys(
@@ -51,21 +54,24 @@ inline void ParticleColorsys(
 	ptc.ParticleColor.vector_w = ColorAhpla;
 }
 
-inline vector<float> ParticleBaseElement(const Vector3T<float>& position, const Vector4T<float>& color, float size) {
+// normal.x = particles.life value.
+inline vector<float> ParticleBaseElement(
+	const Vector3T<float>& position, const Vector4T<float>& color, float size, float life
+) {
 	vector<float> DefaultParticleRect = {
 		-size + position.vector_x, -size + position.vector_y, 0.0f + position.vector_z,
-		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,0.0f, 0.0f,0.0f,0.0f,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,0.0f, life,0.0f,0.0f,
 		size + position.vector_x, -size + position.vector_y, 0.0f + position.vector_z,
-		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,0.0f, 0.0f,0.0f,0.0f,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,0.0f, life,0.0f,0.0f,
 		size + position.vector_x,  size + position.vector_y, 0.0f + position.vector_z,
-		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,1.0f, 0.0f,0.0f,0.0f,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,1.0f, life,0.0f,0.0f,
 
 		-size + position.vector_x, -size + position.vector_y, 0.0f + position.vector_z,
-		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,0.0f, 0.0f,0.0f,0.0f,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,0.0f, life,0.0f,0.0f,
 		size + position.vector_x,  size + position.vector_y, 0.0f + position.vector_z,
-		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,1.0f, 0.0f,0.0f,0.0f,
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 1.0f,1.0f, life,0.0f,0.0f,
 		-size + position.vector_x,  size + position.vector_y, 0.0f + position.vector_z,
-		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,1.0f, 0.0f,0.0f,0.0f
+		0.0f + color.vector_x, 0.0f + color.vector_y, 0.0f + color.vector_z, 0.0f + color.vector_w, 0.0f,1.0f, life,0.0f,0.0f
 	};
 	return DefaultParticleRect;
 }
@@ -230,27 +236,62 @@ namespace GraphicsEngineParticle {
 		data.insert(data.end(), ParticlesGenCache.begin(), ParticlesGenCache.end());
 	}
 
+	// ************************************************ PARTICLE SYSTEM ************************************************
+	// particles calc vec,pos,life,color. mode: main_thread, parallel_threads(pool).
+
 #define DEFAULT_SPEED 1.0f
-	void PsagGLEngineParticle::CalcUpdateParticlesOMP(vector<ParticleAttributes>& particles, float speed, float lifesub) {
-		// calc particles position.
-#pragma omp parallel for
-		for (int i = 0; i < (int)particles.size(); ++i) {
-			// update position.
-			particles[i].ParticlePosition.vector_x += particles[i].ParticleVector.vector_x * DEFAULT_SPEED * speed;
-			particles[i].ParticlePosition.vector_y += particles[i].ParticleVector.vector_y * DEFAULT_SPEED * speed;
-			particles[i].ParticlePosition.vector_z += particles[i].ParticleVector.vector_z * DEFAULT_SPEED * speed;
+	class ParticleSystemDataCalc {
+	protected:
+		vector<ParticleAttributes> ParticlesCalcCache = {};
+	public:
+		ParticleSystemDataCalc(vector<ParticleAttributes> block_particles, float speed, float lifesub) {
+			// calc particles position.
+			for (size_t i = 0; i < block_particles.size(); ++i) {
+				// update position.
+				block_particles[i].ParticlePosition.vector_x += block_particles[i].ParticleVector.vector_x * DEFAULT_SPEED * speed;
+				block_particles[i].ParticlePosition.vector_y += block_particles[i].ParticleVector.vector_y * DEFAULT_SPEED * speed;
+				block_particles[i].ParticlePosition.vector_z += block_particles[i].ParticleVector.vector_z * DEFAULT_SPEED * speed;
+
+				block_particles[i].ParticleLife -= DEFAULT_SPEED * lifesub * (float)block_particles[i].ParticleLifeSwitch;
+				// delete particle.
+				if (block_particles[i].ParticleLife <= 0.0f)
+					block_particles.erase(block_particles.begin() + i);
+			}
+			// copy result particles_data.
+			ParticlesCalcCache = block_particles;
+		}
+		vector<ParticleAttributes> GetDataset() {
+			return move(ParticlesCalcCache);
+		}
+	};
+
+	void PsagGLEngineParticle::CalcUpdateParticlesPARA(vector<ParticleAttributes>& particles, float speed, float lifesub) {
+		size_t TasksNumber = particles.size() / DataBlockSize + 1;
+		// tasks object future.
+		vector<future<shared_ptr<ParticleSystemDataCalc>>> ResultObject(TasksNumber);
+		
+		// craete task => parallel.
+		for (size_t i = 0; i < TasksNumber; ++i) {
+			size_t IndexStart = i * DataBlockSize;
+			size_t IndexEnd = __psag_bit_min(IndexStart + DataBlockSize, particles.size());
+
+			vector<ParticleAttributes> BlockCreateTemp(IndexEnd - IndexStart);
+			// particles dataset memory_block copy.
+			copy(particles.begin() + IndexStart, particles.begin() + IndexEnd, BlockCreateTemp.begin());
+
+			ResultObject[i] = ThreadsParallel->PushTask<ParticleSystemDataCalc>(BlockCreateTemp, speed, lifesub);
 		}
 		
-		// calc particles life.
-		for (size_t i = 0; i < particles.size(); ++i) {
-			particles[i].ParticleLife -= DEFAULT_SPEED * lifesub;
-			// delete particle.
-			if (particles[i].ParticleLife <= 0.0f)
-				particles.erase(particles.begin() + i);
+		// clear data => get task result.
+		particles.clear();
+		for (size_t i = 0; i < TasksNumber; ++i) {
+			// read parallel threads data.
+			auto DataResultPtr = ResultObject[i].get()->GetDataset();
+			particles.insert(particles.end(), DataResultPtr.begin(), DataResultPtr.end());
 		}
 	}
 
-	void PsagGLEngineParticle::CalcUpdateParticles(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {
+	void PsagGLEngineParticle::CalcUpdateParticles(vector<ParticleAttributes>& particles, float speed, float lifesub) {
 		// calc particles position & life.
 		for (size_t i = 0; i < particles.size(); ++i) {
 			// update position.
@@ -258,21 +299,30 @@ namespace GraphicsEngineParticle {
 			particles[i].ParticlePosition.vector_y += particles[i].ParticleVector.vector_y * DEFAULT_SPEED * speed;
 			particles[i].ParticlePosition.vector_z += particles[i].ParticleVector.vector_z * DEFAULT_SPEED * speed;
 
-			particles[i].ParticleLife -= DEFAULT_SPEED * lifesub;
+			particles[i].ParticleLife -= DEFAULT_SPEED * lifesub * (float)particles[i].ParticleLifeSwitch;
 			// delete particle.
 			if (particles[i].ParticleLife <= 0.0f)
 				particles.erase(particles.begin() + i);
 		}
 	}
 
-	void PsagGLEngineParticle::VertexDataConvert(const vector<ParticleAttributes>& src, vector<float>& cvt) {
+	void PsagGLEngineParticle::VertexDataConvert(
+		const vector<ParticleAttributes>& src, vector<float>& dst, const Vector2T<float>& center
+	) {
 		// clear vertex srcdata_cache => convert.
-		cvt.clear();
+		dst.clear();
 		for (const auto& Item : src) {
 			// format: vertex[vec3], color[vec4], uv(coord)[vec2], normal[vec3].
-			auto PTC_TEMP = ParticleBaseElement(Item.ParticlePosition, Item.ParticleColor, Item.ParticleScaleSize);
+			auto PTC_TEMP = ParticleBaseElement(
+				Vector3T<float>(
+					Item.ParticlePosition.vector_x + center.vector_x, 
+					Item.ParticlePosition.vector_y + center.vector_y,
+					Item.ParticlePosition.vector_z
+				), 
+				Item.ParticleColor, Item.ParticleScaleSize, Item.ParticleLife
+			);
 			// (add)push_back partiel.
-			cvt.insert(cvt.end(), PTC_TEMP.begin(), PTC_TEMP.end());
+			dst.insert(dst.end(), PTC_TEMP.begin(), PTC_TEMP.end());
 		}
 	}
 
@@ -299,7 +349,7 @@ namespace GraphicsEngineParticle {
 		VirTextureItem = GenResourceID.PsagGenTimeKey();
 		// virtual texture item alloc.
 		if (image.ImagePixels.empty())
-			VirTextureItemAllocEmpty(VirTextureItem, Vector2T<uint32_t>(512, 512));
+			VirTextureItemAllocEmpty(VirTextureItem, Vector2T<uint32_t>(256, 256));
 		else
 			VirTextureItemAlloc(VirTextureItem, image);
 		// set uniform params name.
@@ -308,8 +358,7 @@ namespace GraphicsEngineParticle {
 		VirTextureUniform.TexParamCropping = "ParticleVirTexCropping";
 		VirTextureUniform.TexParamSize     = "ParticleVirTexSize";
 
-		UPDATE_CALC_FUNC = CalcUpdateParticles;
-		omp_set_num_threads(1);
+		UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f) { CalcUpdateParticles(p, s, f); };
 
 		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system init.");
 		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system render_resolution: %u x %u", render_resolution.vector_x, render_resolution.vector_y);
@@ -320,12 +369,16 @@ namespace GraphicsEngineParticle {
 		VirTextureItemFree(VirTextureItem);
 		VerDyDataItemFree(DyVertexSysItem);
 		LLRES_Shaders->ResourceDelete(ShaderPostProgram);
+
+		if (ThreadsParallel != nullptr)
+			delete ThreadsParallel;
 	}
 
 	void PsagGLEngineParticle::UpdateParticleData() {
-		CalcUpdateParticles(DataParticles, 0.72f * GraphicsEngineTimeStep, GraphicsEngineTimeStep);
+		// calculate particles coord.
+		UPDATE_CALC_FUNC(DataParticles, 0.72f * GraphicsEngineTimeStep, GraphicsEngineTimeStep);
 		// "particle_attributes" => float
-		VertexDataConvert(DataParticles, DataVertices);
+		VertexDataConvert(DataParticles, DataVertices, ParticlesCoordCenter);
 		// particles_data => data cache. 
 		VerDyOperFramePushData(DyVertexSysItem, DataVertices);
 	}
@@ -337,10 +390,11 @@ namespace GraphicsEngineParticle {
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  MatrixDataWindow);
 
-		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",  RenderTimer);
-		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",  RenderMove);
-		ShaderUniform.UniformVec2 (ShaderTemp, "RenderScale", RenderScale);
-		ShaderUniform.UniformFloat(ShaderTemp, "RenderTwist", RenderTwist);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",   RenderTimer);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",   RenderMove);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderScale",  RenderScale);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderRotate", RenderRotate);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTwist",  RenderTwist);
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
@@ -373,17 +427,30 @@ namespace GraphicsEngineParticle {
 		generator->CreateAddParticleDataset(DataParticles);
 	}
 
-	void PsagGLEngineParticle::ParticleClacMode(ParticleCalcMode mode, int threads) {
+	void PsagGLEngineParticle::ParticleClacMode(ParticleCalcMode mode, size_t block_size, uint32_t threads) {
+		// parallel mode ? => failed.
+		if (ThreadsParallel != nullptr) return;
 		// particles calc(update) func_load.
 		switch (mode) {
-		case(CalcDefault): { UPDATE_CALC_FUNC = CalcUpdateParticles; break; }
-		case(CalcOpenMP): { 
-			UPDATE_CALC_FUNC = CalcUpdateParticlesOMP;
-			omp_set_num_threads(threads);
+		case(CALC_DEFAULT): { 
+			UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f)
+				{ CalcUpdateParticles(p, s, f); };
+			break; 
+		}
+		case(CALC_PARALLEL): { 
+			UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f)
+				{ CalcUpdateParticlesPARA(p, s, f); };
+			// block default(min) size = 1000.
+			DataBlockSize = block_size > 1000 ? block_size : 1000;
+			// create threads_pool.
+			ThreadsParallel = new PSAG_THREAD_POOL::PsagThreadTasks(threads);
 			break;
 		}
-		case(CalcEmptyOper): { UPDATE_CALC_FUNC = CalcUpdateParticlesNULL; break; }
-		}
+		case(CALC_NO_CALC): { 
+			UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f)
+				{ CalcUpdateParticlesNULL(p, s, f); }; 
+			break; 
+		}}
 	}
 
 	vector<ParticleAttributes>* PsagGLEngineParticle::GetParticleDataset() {

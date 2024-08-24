@@ -117,8 +117,8 @@ namespace PSAG_THREAD_POOL {
         void     ResizeWorkers(uint32_t resize);
     };
 }
-
-// PSAG thread(calc) function: SIMD AVX-256.
+#define ENABLE_AVX256_CALC_FUNC
+// PSAG thread(calc) function: SIMD AVX-256, X86.
 namespace PSAG_THREAD_SIMD {
 #ifdef ENABLE_AVX256_CALC_FUNC
     // device intel-avx-isa.
@@ -128,7 +128,8 @@ namespace PSAG_THREAD_SIMD {
     // imm register 256bit float32 * 8, 32bytes.
     using PsagFp32Simd256b = __m256;
 
-    PsagFp32Simd256b PsagSimdLoad8Fp32(float* dataptr, size_t offset, size_t bytes = 32);
+    PsagFp32Simd256b PsagSimdLoad8Fp32    (float* dataptr, size_t offset, size_t bytes = 32);
+    void             PsagSimdStore8Fp32   (PsagFp32Simd256b vec, float* dataptr, size_t bytes = 32);
     PsagFp32Simd256b PsagSimdLoad8Fp32Fill(float* dataptr, size_t count_32b);
 
     PsagFp32Simd256b PsagSimdCalcADD(PsagFp32Simd256b A, PsagFp32Simd256b B);
@@ -146,6 +147,24 @@ namespace PSAG_THREAD_SIMD {
         ModeMin = 1 << 2
     };
     PsagFp32Simd256b PsagSimdCalcLIMIT(PsagFp32Simd256b A, PsagFp32Simd256b B, LIMIT_CALC_TYPE MODE);
+
+    template <int mask>
+    // avx-isa: blend values based mask [0,255].
+    PsagFp32Simd256b PsagSimdCalcBLEND(PsagFp32Simd256b A, PsagFp32Simd256b B) {
+        return _mm256_blend_ps(A, B, mask);
+    }
+
+    PsagFp32Simd256b PsagSimdCalcRSQRT(PsagFp32Simd256b A);
+    PsagFp32Simd256b PsagSimdCalcRECI (PsagFp32Simd256b A);
+    PsagFp32Simd256b PsagSimdCalcNEG  (PsagFp32Simd256b A);
+    PsagFp32Simd256b PsagSimdCalcHADD (PsagFp32Simd256b A, PsagFp32Simd256b B);
+    PsagFp32Simd256b PsagSimdCalcDOT  (PsagFp32Simd256b A, PsagFp32Simd256b B);
+
+    bool PsagSimdCompareEQ(PsagFp32Simd256b A, PsagFp32Simd256b B);
+    bool PsagSimdCompareLT(PsagFp32Simd256b A, PsagFp32Simd256b B);
+    bool PsagSimdCompareLE(PsagFp32Simd256b A, PsagFp32Simd256b B);
+    bool PsagSimdCompareGT(PsagFp32Simd256b A, PsagFp32Simd256b B);
+    bool PsagSimdCompareGE(PsagFp32Simd256b A, PsagFp32Simd256b B);
 #endif
 }
 

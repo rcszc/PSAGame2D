@@ -10,7 +10,6 @@ extern "C" {
     _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001; 
 }
 #endif
-
 namespace system_err {
     // glfw system callback.
     static void GLFWsys_ErrorCallback(int error, const char* description) {
@@ -25,8 +24,7 @@ namespace system_err {
             PushLogger(LogError, PSAG_WINDOW_OGLFW::PSAG_WINDOW_LABEL, "fw_window %s", message);
             return false;
         }
-        else
-            return true;
+        return true;
     }
 }
 

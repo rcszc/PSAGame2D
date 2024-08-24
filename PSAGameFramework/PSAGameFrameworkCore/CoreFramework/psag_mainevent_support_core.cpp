@@ -88,7 +88,10 @@ namespace PsagFrameworkCore {
     bool PSAGame2DFramework::CoreFrameworkInit(FrameworkSysVersion version) {
         bool CoreInitErrorFlag = PSAG_FALSE;
         // init_config_func => init...
-        FrameworkInitConfig(EngineGLSL);
+        if (!FrameworkInitConfig(EngineGLSL)) {
+            PushLogger(LogError, PSAGM_FRAME_CORE_LABEL, "core init: fatal error.");
+            return false;
+        }
         RenderingWindowSize = Vector2T<uint32_t>(WindowInitConfig.WindowSizeWidth, WindowInitConfig.WindowSizeHeight);
 
         // enable opengl profile config.
@@ -121,9 +124,10 @@ namespace PsagFrameworkCore {
         GraphicsEngineDataset::GLEngineStcVertexData::LowLevelResourceCreate(PushLogger, 30);
 
         // graphics system create.
-        VertexDataObjectCreate();
+        // dynamic vertex, static vertex, virtual textures.
+        DynamicVertexDataObjectCreate();
         StaticVertexDataObjectCreate();
-        VirtualTextureDataObjectCreate(RenderingVirTextureSizeBase);
+        VirtualTextureDataObjectCreate(RenderingVirTexBasicSize, VirTexturesMax);
 
         // sound system create.
         CoreInitErrorFlag |= !CreateSoundDevice();
@@ -167,7 +171,7 @@ namespace PsagFrameworkCore {
             delete ObjectItem.second;
 
         // graphics system init.
-        VertexDataObjectDelete();
+        DynamicVertexDataObjectDelete();
         StaticVertexDataObjectDelete();
         VirtualTextureDataObjectDelete();
 

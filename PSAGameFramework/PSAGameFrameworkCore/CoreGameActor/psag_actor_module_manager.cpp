@@ -5,18 +5,67 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace GameCoreManager {
-	GameActorActuatorManager::~GameActorActuatorManager() {
+	// ******************************** game actor_shaders ********************************
+
+	GameActorShaderManager::~GameActorShaderManager() {
+		for (auto& ShaderItem : GameShaderDataset) {
+			if (ShaderItem.second == nullptr) {
+				PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "actor_shader manager: %s nullptr!",
+					ShaderItem.first.c_str());
+				continue;
+			}
+			// free actor_shader.
+			delete ShaderItem.second;
+		}
+		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "actor_shader manager system delete.");
+	}
+
+	bool GameActorShaderManager::CreateActorShader(const char* shader_name, GameActorCore::GameActorShader* shader) {
+		// shader_pointer = null | name != empty.
+		if (shader == nullptr || FindActorShader(shader_name) != nullptr) {
+			PushLogger(LogError, PSAGM_CORE_MAG_LABEL,
+				"actor_shader(mag) item failed create(nullptr | name_err).");
+			return false;
+		}
+		// create shader.
+		shader->CreateShaderResource();
+		GameShaderDataset[shader_name] = shader;
+		return true;
+	}
+
+	bool GameActorShaderManager::DeleteActorShader(const char* shader_name) {
+		auto it = GameShaderDataset.find(shader_name);
+		if (it != GameShaderDataset.end()) {
+			// shader_pointer null.
+			if (it->second == nullptr) {
+				PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "actor_shader(mag) item failed delete.");
+				return  false;
+			}
+			delete it->second;
+			GameShaderDataset.erase(it);
+			return true;
+		}
+		return false;
+	}
+
+	GameActorCore::GameActorShader* GameActorShaderManager::FindActorShader(const char* shader_name) {
+		return GameShaderDataset.find(shader_name) == GameShaderDataset.end() ? nullptr : GameShaderDataset[shader_name];
+	}
+
+	// ******************************** game actor_actuator ********************************
+
+	GameActorExecutorManager::~GameActorExecutorManager() {
 		for (auto& ActorItem : GameActorDataset)
 			if (ActorItem.second != nullptr)
 				delete ActorItem.second;
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_actor manager system delete.");
 	}
 
-	size_t GameActorActuatorManager::CreateGameActor(
-		uint32_t actor_code, const GameActorCore::GameActorActuatorDESC& actor_desc
+	size_t GameActorExecutorManager::CreateGameActor(
+		uint32_t actor_code, const GameActorCore::GameActorExecutorDESC& actor_desc
 	) {
-		GameActorCore::GameActorActuator* CreateGameActor = 
-			new GameActorCore::GameActorActuator(actor_code, actor_desc);
+		GameActorCore::GameActorExecutor* CreateGameActor = 
+			new GameActorCore::GameActorExecutor(actor_code, actor_desc);
 		// actor pointer = nullptr.
 		if (CreateGameActor == nullptr) {
 			PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_actor(mag) item failed create.");
@@ -27,7 +76,7 @@ namespace GameCoreManager {
 		return UniqueCode;
 	}
 
-	bool GameActorActuatorManager::DeleteGameActor(size_t unique_code) {
+	bool GameActorExecutorManager::DeleteGameActor(size_t unique_code) {
 		auto it = GameActorDataset.find(unique_code);
 		if (it != GameActorDataset.end()) {
 			// find actor_item => push free_list => delete.
@@ -37,24 +86,23 @@ namespace GameCoreManager {
 		return false;
 	}
 
-	GameActorCore::GameActorActuator* GameActorActuatorManager::FindGameActor(size_t unique_code) {
+	GameActorCore::GameActorExecutor* GameActorExecutorManager::FindGameActor(size_t unique_code) {
 		return GameActorDataset.find(unique_code) == GameActorDataset.end() ? nullptr : GameActorDataset[unique_code];
 	}
 
-	void GameActorActuatorManager::UpdateManagerData() {
+	void GameActorExecutorManager::UpdateManagerData() {
 		for (auto& FreeItem : GameActorFreeList) {
 			auto it = GameActorDataset.find(FreeItem);
 			if (it != GameActorDataset.end()) {
 				// delete actor_object & erase info.
-				if (it->second != nullptr)
-					delete it->second;
+				if (it->second != nullptr) delete it->second;
 				GameActorDataset.erase(it);
 			}
 		}
 		GameActorFreeList.clear();
 	}
 
-	void GameActorActuatorManager::RunAllGameActor() {
+	void GameActorExecutorManager::RunAllGameActor() {
 		for (auto& RunActorItem : GameActorDataset) {
 			// update actor state.
 			RunActorItem.second->ActorUpdateHealth();
@@ -63,15 +111,17 @@ namespace GameCoreManager {
 		}
 	}
 
-	GameBrickActuatorManager::~GameBrickActuatorManager() {
+	// ******************************** game brick_actuator ********************************
+
+	GameBrickExecutorManager::~GameBrickExecutorManager() {
 		for (auto& BrickItem : GameBrickDataset)
 			if (BrickItem.second != nullptr)
 				delete BrickItem.second;
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_brick manager system delete.");
 	}
 
-	size_t GameBrickActuatorManager::CreateGameBrick(const GameBrickCore::GameBrickActuatorDESC& brick_desc) {
-		GameBrickCore::GameBrickActuator* CreateGameBrick = new GameBrickCore::GameBrickActuator(brick_desc);
+	size_t GameBrickExecutorManager::CreateGameBrick(const GameBrickCore::GameBrickExecutorDESC& brick_desc) {
+		GameBrickCore::GameBrickExecutor* CreateGameBrick = new GameBrickCore::GameBrickExecutor(brick_desc);
 		// brick pointer = nullptr.
 		if (CreateGameBrick == nullptr) {
 			PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_brick(mag) item failed create.");
@@ -82,9 +132,14 @@ namespace GameCoreManager {
 		return UniqueCode;
 	}
 
-	bool GameBrickActuatorManager::DeleteGameBrick(size_t unique_code) {
+	bool GameBrickExecutorManager::DeleteGameBrick(size_t unique_code) {
 		auto it = GameBrickDataset.find(unique_code);
 		if (it != GameBrickDataset.end()) {
+			// brick_pointer null.
+			if (it->second == nullptr) {
+				PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_brick(mag) item failed delete.");
+				return false;
+			}
 			delete it->second;
 			GameBrickDataset.erase(it);
 			return true;
@@ -92,7 +147,7 @@ namespace GameCoreManager {
 		return false;
 	}
 
-	void GameBrickActuatorManager::RunAllGameBrick() {
+	void GameBrickExecutorManager::RunAllGameBrick() {
 		for (auto& RunBrickItem : GameBrickDataset)
 			RunBrickItem.second->BrickRendering();
 	}

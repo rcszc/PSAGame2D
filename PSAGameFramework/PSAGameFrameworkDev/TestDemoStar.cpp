@@ -64,29 +64,29 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
     PsagActor::OperPhysicalWorld CreatePhyWorld("TestPhyWorld", 1);
 
     // 创建Actor着色器资源.
-    ActorShaderPawn = new PsagActor::ActorRender(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderResource();
-    ActorShaderStar = new PsagActor::ActorRender(ActorFragStar, WinSize); ActorShaderStar->CreateShaderResource();
+    ActorShaderPawn = new PsagActor::ActorShader(ActorFragPawn, WinSize); ActorShaderPawn->CreateShaderResource();
+    ActorShaderStar = new PsagActor::ActorShader(ActorFragStar, WinSize); ActorShaderStar->CreateShaderResource();
 
     PsagLow::PsagSupFilesysLoaderBin FxTexture1("Test/TEST_NOISE.png");
     PsagLow::PsagSupFilesysLoaderBin FxTexture2("Test/TEST_LASER.png");
 
     // 特效着色器: 能量球.
-    ActorShaderFX1 = new PsagActor::ActorRender(ActorFragFX1, WinSize);
+    ActorShaderFX1 = new PsagActor::ActorShader(ActorFragFX1, WinSize);
     ActorShaderFX1->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(FxTexture1.GetDataBinary()));
     ActorShaderFX1->CreateShaderResource();
 
     // 特效着色器: 闪电.
-    ActorShaderFX2 = new PsagActor::ActorRender(ActorFragFX2, WinSize);
+    ActorShaderFX2 = new PsagActor::ActorShader(ActorFragFX2, WinSize);
     ActorShaderFX2->CreateShaderResource();
 
     // 特效着色器: 能量束.
-    ActorShaderFX3 = new PsagActor::ActorRender(ActorFragFX3, WinSize);
+    ActorShaderFX3 = new PsagActor::ActorShader(ActorFragFX3, WinSize);
     ActorShaderFX3->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(FxTexture2.GetDataBinary()));
     ActorShaderFX3->CreateShaderResource();
 
     PsagLow::PsagSupFilesysLoaderBin BrickTexture("Test/TEST_BOX.png");
 
-    BrickShader = new PsagActor::ActorRender(GameActorScript::PsagShaderBrickPrivateFS, WinSize);
+    BrickShader = new PsagActor::ActorShader(GameActorScript::PsagShaderPrivateFS_Brick, WinSize);
     BrickShader->ShaderLoadImage(DecodeRawImage.DecodeImageRawData(BrickTexture.GetDataBinary()));
     BrickShader->CreateShaderResource();
 
@@ -137,7 +137,9 @@ bool StarDemoClass::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
     CreateRandomStarActors(72);
     FpsDebug = new GameDebugGuiWindow::DebugWindowGuiFPS("GameFPS", 1200.0f);
-    PlayerPawn = new PsagManager::Tools::Pawn::GamePlayerPawn(Vector2T<float>(128.0f, 128.0f));
+
+    PlayerPawn   = new PsagManager::Tools::Pawn::GamePlayerPawn(Vector2T<float>(128.0f, 128.0f));
+    PlayerCamera = new PsagManager::Tools::Camera::GamePlayerComaeraMP(Vector2T<float>(0.25f, 0.2f), WinSize, 1.0f);
     return true;
 }
 
@@ -272,6 +274,7 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
     if (ImGui::IsKeyPressed(ImGuiKey_R, false))
         ActorUltimateFX->StarDemoFxFire();
 
+    /*
     ImGui::Begin("TestWindow");
 
     ImGui::InputFloat2("FIRE POS", UltimateSettingPosition.data());
@@ -283,40 +286,24 @@ bool StarDemoClass::LogicEventLoopGui(GameLogic::FrameworkParams& RunningState) 
             UltimateSettingPosition, UltimateSettingRotate
         );
     }
+
+    ImGui::Text("Particles: %u", AshesParticles->GetParticleState().DarwParticlesNumber);
     ImGui::End();
+    */
 
     RunningState.CameraParams->MatrixRotate += (CameraRotate - RunningState.CameraParams->MatrixRotate) * 0.05f;
 
     auto ToWindowCoord = PawnActorObj->ActorConvertVirCoord(RunningState.WindowResolution);
 
-    if (ToWindowCoord.vector_x > RunningState.WindowResolution.vector_x * 0.4f)
-        CameraPosition.vector_x -= abs(PawnActorObj->ActorGetMoveSpeed().vector_x) * RunningState.GameRunTimeStep;
-
-    if (ToWindowCoord.vector_x < RunningState.WindowResolution.vector_x * 0.6f)
-        CameraPosition.vector_x += abs(PawnActorObj->ActorGetMoveSpeed().vector_x) * RunningState.GameRunTimeStep;
-
-    if (ToWindowCoord.vector_y > RunningState.WindowResolution.vector_y * 0.4f)
-        CameraPosition.vector_y += abs(PawnActorObj->ActorGetMoveSpeed().vector_y) * RunningState.GameRunTimeStep;
-
-    if (ToWindowCoord.vector_y < RunningState.WindowResolution.vector_y * 0.6f)
-        CameraPosition.vector_y -= abs(PawnActorObj->ActorGetMoveSpeed().vector_y) * RunningState.GameRunTimeStep;
-
-    Vector2T<float> CameraOffset = {};
-    if (ActorUltimateFX != nullptr) {
-
-        CameraOffset = ActorUltimateFX->StarDemoFxCameraOffset(&CameraScale, &CameraRotate);
-        GuiTitleNumber(Vector2T<float>(ImGui::GetIO().DisplaySize.x / 2.0f - 320.0f, 72.0f), ActorUltimateFX->StarDemoFxProgress() * 100.0f);
-
-        CameraPosition.vector_x += (UltimateSettingPosition.vector_x - CameraPosition.vector_x) * 0.002f;
-        CameraPosition.vector_y += (UltimateSettingPosition.vector_y - CameraPosition.vector_y) * 0.002f;
-    }
+    PlayerCamera->PlayerCameraRun(ToWindowCoord, PawnActorObj->ActorGetMoveSpeed());
+    auto CameraPosition = PlayerCamera->GetCameraPosition();
 
     RunningState.CameraParams->MatrixScale.vector_x +=
         (CameraScale - RunningState.CameraParams->MatrixScale.vector_x) * 0.0025f;
     RunningState.CameraParams->MatrixScale.vector_y = RunningState.CameraParams->MatrixScale.vector_x;
 
     RunningState.CameraParams->MatrixPosition = 
-        Vector2T<float>(CameraPosition.vector_x + CameraOffset.vector_x, CameraPosition.vector_y + CameraOffset.vector_y);
+        Vector2T<float>(CameraPosition.vector_x, CameraPosition.vector_y);
 
     ImGui::PopStyleColor(8);
     return true;

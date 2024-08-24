@@ -11,7 +11,5 @@ void main()
 	vec4 SceneColor     = texture(PostTextures, vec3(SampleCoord, 1.0));
 	vec4 SceneBlurColor = texture(PostTextures, vec3(SampleCoord, 4.0));
 
-	SceneColor += SceneBlurColor;
-
-	FragColor = SceneColor;//(SceneColor * 1.42 * PostBloomSource + SceneBlurColor * 2.4 * PostBloomBlur) * 0.5;
+	FragColor = SceneColor * 1.2 * PostBloomSource + SceneBlurColor * 1.6 * PostBloomBlur;
 }

@@ -13,9 +13,9 @@ uniform float RenderTime;
 out vec4 FragColor;
 
 vec4 DrawSquare(vec2 uv, vec2 Center, float SideLength, vec4 Color) {
-    vec2 HalfSize = vec2(SideLength * 0.5);
-    vec2 MinBound = Center - HalfSize;
-    vec2 MaxBound = Center + HalfSize;
+    vec2 SizeHalf = vec2(SideLength * 0.5);
+    vec2 MinBound = Center - SizeHalf;
+    vec2 MaxBound = Center + SizeHalf;
 
     if (uv.x >= MinBound.x && uv.x <= MaxBound.x &&
         uv.y >= MinBound.y && uv.y <= MaxBound.y) 

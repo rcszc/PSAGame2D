@@ -17,6 +17,9 @@ protected:
 
 namespace CollectEngineRandom {
 	StaticStrLABEL PSAGM_COLENGINE_RAND_LABEL = "PSAG_COLL_RADNOM";
+	namespace Func {
+		float GenerateRandomFunc(float max, float min);
+	}
 
 	enum RandomSeed {
 		TimeSeedSeconds      = 1 << 1,
@@ -68,16 +71,58 @@ namespace CollectEnginePawn {
 		Vector2T<float> DampingEffectVector = {};
 		Vector2T<float> MoveSpeedTarget = {};
 	public:
-		GamePlayerPawn(Vector2T<float> damping);
+		GamePlayerPawn(const Vector2T<float>& damping);
 
 		bool MouseButtonPressed_R(bool pulse = false);
 		bool MouseButtonPressed_L(bool pulse = false);
+
+		bool KeyboardPressed_R();
+		bool KeyboardPressed_F();
 
 		// control(value): x,y[+-].
 		Vector2T<float> ControlMoveVector    = {};
 		Vector2T<float> ControlMousePosition = {};
 
 		void PlayerPawnRun(float speed_value = 1.0f);
+	};
+}
+
+namespace CollectEngineCamera {
+	StaticStrLABEL PSAGM_COLENGINE_CAMERA_LABEL = "PSAG_COLL_CAMERA";
+
+	class GamePlayerComaeraMP :public __COLLECT_ENGINE_TIMESETP {
+	protected:
+		Vector2T<float> CameraPositionTarget = {};
+		Vector2T<float> CameraPosition       = {};
+
+		Vector2T<float> WindowRectRange  = {};
+		Vector2T<float> WindowResolution = {};
+
+		float CALC_LERP_SCALE = 1.0f;
+	public:
+		GamePlayerComaeraMP(
+			const Vector2T<float>& rect_range, const Vector2T<uint32_t>& window_size, 
+			float hardness
+		);
+		void PlayerCameraRun(const Vector2T<float>& window_coord, const Vector2T<float>& actor_speed);
+		// calc_target => calc_position.
+		Vector2T<float> GetCameraPosition() { return CameraPosition; }
+	};
+}
+
+namespace CollectEngineTimerClock {
+	StaticStrLABEL PSAGM_COLENGINE_TIMER_LABEL = "PSAG_COLL_TIMER";
+
+	// timer accuracy: us, setting: ms.
+	class GameCycleTimer {
+	protected:
+		std::chrono::system_clock::time_point TimeTempTarget = std::chrono::system_clock::now();
+	public:
+		bool CycleTimerFlagGet();
+		bool CycleTimerClearReset(float time_delay);
+
+		// return: milliseconds.
+		float GetTimeNowCount();
 	};
 }
 

@@ -5,7 +5,7 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 StarDemoFX::StarDemoFX(
-    PsagActor::ActorsManager* Manager, Vector3T<PsagActor::ActorRender*> Shader,
+    PsagActor::ActorsManager* Manager, Vector3T<PsagActor::ActorShader*> Shader,
     const Vector2T<float>& Position, float Angle
 ) {
     FxActorFireAngle = Angle;

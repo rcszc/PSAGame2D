@@ -14,7 +14,7 @@ namespace GameDebugGuiWindow {
 	constexpr ImVec4 L_COLOR = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	constexpr ImVec4 H_COLOR = ImVec4(0.0f, 1.0f, 0.9f, 1.0f);
 
-	void DebugWindowGuiActorPawn(const char* name, GameActorCore::GameActorActuator* actor) {
+	void DebugWindowGuiActorPawn(const char* name, GameActorCore::GameActorExecutor* actor) {
 		ImGui::Begin(name);
 		{
 			ImGui::Text("Actor Type: %u, Unique: %u", actor->ActorGetPrivate().ActorTypeCode, actor->ActorGetPrivate().ActorUniqueCode);
@@ -35,7 +35,7 @@ namespace GameDebugGuiWindow {
 		ImGui::End();
 	}
 
-	void DebugWindowGuiActors(const char* name, unordered_map<size_t, GameActorCore::GameActorActuator*>* actors) {
+	void DebugWindowGuiActors(const char* name, unordered_map<size_t, GameActorCore::GameActorExecutor*>* actors) {
 		ImGui::Begin(name, (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
 		ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 0.92f), "Actors Number: %u", actors->size());
 

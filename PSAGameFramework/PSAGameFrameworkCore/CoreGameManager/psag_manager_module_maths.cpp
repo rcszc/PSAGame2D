@@ -15,6 +15,15 @@ namespace GameManagerCore {
 			return PSAG_M_RADDEG(atan2(Dy, Dx));
 		}
 
+		Vector2T<float> CalcFuncPointAngleDistance(Vector2T<float> basic_point, float angle_deg, float distance) {
+			float AngleRad = PSAG_M_DEGRAD(angle_deg);
+
+			float NewPx = basic_point.vector_x + distance * cos(AngleRad);
+			float NewPy = basic_point.vector_y + distance * sin(AngleRad);
+
+			return Vector2T<float>(NewPx, NewPy);
+		}
+
 		void CalcFuncLerpVec1(float* ahpla, float* target, float speed) {
 			*ahpla += (*target - *ahpla) * speed;
 		}

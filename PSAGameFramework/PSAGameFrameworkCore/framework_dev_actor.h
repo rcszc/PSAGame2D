@@ -11,20 +11,27 @@ namespace PsagActor {
 
 	using VertexDESC  = GameActorCore::GameActorShaderVerticesDESC;
 	using ActorHpDESC = GameActorCore::GameActorHealthDESC;
-	using ActorDESC   = GameActorCore::GameActorActuatorDESC;
-	using BrickDESC   = GameBrickCore::GameBrickActuatorDESC;
+	using ActorDESC   = GameActorCore::GameActorExecutorDESC;
+	using BrickDESC   = GameBrickCore::GameBrickExecutorDESC;
 
-	using ActorUnique = GameActorCore::ActorPrivateINFO;
-	using BirckUnique = GameActorCore::ActorPrivateINFO;
+	using ActorUnique = GameComponents::ActorPrivateINFO;
+	using BirckUnique = GameComponents::ActorPrivateINFO;
 
-	using ActorRender = GameActorCore::GameActorShader;
-	using Actor       = GameActorCore::GameActorActuator;
-	using Brick       = GameBrickCore::GameBrickActuator;
+	using ActorShader = GameActorCore::GameActorShader;
+	using Actor       = GameActorCore::GameActorExecutor;
+	using Brick       = GameBrickCore::GameBrickExecutor;
 
-	using ActorsManager = GameCoreManager::GameActorActuatorManager;
-	using BricksManager = GameCoreManager::GameBrickActuatorManager;
+	using ActorHP        = GameComponents::GameActorHP;
+	using ActorLogicBase = GameComponents::ActorActionLogicBase;
+	using ActorCollision = GameActorCore::GameCollisionPAIR;
+
+	using ShaderManager = GameCoreManager::GameActorShaderManager;
+	using ActorsManager = GameCoreManager::GameActorExecutorManager;
+	using BricksManager = GameCoreManager::GameBrickExecutorManager;
 
 	using OperPhysicalWorld = GamePhysicsOper::GamePhysicalWorld;
+	using PresetScript = GameActorCore::GameActorPresetScript;
 }
+#define ACTOR_COLL_FUNC [&](PsagActor::Actor* ThisActor)
 
 #endif

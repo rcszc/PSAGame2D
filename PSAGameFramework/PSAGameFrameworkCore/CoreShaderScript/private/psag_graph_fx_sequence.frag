@@ -11,9 +11,8 @@ uniform float RenderTime;
 void main()
 {
 	vec2 SampleCoord = FxCoord * RenderUvSize + RenderUvOffset;
-	vec4 Color = texture(SequeVirTex, vec3(SampleCoord, float(SequeVirTexLayer)));
+	vec3 Color = texture(SequeVirTex, vec3(SampleCoord, float(SequeVirTexLayer))).rgb;
 
-	Color.a = (Color.r + Color.g + Color.b) / 3.0;
-
-	FragColor = Color * RenderColorBlend;
+	vec4 FragOut = vec4(vec3(Color), (Color.r + Color.g + Color.b) / 3.0);
+	FragColor = FragOut * RenderColorBlend;
 }

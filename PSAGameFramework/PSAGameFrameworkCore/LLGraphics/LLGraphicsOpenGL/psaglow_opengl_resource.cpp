@@ -25,7 +25,7 @@ namespace PSAG_OGL_RES {
 			std::lock_guard<std::mutex> Lock(TmuStateMutex);
 			FindIdelFlag = FindTmuStateflag(TmuStateFlag, ReturnTmuCount);
 		}
-		// 0号纹理采样器为系统默认(不使用).
+		// 0号(NULL)纹理采样器为系统默认(不使用).
 		ReturnTmuCount += 1;
 		if (!FindIdelFlag)
 			PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "tmu failed alloc_count idle = 0.");
@@ -275,7 +275,7 @@ namespace PSAG_OGL_RES {
 
 	bool PsagResFrameBufferOGL::ResourceDelete(ResUnique key) {
 		std::lock_guard<std::mutex> Lock(ResourceFrameBufferMutex);
-
+		
 		auto it = ResourceFrameBufferMap.find(key);
 		if (it != ResourceFrameBufferMap.end()) {
 

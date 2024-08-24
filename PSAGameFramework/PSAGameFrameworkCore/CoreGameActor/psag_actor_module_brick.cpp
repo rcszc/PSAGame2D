@@ -6,7 +6,7 @@ using namespace PSAG_LOGGER;
 
 namespace GameBrickCore {
 
-	GameBrickActuator::GameBrickActuator(const GameBrickActuatorDESC& INIT_DESC) {
+	GameBrickExecutor::GameBrickExecutor(const GameBrickExecutorDESC& INIT_DESC) {
 		PSAG_SYSGEN_TIME_KEY GenResourceID;
 		BrickUniqueID = GenResourceID.PsagGenTimeKey();
 
@@ -26,30 +26,30 @@ namespace GameBrickCore {
 		auto ResTemp = INIT_DESC.BrickShaderResource->__RENDER_RESOLUTION;
 		RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
 
-		BrickResource = INIT_DESC.BrickShaderResource;
+		BrickRenderRes = INIT_DESC.BrickShaderResource;
 
 		if (INIT_DESC.EnableRendering) {
-			BirckCompRendering = new GameActorCore::system::ActorRendering();
+			BirckCompRendering = new GameComponents::ActorRendering();
 
 			BirckCompRendering->RenderResolution = RenderingResolution;
-			BirckCompRendering->ShaderIndex      = BrickResource->__ACTOR_SHADER_ITEM;
-			BirckCompRendering->VertexGroupIndex = BrickResource->__ACTOR_VERTEX_ITEM;
+			BirckCompRendering->ShaderIndex      = BrickRenderRes->__ACTOR_SHADER_ITEM;
+			BirckCompRendering->VertexGroupIndex = BrickRenderRes->__ACTOR_VERTEX_ITEM;
 			BirckCompRendering->RenderMatrix     = &MatrixDataWindow;
 
 			// load rendering texture.
-			if (VirTextureExist(BrickResource->__VIR_TEXTURE_ITEM)) {
+			if (VirTextureExist(BrickRenderRes->__VIR_TEXTURE_ITEM)) {
 				// rendering texture func.
 				BirckCompRendering->RenderingTextureFunc = 
 					[this](PsagShader shader) { BirckCompRendering->UpdateActorRenderingTexture(shader); };
 
 				// virtual texture_unqiue, unifrom.
-				BirckCompRendering->VirTexItem    = BrickResource->__VIR_TEXTURE_ITEM;
-				BirckCompRendering->VirTexUniform = BrickResource->__VIR_UNIFORM_ITEM;
+				BirckCompRendering->VirTexItem    = BrickRenderRes->__VIR_TEXTURE_ITEM;
+				BirckCompRendering->VirTexUniform = BrickRenderRes->__VIR_UNIFORM_ITEM;
 			}
 		}
 		else {
 			// comp(empty_object): rendering.
-			BirckCompRendering = new GameActorCore::system::null::ActorRenderingNULL();
+			BirckCompRendering = new GameComponents::null::ActorRenderingNULL();
 		}
 		// birck => load physics world_item.
 		if (PhysicsWorldFind(INIT_DESC.BrickPhysicsWorld) == nullptr) {
@@ -88,7 +88,7 @@ namespace GameBrickCore {
 		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item create.");
 	}
 
-	GameBrickActuator::~GameBrickActuator() {
+	GameBrickExecutor::~GameBrickExecutor() {
 		// free: sysem_components.
 		if (BirckCompRendering != nullptr) delete BirckCompRendering;
 
@@ -97,10 +97,10 @@ namespace GameBrickCore {
 		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item delete: %u", BrickUniqueID);
 	}
 
-	void GameBrickActuator::BrickRendering() {
+	void GameBrickExecutor::BrickRendering() {
 		// rendering brick shader_data.
 		BirckCompRendering->UpdateActorRendering(
-			GameActorCore::system::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, BrickStaticLayer),
+			GameComponents::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, BrickStaticLayer),
 			VirTimerCount
 		);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;

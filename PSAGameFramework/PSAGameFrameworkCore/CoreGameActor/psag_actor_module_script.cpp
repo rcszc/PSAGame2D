@@ -37,7 +37,7 @@ void main()
 	FxCoord = VertexTexture;
 }
 )";
-	const char* PsagShaderBrickPrivateFS = R"(
+	const char* PsagShaderPrivateFS_Brick = R"(
 #version 460 core
 
 in vec4 FxColor;
@@ -55,7 +55,8 @@ out vec4 FragColor;
 
 void main()
 {
-    FragColor = texture(VirTexture, vec3(FxCoord, float(VirTextureLayer)));
+	vec2 SamplerCoord = VirTextureCropping * FxCoord;
+    FragColor = texture(VirTexture, vec3(SamplerCoord, float(VirTextureLayer)));
 }
 )";
 }

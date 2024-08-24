@@ -37,7 +37,8 @@ namespace GameManagerCore {
 			ParticleGroupCreate.ConfigRandomColorSystem(
 				CREATE_DESC.ParticlesCrRandom,
 				CREATE_DESC.ParticlesCgRandom,
-				CREATE_DESC.ParticlesCbRandom
+				CREATE_DESC.ParticlesCbRandom,
+				CREATE_DESC.ParticlesColorMode
 			);
 			ParticleGroupCreate.ConfigRandomDispersion(
 				CREATE_DESC.ParticlesVecRandom,
@@ -61,6 +62,16 @@ namespace GameManagerCore {
 				FxParticleObject->GetParticleDataset()->end(), ADD_PARTICLES.begin(), ADD_PARTICLES.end()
 			);
 			return true;
+		}
+
+		void GameFxParticle::SetFxParticlesCenter(const Vector2T<float>& coord) {
+			// particles calc center_coord.
+			FxParticleObject->ParticlesCoordCenter = coord;
+		}
+
+		void GameFxParticle::SetFxParticlesRandRotate(bool rot_switch) {
+			// false: * speed(0.0f), true: speed = basic(1.0f)
+			FxParticleObject->SetParticleRotateSpeed((float)rot_switch);
 		}
 
 		void GameFxParticle::FxParticleRendering() {

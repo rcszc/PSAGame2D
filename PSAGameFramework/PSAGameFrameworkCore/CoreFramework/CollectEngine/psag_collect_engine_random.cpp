@@ -11,6 +11,15 @@ namespace CollectEngineRandom {
 		return chrono::duration_cast<CHRONO_TYPE>(chrono::system_clock::now().time_since_epoch()).count();
 	}
 
+	namespace Func {
+		float GenerateRandomFunc(float max, float min) {
+			// const seed: milliseconds time.
+			mt19937_64 MtGenerator((uint64_t)GetTimeNowCount<chrono::milliseconds>());
+			uniform_real_distribution<float> Distribution(min, max);
+			return Distribution(MtGenerator);
+		}
+	}
+
 	void GenerateRandom1D::RandomSeedMode(RandomSeed mode) {
 		switch (mode) {
 		case(TimeSeedSeconds):      { GenerateSeedFunc = [&]() { return GetTimeNowCount<chrono::seconds>(); }; break; }

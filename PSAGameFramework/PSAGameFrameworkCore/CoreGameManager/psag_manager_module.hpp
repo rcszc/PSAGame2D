@@ -3,11 +3,11 @@
 #ifndef __PSAG_MANAGER_MODULE_HPP
 #define __PSAG_MANAGER_MODULE_HPP
 // graphics & collect engine => manager_module.
+#define ENABLE_LOWMODULE_FILESYS
 #include "../CoreFramework/GraphicsEngine/psag_graphics_engine.h"
 #include "../CoreFramework/CollectEngine/psag_collect_engine.h"
 
 namespace GameManagerCore {
-
 	namespace GameFX {
 		StaticStrLABEL PSAGM_MANAGER_FX_LABEL = "PSAG_MANAGER_FX";
 
@@ -33,16 +33,16 @@ namespace GameManagerCore {
 			PartcMode::EmittersMode ParticlesLaunchMode;
 
 			GameFxCreateParticleDESC() :
-				ParticlesColorMode  (PartcMode::ChannelsRGB),
-				ParticlesLaunchMode (PartcMode::PrtcPoints),
-				PariclesNumber      (10.0f),
+				ParticlesColorMode (PartcMode::ChannelsRGB),
+				ParticlesLaunchMode(PartcMode::PrtcPoints),
+				PariclesNumber     (10.0f),
 
 				ParticlesLifeRandom(Vector2T<float>(128.0f, 256.0f)),
 				ParticlesSizeRandom(Vector2T<float>(1.0f, 2.0f)),
 
-				ParticlesCrRandom(Vector2T<float>(0.0f, 1.0f)),
-				ParticlesCgRandom(Vector2T<float>(0.0f, 1.0f)),
-				ParticlesCbRandom(Vector2T<float>(0.0f, 1.0f)),
+				ParticlesCrRandom(Vector2T<float>(0.0f, 0.0f)),
+				ParticlesCgRandom(Vector2T<float>(0.0f, 0.0f)),
+				ParticlesCbRandom(Vector2T<float>(0.0f, 0.0f)),
 
 				ParticlesVecRandom      (Vector2T<float>(-1.0f, 1.0f)),
 				ParticlesPosRandom      (Vector2T<float>(-1.0f, 1.0f)),
@@ -52,9 +52,9 @@ namespace GameManagerCore {
 
 		// value = 'GraphicsEngineParticle::ParticleCalcMode'
 		enum ParticleUpdateMode {
-			UpdateDefault   = 1 << 1, // 默认计算模式.
-			UpdateOpenMP    = 1 << 2, // 并行计算模式(OMP).
-			UpdateEmptyOper = 1 << 3  // 空计算模式(手动接管).
+			CALC_DEFAULT  = 1 << 1, // 默认计算模式.
+			CALC_PARALLEL = 1 << 2, // 并行计算模式.
+			CALC_NO_CALC  = 1 << 3  // 无计算模式.
 		};
 
 		struct GameFxParticleDESC {
@@ -68,7 +68,7 @@ namespace GameManagerCore {
 			GameFxParticleDESC() :
 				ParticleRenderResolution(Vector2T<uint32_t>(1080, 1920)),
 				ParticleRenderTexture   ({}),
-				ParticleUpdateCalcMode  (UpdateDefault),
+				ParticleUpdateCalcMode  (CALC_DEFAULT),
 				ParticlesDisturbance    (0.0f)
 			{}
 		};
@@ -90,6 +90,10 @@ namespace GameManagerCore {
 
 			size_t GetFxParticlesNumber()    { return FxParticleObject->GetParticleState().DarwParticlesNumber; }
 			size_t GetFxParticlesDataCount() { return FxParticleObject->GetParticleState().DarwDatasetSize; }
+
+			void SetFxParticlesCenter(const Vector2T<float>& coord);
+			// particle random_angle rotate(speed), false => 0.0deg.
+			void SetFxParticlesRandRotate(bool rot_switch);
 
 			ParticlesDataset* FxParticleSourceData() {
 				// particle system src_dataset (attributes_struct) ptr.
@@ -137,8 +141,19 @@ namespace GameManagerCore {
 		using TextureViewCapture = GraphicsEnginePVFX::PsagGLEngineFxCaptureView;
 	}
 
+	namespace GameSyncLoader {
+		using SyncBinFileLoad = PsagLow::PsagSupFilesysLoaderBin;
+		using SyncStrFileLoad = PsagLow::PsagSupFilesysLoaderStr;
+
+		using SyncJsonMode     = PsagLow::PsagSupFilesysJsonMode;
+		using SyncJsonFileLoad = PsagLow::PsagSupFilesysJson;
+
+		using SyncDecodeImage = PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat;
+	}
+
 	namespace GameMathsTools {
-		float CalcFuncPointsAngle(Vector2T<float> basic_point, Vector2T<float> point);
+		float           CalcFuncPointsAngle       (Vector2T<float> basic_point, Vector2T<float> point);
+		Vector2T<float> CalcFuncPointAngleDistance(Vector2T<float> basic_point, float angle_deg, float distance);
 
 		void CalcFuncLerpVec1(float* ahpla, float* target, float speed);
 		void CalcFuncLerpVec2(Vector2T<float>* ahpla, Vector2T<float>* target, float speed);

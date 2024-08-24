@@ -17,9 +17,9 @@ class StarDemoFX {
 protected:
     PsagActor::ActorsManager* ActorManager = nullptr;
 
-    PsagActor::ActorRender* ActorShader1 = nullptr; // 能量球.
-    PsagActor::ActorRender* ActorShader2 = nullptr; // 闪电.
-    PsagActor::ActorRender* ActorShader3 = nullptr; // 能量束.
+    PsagActor::ActorShader* ActorShader1 = nullptr; // 能量球.
+    PsagActor::ActorShader* ActorShader2 = nullptr; // 闪电.
+    PsagActor::ActorShader* ActorShader3 = nullptr; // 能量束.
 
     GraphicsEngineParticle::PsagGLEngineParticle* ActorParticles = nullptr;
 
@@ -33,7 +33,7 @@ protected:
     float FxActorFireAngle = 0.0f;
 public:
     StarDemoFX(
-        PsagActor::ActorsManager* Manager, Vector3T<PsagActor::ActorRender*> Shader,
+        PsagActor::ActorsManager* Manager, Vector3T<PsagActor::ActorShader*> Shader,
         const Vector2T<float>& Position, float Angle
     );
     ~StarDemoFX();
@@ -49,8 +49,6 @@ public:
 
 class StarDemoClass :public GameLogic::INTERFACE_DEVCLASS_GAME {
 protected:
-    Vector2T<float> CameraPosition = {};
-
     float GameTestMaxFPS = 0.0f;
     float CameraScale  = 1.0f;
     float CameraRotate = 0.0f;
@@ -64,6 +62,7 @@ protected:
 
     GraphicsEngineParticle::PsagGLEngineParticle* AshesParticles = nullptr;
     PsagManager::Tools::Pawn::GamePlayerPawn* PlayerPawn = nullptr;
+    PsagManager::Tools::Camera::GamePlayerComaeraMP* PlayerCamera = nullptr;
 
     // ######################## TEST ACTORS ########################
 
@@ -73,19 +72,16 @@ protected:
     ResUnique PawnActorCode = NULL;
     size_t NpcActorCode[3] = {};
 
-    PsagActor::ActorRender* ActorShaderPawn = nullptr;
-    PsagActor::ActorRender* ActorShaderStar = nullptr;
+    PsagActor::ActorShader* ActorShaderPawn = nullptr;
+    PsagActor::ActorShader* ActorShaderStar = nullptr;
 
-    PsagActor::ActorRender* BrickShader = nullptr;
+    PsagActor::ActorShader* BrickShader = nullptr;
 
-    PsagActor::ActorRender* ActorShaderFX1 = nullptr; // 能量球着色器.
-    PsagActor::ActorRender* ActorShaderFX2 = nullptr; // 闪电着色器.
-    PsagActor::ActorRender* ActorShaderFX3 = nullptr; // 能量束着色器.
+    PsagActor::ActorShader* ActorShaderFX1 = nullptr; // 能量球着色器.
+    PsagActor::ActorShader* ActorShaderFX2 = nullptr; // 闪电着色器.
+    PsagActor::ActorShader* ActorShaderFX3 = nullptr; // 能量束着色器.
 
     StarDemoFX* ActorUltimateFX = nullptr;
-
-    float UltimateSettingRotate = 0.0f;
-    Vector2T<float> UltimateSettingPosition = {};
 
     void CreateStarActor(Vector2T<float> PosBegin, Vector2T<float> PosSpeed);
     void CreateRandomStarActors(size_t number);

@@ -86,8 +86,8 @@ namespace GraphicsEngineDataset {
 		bool VerDyOperFrameDraw(ResUnique rukey); // T-SAFE
 
 		// dynamic vertex system: framework oper.
-		void VertexDataObjectCreate();
-		void VertexDataObjectDelete();
+		void DynamicVertexDataObjectCreate();
+		void DynamicVertexDataObjectDelete();
 
 		// framework core system_update.
 		void SystemFrameUpdateNewState(); // T-SAFE
@@ -442,15 +442,17 @@ namespace GraphicsEngineParticle {
 
 		float ParticleScaleSize;
 		float ParticleLife;
+		bool  ParticleLifeSwitch;
 		ParticlesGenMode::ColorChannelMode ParticleModeType;
 
 		constexpr ParticleAttributes() :
-			ParticleVector   ({}),
-			ParticlePosition ({}),
-			ParticleColor    ({}),
-			ParticleScaleSize(1.0f),
-			ParticleLife     (0.0f),
-			ParticleModeType (ParticlesGenMode::Grayscale)
+			ParticleVector    ({}),
+			ParticlePosition  ({}),
+			ParticleColor     ({}),
+			ParticleScaleSize (1.0f),
+			ParticleLife      (0.0f),
+			ParticleLifeSwitch(true),
+			ParticleModeType  (ParticlesGenMode::Grayscale)
 		{}
 	};
 
@@ -522,9 +524,9 @@ namespace GraphicsEngineParticle {
 	};
 
 	enum ParticleCalcMode {
-		CalcDefault   = 1 << 1,
-		CalcOpenMP    = 1 << 2,
-		CalcEmptyOper = 1 << 3
+		CALC_DEFAULT  = 1 << 1, // 默认计算模式.
+		CALC_PARALLEL = 1 << 2, // 并行计算模式.
+		CALC_NO_CALC  = 1 << 3  // 无计算模式.
 	};
 
 	class PsagGLEngineParticle :
@@ -534,12 +536,15 @@ namespace GraphicsEngineParticle {
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	private:
-		static void CalcUpdateParticlesOMP (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
-		static void CalcUpdateParticlesNULL(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {};
-		static void CalcUpdateParticles    (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+		// clac_mode: CALC_PARALLEL => create.
+		PSAG_THREAD_POOL::PsagThreadTasks* ThreadsParallel = nullptr;
+		size_t DataBlockSize = NULL;
 
-		std::function<void(std::vector<ParticleAttributes>&, float, float)>
-			UPDATE_CALC_FUNC = {};
+		void CalcUpdateParticlesPARA(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+		void CalcUpdateParticlesNULL(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {};
+		void CalcUpdateParticles    (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
+
+		std::function<void(std::vector<ParticleAttributes>&, float, float)> UPDATE_CALC_FUNC = {};
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
@@ -550,28 +555,33 @@ namespace GraphicsEngineParticle {
 		ResUnique ShaderPostProgram = {};
 		ResUnique DyVertexSysItem   = {};
 
-		float           RenderTimer   = 0.0f;
-		Vector2T<float> RenderMove    = {};
-		Vector2T<float> RenderScale   = Vector2T<float>(1.0f, 1.0f);
-		float           RenderTwist   = 0.0f;
+		float           RenderTimer  = 0.0f;
+		Vector2T<float> RenderMove   = {};
+		Vector2T<float> RenderScale  = Vector2T<float>(1.0f, 1.0f);
+		float           RenderRotate = 0.0f;
+		float           RenderTwist  = 0.0f;
 
 		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
-		void VertexDataConvert(const std::vector<ParticleAttributes>& src, std::vector<float>& cvt);
+		void VertexDataConvert(
+			const std::vector<ParticleAttributes>& src, std::vector<float>& dst, 
+			const Vector2T<float>& center
+		);
 	public:
 		PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image = {});
 		~PsagGLEngineParticle();
 
 		void ParticleCreate(ParticleGeneratorBase* generator);
-		void ParticleClacMode(ParticleCalcMode mode, int threads = 4);
+		void ParticleClacMode(ParticleCalcMode mode, size_t block_size = 2000, uint32_t threads = 8);
 
 		std::vector<ParticleAttributes>* GetParticleDataset();
 		ParticleSystemState				 GetParticleState();
 
-		void SetParticleTwisted(float value) {
-			RenderTwist = value;
-		}
+		void SetParticleTwisted    (float value) { RenderTwist  = value > 0.0f ? value : 0.0f; }
+		void SetParticleRotateSpeed(float value) { RenderRotate = value > 0.0f ? value : 0.0f; }
+
+		Vector2T<float> ParticlesCoordCenter = {};
 
 		void UpdateParticleData();
 		void RenderParticleFX();

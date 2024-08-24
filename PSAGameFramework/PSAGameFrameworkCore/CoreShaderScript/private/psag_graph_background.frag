@@ -28,6 +28,7 @@ void main()
 		BlendColor = TexColorMid * TexColorMid.w + PreviousColor * (1.0 - TexColorMid.w);
 		PreviousColor = BlendColor;
 	}
+
 	// multi_layered background blend => out.
 	FragColor = (TexColorFront * TexColorFront.w + BlendColor * (1.0 - TexColorFront.w)) * BackBlendColor;
 }

@@ -186,13 +186,13 @@ namespace PsagFrameworkCore {
         // renderer event_loop params.
         Vector4T<float>* RenderingFrameColorPtr = &RenderBgColor;
 
-        Vector2T<uint32_t> RenderingWindowSize         = {};
-        Vector2T<uint32_t> RenderingVirTextureSizeBase = {};
+        Vector2T<uint32_t> RenderingWindowSize      = {};
+        Vector2T<uint32_t> RenderingVirTexBasicSize = {};
 
         // time step (fps)benchmark.
         float RenderingBaseFPS = 120.0f;
 
-        void FrameworkInitConfig(const std::string& gl_version);
+        bool FrameworkInitConfig(const std::string& gl_version);
         void FrameworkRendererLowinit(const std::string& gl_version);
 
         bool FrameworkRenderingGameScene();

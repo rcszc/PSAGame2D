@@ -184,7 +184,7 @@ struct ImGui_ImplOpenGL3_Data
     GLuint          GlVersion;               // Extracted at runtime using GL_MAJOR_VERSION, GL_MINOR_VERSION queries (e.g. 320 for GL 3.2)
     char            GlslVersionString[32];   // Specified by user or detected based on compile time GL settings.
     GLuint          FontTexture;
-    GLuint          ShaderHandle;
+    GLuint          S_HANDLE;
     GLint           AttribLocationTex;       // Uniforms location
     GLint           AttribLocationProjMtx;
     GLuint          AttribLocationVtxPos;    // Vertex attributes location
@@ -336,7 +336,7 @@ void    ImGui_ImplOpenGL3_NewFrame()
     ImGui_ImplOpenGL3_Data* bd = ImGui_ImplOpenGL3_GetBackendData();
     IM_ASSERT(bd != NULL && "Did you call ImGui_ImplOpenGL3_Init()?");
 
-    if (!bd->ShaderHandle)
+    if (!bd->S_HANDLE)
         ImGui_ImplOpenGL3_CreateDeviceObjects();
 }
 
@@ -388,7 +388,7 @@ static void ImGui_ImplOpenGL3_SetupRenderState(ImDrawData* draw_data, int fb_wid
         { 0.0f,         0.0f,        -1.0f,   0.0f },
         { (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f },
     };
-    glUseProgram(bd->ShaderHandle);
+    glUseProgram(bd->S_HANDLE);
     glUniform1i(bd->AttribLocationTex, 0);
     glUniformMatrix4fv(bd->AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 
@@ -824,22 +824,22 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     CheckShader(frag_handle, "fragment shader");
 
     // Link
-    bd->ShaderHandle = glCreateProgram();
-    glAttachShader(bd->ShaderHandle, vert_handle);
-    glAttachShader(bd->ShaderHandle, frag_handle);
-    glLinkProgram(bd->ShaderHandle);
-    CheckProgram(bd->ShaderHandle, "shader program");
+    bd->S_HANDLE = glCreateProgram();
+    glAttachShader(bd->S_HANDLE, vert_handle);
+    glAttachShader(bd->S_HANDLE, frag_handle);
+    glLinkProgram(bd->S_HANDLE);
+    CheckProgram(bd->S_HANDLE, "shader program");
 
-    glDetachShader(bd->ShaderHandle, vert_handle);
-    glDetachShader(bd->ShaderHandle, frag_handle);
+    glDetachShader(bd->S_HANDLE, vert_handle);
+    glDetachShader(bd->S_HANDLE, frag_handle);
     glDeleteShader(vert_handle);
     glDeleteShader(frag_handle);
 
-    bd->AttribLocationTex = glGetUniformLocation(bd->ShaderHandle, "Texture");
-    bd->AttribLocationProjMtx = glGetUniformLocation(bd->ShaderHandle, "ProjMtx");
-    bd->AttribLocationVtxPos = (GLuint)glGetAttribLocation(bd->ShaderHandle, "Position");
-    bd->AttribLocationVtxUV = (GLuint)glGetAttribLocation(bd->ShaderHandle, "UV");
-    bd->AttribLocationVtxColor = (GLuint)glGetAttribLocation(bd->ShaderHandle, "Color");
+    bd->AttribLocationTex = glGetUniformLocation(bd->S_HANDLE, "Texture");
+    bd->AttribLocationProjMtx = glGetUniformLocation(bd->S_HANDLE, "ProjMtx");
+    bd->AttribLocationVtxPos = (GLuint)glGetAttribLocation(bd->S_HANDLE, "Position");
+    bd->AttribLocationVtxUV = (GLuint)glGetAttribLocation(bd->S_HANDLE, "UV");
+    bd->AttribLocationVtxColor = (GLuint)glGetAttribLocation(bd->S_HANDLE, "Color");
 
     // Create buffers
     glGenBuffers(1, &bd->VboHandle);
@@ -862,7 +862,7 @@ void    ImGui_ImplOpenGL3_DestroyDeviceObjects()
     ImGui_ImplOpenGL3_Data* bd = ImGui_ImplOpenGL3_GetBackendData();
     if (bd->VboHandle)      { glDeleteBuffers(1, &bd->VboHandle); bd->VboHandle = 0; }
     if (bd->ElementsHandle) { glDeleteBuffers(1, &bd->ElementsHandle); bd->ElementsHandle = 0; }
-    if (bd->ShaderHandle)   { glDeleteProgram(bd->ShaderHandle); bd->ShaderHandle = 0; }
+    if (bd->S_HANDLE)   { glDeleteProgram(bd->S_HANDLE); bd->S_HANDLE = 0; }
     ImGui_ImplOpenGL3_DestroyFontsTexture();
 }
 
