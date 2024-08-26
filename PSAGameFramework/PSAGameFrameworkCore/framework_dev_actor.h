@@ -9,17 +9,19 @@ namespace PsagActorType = GameActorCore::Type;
 namespace PsagActor {
 	namespace DebugTools = GameDebugGuiWindow;
 
-	using VertexDESC  = GameActorCore::GameActorShaderVerticesDESC;
-	using ActorHpDESC = GameActorCore::GameActorHealthDESC;
-	using ActorDESC   = GameActorCore::GameActorExecutorDESC;
-	using BrickDESC   = GameBrickCore::GameBrickExecutorDESC;
+	using VertexDESC      = GameActorCore::GameActorShaderVerticesDESC;
+	using ActorHpDESC     = GameActorCore::GameActorHealthDESC;
+	using ActorDESC       = GameActorCore::GameActorExecutorDESC;
+	using BrickDESC       = GameBrickCore::GameBrickExecutorDESC;
+	using ActorSensorDESC = GameActorCore::GameActorCircleSensorDESC;
 
 	using ActorUnique = GameComponents::ActorPrivateINFO;
-	using BirckUnique = GameComponents::ActorPrivateINFO;
+	using BirckUnique = size_t;
 
 	using ActorShader = GameActorCore::GameActorShader;
 	using Actor       = GameActorCore::GameActorExecutor;
 	using Brick       = GameBrickCore::GameBrickExecutor;
+	using ActorSensor = GameActorCore::GameActorCircleSensor;
 
 	using ActorHP        = GameComponents::GameActorHP;
 	using ActorLogicBase = GameComponents::ActorActionLogicBase;

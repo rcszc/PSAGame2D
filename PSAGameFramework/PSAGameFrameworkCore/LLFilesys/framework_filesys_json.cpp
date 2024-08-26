@@ -27,7 +27,7 @@ namespace PSAG_FILESYS_JSON {
 			JsonObject.Parse(JsonDocString.c_str());
 
 			PushLogger(LogInfo, PSAG_FILESYS_JSON_LABEL, 
-				"loader(json) file: s% read_size: u%", instr.c_str(), JsonDocString.size());
+				"loader(json) file: s% read_size: %u", instr.c_str(), JsonDocString.size());
 			break;
 		}
 		case(InputJsonString): {
@@ -35,7 +35,7 @@ namespace PSAG_FILESYS_JSON {
 			JsonObject.Parse(instr.c_str());
 
 			PushLogger(LogInfo, PSAG_FILESYS_JSON_LABEL, 
-				"loader(json) data: s% read_size: u%", instr.c_str(), instr.size());
+				"loader(json) data: s% read_size: %u", instr.c_str(), instr.size());
 			break;
 		}
 		// write: invalid mode.

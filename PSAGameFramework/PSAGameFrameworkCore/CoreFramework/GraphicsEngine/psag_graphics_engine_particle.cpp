@@ -327,7 +327,7 @@ namespace GraphicsEngineParticle {
 	}
 
 	PsagGLEngineParticle::PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image) {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 		
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
@@ -338,15 +338,15 @@ namespace GraphicsEngineParticle {
 
 		// create & storage particles_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderPostProgram = GenResourceID.PsagGenTimeKey();
+			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
 		// => mag"GraphicsEngineDataset::GLEngineStcVertexData".
-		DyVertexSysItem = GenResourceID.PsagGenTimeKey();
+		DyVertexSysItem = GenResourceID.PsagGenUniqueKey();
 		VerDyDataItemAlloc(DyVertexSysItem);
 
-		VirTextureItem = GenResourceID.PsagGenTimeKey();
+		VirTextureItem = GenResourceID.PsagGenUniqueKey();
 		// virtual texture item alloc.
 		if (image.ImagePixels.empty())
 			VirTextureItemAllocEmpty(VirTextureItem, Vector2T<uint32_t>(256, 256));

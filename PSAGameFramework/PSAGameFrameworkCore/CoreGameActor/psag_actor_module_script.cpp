@@ -16,9 +16,10 @@ layout (location = 3) in vec3 VertexNormal;
 uniform mat4 MvpMatrix;
 
 uniform vec2  ActorPos;
-uniform float ActorRot;
+uniform float ActorRotate;
 uniform vec2  ActorSize;
 uniform float ActorZ;
+uniform vec4  ActorColor;
 
 out vec4 FxColor;
 out vec2 FxCoord;
@@ -26,14 +27,16 @@ out vec2 FxCoord;
 void main()
 {
 	// rotate & scale matrix2x2.
-    mat2 Rotation2DMatrix = mat2(cos(ActorRot), -sin(ActorRot), sin(ActorRot),  cos(ActorRot));
+    mat2 Rotation2DMatrix = mat2(cos(ActorRotate), -sin(ActorRotate), sin(ActorRotate),  cos(ActorRotate));
 	mat2 Scale2DMatrix    = mat2(ActorSize.x, 0.0, 0.0, ActorSize.y);
 
 	// scale => rotate => move.
 	vec2 VerPos = vec2(VertexPosition.xy * Scale2DMatrix * Rotation2DMatrix + ActorPos);
 	gl_Position = MvpMatrix * vec4(vec3(VerPos.x, VerPos.y, ActorZ), 1.0);
 
-	FxColor = VertexColor;
+	// FxColor = VertexColor;
+    // actor shader non: vertex_color, v_color = uniform. [20240825]
+	FxColor = ActorColor;
 	FxCoord = VertexTexture;
 }
 )";
@@ -56,7 +59,7 @@ out vec4 FragColor;
 void main()
 {
 	vec2 SamplerCoord = VirTextureCropping * FxCoord;
-    FragColor = texture(VirTexture, vec3(SamplerCoord, float(VirTextureLayer)));
+    FragColor = texture(VirTexture, vec3(SamplerCoord, float(VirTextureLayer))) * FxColor;
 }
 )";
 }

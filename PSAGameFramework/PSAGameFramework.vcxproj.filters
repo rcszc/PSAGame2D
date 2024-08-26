@@ -222,17 +222,8 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_random.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoStarShader.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoStar.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoStarFX.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_shader.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
@@ -267,13 +258,13 @@
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_timer.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
     </ClCompile>
   </ItemGroup>
@@ -414,9 +405,6 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="PSAGameFrameworkDev\TestDemoStar.h">
-      <Filter>源文件\A-PSAGameFrameworkDev</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\framework_dev_actor.h">
       <Filter>源文件\DevSupport</Filter>

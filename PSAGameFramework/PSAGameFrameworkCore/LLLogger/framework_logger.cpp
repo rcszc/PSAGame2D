@@ -11,13 +11,11 @@
 using namespace std;
 namespace PRLC = PSAG_LOGGER::ReadLogCache;
 
-mutex LogMutex = {};
-vector<PRLC::LogCache> GLOBAL_LOG_CACHE = {};
-
-size_t LogWarringLines = NULL, LogErrorLines = NULL;
-
+mutex                 LogMutex      = {};
 queue<PRLC::LogCache> LogWriteQueue = {};
-condition_variable    LogCondition  = {};
+
+vector<PRLC::LogCache> GLOBAL_LOG_CACHE = {};
+size_t LogWarringLines = NULL, LogErrorLines = NULL;
 
 #include <iomanip>
 // time [xxxx.xx.xx.xx:xx:xx:xx ms].
@@ -81,11 +79,11 @@ namespace PSAG_LOGGER {
 		// => read logger chache & logger process(print).
 		GLOBAL_LOG_CACHE.push_back(PRLC::LogCache(FmtLog, module_name, label));
 		LogWriteQueue.push(PRLC::LogCache(FmtLog, module_name, label));
-		LogCondition.notify_one();
 	}
 
 #define LOGGER_BUFFER_LEN 2048
 	void PushLogger(const LOGLABEL& label, const char* module_label, const char* log_text, ...) {
+#if PSAG_DEBUG_MODE
 		char LoggerStrTemp[LOGGER_BUFFER_LEN] = {};
 
 		va_list ParamArgs;
@@ -94,6 +92,7 @@ namespace PSAG_LOGGER {
 		va_end(ParamArgs);
 
 		PushLogProcess(label, (string)module_label, LoggerStrTemp);
+#endif
 	}
 
 	void SET_PRINTLOG_STATE(bool status_flag) {
@@ -155,14 +154,13 @@ namespace PSAG_LOGGER_PROCESS {
 		
 		while (LogProcessFlag) {
 			unique_lock<mutex> LogThreadLock(LogMutex);
-			LogCondition.wait(LogThreadLock, [] { return !LogWriteQueue.empty() || !LogProcessFlag; });
 
 			while (!LogWriteQueue.empty()) {
 				const PRLC::LogCache& LogMsgTemp = LogWriteQueue.front();
 				
 				WriteLogFile << LogMsgTemp.LogString << endl;
 				// print.
-#if defined(_DEBUG) || defined(DEBUG)
+#if PSAG_DEBUG_MODE
 				auto FindLevelColor = HashLogLable.find(LogMsgTemp.LogLabel);
 				if (FindLevelColor != HashLogLable.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
 					cout << FindLevelColor->second << LogMsgTemp.LogString << " \033[0m" << endl;
@@ -202,8 +200,7 @@ namespace PSAG_LOGGER_PROCESS {
 	bool FreeLogProcessing() {
 		LogProcessFlag = false;
 		try {
-			// set_flag => notify => join_thread.
-			LogCondition.notify_one();
+			// set_flag  => join_thread.
 			LogProcessThread->join();
 			PSAG_LOGGER::PushLogger(LogInfo, PSAG_LOGGER_LABEL, "free thread success.");
 		}
@@ -215,5 +212,7 @@ namespace PSAG_LOGGER_PROCESS {
 	}
 }
 
-size_t     PSAG_SYSGEN_TIME_KEY::TimeCountBuffer      = {};
-std::mutex PSAG_SYSGEN_TIME_KEY::TimeCountBufferMutex = {};
+std::atomic<size_t> PSAG_SYS_GENERATE_KEY::UniqueCodeCountTemp = NULL;
+
+size_t     PSAG_SYS_GENERATE_KEY::TimeCountBuffer      = {};
+std::mutex PSAG_SYS_GENERATE_KEY::TimeCountBufferMutex = {};

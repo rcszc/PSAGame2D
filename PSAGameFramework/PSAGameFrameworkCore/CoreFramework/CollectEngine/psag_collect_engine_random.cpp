@@ -12,9 +12,11 @@ namespace CollectEngineRandom {
 	}
 
 	namespace Func {
-		float GenerateRandomFunc(float max, float min) {
-			// const seed: milliseconds time.
-			mt19937_64 MtGenerator((uint64_t)GetTimeNowCount<chrono::milliseconds>());
+		float GenerateRandomFunc(float max, float min, uint64_t seed) {
+			uint64_t SEED_CODE = (uint64_t)GetTimeNowCount<chrono::milliseconds>();
+			if (seed != 0) SEED_CODE = seed;
+			// const seed: milliseconds_time, set_value.
+			mt19937_64 MtGenerator(SEED_CODE);
 			uniform_real_distribution<float> Distribution(min, max);
 			return Distribution(MtGenerator);
 		}

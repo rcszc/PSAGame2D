@@ -31,6 +31,12 @@
 #define PSAG_COMPILE_MODE 0 // mode: release(code: 0)
 #endif
 
+#if defined(_WIN64) || defined(__x86_64__) || defined(__ppc64__)
+#define PSAG_COMPILE_X64 1 // 64bit.
+#else
+#define PSAG_COMPILE_X64 0
+#endif
+
 // warring old_function.
 #if defined(_MSC_VER) // MSVC.
 #define OLD_FUNCTION __declspec(deprecated)

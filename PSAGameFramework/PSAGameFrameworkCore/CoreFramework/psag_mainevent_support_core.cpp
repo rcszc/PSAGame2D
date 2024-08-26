@@ -39,13 +39,6 @@ namespace PsagFrameworkCore {
         return true;
     }
 
-    bool PSAGame2DFramework::FrameworkRenderingGameGui() {
-        // run gui_logic(game_gui).
-        for (auto it = GAME_CORE_CLASS.begin(); it != GAME_CORE_CLASS.end(); ++it)
-            it->second->LogicEventLoopGui(FrameworkParams);
-        return true;
-    }
-
     bool PSAGame2DFramework::CoreFrameworkEvent() {
         bool CoreErrorFlag = PSAG_FALSE;
         ClacFrameTimeStepBegin();
@@ -65,16 +58,22 @@ namespace PsagFrameworkCore {
         MatrixDataRect   = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), 1.0f);
         MatrixDataWindow = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), RoatioValue);
 
-        // opengl render_event loop.
+        // opengl render_event loop(ogl,imgui).
         RenderContextAbove();
         {
+            RenderGuiContextA();
+#if PSAG_DEBUG_MODE 
             if (RendererPostFX != nullptr) {
-                CoreErrorFlag |= !RendererPostFX->CaptureGameScene([&]() { return FrameworkRenderingGameScene(); });
+                auto GAME_SCENE = [&]() { return FrameworkRenderingGameScene(); };
+                CoreErrorFlag |= !RendererPostFX->CaptureGameScene(GAME_SCENE);
                 // render_pipline out_render.
                 RendererPostFX->RenderingPostModule();
             }
-            RenderGuiContextA();
-            CoreErrorFlag |= !FrameworkRenderingGameGui();
+#else
+            auto GAME_SCENE = [&]() { return FrameworkRenderingGameScene(); };
+            CoreErrorFlag |= !RendererPostFX->CaptureGameScene(GAME_SCENE);
+#endif
+            RendererPostFX->RenderingPostModule();
             RenderGuiContextB();
         }
         RenderContextBelow();

@@ -33,13 +33,21 @@ namespace PhysicsEngine {
 	// square, length: +-10.0f.
 	std::vector<b2Vec2> PresetVertexGroupSqua();
 	std::vector<b2Vec2> VertexPosToBox2dVec(const std::vector<Vector2T<float>>& data);
+
+	enum BodyShapeType {
+		POLYGON_TYPE = 1 << 1,
+		CIRCLE_TYPE  = 1 << 2
+	};
 	
 	struct PhysicsBodyConfig {
 		size_t IndexUniqueCode;
 		// 2D碰撞顶点组 (封闭多边形).
 		std::vector<b2Vec2> CollVertexGroup;
 
+		BodyShapeType PhyShapeType;
+
 		Vector2T<float> PhyBoxPosition;
+		// rect: x: width, y: height, circle: x = r (y - invalid).
 		Vector2T<float> PhyBoxCollisionSize;
 		float           PhyBoxRotate;
 
@@ -49,6 +57,9 @@ namespace PhysicsEngine {
 		// true:dynamic_body, false: static_body.
 		bool PhysicsModeTypeFlag;
 		bool PhysicsCollisionFlag;
+
+		// 当Body为探测器时无碰撞体积, 碰撞信息在探测器表.
+		bool PhysicsIsSensorFlag;
 	};
 
 	struct PhysicsRunState {
@@ -101,7 +112,9 @@ namespace PhysicsEngine {
 	class __PsagPhyContactListener :public b2ContactListener {
 	public:
 		std::unordered_map<PhyBodyKey, PhysicsBodyData> PhysicsDataset = {};
+
 		CollisionHashMap PhysicsCollision = {};
+		CollisionHashMap PhysicsSensor    = {};
 
 		void BeginContact(b2Contact* contact) override;
 		void EndContact(b2Contact* contact) override;
@@ -128,8 +141,9 @@ namespace PhysicsEngine {
 		void PhyBodyItemResetBox(std::string world, PhyBodyKey rukey, Vector2T<float> size, float density, float friction);
 		PhysicsRunState PhyBodyItemGet(std::string world, PhyBodyKey rukey);
 
-		std::vector<size_t> PhyBodyItemGetCollision     (std::string world, PhyBodyKey rukey);
-		size_t              PhyBodyItemGetCollisionFirst(std::string world, PhyBodyKey rukey);
+		// mode: 1: physics_collision_list, 2: physics_sensor_list.
+		std::vector<size_t> PhyBodyItemGetCollision     (std::string world, PhyBodyKey rukey, int mode = 1);
+		size_t              PhyBodyItemGetCollisionFirst(std::string world, PhyBodyKey rukey, int mode = 1);
 
 		// physics system: framework oper.
 		bool PhysicsWorldCreate(std::string strkey, Vector2T<float> gravity_vector);

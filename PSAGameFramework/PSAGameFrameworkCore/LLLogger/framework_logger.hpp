@@ -52,12 +52,21 @@ namespace PSAG_LOGGER_PROCESS {
 }
 
 // framework global generate_key.
-class PSAG_SYSGEN_TIME_KEY {
+class PSAG_SYS_GENERATE_KEY {
 private:
+	static std::atomic<size_t> UniqueCodeCountTemp;
+
 	static size_t     TimeCountBuffer;
 	static std::mutex TimeCountBufferMutex;
 public:
 	// generate unique number(time:nanoseconds).
+	// time_key => count_key. RCSZ [20240825]
+	size_t PsagGenUniqueKey() {
+		// count: const_add_value: 2.
+		return UniqueCodeCountTemp += 2;
+	}
+
+	// generate unique number(time:nanoseconds). [OLD]
 	size_t PsagGenTimeKey() {
 		std::lock_guard<std::mutex> Lock(TimeCountBufferMutex);
 
@@ -70,7 +79,6 @@ public:
 			std::this_thread::sleep_for(ThreadSleep);
 		}
 		TimeCountBuffer = GenNumberTemp;
-
 		return GenNumberTemp;
 	}
 };

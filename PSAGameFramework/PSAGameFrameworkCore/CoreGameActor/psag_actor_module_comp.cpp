@@ -26,6 +26,7 @@ namespace GameComponents {
 	}
 
 	ActorActionLogic::~ActorActionLogic() {
+		if (ActionLogicNULL) return;
 		if (ActionLogicObject == nullptr) {
 			PushLogger(LogWarning, PSAGM_ACTOR_COMP_LABEL, "cmop_action failed delete, nullptr.");
 			return;
@@ -93,6 +94,9 @@ namespace GameComponents {
 	void ActorHealthTrans::UpdateActorHealthTrans() {
 		// state lerp_calc. out += (stat - out) * speed * s.
 		for (size_t i = 0; i < ActorHealthState.size(); ++i) {
+			ActorHealthState[i].HealthSTATE = 
+				PsagClamp(ActorHealthState[i].HealthSTATE, 0.0f, ActorHealthState[i].HealthMAX);
+			// calc health_lerp.
 			ActorHealthStateOut[i] += (ActorHealthState[i].HealthSTATE - ActorHealthStateOut[i]) * PSAGM_ACTOR_INTER 
 				* ActorHealthState[i].HealthSPEED * ActorModulesTimeStep;
 		}
@@ -100,8 +104,8 @@ namespace GameComponents {
 
 	void ActorHealthTrans::SetActorHealth(size_t count, float value) {
 #if PSAG_DEBUG_MODE
-		if (value < 0.0f || count >= ActorHealthState.size()) {
-			PushLogger(LogError, PSAGM_ACTOR_COMP_LABEL, "cmop_health set_value < 0.0f | count >= size.");
+		if (count >= ActorHealthState.size()) {
+			PushLogger(LogError, PSAGM_ACTOR_COMP_LABEL, "cmop_health count >= size.");
 			return;
 		}
 		ActorHealthState[count].HealthSTATE = value;
@@ -119,10 +123,11 @@ namespace GameComponents {
 		ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderResolution);
 		ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime",       time_count);
 
-		ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",  params.RenderPosition);
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorRot",  PSAG_M_DEGRAD(params.RenderRotate));
-		ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize", params.RenderScale);
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",    params.RenderLayerHeight);
+		ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",    params.RenderPosition);
+		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", PSAG_M_DEGRAD(params.RenderRotate));
+		ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize",   params.RenderScale);
+		ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",      params.RenderLayerHeight);
+		ShaderUniform.UniformVec4 (ShaderTemp, "ActorColor",  params.RenderColorBlend);
 
 		RenderingTextureFunc(ShaderTemp);
 		VerStcOperFrameDraw(VertexGroupIndex);

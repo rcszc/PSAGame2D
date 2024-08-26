@@ -139,24 +139,24 @@ namespace GraphicsEngineDataset {
 	}
 
 	void GLEngineStcVertexData::StaticVertexDataObjectCreate() {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [stc]
 		if (LLRES_VertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
-			VertexAttribute = GenResourceID.PsagGenTimeKey();
+			VertexAttribute = GenResourceID.PsagGenUniqueKey();
 			LLRES_VertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
 		}
 
 		// create rendering rect.
 		if (VertexProcess.CreateStaticModel(LLRES_VertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
-			VertexBuffer = GenResourceID.PsagGenTimeKey();
+			VertexBuffer = GenResourceID.PsagGenUniqueKey();
 			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
 
 		// alloc system preset.
-		SystemPresetRectangle = GenResourceID.PsagGenTimeKey();
+		SystemPresetRectangle = GenResourceID.PsagGenUniqueKey();
 		vector<float> DataTemp = {};
 		DataTemp = PSAG_OGL_MAG::ShaderTemplateRectDep(0.0f);
 		VerStcDataItemAlloc(SystemPresetRectangle, DataTemp);
@@ -276,18 +276,18 @@ namespace GraphicsEngineDataset {
 	}
 
 	void GLEngineDyVertexData::DynamicVertexDataObjectCreate() {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [dy]
 		if (LLRES_VertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
-			VertexAttribute = GenResourceID.PsagGenTimeKey();
+			VertexAttribute = GenResourceID.PsagGenUniqueKey();
 			LLRES_VertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
 		}
 
 		if (VertexProcess.CreateDynamicModel(LLRES_VertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
-			VertexBuffer = GenResourceID.PsagGenTimeKey();
+			VertexBuffer = GenResourceID.PsagGenUniqueKey();
 			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "dynamic vertex data manager_create.");
@@ -599,19 +599,19 @@ namespace GraphicsEngineDataset {
 		CreateErrorFlag |= !TextureCreate1X.CreateTexture();
 
 		// generate unique_id.
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 		if (!CreateErrorFlag) {
 			// create key => storage res.
-			TexturesSize8X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
+			TexturesSize8X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
 			LLRES_Textures->ResourceStorage(TexturesSize8X.TextureArrayIndex, &TextureCreate8X);
 
-			TexturesSize4X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
+			TexturesSize4X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
 			LLRES_Textures->ResourceStorage(TexturesSize4X.TextureArrayIndex, &TextureCreate4X);
 
-			TexturesSize2X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
+			TexturesSize2X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
 			LLRES_Textures->ResourceStorage(TexturesSize2X.TextureArrayIndex, &TextureCreate2X);
 
-			TexturesSize1X.TextureArrayIndex = GenResourceID.PsagGenTimeKey();
+			TexturesSize1X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
 			LLRES_Textures->ResourceStorage(TexturesSize1X.TextureArrayIndex, &TextureCreate1X);
 		}
 

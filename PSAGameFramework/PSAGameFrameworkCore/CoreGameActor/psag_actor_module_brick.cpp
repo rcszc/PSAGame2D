@@ -7,8 +7,8 @@ using namespace PSAG_LOGGER;
 namespace GameBrickCore {
 
 	GameBrickExecutor::GameBrickExecutor(const GameBrickExecutorDESC& INIT_DESC) {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		BrickUniqueID = GenResourceID.PsagGenTimeKey();
+		PSAG_SYS_GENERATE_KEY GenResourceID;
+		BrickUniqueID = GenResourceID.PsagGenUniqueKey();
 
 #if ENABLE_DEBUG_MODE
 		FTDcapture::CaptureContext CapPoint;
@@ -58,18 +58,25 @@ namespace GameBrickCore {
 		}
 		BrickPhysicsWorld = INIT_DESC.BrickPhysicsWorld;
 
-		BrickStaticPosition = INIT_DESC.InitialPosition;
-		BrickStaticScale    = INIT_DESC.InitialScale;
-		BrickStaticRotate   = INIT_DESC.InitialRotate;
-		BrickStaticLayer    = INIT_DESC.InitialRenderLayer;
+		BrickRenderParams.RenderColorBlend = INIT_DESC.InitialVertexColor;
+
+		BrickRenderParams.RenderPosition    = INIT_DESC.InitialPosition;
+		BrickRenderParams.RenderScale       = INIT_DESC.InitialScale;
+		BrickRenderParams.RenderRotate      = INIT_DESC.InitialRotate;
+		BrickRenderParams.RenderLayerHeight = INIT_DESC.InitialRenderLayer;
 		// actor space_z value_clamp.
-		BrickStaticLayer = PsagClamp(BrickStaticLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
+		BrickRenderParams.RenderLayerHeight = 
+			PsagClamp(BrickRenderParams.RenderLayerHeight, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode     = BrickUniqueID;
 		ActorPhyConfig.CollVertexGroup     = PhysicsEngine::PresetVertexGroupSqua(); // default vertex_group.
 		ActorPhyConfig.PhysicsModeTypeFlag = false;
+
+		// 多边形碰撞,非传感器.
+		ActorPhyConfig.PhyShapeType        = PhysicsEngine::POLYGON_TYPE;
+		ActorPhyConfig.PhysicsIsSensorFlag = false;
 
 		if (INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());
@@ -84,8 +91,7 @@ namespace GameBrickCore {
 
 		// BcickPhysicsItem(PhyBodyKey) 由物理引擎分配.
 		PhyBodyItemAlloc(BrickPhysicsWorld, &BcickPhysicsItem, ActorPhyConfig);
-
-		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item create.");
+		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item create: %u", BrickUniqueID);
 	}
 
 	GameBrickExecutor::~GameBrickExecutor() {
@@ -99,10 +105,7 @@ namespace GameBrickCore {
 
 	void GameBrickExecutor::BrickRendering() {
 		// rendering brick shader_data.
-		BirckCompRendering->UpdateActorRendering(
-			GameComponents::RenderingParams(BrickStaticPosition, BrickStaticScale, BrickStaticRotate, BrickStaticLayer),
-			VirTimerCount
-		);
+		BirckCompRendering->UpdateActorRendering(BrickRenderParams, VirTimerCount);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
 	}
 }

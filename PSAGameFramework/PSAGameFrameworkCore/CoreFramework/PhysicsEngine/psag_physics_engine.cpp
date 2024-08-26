@@ -6,7 +6,7 @@ using namespace PSAG_LOGGER;
 
 float __PHYSICS_ENGINE_TIMESETP::PhysicsEngineTimeStep = 1.0f;
 namespace PhysicsEngine {
-
+	// 碰撞(事件)发生.
 	void __PsagPhyContactListener::BeginContact(b2Contact* contact) {
 		// get collision.begin fixture a,b.
 		b2Fixture* FixtureA = contact->GetFixtureA();
@@ -15,11 +15,22 @@ namespace PhysicsEngine {
 		b2Body* BodyA = FixtureA->GetBody();
 		b2Body* BodyB = FixtureB->GetBody();
 
+		// processing sensor event => return.
+		if (FixtureA->IsSensor() || FixtureB->IsSensor()) {
+			// sensor and sensor => invalid.
+			if (FixtureA->IsSensor() && FixtureB->IsSensor()) return;
+			// storage coll_event.
+			PhysicsSensor[__PsagPhyCollisionKey(BodyA, BodyB)] = 
+				PhysicsCollisionCode(PhysicsDataset[BodyA].BindUniqueCode, PhysicsDataset[BodyB].BindUniqueCode);
+			return;
+		}
+
 		// collision a,b =find=> unique_code.
 		PhysicsCollision[__PsagPhyCollisionKey(BodyA, BodyB)] =
 			PhysicsCollisionCode(PhysicsDataset[BodyA].BindUniqueCode, PhysicsDataset[BodyB].BindUniqueCode);
 	}
 
+	// 碰撞(事件)结束.
 	void __PsagPhyContactListener::EndContact(b2Contact* contact) {
 		// get collision.end fixture a,b.
 		b2Fixture* FixtureA = contact->GetFixtureA();
@@ -28,6 +39,14 @@ namespace PhysicsEngine {
 		b2Body* BodyA = FixtureA->GetBody();
 		b2Body* BodyB = FixtureB->GetBody();
 
+		// processing sensor event => return.
+		if (FixtureA->IsSensor() || FixtureB->IsSensor()) {
+			// sensor and sensor => invalid.
+			if (FixtureA->IsSensor() && FixtureB->IsSensor()) return;
+			// delete coll_event.
+			PhysicsSensor.erase(__PsagPhyCollisionKey(BodyA, BodyB));
+			return;
+		}
 		// delete collision item.
 		PhysicsCollision.erase(__PsagPhyCollisionKey(BodyA, BodyB));
 	}
@@ -60,7 +79,7 @@ namespace PhysicsEngine {
 		}
 		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(*rukey);
 		if (it != WorldPointer->PhysicsContact->PhysicsDataset.end()) {
-			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %u", *rukey);
+			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %llu", *rukey);
 			return false;
 		}
 
@@ -75,17 +94,40 @@ namespace PhysicsEngine {
 		b2Body* BodyData = WorldPointer->PhysicsWorld->CreateBody(&DefineBody);
 
 		b2PolygonShape CollisionBox;
-		// process scale.
-		for (auto& ScaleVert : config.CollVertexGroup) {
-			ScaleVert.x *= config.PhyBoxCollisionSize.vector_x;
-			ScaleVert.y *= config.PhyBoxCollisionSize.vector_y;
-		}
-		CollisionBox.Set(config.CollVertexGroup.data(), (int32)config.CollVertexGroup.size());
+		b2CircleShape  CollisionCircle;
 
 		b2FixtureDef DefineFixture;
-		DefineFixture.shape    = &CollisionBox;
-		DefineFixture.density  = config.PhyBodyDensity;
-		DefineFixture.friction = config.PhyBodyFriction;
+
+		switch (config.PhyShapeType) {
+			// 多边形碰撞箱.
+		case(POLYGON_TYPE): {
+			// process scale.
+			for (auto& ScaleVert : config.CollVertexGroup) {
+				ScaleVert.x *= config.PhyBoxCollisionSize.vector_x;
+				ScaleVert.y *= config.PhyBoxCollisionSize.vector_y;
+			}
+			CollisionBox.Set(config.CollVertexGroup.data(), (int32)config.CollVertexGroup.size());
+			// shape(idx) => fixture.
+			DefineFixture.shape = &CollisionBox;
+			break;
+		}
+		case(CIRCLE_TYPE): {
+			// circle position,radius.
+			CollisionCircle.m_p.Set(config.PhyBoxPosition.vector_x, config.PhyBoxPosition.vector_y);
+			CollisionCircle.m_radius = config.PhyBoxCollisionSize.vector_x;
+			// shape(idx) => fixture.
+			DefineFixture.shape = &CollisionCircle;
+			break;
+		}}
+
+		if (config.PhysicsIsSensorFlag) {
+			// Body配置为传感器(无物理碰撞).
+			DefineFixture.isSensor = true;
+		}
+		else {
+			DefineFixture.density  = config.PhyBodyDensity;
+			DefineFixture.friction = config.PhyBodyFriction;
+		}
 
 		// 关闭Body碰撞.
 		if (!config.PhysicsCollisionFlag)
@@ -103,8 +145,8 @@ namespace PhysicsEngine {
 		WorldPointer->PhysicsContact->PhysicsDataset[*rukey] = PhysicsBodyData(config.IndexUniqueCode, BodyData);
 
 		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
-		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %u", rukey);
-		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %u", rukey);
+		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %llu", rukey);
+		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %llu", rukey);
 		return true;
 	}
 
@@ -120,7 +162,7 @@ namespace PhysicsEngine {
 			WorldPointer->PhysicsWorld->DestroyBody(it->second.Box2dActorPtr);
 			WorldPointer->PhysicsContact->PhysicsDataset.erase(it);
 			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
-			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %u", rukey);
+			PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data item: delete key: %llu", rukey);
 			return true;
 		}
 		PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data item: failed delete, not found key.");
@@ -173,7 +215,7 @@ namespace PhysicsEngine {
 		);
 	}
 
-	vector<size_t> PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, PhyBodyKey rukey) {
+	vector<size_t> PhyEngineCoreDataset::PhyBodyItemGetCollision(string world, PhyBodyKey rukey, int mode) {
 		vector<size_t> TotalUnqiueIndex = {};
 		b2Body* BodyCollided = nullptr;
 
@@ -181,7 +223,17 @@ namespace PhysicsEngine {
 		if (WorldPointer == nullptr)
 			return TotalUnqiueIndex;
 
+		CollisionHashMap* CollisionDataList = nullptr;
 		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
+
+		switch (mode) {
+		case(1): { CollisionDataList = &WorldPointer->PhysicsContact->PhysicsCollision; break; }
+		case(2): { CollisionDataList = &WorldPointer->PhysicsContact->PhysicsSensor;    break; }
+		}
+#if PSAG_DEBUG_MODE
+		if (CollisionDataList == nullptr)
+			return TotalUnqiueIndex;
+#endif
 		for (const auto& COLL : WorldPointer->PhysicsContact->PhysicsCollision) {
 
 			if (COLL.first.CollisionBodyA == it->second.Box2dActorPtr ||
@@ -196,7 +248,7 @@ namespace PhysicsEngine {
 		return TotalUnqiueIndex;
 	}
 
-	size_t PhyEngineCoreDataset::PhyBodyItemGetCollisionFirst(string world, PhyBodyKey rukey) {
+	size_t PhyEngineCoreDataset::PhyBodyItemGetCollisionFirst(string world, PhyBodyKey rukey, int mode) {
 		size_t FirstUnqiueIndex = NULL;
 		b2Body* BodyCollided = nullptr;
 
@@ -204,8 +256,18 @@ namespace PhysicsEngine {
 		if (WorldPointer == nullptr)
 			return FirstUnqiueIndex;
 
+		CollisionHashMap* CollisionDataList = nullptr;
 		auto it = WorldPointer->PhysicsContact->PhysicsDataset.find(rukey);
-		for (const auto& COLL : WorldPointer->PhysicsContact->PhysicsCollision) {
+
+		switch (mode) {
+		case(1): { CollisionDataList = &WorldPointer->PhysicsContact->PhysicsCollision; break; }
+		case(2): { CollisionDataList = &WorldPointer->PhysicsContact->PhysicsSensor;    break; }
+		}
+#if PSAG_DEBUG_MODE
+		if (CollisionDataList == nullptr)
+			return NULL;
+#endif
+		for (const auto& COLL : (*CollisionDataList)) {
 
 			if (COLL.first.CollisionBodyA == it->second.Box2dActorPtr ||
 				COLL.first.CollisionBodyB == it->second.Box2dActorPtr

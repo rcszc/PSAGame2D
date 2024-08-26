@@ -7,6 +7,12 @@ using namespace PSAG_LOGGER;
 namespace GameManagerCore {
 	namespace GameMathsTools {
 
+		float CalcFuncPointsDistance(Vector2T<float> point0, Vector2T<float> point1) {
+			float Dx = point1.vector_x - point0.vector_x;
+			float Dy = point1.vector_y - point0.vector_y;
+			return sqrt(Dx * Dx + Dy * Dy);
+		}
+
 		float CalcFuncPointsAngle(Vector2T<float> basic_point, Vector2T<float> point) {
 			// calc points dx,dy.
 			float Dx = point.vector_x - basic_point.vector_x;

@@ -39,7 +39,7 @@ namespace PsagMainEvent {
     void MainAsyncTask::AsyncTaskAdd(string name, function<int()> event) {
         Event CreateTaskEvent = {};
 
-        CreateTaskEvent.EventUniqueID = SystemGenUID.PsagGenTimeKey();
+        CreateTaskEvent.EventUniqueID = SystemGenUID.PsagGenUniqueKey();
         CreateTaskEvent.EventName     = name;
         CreateTaskEvent.EventTask     = event;
 

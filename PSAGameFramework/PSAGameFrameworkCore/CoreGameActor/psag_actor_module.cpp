@@ -37,8 +37,8 @@ namespace GameActorCore {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor type code = null.");
 			return;
 		}
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
-		ActorUniqueInfo.ActorUniqueCode = GenResourceID.PsagGenTimeKey();
+		PSAG_SYS_GENERATE_KEY GenResourceID;
+		ActorUniqueInfo.ActorUniqueCode = GenResourceID.PsagGenUniqueKey();
 		ActorUniqueInfo.ActorTypeCode   = TYPE;
 
 #if ENABLE_DEBUG_MODE
@@ -94,6 +94,10 @@ namespace GameActorCore {
 		ActorPhyConfig.IndexUniqueCode = ActorUniqueInfo.ActorUniqueCode;
 		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua(); // default vertex_group.
 
+		// 多边形碰撞,非传感器.
+		ActorPhyConfig.PhyShapeType        = PhysicsEngine::POLYGON_TYPE;
+		ActorPhyConfig.PhysicsIsSensorFlag = false;
+
 		switch (INIT_DESC.ActorPhysicalMode) {
 		case(ActorPhysicsMove):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
 		case(ActorPhysicsFixed): { ActorPhyConfig.PhysicsModeTypeFlag = false; break; }
@@ -126,12 +130,15 @@ namespace GameActorCore {
 				GameComponents::null::ActorSpaceTransNULL(ActorPhysicsWorld, ActorPhysicsItem);
 		}
 
-		ActorTransPosition    = INIT_DESC.InitialPosition;
-		ActorTransScale       = INIT_DESC.InitialScale;
-		ActorTransRotateValue = INIT_DESC.InitialRotate;
-		ActorTransLayer       = INIT_DESC.InitialRenderLayer;
+		ActorRenderParams.RenderColorBlend = INIT_DESC.InitialVertexColor;
+
+		ActorRenderParams.RenderPosition    = INIT_DESC.InitialPosition;
+		ActorRenderParams.RenderScale       = INIT_DESC.InitialScale;
+		ActorRenderParams.RenderRotate      = INIT_DESC.InitialRotate;
+		ActorRenderParams.RenderLayerHeight = INIT_DESC.InitialRenderLayer;
 		// actor space_z value_clamp.
-		ActorTransLayer = PsagClamp(ActorTransLayer, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
+		ActorRenderParams.RenderLayerHeight = 
+			PsagClamp(ActorRenderParams.RenderLayerHeight, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
 		// create hp comp.
 		if (INIT_DESC.EnableHealth) {
@@ -161,7 +168,8 @@ namespace GameActorCore {
 		// create coord_convert comp.
 		ActorCompConvert = new GameComponents::ActorCoordConvert();
 		// create-success => print_log.
-		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor entity create.");
+		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor entity create: %u", 
+			ActorUniqueInfo.ActorUniqueCode);
 	}
 
 	GameActorExecutor::~GameActorExecutor() {
@@ -181,9 +189,15 @@ namespace GameActorCore {
 		return (float)chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - ActorTimer).count() / 1000.0f;
 	}
 
-	Vector2T<float> GameActorExecutor::ActorConvertVirCoord(Vector2T<uint32_t> window_res) {
+	Vector2T<float> GameActorExecutor::ActorMappingWindowCoord() {
 		// actor virtual coord => window coord.
-		return ActorCompConvert->ConvertSceneToWindow(window_res, ActorTransPosition);
+		return ActorCompConvert->ConvertSceneToWindow(
+			Vector2T<uint32_t>(
+				(uint32_t)RenderingResolution.vector_x, 
+				(uint32_t)RenderingResolution.vector_y
+			),
+			ActorRenderParams.RenderPosition
+		);
 	}
 
 	void GameActorExecutor::ActorUpdateHealth() {
@@ -192,7 +206,7 @@ namespace GameActorCore {
 	}
 
 	void GameActorExecutor::ActorUpdate() {
-		ActorCompSpaceTrans->UpdateActorTrans(ActorTransPosition, ActorTransRotateValue);
+		ActorCompSpaceTrans->UpdateActorTrans(ActorRenderParams.RenderPosition, ActorRenderParams.RenderRotate);
 
 		GameComponents::ActorPrivateINFO CollisionItem = {};
 		// update collision info.
@@ -218,10 +232,54 @@ namespace GameActorCore {
 
 	void GameActorExecutor::ActorRendering() {
 		// rendering actor shader_data.
-		ActorCompRendering->UpdateActorRendering(
-			GameComponents::RenderingParams(ActorTransPosition, ActorTransScale, ActorTransRotateValue, ActorTransLayer),
-			VirTimerCount
-		);
+		ActorCompRendering->UpdateActorRendering(ActorRenderParams, VirTimerCount);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;
+	}
+
+	GameActorCircleSensor::GameActorCircleSensor(const GameActorCircleSensorDESC& INIT_DESC) {
+		// create physics body.
+		PhysicsEngine::PhysicsBodyConfig SensorPhyConfig;
+
+		SensorPhyConfig.IndexUniqueCode = ActorSensorUniqueID;
+		SensorPhyConfig.CollVertexGroup = {}; // sensor: null.
+
+		SensorPhyConfig.PhyShapeType        = PhysicsEngine::CIRCLE_TYPE;
+		SensorPhyConfig.PhysicsIsSensorFlag = true;
+		SensorPhyConfig.PhysicsModeTypeFlag = true;
+
+		if (INIT_DESC.InitialRadius <= 0.0f || INIT_DESC.InitialScale <= 0.0f) {
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor(sensor): radius <= 0.0f | scale <= 0.0f");
+			return;
+		}
+
+		SensorPhyConfig.PhyBoxRotate         = 0.0f;
+		SensorPhyConfig.PhysicsCollisionFlag = true;
+		SensorPhyConfig.PhyBoxCollisionSize  = Vector2T<float>(INIT_DESC.InitialRadius * INIT_DESC.InitialScale, 0.0f);
+		SensorPhyConfig.PhyBoxPosition       = INIT_DESC.InitialPosition;
+
+		SensorPhyConfig.PhyBodyDensity  = 1.0f;
+		SensorPhyConfig.PhyBodyFriction = 1.0f;
+
+		// SensorPhysicsItem(PhyBodyKey) 由物理引擎分配.
+		PhyBodyItemAlloc(SensorPhysicsWorld, &SensorPhysicsItem, SensorPhyConfig);
+		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor(sensor) entity create.");
+	}
+
+	GameActorCircleSensor::~GameActorCircleSensor() {
+		// free: physics system item.
+		PhyBodyItemFree(SensorPhysicsWorld, SensorPhysicsItem);
+	}
+
+	void GameActorCircleSensor::SensorModifyState(const Vector2T<float>& position) {
+		PhyBodyItemGet(SensorPhysicsWorld, SensorPhysicsItem).
+			BodySourcePointer->SetTransform(b2Vec2(position.vector_x, position.vector_y), 0.0f);
+	}
+
+	void GameActorCircleSensor::SensorUpdate() {
+		GameComponents::ActorPrivateINFO CollisionItem = {};
+		// update collision info.
+		CollisionItem.ActorTypeCode = Type::ActorTypeNULL;
+		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollisionFirst(SensorPhysicsWorld, SensorPhysicsItem);
+		SensorCollisionInfo = CollisionItem;
 	}
 }

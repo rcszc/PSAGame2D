@@ -28,7 +28,7 @@ namespace GameManagerCore {
 
 			Vector2T<float> ParticlesVecRandom;
 			Vector2T<float> ParticlesPosRandom;
-			Vector3T<float> ParticlesPosOffsetRandom;
+			Vector2T<float> ParticlesPosOffset;
 
 			PartcMode::EmittersMode ParticlesLaunchMode;
 
@@ -44,9 +44,9 @@ namespace GameManagerCore {
 				ParticlesCgRandom(Vector2T<float>(0.0f, 0.0f)),
 				ParticlesCbRandom(Vector2T<float>(0.0f, 0.0f)),
 
-				ParticlesVecRandom      (Vector2T<float>(-1.0f, 1.0f)),
-				ParticlesPosRandom      (Vector2T<float>(-1.0f, 1.0f)),
-				ParticlesPosOffsetRandom(Vector3T<float>(0.0f, 0.0f, 0.0f))
+				ParticlesVecRandom(Vector2T<float>(-1.0f, 1.0f)),
+				ParticlesPosRandom(Vector2T<float>(-1.0f, 1.0f)),
+				ParticlesPosOffset(Vector2T<float>(0.0f, 0.0f))
 			{}
 		};
 
@@ -152,6 +152,7 @@ namespace GameManagerCore {
 	}
 
 	namespace GameMathsTools {
+		float           CalcFuncPointsDistance    (Vector2T<float> point0, Vector2T<float> point1);
 		float           CalcFuncPointsAngle       (Vector2T<float> basic_point, Vector2T<float> point);
 		Vector2T<float> CalcFuncPointAngleDistance(Vector2T<float> basic_point, float angle_deg, float distance);
 

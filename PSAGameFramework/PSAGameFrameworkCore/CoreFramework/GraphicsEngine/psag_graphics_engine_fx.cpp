@@ -32,7 +32,7 @@ namespace GraphicsEnginePVFX {
 		const Vector2T<uint32_t>& render_resolution, bool clear_buffer
 	) {
 		// generate unique_id.
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTextureView CreateTexView;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer CreateFrameBuffer;
@@ -50,7 +50,7 @@ namespace GraphicsEnginePVFX {
 		};
 		
 		if (CreateFrameBuffer.CreateFrameBuffer()) {
-			FrameBufferItem = GenResourceID.PsagGenTimeKey();
+			FrameBufferItem = GenResourceID.PsagGenUniqueKey();
 			// create bind frame_buffer.
 			PsagTextureAttrib TexAttribTemp = {};
 			TexAttribTemp.Texture = TextureViewItem.Texture;
@@ -86,7 +86,7 @@ namespace GraphicsEnginePVFX {
 
 	constexpr float FxSpaceSize = 10.0f;
 	PsagGLEngineFxSequence::PsagGLEngineFxSequence(const ImageRawData& image, const SequencePlayer& params) {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 		PlayerParams = params;
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
@@ -97,7 +97,7 @@ namespace GraphicsEnginePVFX {
 
 		// create & storage fx_sequence_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderPostProgram = GenResourceID.PsagGenTimeKey();
+			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
@@ -109,7 +109,7 @@ namespace GraphicsEnginePVFX {
 		const float* glmmatptr = glm::value_ptr(ProjectionMatrix);
 		memcpy_s(RenderMatrix.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
-		VirTextureItem = GenResourceID.PsagGenTimeKey();
+		VirTextureItem = GenResourceID.PsagGenUniqueKey();
 		if (!VirTextureItemAlloc(VirTextureItem, image)) {
 			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system: failed create vir_tex.");
 			return;

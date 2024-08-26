@@ -46,14 +46,16 @@ namespace GameComponents {
 
 	class ActorActionLogic :public __ACTOR_MODULES_TIMESTEP {
 	protected:
+		bool ActionLogicNULL = false;
 		ActorActionLogicBase* ActionLogicObject = nullptr;
+
 		// ENABLE: CPP_RTTI.
 		std::string ObjectName = {};
 		size_t ObjectHashCode = NULL;
 	public:
 		ActorActionLogic(ActorActionLogicBase* pointer);
 		// warning: default: nullptr!
-		ActorActionLogic() {};
+		ActorActionLogic() : ActionLogicNULL(true) {}
 		~ActorActionLogic();
 
 		virtual void UpdateActorActionLogic(Actor* actor_this);
@@ -88,8 +90,11 @@ namespace GameComponents {
 	struct GameActorHP {
 		float HealthSTATE = 0.0f;
 		float HealthSPEED = 0.0f;
+		float HealthMAX   = 0.0f;
 
-		GameActorHP(float state, float speed) : HealthSTATE(state), HealthSPEED(speed) {}
+		GameActorHP(float state, float speed, float max) : 
+			HealthSTATE(state), HealthSPEED(speed), HealthMAX(max)
+		{}
 	};
 	class ActorHealthTrans : public __ACTOR_MODULES_TIMESTEP {
 	public:
@@ -109,9 +114,12 @@ namespace GameComponents {
 		float           RenderRotate;
 		float           RenderLayerHeight;
 
+		// render color: uniform"FxColor". [20240825]
+		Vector4T<float> RenderColorBlend = Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f);
+
 		RenderingParams() : RenderPosition({}), RenderScale({}), RenderRotate(0.0f), RenderLayerHeight(-1.0f) {}
-		RenderingParams(const Vector2T<float>& rp, const Vector2T<float>& rs, float rr, float rz) :
-			RenderPosition(rp), RenderScale(rs), RenderRotate(rr), RenderLayerHeight(rz)
+		RenderingParams(const Vector2T<float>& rp, const Vector2T<float>& rs, float rr, float rz, const Vector4T<float>& rc) :
+			RenderPosition(rp), RenderScale(rs), RenderRotate(rr), RenderLayerHeight(rz), RenderColorBlend(rc)
 		{}
 	};
 
@@ -343,6 +351,8 @@ namespace GameActorCore {
 		float           InitialAngle;
 		float           InitialRenderLayer;
 
+		Vector4T<float> InitialVertexColor;
+
 		std::function<void(GameActorExecutor*)> CollisionCallbackFunc =
 			[](GameActorExecutor*) {};
 
@@ -369,6 +379,8 @@ namespace GameActorCore {
 			InitialRotate     (0.0f),
 			InitialAngle      (0.0f),
 			InitialRenderLayer(50.0f),
+
+			InitialVertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
 
 			ActorHealthSystem({}),
 			ActorLogicObject (nullptr)
@@ -399,10 +411,7 @@ namespace GameActorCore {
 		// shader rendering size, shader_uniform param.
 		Vector2T<float> RenderingResolution = {};
 		
-		Vector2T<float>  ActorTransPosition    = {};
-		Vector2T<float>  ActorTransScale       = {};
-		float            ActorTransRotateValue = 0.0f;
-		float            ActorTransLayer       = 0.0f;
+		GameComponents::RenderingParams ActorRenderParams = {};
 
 		// actor basic components.
 		GameComponents::ActorSpaceTrans*   ActorCompSpaceTrans  = nullptr;
@@ -434,30 +443,69 @@ namespace GameActorCore {
 		// timer: accuracy: ms, unit: s.
 		float ActorGetLifeTime();
 		// actor get_state: position & scale & rotate.
-		Vector2T<float> ActorGetPosition() { return ActorTransPosition; };
-		Vector2T<float> ActorGetScale()    { return ActorTransScale; }
-		float           ActorGetRotate()   { return ActorTransRotateValue; };
+		Vector2T<float> ActorGetPosition() { return ActorRenderParams.RenderPosition; };
+		Vector2T<float> ActorGetScale()    { return ActorRenderParams.RenderScale; }
+		float           ActorGetRotate()   { return ActorRenderParams.RenderRotate; };
 
 		Vector2T<float> ActorGetMoveSpeed()   { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
 		float           ActorGetRotateSpeed() { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
 
-		float* ActorLayerValuePtr() { return &ActorTransLayer; }
+		float* ActorLayerValuePtr() { return &ActorRenderParams.RenderLayerHeight; }
 
 		void ActorApplyForceRotate(float vec)                { ActorCompSpaceTrans->ActorTransRotateValue = vec; };
 		void ActorApplyForceMove(const Vector2T<float>& vec) { ActorCompSpaceTrans->ActorTransMoveValue = vec; };
 		// not scale actor collision_box.
-		void ActorModifyScale(const Vector2T<float>& vec) { ActorTransScale = vec; };
+		void ActorModifyScale(const Vector2T<float>& vec) { ActorRenderParams.RenderScale = vec; };
 		// set actor position & angle.
 		void ActorModifyState(const Vector2T<float>& position, float angle) {
 			ActorCompSpaceTrans->SetActorState(position, angle);
 		}
+		void ActorModifyColorBlend(const Vector4T<float>& color) {
+			ActorRenderParams.RenderColorBlend = color;
+		}
 
 		// actor virtual(scene) coord =convert=> window coord(pixel).
-		Vector2T<float> ActorConvertVirCoord(Vector2T<uint32_t> window_res);
+		Vector2T<float> ActorMappingWindowCoord();
 
 		void ActorUpdateHealth();
 		void ActorUpdate();
 		void ActorRendering();
+	};
+
+	struct GameActorCircleSensorDESC {
+		std::string SensorPhysicsWorld;
+
+		Vector2T<float> InitialPosition;
+		float InitialRadius;
+		float InitialScale;
+
+		GameActorCircleSensorDESC() :
+			SensorPhysicsWorld("SYSTEM_PHY_WORLD"),
+
+			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
+			InitialRadius(10.0f),
+			InitialScale (1.0f)
+		{}
+	};
+
+	// 物理传感器(圆形), 用于范围探测.
+	class GameActorCircleSensor :public PhysicsEngine::PhyEngineCoreDataset {
+	protected:
+		size_t ActorSensorUniqueID = {};
+		GameComponents::ActorPrivateINFO SensorCollisionInfo = {};
+		
+		std::string SensorPhysicsWorld = {};
+		PhyBodyKey  SensorPhysicsItem  = {};
+	public:
+		GameActorCircleSensor(const GameActorCircleSensorDESC& INIT_DESC);
+		~GameActorCircleSensor();
+
+		void SensorModifyState(const Vector2T<float>& position);
+		// sensor and actor collision, type(null).
+		GameComponents::ActorPrivateINFO ActorGetCollision() { 
+			return SensorCollisionInfo;
+		}
+		void SensorUpdate();
 	};
 }
 
@@ -487,6 +535,8 @@ namespace GameBrickCore {
 		float           InitialRotate;
 		float           InitialRenderLayer;
 
+		Vector4T<float> InitialVertexColor;
+
 		// system core comp switch_flags.
 		bool EnableRendering = true;
 		bool EnableCollision = true;
@@ -499,7 +549,8 @@ namespace GameBrickCore {
 			InitialPosition   (Vector2T<float>(0.0f, 0.0f)),
 			InitialScale      (Vector2T<float>(1.0f, 1.0f)),
 			InitialRotate     (0.0f),
-			InitialRenderLayer(1.0f)
+			InitialRenderLayer(1.0f),
+			InitialVertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f))
 		{}
 	};
 
@@ -525,20 +576,16 @@ namespace GameBrickCore {
 		// shader rendering size, shader_uniform param.
 		Vector2T<float> RenderingResolution = {};
 
-		Vector2T<float> BrickStaticPosition = {};
-		Vector2T<float> BrickStaticScale    = {};
-		float           BrickStaticRotate   = 0.0f;
-		float           BrickStaticLayer    = 0.0f;
-
+		GameComponents::RenderingParams BrickRenderParams = {};
 		GameComponents::ActorRendering* BirckCompRendering = nullptr;
 	public:
 		~GameBrickExecutor();
 		GameBrickExecutor(const GameBrickExecutorDESC& INIT_DESC);
 
 		size_t          BrickGetUniqueID() { return BrickUniqueID; }
-		Vector2T<float> BrickGetPosition() { return BrickStaticPosition; }
-		Vector2T<float> BrickGetScale()    { return BrickStaticScale; }
-		float           BrickGetRotate()   { return BrickStaticRotate; }
+		Vector2T<float> BrickGetPosition() { return BrickRenderParams.RenderPosition; }
+		Vector2T<float> BrickGetScale()    { return BrickRenderParams.RenderScale; }
+		float           BrickGetRotate()   { return BrickRenderParams.RenderRotate; }
 
 		void BrickRendering();
 	};

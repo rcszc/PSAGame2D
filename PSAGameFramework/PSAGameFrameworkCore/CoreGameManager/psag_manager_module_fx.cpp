@@ -43,7 +43,7 @@ namespace GameManagerCore {
 			ParticleGroupCreate.ConfigRandomDispersion(
 				CREATE_DESC.ParticlesVecRandom,
 				CREATE_DESC.ParticlesPosRandom,
-				CREATE_DESC.ParticlesPosOffsetRandom
+				Vector3T<float>(CREATE_DESC.ParticlesPosOffset.vector_x, CREATE_DESC.ParticlesPosOffset.vector_y, 0.0f)
 			);
 			// particle generator => particle system.
 			FxParticleObject->ParticleCreate(&ParticleGroupCreate);

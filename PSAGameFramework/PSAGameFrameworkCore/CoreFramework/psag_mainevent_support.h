@@ -33,7 +33,8 @@ namespace GameLogic {
         virtual void LogicCloseFree() = 0;
         // loop: return flag: false:continue, true:exit.
         virtual bool LogicEventLoopGame(FrameworkParams& RunningState) = 0;
-        virtual bool LogicEventLoopGui(FrameworkParams& RunningState)  = 0;
+        // 取消独立的Gui事件渲染. RCSZ [20240826]
+        // virtual bool LogicEventLoopGui(FrameworkParams& RunningState) = 0;
     };
 }
 
@@ -49,7 +50,7 @@ namespace PsagMainEvent {
     class MainAsyncTask {
     protected:
         // generate event_task unique_id.
-        PSAG_SYSGEN_TIME_KEY SystemGenUID;
+        PSAG_SYS_GENERATE_KEY SystemGenUID;
         
         std::vector<Event>            EventsArray   = {};
         std::queue<int>               EventsResults = {};
@@ -194,9 +195,8 @@ namespace PsagFrameworkCore {
 
         bool FrameworkInitConfig(const std::string& gl_version);
         void FrameworkRendererLowinit(const std::string& gl_version);
-
+        // run,update,rendering game.
         bool FrameworkRenderingGameScene();
-        bool FrameworkRenderingGameGui();
     public:
 
         bool CoreFrameworkInit(FrameworkSysVersion version) override;

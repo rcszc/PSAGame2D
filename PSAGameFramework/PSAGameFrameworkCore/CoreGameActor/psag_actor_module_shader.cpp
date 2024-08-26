@@ -29,14 +29,14 @@ namespace GameActorCore {
 	}
 
 	bool GameActorShader::CreateShaderResource() {
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 
 		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
 		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
 
 		if (ShaderProcess.CreateCompileShader()) {
-			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenTimeKey();
+			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
 		}
 		else {
@@ -46,7 +46,7 @@ namespace GameActorCore {
 		// find => shader_handle_temp => uniform.
 		S_HANDLE = LLRES_Shaders->ResourceFind(__ACTOR_SHADER_ITEM);
 
-		__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenTimeKey();
+		__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenUniqueKey();
 		if (VerticesPosition != nullptr) {
 			// vertex coord => shader vertex_group.
 			vector<float> DatasetTemp = {};
@@ -120,8 +120,8 @@ namespace GameActorCore {
 		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM)) return false;
 
 		if (!image.ImagePixels.empty()) {
-			PSAG_SYSGEN_TIME_KEY GenResourceID;
-			__VIR_TEXTURE_ITEM = GenResourceID.PsagGenTimeKey();
+			PSAG_SYS_GENERATE_KEY GenResourceID;
+			__VIR_TEXTURE_ITEM = GenResourceID.PsagGenUniqueKey();
 			// alloc virtual sampler texture.
 			if (!VirTextureItemAlloc(__VIR_TEXTURE_ITEM, image)) {
 				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed load_image.");

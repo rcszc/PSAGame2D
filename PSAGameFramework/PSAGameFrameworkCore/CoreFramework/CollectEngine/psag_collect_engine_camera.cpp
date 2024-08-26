@@ -37,4 +37,11 @@ namespace CollectEngineCamera {
 		CameraPosition.vector_x += (CameraPositionTarget.vector_x - CameraPosition.vector_x) * 0.05f * CALC_LERP_SCALE;
 		CameraPosition.vector_y += (CameraPositionTarget.vector_y - CameraPosition.vector_y) * 0.05f * CALC_LERP_SCALE;
 	}
+
+	Vector2T<float> GamePlayerComaeraMP::GetCameraPosition(const Vector2T<float>& camera_offset) {
+		return Vector2T<float>(
+			CameraPosition.vector_x + camera_offset.vector_x,
+			CameraPosition.vector_y + camera_offset.vector_y
+		);
+	}
 }

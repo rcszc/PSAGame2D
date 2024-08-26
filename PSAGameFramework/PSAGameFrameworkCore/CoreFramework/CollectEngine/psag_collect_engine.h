@@ -18,7 +18,7 @@ protected:
 namespace CollectEngineRandom {
 	StaticStrLABEL PSAGM_COLENGINE_RAND_LABEL = "PSAG_COLL_RADNOM";
 	namespace Func {
-		float GenerateRandomFunc(float max, float min);
+		float GenerateRandomFunc(float max, float min, uint64_t seed = 0);
 	}
 
 	enum RandomSeed {
@@ -105,8 +105,8 @@ namespace CollectEngineCamera {
 			float hardness
 		);
 		void PlayerCameraRun(const Vector2T<float>& window_coord, const Vector2T<float>& actor_speed);
-		// calc_target => calc_position.
-		Vector2T<float> GetCameraPosition() { return CameraPosition; }
+		// calc_target => calc_position, out_pos = pos + offset.
+		Vector2T<float> GetCameraPosition(const Vector2T<float>& camera_offset = Vector2T<float>());
 	};
 }
 

@@ -348,13 +348,13 @@ namespace PSAG_OGL_MAG {
 	bool PsagTextureViewOGL::CreateTexViewData(const ImageRawData& image_data, TextureFilterMode mode) {
 		if (CreateBindTextureView(TextureViewCreate.Texture)) {
 			// check image pixel_data.
-			if (!image_data.ImagePixels.empty()) {
+			if (image_data.ImagePixels.empty()) {
 				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "texture_view create, image data_empty.");
 				return DEF_PSAGSTAT_FAILED;
 			}
 			// create texture2d view.
 			if (!ConfigCreateTexture(
-				NULL, image_data.Width, image_data.Height, image_data.Channels, image_data.ImagePixels.data(), mode, 
+				1, image_data.Width, image_data.Height, image_data.Channels, image_data.ImagePixels.data(), mode, 
 				NULL, GL_TEXTURE_2D
 			)) {
 				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "texture_view create, opengl_api err.");

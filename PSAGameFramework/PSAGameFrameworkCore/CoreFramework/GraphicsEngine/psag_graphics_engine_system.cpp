@@ -148,7 +148,7 @@ namespace GraphicsEnginePost {
 
 	PsagGLEnginePost::PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution) {
 		// generate unique_id.
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderPost;
 		ShaderPost.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
@@ -158,7 +158,7 @@ namespace GraphicsEnginePost {
 		
 		// create & storage post_shader.
 		if (ShaderPost.CreateCompileShader()) {
-			ShaderPostProgram = GenResourceID.PsagGenTimeKey();
+			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderPost);
 		}
 
@@ -171,7 +171,7 @@ namespace GraphicsEnginePost {
 		ShaderLight.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.ShaderFragLight, StringScript);
 
 		if (ShaderLight.CreateCompileShader()) {
-			ShaderVolumLight = GenResourceID.PsagGenTimeKey();
+			ShaderVolumLight = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderVolumLight, &ShaderLight);
 		}
 
@@ -185,7 +185,7 @@ namespace GraphicsEnginePost {
 		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.shaderFragColorFilter, StringScript);
 
 		if (ShaderColorFilter.CreateCompileShader()) {
-			ShaderFilter = GenResourceID.PsagGenTimeKey();
+			ShaderFilter = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderFilter, &ShaderColorFilter);
 		}
 
@@ -200,7 +200,7 @@ namespace GraphicsEnginePost {
 
 		if (ShaderBloomHPCS.CreateCompileShader()) {
 			// bloom_process shader, h(横向采样).	
-			ShaderBloomH = GenResourceID.PsagGenTimeKey();
+			ShaderBloomH = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderBloomH, &ShaderBloomHPCS);
 		}
 
@@ -213,11 +213,11 @@ namespace GraphicsEnginePost {
 
 		if (ShaderBloomVPCS.CreateCompileShader()) {
 			// bloom_process shader, v(纵向采样).	
-			ShaderBloomV = GenResourceID.PsagGenTimeKey();
+			ShaderBloomV = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderBloomV, &ShaderBloomVPCS);
 		}
 
-		RenderRect = GenResourceID.PsagGenTimeKey();
+		RenderRect = GenResourceID.PsagGenUniqueKey();
 		// fmt: 1.0f, lowest layer.
 		VerStcDataItemAlloc(RenderRect, PSAG_OGL_MAG::ShaderTemplateRectDep(10.0f));
 
@@ -232,7 +232,7 @@ namespace GraphicsEnginePost {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsRenderBuffer DepRenderBufferCreate;
 
 		if (DepRenderBufferCreate.CreateRenderBufferDepth(render_resolution.vector_x, render_resolution.vector_y)) {
-			GameSceneRenderBuffer = GenResourceID.PsagGenTimeKey();
+			GameSceneRenderBuffer = GenResourceID.PsagGenUniqueKey();
 			LLRES_RenderBuffers->ResourceStorage(GameSceneRenderBuffer, &DepRenderBufferCreate);
 		}
 		
@@ -249,13 +249,13 @@ namespace GraphicsEnginePost {
 			TextureCreate.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
 
 		if (TextureCreate.CreateTexture()) {
-			ProcessTextures = GenResourceID.PsagGenTimeKey();
+			ProcessTextures = GenResourceID.PsagGenUniqueKey();
 			LLRES_Textures->ResourceStorage(ProcessTextures, &TextureCreate);
 		}
 
 		// 游戏场景 (捕获输入)
 		if (FboGameScene.CreateFrameBuffer()) {
-			GameSceneFrameBuffer = GenResourceID.PsagGenTimeKey();
+			GameSceneFrameBuffer = GenResourceID.PsagGenUniqueKey();
 			// bind scene color_buffer & render_buffer(depth).
 			// depth_info get: "gl_FragCoord.z"
 			FboGameScene.RenderBufferBindFBO(LLRES_RenderBuffers->ResourceFind(GameSceneRenderBuffer));
@@ -268,7 +268,7 @@ namespace GraphicsEnginePost {
 
 		// 2D灯光处理 (体积光)
 		if (FboVolumLight.CreateFrameBuffer()) {
-			LightFrameBuffer = GenResourceID.PsagGenTimeKey();
+			LightFrameBuffer = GenResourceID.PsagGenUniqueKey();
 			FboVolumLight.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 1);
 			LLRES_FrameBuffers->ResourceStorage(LightFrameBuffer, &FboVolumLight);
 		}
@@ -277,7 +277,7 @@ namespace GraphicsEnginePost {
 
 		// 纹理过滤 (图元颜色提取)
 		if (FboColorFilter.CreateFrameBuffer()) {
-			FilterFrameBuffer = GenResourceID.PsagGenTimeKey();
+			FilterFrameBuffer = GenResourceID.PsagGenUniqueKey();
 			FboColorFilter.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 2);
 			LLRES_FrameBuffers->ResourceStorage(FilterFrameBuffer, &FboColorFilter);
 		}
@@ -286,7 +286,7 @@ namespace GraphicsEnginePost {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboGameBloom[2] = {};
 		// bloom h&v shaders texture.
 		for (size_t i = 0; i < 2; ++i) {
-			BloomFrameBuffers[i] = GenResourceID.PsagGenTimeKey();
+			BloomFrameBuffers[i] = GenResourceID.PsagGenUniqueKey();
 			if (FboGameBloom[i].CreateFrameBuffer()) {
 				// fbo_h => bind layer2, fbo_v => bind layer3.
 				FboGameBloom[i].TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, (uint32_t)i + 3);
@@ -361,7 +361,7 @@ namespace GraphicsEngineBackground {
 		const Vector2T<uint32_t>& render_resolution, const vector<ImageRawData>& imgdataset
 	) {
 		// generate unique_id.
-		PSAG_SYSGEN_TIME_KEY GenResourceID;
+		PSAG_SYS_GENERATE_KEY GenResourceID;
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
@@ -371,11 +371,11 @@ namespace GraphicsEngineBackground {
 
 		// create & storage background_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderPostProgram = GenResourceID.PsagGenTimeKey();
+			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
 			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
-		BackgroundRect = GenResourceID.PsagGenTimeKey();
+		BackgroundRect = GenResourceID.PsagGenUniqueKey();
 		// fmt: 1.0f, lowest layer.
 		VerStcDataItemAlloc(BackgroundRect, PSAG_OGL_MAG::ShaderTemplateRectDep(-10.0f));
 
@@ -397,7 +397,7 @@ namespace GraphicsEngineBackground {
 				BackTexture.PushCreateTexData(TextureParam(1.0f, 1.0f), DEF_IMG_CHANNEL_RGBA, LayerData.ImagePixels);
 
 			if (BackTexture.CreateTexture()) {
-				BackgroundTextures = GenResourceID.PsagGenTimeKey();
+				BackgroundTextures = GenResourceID.PsagGenUniqueKey();
 				LLRES_Textures->ResourceStorage(BackgroundTextures, &BackTexture);
 			}
 			TextureTopLayer = float(imgdataset.size() - 1);

@@ -1,5 +1,5 @@
 # PSA Game2D Graphics STD
-> ©PomeloStar Studio 2024-2025 （2024.05.12）
+> ©PomeloStar Studio 2024-2025 (2024.05.12)
 
 - __Developers:__ ```RCSZ```
 - __Update:__ ```2024.08.06``` __Version:__ ```0.1.2```

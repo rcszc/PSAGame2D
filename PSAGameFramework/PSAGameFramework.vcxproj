@@ -204,9 +204,6 @@
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_shader.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoStarShader.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoStar.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\TestDemoStarFX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_background.frag" />
@@ -261,7 +258,6 @@
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imms.h" />
     <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h" />
-    <ClInclude Include="PSAGameFrameworkDev\TestDemoStar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
