@@ -11,35 +11,8 @@ extern const char* ShaderFragPawnActor;
 extern const char* ShaderFragBulletActor;
 extern const char* ShaderFragNPCActor;
 
-extern const char* ActorFragFX1;
-extern const char* ActorFragFX2;
-extern const char* ActorFragFX3;
-
 constexpr float PawnActorHPmax = 48800.0f;
 constexpr float NpcActorHPmax = 2200.0f;
-
-class PawnActorFX {
-protected:
-    PsagActor::ActorsManager* ActorManager = nullptr;
-
-    PsagActor::ActorShader* ActorShader1 = nullptr; // 能量球.
-    PsagActor::ActorShader* ActorShader2 = nullptr; // 闪电.
-
-    GraphicsEngineParticle::PsagGLEngineParticle* ActorParticles = nullptr;
-
-    float FxActorAnimTimer = 0.0f;
-    float FxActorTimer     = 0.0f;
-
-    size_t FxActorUnique[2] = {};
-public:
-    PawnActorFX(
-        PsagActor::ActorsManager* Manager, Vector2T<PsagActor::ActorShader*> Shader, 
-        const Vector2T<float>& Position
-    );
-    ~PawnActorFX();
-
-    void PawnActorFxRender();
-};
 
 class PsaGameV1Demo :public GameLogic::INTERFACE_DEVCLASS_GAME {
 protected:
@@ -49,9 +22,10 @@ protected:
 
     PsagActor::PresetScript SYS_PRESET_SC = {};
 
-    // PActor 生命恢复间隔计时器, 开火计时器.
+    // PActor 生命恢复间隔计时器, 开火计时器, 换弹计时器.
     PsagManager::Tools::Timer::GameCycleTimer* PActorHP   = nullptr;
     PsagManager::Tools::Timer::GameCycleTimer* PActorFIRE = nullptr;
+    PsagManager::Tools::Timer::GameCycleTimer* PActorCAMM = nullptr;
 
     PsagManager::Fx::Particle* DemoParticlePActor1 = nullptr; // 回血粒子.
     PsagManager::Fx::Particle* DemoParticlePActor2 = nullptr; // 换弹粒子.
@@ -62,8 +36,8 @@ protected:
 
     PsagManager::FxView::TextureViewImage* GuiViewImage = nullptr;
 
-    float CameraShakeValue = 0.0f;
-    float PawnActorBullet = 70.0f;
+    float PawnActorBullet = 128.0f;
+    bool  PawnActorChangeAMM = false;
 
     ResUnique PawnActorUnqiue = NULL;
 

@@ -6,7 +6,7 @@ using namespace PSAG_LOGGER;
 
 void PsaGameV1Demo::GameCreateBulletPawn(const Vector2T<float>& position, float angle) {
     PsagActor::ActorDESC ConfigBulletActor;
-    const float BULLET_SPEED = 78.0f;
+    const float BULLET_SPEED = 70.0f;
     
     ConfigBulletActor.ActorPhysicsWorld   = "DemoPhysics";
     ConfigBulletActor.ActorShaderResource = DemoShaders->FindActorShader("BulletActor");
@@ -23,7 +23,7 @@ void PsaGameV1Demo::GameCreateBulletPawn(const Vector2T<float>& position, float 
             cos(PSAG_M_DEGRAD(-angle - 90.0f)) * BULLET_SPEED
         );
 
-    ConfigBulletActor.InitialVertexColor    = Vector4T(0.0f, 2.0f, 2.0f, 1.0f);
+    ConfigBulletActor.InitialVertexColor    = Vector4T(0.0f, 2.5f, 2.5f, 1.0f);
     ConfigBulletActor.CollisionCallbackFunc = ACTOR_COLL_FUNC{
 
         if (DemoActors->FindGameActor(ThisActor->ActorGetCollision().ActorUniqueCode) != nullptr) {
@@ -48,7 +48,7 @@ void PsaGameV1Demo::GameCreateBulletPawn(const Vector2T<float>& position, float 
 
 void PsaGameV1Demo::GameCreateBulletNPC(const Vector2T<float>& position, float angle) {
     PsagActor::ActorDESC ConfigBulletActor;
-    const float BULLET_SPEED = 52.0f;
+    const float BULLET_SPEED = 48.0f;
 
     ConfigBulletActor.ActorPhysicsWorld = "DemoPhysics";
     ConfigBulletActor.ActorShaderResource = DemoShaders->FindActorShader("BulletActor");

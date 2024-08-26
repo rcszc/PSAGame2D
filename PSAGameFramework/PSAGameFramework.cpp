@@ -2,7 +2,7 @@
 // @PomeloStar Studio 2024-2025 GameFramework(Engine).
 // Developers: 
 /*
-* Engine Version: 0.1.2 Alpha (10.20240610)
+* Engine Version: 0.1.2 Alpha (10.20240826)
 * MSVC C11, C++17 x64 Release
 * OpenGL GLSL: 4.6
 * OpenGL GLFW: 3.0
@@ -13,7 +13,7 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_08_017.
+// Engine Update: 2024_08_26.
 #define PSAG2D_ENGINE_VER 12.20240817
 /*
 * 附加说明:
@@ -48,7 +48,7 @@ int main() {
 		PsagFrameworkStart::CorePsagMainStart FrameworkStarter = {};
 		// add start_item: object.
 		FrameworkStarter.UniqueFrameworkObj(MainPSAGame2D);
-		// start framework(engine)[exe].
+		// start framework(engine)[exe], 200MS.
 		FrameworkStarter.StartPsaGame(PSAG2D_ENGINE_VER, 200);
 		// framework free exit.
 		FrameworkResult = FrameworkStarter.FreeFramework();

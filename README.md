@@ -2,19 +2,20 @@
 # PSAGame2D
 > PomeloStar 2D游戏开发框架.
 
-__当前版本:__ v20240824
+__当前版本:__ `V1-20240824` __开发文档:__ 暂无(编写中..ing)
 
-> __暂无文档__, 目前还在施工中hhh🙂, 一堆模块还处于开发阶段. ( 希望别弃坑了~~前面还有一堆坑~~
+> 目前长期施工中🙂, 许多模块还处于开发阶段. ( 希望别弃坑了~~前面还有一堆坑~~
 
-- 图形引擎基于 OpenGL4.6
-- 物理引擎基于 Box2D
-- 音频模块基于 OpenAL
-- 内置帧性能采集器
-- 使用简单的控制反转(IOC), 降低游戏代码与框架的耦合度
-- 框架内置多级 后期处理&背景处理 着色器管线
-- 使用描述符(DESC), 描述各构建对象以及挂载组件, 简化手动创建
+<img src="PSAGameDesigns/PSAGame2DHeader.png"/>
 
-__开发进度:__ ████████░░ 89%
+- 图形引擎基于 `OpenGL4.6`
+- 物理引擎基于 `Box2D`
+- 音频系统基于 `OpenAL`
+
+目前主要兼容 __WindowsX86__ 平台. 内置帧性能监控, 使用简单的控制反转(IOC), 降低游戏代码与框架的耦合度, 框架内置多级 后期处理&背景处理 着色器管线. 使用描述符(DESC), 描述各构建对象以及挂载组件, 简化手动创建等.
+
+__V1开发进度:__ █████████░ 90%
+
 > FrameworkCore Files: 79, LoC: 11740
 ---
 
@@ -38,18 +39,24 @@ __开发进度:__ ████████░░ 89%
 
 ### 纹理管理器架构 & 顶点组管理器架构
 
+> 目前顶点组管理器架构, 为避免显存碎片化效率非常低, 以后还会改进.
+
 <p align="center">
   <img src="PSAGameDesigns/VirtualTextureArch.png" style="width:35%"/>
   <span style="display:inline-block; width:1%;"></span>
   <img src="PSAGameDesigns/VertexGroupsArch.png" style="width:62%;"/>
 </p>
 
-> 架构并不固定, 可能会有微调.
+以上架构并不固定, 可能会有微调.
 
-## 开发中ing...
+## 框架每个版本都会带有对应 DEMO
 
 [__BiliBili视频__](https://www.bilibili.com/video/BV1VPvoecEux/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b)
 
-<img src="PSAGameDesigns/PSAGame2Dv20240619.png"/>
+<img src="PSAGameDesigns/PSAGame2Dv20240826.png"/>
 
-> __PS:__ "PSA"是为了致敬咱的工作室PomeloStar, 为什么不是引擎而是框架? 凭我一个菜鸟的实力根本搓不出引擎 (只能是框架
+---
+
+> __PS:__ 能力有限(菜), PSAGame2D总体为纯代码游戏框架, 目前并不考虑制作图形化编辑器.
+
+项目开始编写: `2024.03.31`

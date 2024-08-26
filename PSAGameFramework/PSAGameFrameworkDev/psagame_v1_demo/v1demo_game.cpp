@@ -42,6 +42,7 @@ bool PsaGameV1Demo::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 	PActorHP   = new PsagManager::Tools::Timer::GameCycleTimer();
 	PActorFIRE = new PsagManager::Tools::Timer::GameCycleTimer();
+	PActorCAMM = new PsagManager::Tools::Timer::GameCycleTimer();
 
 	// 创建玩家 输入控制,相机运动.
 	PlayerPawn   = new PsagManager::Tools::Pawn::GamePlayerPawn(Vector2T<float>(128.0f, 128.0f));
@@ -70,6 +71,26 @@ void PsaGameV1Demo::LogicCloseFree() {
 	delete DemoArchitecture;
 }
 
+// ImGui 绘制大标题字体.
+void DrawTitleFloatValue(const char* name, float value, const ImVec2& pos, float width, streamsize num = 2) {
+	ImVec2 WindowSize(width, 92.0f);
+	ImGui::SetNextWindowPos(pos);
+	ImGui::SetNextWindowSize(WindowSize);
+
+	ImGuiWindowFlags FlagsTemp = 
+		ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	ImGui::Begin(name, (bool*)NULL, FlagsTemp);
+	ImGui::SetWindowFontScale(3.2f);
+
+	ostringstream OstreamString;
+	OstreamString << fixed << setprecision(num) << value;
+	float TitleLength = ImGui::CalcTextSize(OstreamString.str().c_str()).x;
+
+	ImGui::SetCursorPosX(WindowSize.x * 0.5f - TitleLength * 0.5f);
+	ImGui::Text("%s", OstreamString.str().c_str());
+	ImGui::End();
+}
+
 bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
 	// ******************************** Run,Update,Rendering ********************************
 
@@ -90,26 +111,28 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	PlayerCamera->PlayerCameraRun(MappingWinCoord, PawnActorOBJ->ActorGetMoveSpeed());
 
 	// 摄像机抖动.
-	RunningState.CameraParams->MatrixPosition = 
-		PlayerCamera->GetCameraPosition(
-			Vector2T<float>(
-				sin(PSAG_M_DEGRAD(PawnActorAngle + 90.0f)) * sin(CameraShakeValue) * 22.0f, 
-				cos(PSAG_M_DEGRAD(PawnActorAngle + 90.0f)) * sin(CameraShakeValue) * 22.0f
-			));
+	RunningState.CameraParams->MatrixPosition = PlayerCamera->GetCameraPosition();
 
-	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerFlagGet() && PawnActorBullet > 0.0f) {
+	// 鼠标左键, 循环计时器, 剩余子弹,  非换弹时间.
+	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerFlagGet() && 
+		PawnActorBullet > 0.0f && !PawnActorChangeAMM
+	) {
 		// 创建Actor子弹 => 减弹夹 => 重置计时器.
 		GameCreateBulletPawn(PawnActorOBJ->ActorGetPosition(), PawnActorOBJ->ActorGetRotate());
 		PawnActorBullet -= 1.0f;
 		PActorFIRE->CycleTimerClearReset(50.0f);
-
-		CameraShakeValue += 0.72f;
 	}
 
-	if (PlayerPawn->KeyboardPressed_R() && PawnActorBullet < 1.0f) {
-		GameCreateParticlesPActorCAMM(42.0f);
-		PawnActorBullet = 70.0f;
+	if (PawnActorChangeAMM && PActorCAMM->CycleTimerFlagGet()) {
+		GameCreateParticlesPActorCAMM(8.0f);
+		PawnActorBullet += 4.0f;
+		PActorCAMM->CycleTimerClearReset(200.0f);
+		// 换弹完成.
+		if (PawnActorBullet >= 128.0f) PawnActorChangeAMM = false;
 	}
+
+	if (PlayerPawn->KeyboardPressed_R() && PawnActorBullet < 1.0f)
+		PawnActorChangeAMM = true;
 
 	if (PlayerPawn->MouseButtonPressed_R() && PActorHP->CycleTimerFlagGet()) {
 		// 回血 => 粒子 => 重置计时器.
@@ -134,17 +157,20 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 
 	// 修改 ImGui 控件颜色.
 	ImGui::PushStyleColor(ImGuiCol_WindowBg,      ImVec4(0.16f, 0.16f, 0.16f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBg,       ImVec4(0.12f, 0.12f, 0.12f, 0.72f));
-	ImGui::PushStyleColor(ImGuiCol_Text,          ImVec4(0.0f, 1.0f, 1.0f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 1.0f, 1.0f, 0.38f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBg,       ImVec4(0.16f, 0.16f, 0.16f, 0.58f));
+	ImGui::PushStyleColor(ImGuiCol_Text,          ImVec4(0.58f, 0.58f, 0.58f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.32f, 0.32f, 0.32f, 0.32f));
 
 	ImGuiWindowFlags FlagsTemp = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-	ImVec2 HPWindowSize = ImVec2(0.7f, 0.2f) * ImGui::GetIO().DisplaySize;
+	ImVec2 HPWindowSize = ImVec2(0.5f, 0.2f) * ImGui::GetIO().DisplaySize;
 
-	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - HPWindowSize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.92f));
+	DrawTitleFloatValue("##VALUE", PawnActorBullet, ImVec2(32.0f, 32.0f), 200.0f, 0);
+
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - HPWindowSize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.9f));
 	ImGui::SetNextWindowSize(HPWindowSize);
 
 	ImGui::Begin("##PActorHP", (bool*)0, FlagsTemp);
+	ImGui::SetWindowFontScale(1.2f);
 	ImGui::Text("AMM: %.0f HP: %.1f", PawnActorBullet, PawnActorOBJ->ActorGetHealth(0));
 	ImGui::ProgressBar(PawnActorOBJ->ActorGetHealth(0) / PawnActorHPmax);
 	ImGui::End();
