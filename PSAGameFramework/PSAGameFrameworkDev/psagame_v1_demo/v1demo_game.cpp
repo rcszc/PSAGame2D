@@ -164,7 +164,7 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	ImGuiWindowFlags FlagsTemp = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 	ImVec2 HPWindowSize = ImVec2(0.5f, 0.2f) * ImGui::GetIO().DisplaySize;
 
-	DrawTitleFloatValue("##VALUE", PawnActorBullet, ImVec2(32.0f, 32.0f), 200.0f, 0);
+	DrawTitleFloatValue("##VALUE", PawnActorBullet, ImVec2(ImGui::GetIO().DisplaySize.x - 220.0f, 32.0f), 200.0f, 0);
 
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - HPWindowSize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.9f));
 	ImGui::SetNextWindowSize(HPWindowSize);

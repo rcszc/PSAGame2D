@@ -2,7 +2,7 @@
 # PSAGame2D
 > PomeloStar 2D游戏开发框架.
 
-__当前版本:__ `V1-20240824` __开发文档:__ 暂无(编写中..ing)
+__当前版本:__ `V1-20240827` __开发文档:__ 暂无(赶工中..ing)
 
 > 目前长期施工中🙂, 许多模块还处于开发阶段. ( 希望别弃坑了~~前面还有一堆坑~~
 
@@ -16,7 +16,7 @@ __当前版本:__ `V1-20240824` __开发文档:__ 暂无(编写中..ing)
 
 __V1开发进度:__ █████████░ 90%
 
-> FrameworkCore Files: 79, LoC: 11740
+> FrameworkCore __Files:__ 79, __LoC:__ 11959
 ---
 
 ## PSAG-ARCH 架构
@@ -44,7 +44,7 @@ __V1开发进度:__ █████████░ 90%
 <p align="center">
   <img src="PSAGameDesigns/VirtualTextureArch.png" style="width:35%"/>
   <span style="display:inline-block; width:1%;"></span>
-  <img src="PSAGameDesigns/VertexGroupsArch.png" style="width:62%;"/>
+  <img src="PSAGameDesigns/VertexGroupArch.png" style="width:62%;"/>
 </p>
 
 以上架构并不固定, 可能会有微调.
@@ -57,6 +57,6 @@ __V1开发进度:__ █████████░ 90%
 
 ---
 
-> __PS:__ 能力有限(菜), PSAGame2D总体为纯代码游戏框架, 目前并不考虑制作图形化编辑器.
+> __PS:__ 能力有限(太菜), PSAGame2D总体为纯代码游戏框架, 目前并不考虑制作图形化编辑器.
 
-项目开始编写: `2024.03.31`
+项目开坑时间: `2024.03.31`
