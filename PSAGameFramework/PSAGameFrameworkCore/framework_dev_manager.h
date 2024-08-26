@@ -15,8 +15,8 @@ namespace PsagManager {
 
 		using ParticleCalcMode = GameManagerCore::GameFX::ParticleUpdateMode;
 
-		using ParticleSrcAttrib = GameManagerCore::GameFX::ParticleAttributes;
-		using ParticleSrcArray  = GameManagerCore::GameFX::ParticlesDataset;
+		using ParticleSrcAttri = GameManagerCore::GameFX::ParticleAttributes;
+		using ParticleSrcArray = GameManagerCore::GameFX::ParticlesDataset;
 
 		using SpriteSheetDESC = GameManagerCore::GameFX::GameFxSpriteSheetDESC;
 		using SpriteSheet     = GameManagerCore::GameFX::GameFxSpriteSheet;

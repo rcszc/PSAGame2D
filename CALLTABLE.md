@@ -75,7 +75,7 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 `P-M2003` ```PsagManager::Fx::ParticleCalcMode```
 
-`P-M2004` ```PsagManager::Fx::ParticleSrcAttrib```
+`P-M2004` ```PsagManager::Fx::ParticleSrcAttri```
 
 `P-M2005` ```PsagManager::Fx::ParticleSrcArray```
 
@@ -105,9 +105,11 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 `P-M1105` ```PsagManager::Tools::Timer::```
 
-> M12
+> M11
 
 `P-M1201` ```PsagManager::Fx::GenMode::```
+
+> M12
 
 ---
 
