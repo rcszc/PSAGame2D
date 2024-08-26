@@ -51,7 +51,7 @@ __V1开发进度:__ █████████░ 90%
 
 ## 框架每个版本都会带有对应 DEMO
 
-[__BiliBili视频__](https://www.bilibili.com/video/BV1VPvoecEux/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b)
+[__BiliBili视频__](https://www.bilibili.com/video/BV1eesneqEmZ/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b) __Update:__ 2024.08.27
 
 <img src="PSAGameDesigns/PSAGame2Dv20240826.png"/>
 
