@@ -21,6 +21,7 @@
 #include <functional>
 #include <typeinfo> // RTTI.
 
+#define POMELO_STAR_GAME2D_DEF true
 #define ENABLE_FTD false
 // FrameDebug => FrameworkLow. [20240817]
 #include "../DebugFrameTime/psag_ft_debug.hpp"
