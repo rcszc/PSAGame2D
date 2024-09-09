@@ -14,7 +14,9 @@
 * PhysicsSystem: Box2D
 */
 // Engine Update: 2024_08_26.
-#define PSAG2D_ENGINE_VER 12.20240817
+// 10.20240826 - OGL 将是此框架 OpenGL 最后一个版本, 此后将移植 Vulkan.
+// Next: 10.20240xxx - VULKAN
+#define PSAG2D_ENGINE_VER 12.20240826
 /*
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX

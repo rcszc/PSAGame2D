@@ -2,6 +2,7 @@
 
 #ifndef _FRAMEWORK_DEF_MATH_HPP
 #define _FRAMEWORK_DEF_MATH_HPP
+#define POMELO_STAR_GAME2D_DEF_MATHS
 
 // PSA-V0.1.2 RENDER-COORD ±ê×¼. [RENDER_COORD_01]
 // framework const ortho space_coord.
