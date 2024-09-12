@@ -28,7 +28,6 @@ namespace PSAG_OGL_IMG {
 			if (flag) PsagLowLog(LogInfo, PSAG_OGLIMG_LABEL, "success save(%s) image_file: %s", label, file);
 			else      PsagLowLog(LogWarning, PSAG_OGLIMG_LABEL, "failed save(%s) image_file: %s", label, file);
 		};
-
 		if (!std::filesystem::is_directory(DirectoryPath)) {
 			PsagLowLog(LogError, PSAG_OGLIMG_LABEL, "invalid directory, save image_file: %s", DirectoryPath.string().c_str());
 			return false;
@@ -104,16 +103,16 @@ namespace PSAG_OGL_IMG {
 		stbi_flip_vertically_on_write(true);
 
 		switch (mode) {
+		// stb_image jpg_encode raw_data.
 		case(ImageJPG): {
 			RawDataStream InputBuffer = rawdata.ImagePixels;
 			uint8_t* RawDataBuffer = nullptr;
-			int EncodeSize = rawdata.Width * rawdata.Height * rawdata.Channels;
+			size_t EncodeSize = size_t(rawdata.Width * rawdata.Height * rawdata.Channels);
 
 			stbi_write_jpg_to_func(
 				&StbiExtWriteToMemory, InputBuffer.data(), rawdata.Width, rawdata.Height, rawdata.Channels,
 				&RawDataBuffer, int(quality * 100.0f)
 			);
-			
 			if (RawDataBuffer == nullptr) {
 				PsagLowLog(LogError, PSAG_OGLIMG_LABEL, "failed encode jpg, data = nullptr.");
 				return ResultRawDataTemp;
@@ -126,6 +125,7 @@ namespace PSAG_OGL_IMG {
 			PsagLowLog(LogInfo, PSAG_OGLIMG_LABEL, "success encode jpg, size: %d bytes.", EncodeSize);
 			return ResultRawDataTemp;
 		}
+		// stb_image png_encode raw_data.
 		case(ImagePNG): {
 			int EncodeSize = NULL;
 			uint8_t* RawDataBuffer = stbi_write_png_to_mem(
@@ -133,12 +133,11 @@ namespace PSAG_OGL_IMG {
 				rawdata.Width * rawdata.Channels, rawdata.Width, rawdata.Height, rawdata.Channels,
 				&EncodeSize
 			);
-
 			if (RawDataBuffer == nullptr) {
 				PsagLowLog(LogError, PSAG_OGLIMG_LABEL, "failed encode png, data = nullptr.");
 				return ResultRawDataTemp;
 			}
-			ResultRawDataTemp.resize(EncodeSize);
+			ResultRawDataTemp.resize((size_t)EncodeSize);
 			// buffer => temp, free buffer.
 			ResultRawDataTemp.assign(RawDataBuffer, RawDataBuffer + ResultRawDataTemp.size());
 			stbi_image_free(RawDataBuffer);
@@ -163,12 +162,12 @@ namespace PSAG_OGL_IMG {
 			PsagLowLog(LogError, PSAG_OGLIMG_LABEL, "failed decode image, data = nullptr.");
 			return ResultRawDataTemp;
 		}
-
 		ResultRawDataTemp.ImagePixels.resize(Width * Height * Channels);
 		ResultRawDataTemp.ImagePixels.assign(DataPtr, DataPtr + ResultRawDataTemp.ImagePixels.size());
-		ResultRawDataTemp.Width    = Width;
-		ResultRawDataTemp.Height   = Height;
-		ResultRawDataTemp.Channels = Channels;
+
+		ResultRawDataTemp.Width    = (uint32_t)Width;
+		ResultRawDataTemp.Height   = (uint32_t)Height;
+		ResultRawDataTemp.Channels = (uint32_t)Channels;
 
 		stbi_image_free(DataPtr);
 		PsagLowLog(LogInfo, PSAG_OGLIMG_LABEL, "success decode image: size: %d x %d, color_channel: %d",

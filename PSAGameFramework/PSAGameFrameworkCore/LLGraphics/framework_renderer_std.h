@@ -11,7 +11,7 @@
 class PSAGGL_GLOBAL_INIT {
 public:
 	virtual INIT_RETURN RendererInit(INIT_PARAMETERS init_param, const std::string& version) = 0;
-	virtual void LoggerFunc(RendererLogger function) = 0;
+	virtual bool LoggerFunction(RendererLogger function) = 0;
 };
 
 // ******************************** Manager ********************************
@@ -34,11 +34,13 @@ struct TextureParam {
 
 	TextureParam() : WidthScale(0), HeightScale(0) {}
 	TextureParam(float x, float y) : WidthScale(x), HeightScale(y) {}
+
+	size_t SIZE() { return sizeof(TextureParam); }
 };
 
 //  PSA-V0.1.2 GL-TEX-ATTR 标准. [GL_TEX_ATTR_01]
 // texture(array) attribute.
-struct PsagTextureAttrib {
+struct PsagTextureAttribute {
 	std::vector<TextureParam> LayersParams;
 	TextureFilterMode FilterModeType;
 
@@ -46,20 +48,21 @@ struct PsagTextureAttrib {
 	PsagTexture Texture;
 	uint32_t TextureSamplerCount;
 
-	PsagTextureAttrib() :
+	PsagTextureAttribute() :
 		Texture{}, LayersParams({}), FilterModeType(LinearFiltering), TextureSamplerCount(0),
 		Layers(0), Width(0), Height(0), Channels(0)
 	{}
+	size_t SIZE() { return sizeof(PsagTextureAttribute); }
 };
 
 // texture std storage_interface.
 // 'PsagGLmanagerTexture', 'PsagGLmanagerTextureDepth'.
 class PsagGLmangerTextureStorage {
 public:
-	virtual PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) = 0;
+	virtual PsagTextureAttribute _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
-// texture(group) create, layers_size equal.
+// color texture(array) create, layers_size equal.
 class PsagGLmanagerTexture {
 public:
 	virtual bool SetTextureParam(uint32_t width, uint32_t height, TextureFilterMode mode) = 0;
@@ -81,8 +84,11 @@ public:
 //  PSA-V0.1.2 GL-TEX-ATTR 标准. [GL_TEX_ATTR_02]
 // texture view, static.
 struct PsagTextureView {
+	// psag texture_handle => imgui_render.
 	uint32_t Width, Height, Channels;
 	PsagTexture Texture;
+
+	size_t SIZE() { return sizeof(PsagTextureView); }
 };
 
 // "ImageRawData" define.
@@ -98,20 +104,21 @@ public:
 };
 
 // vertex_buffer & vertex_attribute.
-struct PsagVertexBufferAttrib {
-	// 顶点组大小(bytes), 顶点数据(集)大小(bytes).
+struct PsagVertexBufferAttribute {
+	// 顶点组大小(bytes), 顶点数据(集)大小 bytes.
 	size_t VertexBytes, VerticesDataBytes;
 
 	PsagVertexBuffer DataBuffer;
-	PsagVertexAttribute DataAttrib;
+	PsagVertexAttribute DataAttribute;
 
-	PsagVertexBufferAttrib() : DataBuffer{}, DataAttrib{}, VertexBytes(0), VerticesDataBytes(0) {}
-	PsagVertexBufferAttrib(PsagVertexBuffer vb, PsagVertexAttribute va, size_t ver, size_t size) :
-		DataBuffer(vb), DataAttrib(va), VertexBytes(ver), VerticesDataBytes(size)
+	PsagVertexBufferAttribute() : DataBuffer{}, DataAttribute{}, VertexBytes(0), VerticesDataBytes(0) {}
+	PsagVertexBufferAttribute(PsagVertexBuffer vb, PsagVertexAttribute va, size_t ver, size_t size) :
+		DataBuffer(vb), DataAttribute(va), VertexBytes(ver), VerticesDataBytes(size)
 	{}
+	size_t SIZE() { return sizeof(PsagVertexBufferAttribute); }
 };
 
-class PsagGLmanagerModel {
+class PsagGLmanagerVertex {
 public:
 	virtual PsagVertexAttribute CreateVertexAttribute(uint32_t type, uint32_t begin_location = 0) = 0;
 	virtual PsagVertexBuffer CreateVertexBuffer() = 0;
@@ -119,30 +126,31 @@ public:
 	virtual bool CreateStaticModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) = 0;
 	virtual bool CreateDynamicModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) = 0;
 
-	virtual PsagVertexBufferAttrib _MS_GETRES(ResourceFlag& flag) = 0;
+	virtual PsagVertexBufferAttribute _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
 // render_buffer(rbo) attribute.
-struct PsagRenderBufferAttrib {
+struct PsagRenderBufferAttribute {
 	uint32_t Width, Height, Channels;
 	size_t TextureBytes;
 
 	PsagRenderBuffer RenderBuffer;
 
-	PsagRenderBufferAttrib() : RenderBuffer{}, Width(NULL), Height(NULL), Channels(NULL), TextureBytes(NULL) {}
-	PsagRenderBufferAttrib(uint32_t x, uint32_t y, uint32_t ch, PsagRenderBuffer rb) :
+	PsagRenderBufferAttribute() : RenderBuffer{}, Width(NULL), Height(NULL), Channels(NULL), TextureBytes(NULL) {}
+	PsagRenderBufferAttribute(uint32_t x, uint32_t y, uint32_t ch, PsagRenderBuffer rb) :
 		Width(x), Height(y), Channels(ch), TextureBytes(size_t(x * y * ch) * sizeof(float)), RenderBuffer(rb)
 	{}
+	size_t SIZE() { return sizeof(PsagRenderBufferAttribute); }
 };
 
 class PsagGLmanagerFrameBuffer {
 public:
 	virtual bool CreateFrameBuffer() = 0;
 
-	virtual bool TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment) = 0;
-	virtual bool TextureDepBindFBO(const PsagTextureAttrib& texture) = 0;
+	virtual bool TextureBindFBO(const PsagTextureAttribute& texture, uint32_t attachment) = 0;
+	virtual bool TextureDepBindFBO(const PsagTextureAttribute& texture) = 0;
 
-	virtual bool RenderBufferBindFBO(PsagRenderBufferAttrib buffer) = 0;
+	virtual bool RenderBufferBindFBO(PsagRenderBufferAttribute buffer) = 0;
 
 	virtual PsagFrameBuffer _MS_GETRES(ResourceFlag& flag) = 0;
 };
@@ -156,23 +164,31 @@ struct ImageRawData {
 class PsagGLmanagerRenderBuffer {
 public:
 	virtual bool CreateRenderBufferDepth(uint32_t width, uint32_t height) = 0;
-
 	virtual bool CreateRenderBuffer(uint32_t width, uint32_t height) = 0;
-	virtual ImageRawData ReadRenderBuffer(PsagRenderBufferAttrib buffer) = 0;
 
-	virtual PsagRenderBufferAttrib _MS_GETRES(ResourceFlag& flag) = 0;
+	virtual ImageRawData ReadRenderBuffer(PsagRenderBufferAttribute buffer) = 0;
+
+	virtual PsagRenderBufferAttribute _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
 class PsagGLmanagerUniform {
 public:
-	virtual void UniformMatrix3x3 (PsagShader program, const char* name, const PsagMatrix3& matrix) = 0;
-	virtual void UniformMatrix4x4 (PsagShader program, const char* name, const PsagMatrix4& matrix) = 0;
+	virtual void UniformMatrix3x3(PsagShader program, const char* name, const PsagMatrix3& matrix) = 0;
+	virtual void UniformMatrix4x4(PsagShader program, const char* name, const PsagMatrix4& matrix) = 0;
 
-	virtual void UniformFloat   (PsagShader program, const char* name, const float&           value) = 0;
-	virtual void UniformVec2    (PsagShader program, const char* name, const Vector2T<float>& value) = 0;
-	virtual void UniformVec3    (PsagShader program, const char* name, const Vector3T<float>& value) = 0;
-	virtual void UniformVec4    (PsagShader program, const char* name, const Vector4T<float>& value) = 0;
-	virtual void UniformInteger (PsagShader program, const char* name, const int32_t&         value) = 0;
+	virtual void UniformFloat  (PsagShader program, const char* name, const float&           value) = 0;
+	virtual void UniformVec2   (PsagShader program, const char* name, const Vector2T<float>& value) = 0;
+	virtual void UniformVec3   (PsagShader program, const char* name, const Vector3T<float>& value) = 0;
+	virtual void UniformVec4   (PsagShader program, const char* name, const Vector4T<float>& value) = 0;
+	virtual void UniformInteger(PsagShader program, const char* name, const int32_t&         value) = 0;
+};
+
+class PsagGLmanagerUniformBuffer {
+public:
+	virtual void CreateUniformInfo(size_t struct_size) = 0;
+	virtual bool CreateUniformBuffer(uint32_t binding) = 0;
+
+	virtual PsagUniformBuffer _MS_GETRES(ResourceFlag& flag) = 0;
 };
 
 // ******************************** Resource(ThreadSafe) ********************************
@@ -181,8 +197,8 @@ public:
 // resource: texture mapping unit.
 class PsagGLresourceTMU {
 public:
-	virtual uint32_t AllocTmuCount() = 0;
-	virtual void FreeTmuCount(uint32_t count) = 0;
+	virtual uint32_t AllocTexMapUnitCount() = 0;
+	virtual void FreeTexMapUnitCount(uint32_t count) = 0;
 };
  
 class PsagGLresourceShader {
@@ -197,7 +213,7 @@ public:
 
 class PsagGLresourceTexture {
 public:
-	virtual PsagTextureAttrib ResourceFind(ResUnique key) = 0;
+	virtual PsagTextureAttribute ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) = 0;
 	virtual bool ResourceDelete(ResUnique key) = 0;
 
@@ -205,11 +221,11 @@ public:
 	virtual ~PsagGLresourceTexture() = default;
 };
 
-// VertexBufferHD + VertexAttributeHD => VertexBufferAttr
+// vertex_buffer + vertex_attribute => psag_vbo.
 class PsagGLresourceVertexBuffer {
 public:
-	virtual PsagVertexBufferAttrib ResourceFind(ResUnique key) = 0;
-	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerModel* res) = 0;
+	virtual PsagVertexBufferAttribute ResourceFind(ResUnique key) = 0;
+	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerVertex* res) = 0;
 	virtual bool ResourceDelete(ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
@@ -238,12 +254,22 @@ public:
 
 class PsagGLresourceRenderBuffer {
 public:
-	virtual PsagRenderBufferAttrib ResourceFind(ResUnique key) = 0;
+	virtual PsagRenderBufferAttribute ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerRenderBuffer* res) = 0;
 	virtual bool ResourceDelete(ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceRenderBuffer() = default;
+};
+
+class PsagGLresourceUniformBuffer {
+public:
+	virtual PsagUniformBuffer ResourceFind(ResUnique key) = 0;
+	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerUniformBuffer* res) = 0;
+	virtual bool ResourceDelete(ResUnique key) = 0;
+
+	virtual size_t ResourceSize() = 0;
+	virtual ~PsagGLresourceUniformBuffer() = default;
 };
 
 // ******************************** Input/Output ********************************

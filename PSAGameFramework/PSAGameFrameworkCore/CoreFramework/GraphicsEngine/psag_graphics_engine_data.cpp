@@ -39,18 +39,17 @@ namespace GraphicsEngineDataset {
 	atomic<size_t> GLEngineDataSTATE::DataBytesDynamicVertex = NULL;
 	atomic<size_t> GLEngineDataSTATE::DataBytesOnlineTexture = NULL;
 
-	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper
-		GLEngineStcVertexData::ShaderRender = {};
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState GLEngineStaticVertexData::ShaderRender = {};
 
-	ResUnique GLEngineStcVertexData::VertexAttribute = {};
-	ResUnique GLEngineStcVertexData::VertexBuffer = {};
+	ResUnique GLEngineStaticVertexData::VertexAttribute = {};
+	ResUnique GLEngineStaticVertexData::VertexBuffer    = {};
 
-	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStcVertexData::IndexItems = {};
-	ResUnique GLEngineStcVertexData::SystemPresetRectangle = {};
+	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStaticVertexData::IndexItems = {};
+	ResUnique GLEngineStaticVertexData::SystemPresetRectangle = {};
 
-	mutex GLEngineStcVertexData::DatasetResMutex = {};
+	mutex GLEngineStaticVertexData::DatasetResMutex = {};
 
-	bool GLEngineStcVertexData::VerStcDataItemAlloc(ResUnique rukey, const vector<float>& data) {
+	bool GLEngineStaticVertexData::VerStcDataItemAlloc(ResUnique rukey, const vector<float>& data) {
 		VABO_DATASET_INFO AllocVertInfo = {};
 
 		size_t DatasetSizeTemp = NULL;
@@ -62,7 +61,7 @@ namespace GraphicsEngineDataset {
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc): failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
-		auto VertexAttrib = LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer);
+		auto VertexAttrib = GraphicVertexBuffers->ExtResourceMapping(VertexBuffer);
 		// 映射GPU显存 => 重写数据 => 上传GPU显存.
 		vector<float> DatasetTemp = ShaderRender.ReadVertexDatasetFP32(VertexAttrib->DataBuffer);
 
@@ -83,14 +82,14 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineStcVertexData::VerStcDataItemFree(ResUnique rukey) {
+	bool GLEngineStaticVertexData::VerStcDataItemFree(ResUnique rukey) {
 		{ // enable [free] TCS.
 			lock_guard<mutex> Lock(DatasetResMutex);
 
 			auto it = IndexItems.find(rukey);
 			if (it != IndexItems.end()) {
 				IndexItems.erase(it); // delete info_item.
-				auto VertexAttrib = LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer);
+				auto VertexAttrib = GraphicVertexBuffers->ExtResourceMapping(VertexBuffer);
 				// 映射GPU显存 => 重写信息 => 重写数据 => 上传GPU显存.
 				vector<float> DatasetTemp = ShaderRender.ReadVertexDatasetFP32(VertexAttrib->DataBuffer);
 				vector<float> DatasetRewriting = {};
@@ -123,7 +122,7 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineStcVertexData::VerStcOperFrameDraw(ResUnique rukey) {
+	bool GLEngineStaticVertexData::VerStcOperFrameDraw(ResUnique rukey) {
 		// enable [draw_cmd] TCS.
 		lock_guard<mutex> Lock(DatasetResMutex);
 
@@ -132,27 +131,27 @@ namespace GraphicsEngineDataset {
 
 		// draw vertex: length,offset.
 		ShaderRender.DrawVertexGroupSeg(
-			LLRES_VertexBuffers->ResourceFind(VertexBuffer),
+			GraphicVertexBuffers->ResourceFind(VertexBuffer),
 			IndexItems[rukey].DatasetLength / (FS_VERTEX_LENGTH), IndexItems[rukey].DatasetOffsetLength / (FS_VERTEX_LENGTH)
 		);
 		return true;
 	}
 
-	void GLEngineStcVertexData::StaticVertexDataObjectCreate() {
+	void GLEngineStaticVertexData::StaticVertexDataObjectCreate() {
 		PSAG_SYS_GENERATE_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsVertex VertexProcess;
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [stc]
-		if (LLRES_VertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
+		if (GraphicVertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
 			VertexAttribute = GenResourceID.PsagGenUniqueKey();
-			LLRES_VertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
+			GraphicVertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
 		}
 
 		// create rendering rect.
-		if (VertexProcess.CreateStaticModel(LLRES_VertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
+		if (VertexProcess.CreateStaticModel(GraphicVertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
 			VertexBuffer = GenResourceID.PsagGenUniqueKey();
-			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
+			GraphicVertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
 
 		// alloc system preset.
@@ -164,26 +163,26 @@ namespace GraphicsEngineDataset {
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "static vertex data manager_create.");
 	}
 
-	void GLEngineStcVertexData::StaticVertexDataObjectDelete() {
+	void GLEngineStaticVertexData::StaticVertexDataObjectDelete() {
 		// opengl free vao,vbo handle.
-		LLRES_VertexAttributes->ResourceDelete(VertexAttribute);
-		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);
+		GraphicVertexAttributes->ResourceDelete(VertexAttribute);
+		GraphicVertexBuffers->ResourceDelete(VertexBuffer);
 	}
 
-	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper
-		GLEngineDyVertexData::ShaderRender = {};
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState
+		GLEngineDynamicVertexData::ShaderRender = {};
 
-	ResUnique GLEngineDyVertexData::VertexAttribute = {};
-	ResUnique GLEngineDyVertexData::VertexBuffer    = {};
+	ResUnique GLEngineDynamicVertexData::VertexAttribute = {};
+	ResUnique GLEngineDynamicVertexData::VertexBuffer    = {};
 
-	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineDyVertexData::IndexItems = {};
-	vector<float> GLEngineDyVertexData::VertexRawDataset = {};
+	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineDynamicVertexData::IndexItems = {};
+	vector<float> GLEngineDynamicVertexData::VertexRawDataset = {};
 
-	bool GLEngineDyVertexData::GLOBAL_UPDATE_FLAG = false;
+	bool GLEngineDynamicVertexData::GLOBAL_UPDATE_FLAG = false;
 
-	mutex GLEngineDyVertexData::DatasetResMutex = {};
+	mutex GLEngineDynamicVertexData::DatasetResMutex = {};
 
-	bool GLEngineDyVertexData::VerDyDataItemAlloc(ResUnique rukey) {
+	bool GLEngineDynamicVertexData::VerDyDataItemAlloc(ResUnique rukey) {
 		// enable [alloc] TCS.
 		lock_guard<mutex> Lock(DatasetResMutex);
 
@@ -197,7 +196,7 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineDyVertexData::VerDyDataItemFree(ResUnique rukey) {
+	bool GLEngineDynamicVertexData::VerDyDataItemFree(ResUnique rukey) {
 		// enable [free] TCS.
 		lock_guard<mutex> Lock(DatasetResMutex);
 
@@ -218,7 +217,7 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineDyVertexData::VerDyOperFramePushData(ResUnique rukey, const vector<float>& data) {
+	bool GLEngineDynamicVertexData::VerDyOperFramePushData(ResUnique rukey, const vector<float>& data) {
 		{
 			// enable [free] TCS.
 			lock_guard<mutex> Lock(DatasetResMutex);
@@ -236,7 +235,7 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineDyVertexData::VerDyOperFrameDraw(ResUnique rukey) {
+	bool GLEngineDynamicVertexData::VerDyOperFrameDraw(ResUnique rukey) {
 		// enable [draw] TCS.
 		lock_guard<mutex> Lock(DatasetResMutex);
 
@@ -248,13 +247,13 @@ namespace GraphicsEngineDataset {
 		// update_data => gpu draw_command.
 		// draw vertex: length,offset.
 		ShaderRender.DrawVertexGroupSeg(
-			LLRES_VertexBuffers->ResourceFind(VertexBuffer),
+			GraphicVertexBuffers->ResourceFind(VertexBuffer),
 			IndexItems[rukey].DatasetLength / (FS_VERTEX_LENGTH), IndexItems[rukey].DatasetOffsetLength / (FS_VERTEX_LENGTH)
 		);
 		return true;
 	}
 
-	void GLEngineDyVertexData::SystemFrameUpdateNewState() {
+	void GLEngineDynamicVertexData::SystemFrameUpdateNewState() {
 		// enable [new_state] TCS.
 		lock_guard<mutex> Lock(DatasetResMutex);
 
@@ -264,10 +263,10 @@ namespace GraphicsEngineDataset {
 			it->second = VABO_DATASET_INFO();
 	}
 
-	void GLEngineDyVertexData::UpdateVertexDyDataset() {
+	void GLEngineDynamicVertexData::UpdateVertexDyDataset() {
 		// vertex buffer update_dataset, cpu => gpu.
 		ShaderRender.UploadVertexDataset(
-			LLRES_VertexBuffers->ExtResourceMapping(VertexBuffer), VertexRawDataset.data(), VertexRawDataset.size() * sizeof(float)
+			GraphicVertexBuffers->ExtResourceMapping(VertexBuffer), VertexRawDataset.data(), VertexRawDataset.size() * sizeof(float)
 		);
 		// update global_state: dy.
 		DataBytesDynamicVertex = VertexRawDataset.size();
@@ -275,28 +274,27 @@ namespace GraphicsEngineDataset {
 		GLOBAL_UPDATE_FLAG = false;
 	}
 
-	void GLEngineDyVertexData::DynamicVertexDataObjectCreate() {
+	void GLEngineDynamicVertexData::DynamicVertexDataObjectCreate() {
 		PSAG_SYS_GENERATE_KEY GenResourceID;
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsModel VertexProcess;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsVertex VertexProcess;
 
 		auto VerBufferTemp = VertexProcess.CreateVertexBuffer();
 		// fixed vertex attribute object. [dy]
-		if (LLRES_VertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
+		if (GraphicVertexAttributes->ResourceFind(VertexAttribute) == OPENGL_INVALID_HANDEL) {
 			VertexAttribute = GenResourceID.PsagGenUniqueKey();
-			LLRES_VertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
+			GraphicVertexAttributes->ResourceStorage(VertexAttribute, VertexProcess.CreateVertexAttribute(0, 0));
 		}
-
-		if (VertexProcess.CreateDynamicModel(LLRES_VertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
+		if (VertexProcess.CreateDynamicModel(GraphicVertexAttributes->ResourceFind(VertexAttribute), VerBufferTemp, nullptr, NULL)) {
 			VertexBuffer = GenResourceID.PsagGenUniqueKey();
-			LLRES_VertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
+			GraphicVertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "dynamic vertex data manager_create.");
 	}
 
-	void GLEngineDyVertexData::DynamicVertexDataObjectDelete() {
+	void GLEngineDynamicVertexData::DynamicVertexDataObjectDelete() {
 		// opengl free vao,vbo handle.
-		LLRES_VertexAttributes->ResourceDelete(VertexAttribute);
-		LLRES_VertexBuffers->ResourceDelete(VertexBuffer);
+		GraphicVertexAttributes->ResourceDelete(VertexAttribute);
+		GraphicVertexBuffers->ResourceDelete(VertexBuffer);
 	}
 
 	namespace TextureLayerAlloc {
@@ -339,7 +337,7 @@ namespace GraphicsEngineDataset {
 		}
 	}
 
-	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper GLEngineSmpTextureData::ShaderRender = {};
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState GLEngineSmpTextureData::ShaderRender = {};
 	PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform GLEngineSmpTextureData::ShaderUniform = {};
 
 	SamplerTextures GLEngineSmpTextureData::TexturesSize1X = {};
@@ -425,7 +423,7 @@ namespace GraphicsEngineDataset {
 			);
 			// upload texture layer_data, rgba(default).
 			ShaderRender.UploadTextureLayer(
-				LLRES_Textures->ResourceFind(TextureIndex->TextureArrayIndex).Texture,
+				GraphicTextures->ResourceFind(TextureIndex->TextureArrayIndex).Texture,
 				VirTextureLayer,
 				TextureIndex->TextureResolution,
 				ImgDataTemp.ImagePixels.data()
@@ -507,7 +505,7 @@ namespace GraphicsEngineDataset {
 		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
 			// find tex => bind context => sampler => uniform(s).
-			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
+			auto TexResourceTemp = GraphicTextures->ResourceFind(TexItemTemp->Texture);
 #if PSAG_DEBUG_MODE
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
 				return false;
@@ -529,7 +527,7 @@ namespace GraphicsEngineDataset {
 		// find virtual texture item_idx.
 		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
-			auto TexResourceTemp = LLRES_Textures->ResourceFind(TexItemTemp->Texture);
+			auto TexResourceTemp = GraphicTextures->ResourceFind(TexItemTemp->Texture);
 #if PSAG_DEBUG_MODE
 			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
 				return false;
@@ -587,10 +585,10 @@ namespace GraphicsEngineDataset {
 		for (size_t i = 0; i < params.Tex1Xnum; ++i) 
 			TextureCreate1X.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
 
-		TextureCreate8X.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
-		TextureCreate4X.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
-		TextureCreate2X.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
-		TextureCreate1X.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
+		TextureCreate8X.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
+		TextureCreate4X.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
+		TextureCreate2X.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
+		TextureCreate1X.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
 
 		bool CreateErrorFlag = false;
 		CreateErrorFlag |= !TextureCreate8X.CreateTexture();
@@ -603,16 +601,16 @@ namespace GraphicsEngineDataset {
 		if (!CreateErrorFlag) {
 			// create key => storage res.
 			TexturesSize8X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
-			LLRES_Textures->ResourceStorage(TexturesSize8X.TextureArrayIndex, &TextureCreate8X);
+			GraphicTextures->ResourceStorage(TexturesSize8X.TextureArrayIndex, &TextureCreate8X);
 
 			TexturesSize4X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
-			LLRES_Textures->ResourceStorage(TexturesSize4X.TextureArrayIndex, &TextureCreate4X);
+			GraphicTextures->ResourceStorage(TexturesSize4X.TextureArrayIndex, &TextureCreate4X);
 
 			TexturesSize2X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
-			LLRES_Textures->ResourceStorage(TexturesSize2X.TextureArrayIndex, &TextureCreate2X);
+			GraphicTextures->ResourceStorage(TexturesSize2X.TextureArrayIndex, &TextureCreate2X);
 
 			TexturesSize1X.TextureArrayIndex = GenResourceID.PsagGenUniqueKey();
-			LLRES_Textures->ResourceStorage(TexturesSize1X.TextureArrayIndex, &TextureCreate1X);
+			GraphicTextures->ResourceStorage(TexturesSize1X.TextureArrayIndex, &TextureCreate1X);
 		}
 
 		if (CreateErrorFlag)
@@ -629,15 +627,15 @@ namespace GraphicsEngineDataset {
 
 	void GLEngineSmpTextureData::VirtualTextureDataObjectDelete() {
 		// free sampler & free textures.
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(TexturesSize8X.TextureArrayIndex).TextureSamplerCount);
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(TexturesSize4X.TextureArrayIndex).TextureSamplerCount);
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(TexturesSize2X.TextureArrayIndex).TextureSamplerCount);
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(TexturesSize1X.TextureArrayIndex).TextureSamplerCount);
+		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(TexturesSize8X.TextureArrayIndex).TextureSamplerCount);
+		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(TexturesSize4X.TextureArrayIndex).TextureSamplerCount);
+		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(TexturesSize2X.TextureArrayIndex).TextureSamplerCount);
+		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(TexturesSize1X.TextureArrayIndex).TextureSamplerCount);
 
-		LLRES_Textures->ResourceDelete(TexturesSize8X.TextureArrayIndex);
-		LLRES_Textures->ResourceDelete(TexturesSize4X.TextureArrayIndex);
-		LLRES_Textures->ResourceDelete(TexturesSize2X.TextureArrayIndex);
-		LLRES_Textures->ResourceDelete(TexturesSize1X.TextureArrayIndex);
+		GraphicTextures->ResourceDelete(TexturesSize8X.TextureArrayIndex);
+		GraphicTextures->ResourceDelete(TexturesSize4X.TextureArrayIndex);
+		GraphicTextures->ResourceDelete(TexturesSize2X.TextureArrayIndex);
+		GraphicTextures->ResourceDelete(TexturesSize1X.TextureArrayIndex);
 
 		if (TexturesSize8X.LayerAllotter == nullptr) PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_create texture[8x] allotter free_err.");
 		delete TexturesSize8X.LayerAllotter;

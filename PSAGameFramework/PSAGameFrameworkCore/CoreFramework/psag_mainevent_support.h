@@ -149,8 +149,8 @@ namespace PsagFrameworkCore {
         public GraphicsEngineMatrix::PsagGLEngineMatrix,
         // public PsagLow::PsagSupGraphicsLLRES, (”Î"GLEngineVertexDyData"≥ÂÕª)
         // init vertex_group_mag(vao,vbo) & vir_texture system.
-        public GraphicsEngineDataset::GLEngineDyVertexData,   // dyamic vertex.
-        public GraphicsEngineDataset::GLEngineStcVertexData,  // static vertex.
+        public GraphicsEngineDataset::GLEngineDynamicVertexData,   // dyamic vertex.
+        public GraphicsEngineDataset::GLEngineStaticVertexData,  // static vertex.
         public GraphicsEngineDataset::GLEngineSmpTextureData, // textures.
         // init physics system.
         public PhysicsEngine::PhyEngineCoreDataset,

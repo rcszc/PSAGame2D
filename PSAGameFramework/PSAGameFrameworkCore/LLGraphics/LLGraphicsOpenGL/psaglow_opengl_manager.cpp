@@ -64,20 +64,21 @@ namespace PSAG_OGL_MAG {
 		return std::vector<float>(ShaderTemplateRect, ShaderTemplateRect + 72);
 	}
 
+	StaticStrLABEL PSAG_OGLMAG_INIT = "PSAG_OGL_INIT";
 	// renderer framework init config opengl api.
 	INIT_RETURN PsagInitOGL::RendererInit(INIT_PARAMETERS init_param, const std::string& version) {
-		GLEWshaderVersion = version;
+		GlewShaderVersion = version;
 		// GLEW API. init opengl core.
 		INIT_RETURN ReturnValue = glewInit();
-		PsagLowLog(LogTrace, PSAG_OGLMAG_LABEL, "framework_graphics config init...");
+		PsagLowLog(LogTrace, PSAG_OGLMAG_INIT, "framework_graphics config init...");
 
 		// opengl enable comp.
 		glEnable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 
+		glDepthMask(GL_TRUE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
-		glDepthMask(GL_TRUE);
 
 		// opengl init params.
 		// GL_DONT_CARE(默认) OGL.0x1100, GL_FASTEST(性能优先) OGL.0x1101, GL_NICEST(质量优先) OGL.0x1102
@@ -91,26 +92,26 @@ namespace PSAG_OGL_MAG {
 		}
 		GLenum OpenGLErrCode = glGetError();
 		if (OpenGLErrCode != GL_NO_ERROR)
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "framework_graphics config init err_code: %u", OpenGLErrCode);
+			PsagLowLog(LogError, PSAG_OGLMAG_INIT, "framework_graphics config params err_code: %u", OpenGLErrCode);
 		return ReturnValue;
 	}
 
-	void PsagInitOGL::LoggerFunc(RendererLogger function) {
-		// framework low-level g.logger
+	bool PsagInitOGL::LoggerFunction(RendererLogger function) {
+		// framework low-level => graphics_logger.
 		if (function) {
 			PsagLowLog = function;
-			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "framework_graphics logger function_ptr: %x", (uintptr_t)function);
-			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "framework_graphics shader gl_version: %s", GLEWshaderVersion.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLMAG_INIT, "framework_graphics logger function_ptr: %x", (uintptr_t)function);
+			PsagLowLog(LogInfo, PSAG_OGLMAG_INIT, "framework_graphics shader gl_version: %s", GlewShaderVersion.c_str());
 		}
+		return function != nullptr;
 	}
 
 	// **************************************** ShaderProgram ****************************************
-	// OpenGL 4.6 GLSL vertex,fragment "#version 460 core"
-	// Update: 2023_12_30. RCSZ
+	// OpenGL 4.6 GLSL vertex,fragment "#version 460 core", Update: 2024_09_12. RCSZ
+	StaticStrLABEL PSAG_OGLMAG_SHADER = "PSAG_OGL_SHADER";
 
 	std::string PsagShadersOGL::FileLoaderText(const std::string& file) {
 		std::ifstream FileLoader(file);
-
 		if (FileLoader.is_open()) {
 			// calc file size.
 			FileLoader.seekg(NULL, std::ios::end);
@@ -120,105 +121,107 @@ namespace PSAG_OGL_MAG {
 			// read string data.
 			std::string FileContent((std::istreambuf_iterator<char>(FileLoader)), std::istreambuf_iterator<char>());
 
-			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "shader script_loader read: %s read_size: %u", file.c_str(), FileSize);
+			PsagLowLog(LogInfo, PSAG_OGLMAG_SHADER, "script_loader read: %s read_size: %u", file.c_str(), FileSize);
 			return FileContent;
 		}
-		else {
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "shader script_loader failed open file: %s", file.c_str());
-			return std::string("");
-		}
+		PsagLowLog(LogError, PSAG_OGLMAG_SHADER, "script_loader failed open file: %s", file.c_str());
+		return std::string();
 	}
 
 	bool PsagShadersOGL::CompilationStatus(const uint32_t& shader, const std::string& label) {
-		// gl_func ret status, error_log size.
-		int32_t CompileSuccess = NULL, ShaderLogBytes = NULL;
+		// gl_func return status, error_log size.
+		int32_t CompileSuccessFlag = NULL, ShaderLogBytes = NULL;
 
-		bool CompileStatus = true;
-		char* ShaderLogInfo = nullptr;
+		char* ShaderErrorInfo = nullptr;
 
-		if (label != "program") { // shader handle.
-			// get compiler status & length.
-			glGetShaderiv(shader, GL_COMPILE_STATUS, &CompileSuccess);
+		if (label == "vertex" || label == "fragment") {
+			// shader compiler status & log_length.
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &CompileSuccessFlag);
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &ShaderLogBytes);
 
-			if (!CompileSuccess) {
+			if (!CompileSuccessFlag) {
 				// program link failed.
-				ShaderLogInfo = new char[ShaderLogBytes];
-				glGetShaderInfoLog(shader, ShaderLogBytes, NULL, (GLchar*)ShaderLogInfo);
+				ShaderErrorInfo = new char[ShaderLogBytes];
+				glGetShaderInfoLog(shader, ShaderLogBytes, NULL, (GLchar*)ShaderErrorInfo);
 
 				// print error.
 				std::string ErrorInfo = "opengl_compiler: " + label;
-				PsagLowLog(LogError, "shader: ", "%s %s", ErrorInfo.c_str(), ShaderLogInfo);
+				PsagLowLog(LogError, "shader_err_msg: ", "%s %s", ErrorInfo.c_str(), ShaderErrorInfo);
 
-				delete[] ShaderLogInfo;
+				delete[] ShaderErrorInfo;
+				return (bool)CompileSuccessFlag;
 			}
-			else
-				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "%s shader compilation succeeded.", label.c_str());
+			PsagLowLog(LogInfo, PSAG_OGLMAG_SHADER, "%s compilation succeeded.", label.c_str());
+			return (bool)CompileSuccessFlag;
 		}
-		else if (!label.empty()) { // program handle.
+		// program link status & log_length.
+		glGetProgramiv(shader, GL_LINK_STATUS, &CompileSuccessFlag);
+		glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &ShaderLogBytes);
 
-			glGetProgramiv(shader, GL_LINK_STATUS, &CompileSuccess);
-			glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &ShaderLogBytes);
+		if (!CompileSuccessFlag) {
+			// shader compilation failed.
+			ShaderErrorInfo = new char[ShaderLogBytes];
+			glGetProgramInfoLog(shader, ShaderLogBytes, NULL, (GLchar*)ShaderErrorInfo);
 
-			if (!CompileSuccess) {
-				// shader compilation failed.
-				ShaderLogInfo = new char[ShaderLogBytes];
-				glGetProgramInfoLog(shader, ShaderLogBytes, NULL, (GLchar*)ShaderLogInfo);
+			// print error.
+			std::string ErrorInfo = "opengl_link: " + label;
+			PsagLowLog(LogError, "program_err_msg: ", "%s %s", ErrorInfo.c_str(), ShaderErrorInfo);
 
-				// print error.
-				std::string ErrorInfo = "opengl_link: " + label;
-				PsagLowLog(LogError, "program: ", "%s %s", ErrorInfo.c_str(), ShaderLogInfo);
-
-				delete[] ShaderLogInfo;
-			}
-			else
-				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "%s program link succeeded.", label.c_str());
+			delete[] ShaderErrorInfo;
+			return (bool)CompileSuccessFlag;
 		}
-		return (bool)CompileSuccess;
+		PsagLowLog(LogInfo, PSAG_OGLMAG_SHADER, "shader_program link succeeded.");
+		return (bool)CompileSuccessFlag;
 	}
 
 	void PsagShadersOGL::LoaderVertShader(const std::vector<std::string>& vs) {
 		// vertex shader.
-		ShaderVS = glCreateShader(GL_VERTEX_SHADER);
-		if (ShaderVS) {
+		ShaderVert = glCreateShader(GL_VERTEX_SHADER);
+		if (ShaderVert > OPENGL_INVALID_HANDEL) {
 			// convert shaders str_ptr.
 			std::vector<const GLchar*> ShaderSourcePtr = {};
-			for (const auto& SrcItem : vs)
-				ShaderSourcePtr.push_back(SrcItem.c_str());
+			for (const auto& CodeItem : vs)
+				ShaderSourcePtr.push_back(CodeItem.c_str());
 
 			// read shader script_source => compile.
-			glShaderSource(ShaderVS, (GLsizei)vs.size(), ShaderSourcePtr.data(), NULL);
-			glCompileShader(ShaderVS);
-			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "vertex_shader source script num: %u", vs.size());
+			glShaderSource(ShaderVert, (GLsizei)vs.size(), ShaderSourcePtr.data(), NULL);
+			glCompileShader(ShaderVert);
 
-			if (!CompilationStatus(ShaderVS, "vertex"))
-				ReturnResFlag = DEFRES_FLAG_INVALID;
-			glAttachShader(ShaderProgram, ShaderVS);
+			PsagLowLog(LogInfo, PSAG_OGLMAG_SHADER, "vertex_shader source script num: %u", vs.size());
+
+			if (!CompilationStatus(ShaderVert, "vertex"))
+				ReturnResourceFlag = DEFRES_FLAG_INVALID;
+
+			// vertex_shader =compile=> =attach=> shader_program.
+			glAttachShader(ShaderProgram, ShaderVert);
+			return;
 		}
-		else
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "failed create vertex_shader handle.");
+		PsagLowLog(LogError, PSAG_OGLMAG_SHADER, "failed create vertex_shader handle.");
 	}
 
 	void PsagShadersOGL::LoaderFragShader(const std::vector<std::string>& fs) {
 		// fragment shader.
-		ShaderFS = glCreateShader(GL_FRAGMENT_SHADER);
-		if (ShaderFS) {
+		ShaderFrag = glCreateShader(GL_FRAGMENT_SHADER);
+		if (ShaderFrag > OPENGL_INVALID_HANDEL) {
 			// convert shaders str_ptr.
 			std::vector<const GLchar*> ShaderSourcePtr = {};
-			for (const auto& SrcItem : fs)
-				ShaderSourcePtr.push_back(SrcItem.c_str());
+			for (const auto& CodeItem : fs)
+				ShaderSourcePtr.push_back(CodeItem.c_str());
 
 			// read shader script_source => compile.
-			glShaderSource(ShaderFS, (GLsizei)fs.size(), ShaderSourcePtr.data(), NULL);
-			glCompileShader(ShaderFS);
-			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "fragment_shader source script num: %u", fs.size());
+			glShaderSource(ShaderFrag, (GLsizei)fs.size(), ShaderSourcePtr.data(), NULL);
+			glCompileShader(ShaderFrag);
 
-			if (!CompilationStatus(ShaderFS, "fragment"))
-				ReturnResFlag = DEFRES_FLAG_INVALID;
-			glAttachShader(ShaderProgram, ShaderFS);
+			PsagLowLog(LogInfo, PSAG_OGLMAG_SHADER, "fragment_shader source script num: %u", fs.size());
+
+			if (!CompilationStatus(ShaderFrag, "fragment"))
+				ReturnResourceFlag = DEFRES_FLAG_INVALID;
+
+			// fragment_shader =compile=> =attach=> shader_program.
+			glAttachShader(ShaderProgram, ShaderFrag);
+			return;
 		}
-		else
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "failed create fragment_shader handle.");
+		PsagLowLog(LogError, PSAG_OGLMAG_SHADER, "failed create fragment_shader handle.");
 	}
 
 	void PsagShadersOGL::ShaderLoaderPushVS(const std::string& vs, ScriptReadMode mode) {
@@ -249,15 +252,15 @@ namespace PSAG_OGL_MAG {
 	}
 
 	PsagShader PsagShadersOGL::_MS_GETRES(ResourceFlag& flag) {
-		flag = ReturnResFlag;
+		flag = ReturnResourceFlag;
 		return ShaderProgram;
 	}
 
-	// **************************************** Model ****************************************
-	// OpenGL 4.6 vertex_buffer,vertex_attribute static,dynamic
-	// Update: 2023_12_30. RCSZ
+	// **************************************** vertex,attribute ****************************************
+	// OpenGL 4.6 vertex_buffer,vertex_attribute static,dynamic, Update: 2023_12_30. RCSZ
+	StaticStrLABEL PSAG_OGLMAG_MODLE = "PSAG_OGL_MODULE";
 
-	void PsagModelOGL::VertexBufferSet(GLuint vao, GLuint vbo, size_t bytes, const float* verptr, uint32_t type) {
+	void PsagVertexSystemOGL::VertexBufferUpload(GLuint vao, GLuint vbo, size_t bytes, const float* verptr, uint32_t type) {
 		// bind vao,vbo => data => unbind vao,vbo.
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -266,14 +269,14 @@ namespace PSAG_OGL_MAG {
 			case(0): { glBufferData(GL_ARRAY_BUFFER, bytes, verptr, GL_STATIC_DRAW);  break; }
 			case(1): { glBufferData(GL_ARRAY_BUFFER, bytes, verptr, GL_DYNAMIC_DRAW); break; }
 			default: 
-				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "failed create vertex_buffer, not mode.");
+				PsagLowLog(LogError, PSAG_OGLMAG_MODLE, "failed create vertex_buffer, not mode.");
 			}
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindVertexArray(NULL);
 	}
 
-	PsagVertexAttribute PsagModelOGL::CreateVertexAttribute(uint32_t type, uint32_t begin_location) {
+	PsagVertexAttribute PsagVertexSystemOGL::CreateVertexAttribute(uint32_t type, uint32_t begin_location) {
 		uint32_t VertexAttributeHandle = NULL;
 
 		// opengl generate vao handle.
@@ -281,21 +284,21 @@ namespace PSAG_OGL_MAG {
 		glBindVertexArray(VertexAttributeHandle);
 
 		if (!VertexAttributeHandle)
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "failed create vertex_attribute.");
+			PsagLowLog(LogError, PSAG_OGLMAG_MODLE, "failed create vertex_attribute.");
 		else {
 			// "FS_VERTEX_BYTES" => "framework_define.hpp" (vertex bytes)
 			switch (type) {
 			case(0): { PSAG_OGL_VERATT::VERTEX_ATT_PRESET_1(FS_VERTEX_BYTES, begin_location); break;  }
 			case(1): { PSAG_OGL_VERATT::VERTEX_ATT_PRESET_2(FS_VERTEX_BYTES, begin_location); break;  }
 			default:
-				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "failed create vertex_attribute, not veratt.");
+				PsagLowLog(LogError, PSAG_OGLMAG_MODLE, "failed create vertex_attribute, no-preset.");
 			}
 		}
 		glBindVertexArray(NULL);
 		return VertexAttributeHandle;
 	}
 
-	PsagVertexBuffer PsagModelOGL::CreateVertexBuffer() {
+	PsagVertexBuffer PsagVertexSystemOGL::CreateVertexBuffer() {
 		uint32_t VertexBufferHandle = NULL;
 		
 		// opengl generate vbo handle.
@@ -303,86 +306,80 @@ namespace PSAG_OGL_MAG {
 		glBindBuffer(GL_ARRAY_BUFFER, VertexBufferHandle);
 		
 		if (!VertexBufferHandle)
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "failed create vertex_buffer.");
-		
+			PsagLowLog(LogError, PSAG_OGLMAG_MODLE, "failed create vertex_buffer.");
+
 		return VertexBufferHandle;
 	}
 
-	bool PsagModelOGL::CreateStaticModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) {
+	bool PsagVertexSystemOGL::CreateStaticModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) {
 		if (veratt && verbuf) {
 			// static_model: write float vertex_data. (mode = 0)
-			VertexBufferSet(veratt, verbuf, bytes, verptr, 0);
+			VertexBufferUpload(veratt, verbuf, bytes, verptr, 0);
 
 			// model attribute(vao,vbo) config.
-			VerBufferAttrib.DataAttrib        = veratt;
-			VerBufferAttrib.DataBuffer        = verbuf;
-			VerBufferAttrib.VertexBytes       = FS_VERTEX_BYTES;
-			VerBufferAttrib.VerticesDataBytes = bytes;
+			VertexBufferAttribute.DataAttribute     = veratt;
+			VertexBufferAttribute.DataBuffer        = verbuf;
+			VertexBufferAttribute.VertexBytes       = FS_VERTEX_BYTES;
+			VertexBufferAttribute.VerticesDataBytes = bytes;
 
-			ReturnResFlag = DEFRES_FLAG_NORMAL;
+			ReturnResourceFlag = DEFRES_FLAG_NORMAL;
 			return DEF_PSAGSTAT_SUCCESS;
 		}
-		else {
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "static_model invalid handle(vao | vbo).");
-			return DEF_PSAGSTAT_FAILED;
-		}
+		PsagLowLog(LogError, PSAG_OGLMAG_MODLE, "static_vertex invalid handle(vao | vbo).");
+		return DEF_PSAGSTAT_FAILED;
 	}
 
-	bool PsagModelOGL::CreateDynamicModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) {
+	bool PsagVertexSystemOGL::CreateDynamicModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) {
 		if (veratt && verbuf) {
 			// dynamic_model: write float vertex_data. (mode = 1)
-			VertexBufferSet(veratt, verbuf, bytes, verptr, 1);
+			VertexBufferUpload(veratt, verbuf, bytes, verptr, 1);
 
 			// model attribute(vao,vbo) config.
-			VerBufferAttrib.DataAttrib        = veratt;
-			VerBufferAttrib.DataBuffer        = verbuf;
-			VerBufferAttrib.VertexBytes       = FS_VERTEX_BYTES;
-			VerBufferAttrib.VerticesDataBytes = bytes;
+			VertexBufferAttribute.DataAttribute     = veratt;
+			VertexBufferAttribute.DataBuffer        = verbuf;
+			VertexBufferAttribute.VertexBytes       = FS_VERTEX_BYTES;
+			VertexBufferAttribute.VerticesDataBytes = bytes;
 
-			ReturnResFlag = DEFRES_FLAG_NORMAL;
+			ReturnResourceFlag = DEFRES_FLAG_NORMAL;
 			return DEF_PSAGSTAT_SUCCESS;
 		}
-		else {
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "dynamic_model invalid handle(vao | vbo).");
-			return DEF_PSAGSTAT_FAILED;
-		}
+		PsagLowLog(LogError, PSAG_OGLMAG_MODLE, "dynamic_vertex invalid handle(vao | vbo).");
+		return DEF_PSAGSTAT_FAILED;
 	}
 
-	PsagVertexBufferAttrib PsagModelOGL::_MS_GETRES(ResourceFlag& flag) {
-		flag = ReturnResFlag;
-		return VerBufferAttrib;
+	PsagVertexBufferAttribute PsagVertexSystemOGL::_MS_GETRES(ResourceFlag& flag) {
+		flag = ReturnResourceFlag;
+		return VertexBufferAttribute;
 	}
 
 	// **************************************** RenderBuffer ****************************************
-	// OpenGL 4.6 render_buffer oper(fbo)
-	// Update: 2024_01_25. RCSZ
+	// OpenGL 4.6 render_buffer oper(fbo), Update: 2024_01_25. RCSZ
+	StaticStrLABEL PSAG_OGLMAG_RENDREBUFFER = "PSAG_OGL_RENDER";
 
-	bool PasgRenderbufferOGL::CreateBindRenderbuffer(PsagRenderBuffer& renderbuf) {
-		// opengl generate rbo handle.
-		if (renderbuf == NULL) {
-			glGenRenderbuffers(1, &renderbuf);
-			glBindRenderbuffer(GL_RENDERBUFFER, renderbuf);
+	bool PasgRenderbufferOGL::CreateBindRenderBuffer(PsagRenderBuffer& render_buffer) {
+		// opengl generate rbo object.
+		if (render_buffer == OPENGL_INVALID_HANDEL) {
+			// psag 24-standard: rbo warn_num: 128.
+			glGenRenderbuffers(1, &render_buffer);
+			glBindRenderbuffer(GL_RENDERBUFFER, render_buffer);
 
-			// opengl handle index > 0.
-			if (renderbuf) { PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "renderbuffer.gen create.");           return DEF_PSAGSTAT_SUCCESS; }
-			else           { PsagLowLog(LogWarning, PSAG_OGLMAG_LABEL, "renderbuffer.gen failed create."); return DEF_PSAGSTAT_FAILED;  }
+			PsagLowLog(LogInfo, PSAG_OGLMAG_RENDREBUFFER, "render_buffer object create.");
+			return DEF_PSAGSTAT_SUCCESS;
 		}
-		else {
-			// handle duplicate creation.
-			PsagLowLog(LogWarning, PSAG_OGLMAG_LABEL, "renderbuffer.gen duplicate create.");
-			return DEF_PSAGSTAT_FAILED;
-		}
+		// object duplicate creation.
+		PsagLowLog(LogWarning, PSAG_OGLMAG_RENDREBUFFER, "render_buffer object duplicate create.");
+		return DEF_PSAGSTAT_FAILED;
 	}
 
 #define RBO_PIXEL_SIZE 4
-	bool PasgRenderbufferOGL::CreateConfigRenderbuffer(uint32_t width, uint32_t height, bool depth) {
-		if (CreateBindRenderbuffer(RenderBuffer.RenderBuffer)) {
+	bool PasgRenderbufferOGL::CreateConfigRenderBuffer(uint32_t width, uint32_t height, bool depth) {
+		if (CreateBindRenderBuffer(RenderBuffer.RenderBuffer)) {
 			// GL_DEPTH24_STENCIL8 - d.24bit s.8bit 32bit(4byte)
 			// alloc rbo memory(set render size).
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, (int)width, (int)height);
 			if (depth) {
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RenderBuffer.RenderBuffer);
-				PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "renderbuffer.config depth.");
+				PsagLowLog(LogInfo, PSAG_OGLMAG_RENDREBUFFER, "render_buffer config depth.");
 			}
 			RenderBuffer.Width        = width;
 			RenderBuffer.Height       = height;
@@ -391,74 +388,70 @@ namespace PSAG_OGL_MAG {
 
 			// render buffer pixel memory_size(mib)
 			float PixelMemory = (float)width * (float)height * RBO_PIXEL_SIZE / 1048576.0f;
-			PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "alloc renderbuffer_mem %u x %u, size: %.3f mib.", width, height, PixelMemory);
-
+			PsagLowLog(LogInfo, PSAG_OGLMAG_RENDREBUFFER, "alloc render_buffer %u x %u, size: %.3f mib.", width, height, PixelMemory);
 			// unbind render_buffer.
 			glBindRenderbuffer(GL_RENDERBUFFER, NULL);
 
-			ReturnResFlag = DEFRES_FLAG_NORMAL;
+			ReturnResourceFlag = DEFRES_FLAG_NORMAL;
 			return DEF_PSAGSTAT_SUCCESS;
 		}
-		else
-			return DEF_PSAGSTAT_FAILED;
+		return DEF_PSAGSTAT_FAILED;
 	}
 
 	bool PasgRenderbufferOGL::CreateRenderBufferDepth(uint32_t width, uint32_t height) {
-		return CreateConfigRenderbuffer(width, height, true);
+		return CreateConfigRenderBuffer(width, height, true);
 	}
 
 	bool PasgRenderbufferOGL::CreateRenderBuffer(uint32_t width, uint32_t height) {
-		return CreateConfigRenderbuffer(width, height, false);
+		return CreateConfigRenderBuffer(width, height, false);
 	}
 
-	ImageRawData PasgRenderbufferOGL::ReadRenderBuffer(PsagRenderBufferAttrib buffer) {
-		ImageRawData RenderPixelData = {};
+	ImageRawData PasgRenderbufferOGL::ReadRenderBuffer(PsagRenderBufferAttribute buffer) {
+		ImageRawData RenderRawData = {};
 
-		RenderPixelData.ImagePixels.resize(RBO_PIXEL_SIZE * buffer.Width * buffer.Height);
+		RenderRawData.ImagePixels.resize(RBO_PIXEL_SIZE * buffer.Width * buffer.Height);
 
-		RenderPixelData.Width    = buffer.Width;
-		RenderPixelData.Height   = buffer.Height;
-		RenderPixelData.Channels = buffer.Channels;
+		RenderRawData.Width    = buffer.Width;
+		RenderRawData.Height   = buffer.Height;
+		RenderRawData.Channels = buffer.Channels;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, buffer.RenderBuffer);
 		// read render_buffer pixel.
-		glReadPixels(NULL, NULL, RenderPixelData.Width, RenderPixelData.Height, GL_RGBA, GL_UNSIGNED_BYTE, RenderPixelData.ImagePixels.data());
+		glReadPixels(NULL, NULL, RenderRawData.Width, RenderRawData.Height, GL_RGBA, GL_UNSIGNED_BYTE, RenderRawData.ImagePixels.data());
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 
-		return RenderPixelData;
+		return RenderRawData;
 	}
 
-	PsagRenderBufferAttrib PasgRenderbufferOGL::_MS_GETRES(ResourceFlag& flag) {
-		flag = ReturnResFlag;
+	PsagRenderBufferAttribute PasgRenderbufferOGL::_MS_GETRES(ResourceFlag& flag) {
+		flag = ReturnResourceFlag;
 		return RenderBuffer;
 	}
 
 	// **************************************** FrameBuffer ****************************************
-	// OpenGL 4.6 frame_buffer bind => texture, bind => render_buffer
-	// Update: 2023_12_30. RCSZ
+	// OpenGL 4.6 frame_buffer bind => texture, bind => render_buffer, Update: 2023_12_30. RCSZ
+	StaticStrLABEL PSAG_OGLMAG_FRAMEBUFFER = "PSAG_OGL_FRAME";
 	
-	bool PsagFramebufferOGL::CreateBindFamebuffer(PsagFrameBuffer& framebuf) {
-		// opengl generate fbo handle.
-		if (framebuf == NULL) {
-			glGenFramebuffers(1, &framebuf);
+	bool PsagFramebufferOGL::CreateBindFameBuffer(PsagFrameBuffer& frame_buffer) {
+		// opengl generate fbo object.
+		if (frame_buffer == OPENGL_INVALID_HANDEL) {
+			// psag 24-standard: rbo warn_num: 128.
+			glGenFramebuffers(1, &frame_buffer);
 			glBindFramebuffer(GL_FRAMEBUFFER, FrameBuffer);
 
-			// opengl handle index > OPENGL_INVALID_HANDEL.
-			if (framebuf) { PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "framebuffer.gen create.");           return DEF_PSAGSTAT_SUCCESS; }
-			else          { PsagLowLog(LogWarning, PSAG_OGLMAG_LABEL, "framebuffer.gen failed create."); return DEF_PSAGSTAT_FAILED;  }
+			PsagLowLog(LogInfo, PSAG_OGLMAG_FRAMEBUFFER, "frame_buffer object create.");
+			return DEF_PSAGSTAT_SUCCESS;
 		}
-		else {
-			// handle duplicate creation.
-			PsagLowLog(LogWarning, PSAG_OGLMAG_LABEL, "framebuffer.gen duplicate create.");
-			return DEF_PSAGSTAT_FAILED;
-		}
+		// object duplicate creation.
+		PsagLowLog(LogWarning, PSAG_OGLMAG_FRAMEBUFFER, "frame_buffer object duplicate create.");
+		return DEF_PSAGSTAT_FAILED;
 	}
 
-	bool PsagFramebufferOGL::CheckFramebuffer(PsagFrameBuffer& framebuf, ResourceFlag& flag) {
+	bool PsagFramebufferOGL::CheckFrameBuffer(PsagFrameBuffer& framebuf, ResourceFlag& flag) {
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 			glDeleteRenderbuffers(1, &framebuf);
 
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "incomplete framebuffer, err_code: %u", glGetError());
+			PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "incomplete frame_buffer, err_code: %u", glGetError());
 			return DEF_PSAGSTAT_FAILED;
 		}
 		flag = DEFRES_FLAG_NORMAL;
@@ -466,38 +459,35 @@ namespace PSAG_OGL_MAG {
 	}
 
 	bool PsagFramebufferOGL::CreateFrameBuffer() {
-		if (CreateBindFamebuffer(FrameBuffer))
-			return DEF_PSAGSTAT_SUCCESS;
+		if (CreateBindFameBuffer(FrameBuffer)) return DEF_PSAGSTAT_SUCCESS;
 		return DEF_PSAGSTAT_FAILED;
 	}
 
-	bool PsagFramebufferOGL::TextureBaseBind(const PsagTextureAttrib& texture, uint32_t attachment, bool dep_flag) {
+	bool PsagFramebufferOGL::TextureBaseBind(const PsagTextureAttribute& texture, uint32_t attachment, bool dep_flag) {
 		bool ResultFlag = false;
 
 		if (attachment > DEF_GL_COLOR_ATTACHMENT_MAX) {
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "frame_buffer attachment num > max.");
+			PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "frame_buffer attachment num > max.");
 			return DEF_PSAGSTAT_FAILED;
 		}
 		// texture => framebuffer.
 		glBindFramebuffer(GL_FRAMEBUFFER, FrameBuffer);
 		glBindTexture(GL_TEXTURE_2D, texture.Texture);
 		{
-			if (texture.Texture > OPENGL_INVALID_HANDEL) {
-				if (!dep_flag) {
-					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, texture.Texture, NULL);
-					PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "frame_buffer std_texture.");
-				}
-				else {
-					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.Texture, NULL);
-					// glDrawBuffer(GL_NONE); // non-color_buffer.
-					PsagLowLog(LogInfo, PSAG_OGLMAG_LABEL, "frame_buffer dep_texture.");
-				}
-			}
-			else {
-				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "invalid handle texture.");
+			if (texture.Texture < OPENGL_INVALID_HANDEL) {
+				PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "invalid handle texture.");
 				return DEF_PSAGSTAT_FAILED;
 			}
-			ResultFlag = CheckFramebuffer(FrameBuffer, ReturnResFlag);
+			if (!dep_flag) {
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, texture.Texture, NULL);
+				PsagLowLog(LogInfo, PSAG_OGLMAG_FRAMEBUFFER, "frame_buffer std_texture.");
+			}
+			else {
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.Texture, NULL);
+				glDrawBuffer(GL_NONE); // non color_buffer.
+				PsagLowLog(LogInfo, PSAG_OGLMAG_FRAMEBUFFER, "frame_buffer dep_texture.");
+			}
+			ResultFlag = CheckFrameBuffer(FrameBuffer, ReturnResourceFlag);
 		}
 		// unbind fbo,texture.
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
@@ -506,27 +496,26 @@ namespace PSAG_OGL_MAG {
 		return ResultFlag;
 	}
 
-	bool PsagFramebufferOGL::TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment) {
+	bool PsagFramebufferOGL::TextureBindFBO(const PsagTextureAttribute& texture, uint32_t attachment) {
 		return TextureBaseBind(texture, attachment, false);
 	}
 
-	bool PsagFramebufferOGL::TextureDepBindFBO(const PsagTextureAttrib& texture) {
+	bool PsagFramebufferOGL::TextureDepBindFBO(const PsagTextureAttribute& texture) {
 		return TextureBaseBind(texture, NULL, true);
 	}
 
-	bool PsagFramebufferOGL::RenderBufferBindFBO(PsagRenderBufferAttrib buffer) {
+	bool PsagFramebufferOGL::RenderBufferBindFBO(PsagRenderBufferAttribute buffer) {
 		bool ResultFlag = false;
 		// texture => framebuffer.
 		glBindFramebuffer(GL_FRAMEBUFFER, FrameBuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, buffer.RenderBuffer);
 		{
-			if (buffer.RenderBuffer > OPENGL_INVALID_HANDEL)
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer.RenderBuffer);
-			else {
-				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "invalid handle render_buffer.");
+			if (buffer.RenderBuffer == OPENGL_INVALID_HANDEL) {
+				PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "invalid handle render_buffer.");
 				return DEF_PSAGSTAT_FAILED;
 			}
-			ResultFlag = CheckFramebuffer(FrameBuffer, ReturnResFlag);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer.RenderBuffer);
+			ResultFlag = CheckFrameBuffer(FrameBuffer, ReturnResourceFlag);
 		}
 		// unbind fbo,rbo.
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
@@ -539,7 +528,7 @@ namespace PSAG_OGL_MAG {
 		bool ResultFlag = false;
 
 		if (attachment > DEF_GL_COLOR_ATTACHMENT_MAX) {
-			PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "frame_buffer attachment num > max.");
+			PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "frame_buffer attachment num > max.");
 			return DEF_PSAGSTAT_FAILED;
 		}
 		// texture_array => framebuffer.
@@ -549,10 +538,10 @@ namespace PSAG_OGL_MAG {
 			if (texture_hd > OPENGL_INVALID_HANDEL)
 				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture_hd, NULL, layer);
 			else {
-				PsagLowLog(LogError, PSAG_OGLMAG_LABEL, "invalid handle texture_array.");
+				PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "invalid handle texture_array.");
 				return DEF_PSAGSTAT_FAILED;
 			}
-			ResultFlag = CheckFramebuffer(FrameBuffer, ReturnResFlag);
+			ResultFlag = CheckFrameBuffer(FrameBuffer, ReturnResourceFlag);
 		}
 		// unbind fbo,texture_array.
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
@@ -562,24 +551,56 @@ namespace PSAG_OGL_MAG {
 	}
 
 	PsagFrameBuffer PsagFramebufferOGL::_MS_GETRES(ResourceFlag& flag) {
-		flag = ReturnResFlag;
+		flag = ReturnResourceFlag;
 		return FrameBuffer;
 	}
 
-	// **************************************** Uniform ****************************************
-	// OpenGL 4.6 GLSL uniform variable.
-	// Update: 2023_12_30. RCSZ
-	std::atomic<bool> ATC_UNIFORM_ERROR_FLAG = false;
+	// **************************************** UniformBuffer ****************************************
+	// Update: 2024_09_12. RCSZ
+	StaticStrLABEL PSAG_OGLMAG_UNIFORMBUFFER = "PSAG_OGL_UNIFORM";
 
-	// 弃用 Shader句柄有效性检查. [20240606]
-	bool PsagUniformOGL::ProgramHandle(GLuint program, const char* label) {
-		if (program) {
+	bool PsagUniformBufferOGL::CreateBindUniformBuffer(PsagUniformBuffer* uniform_buffer) {
+		// opengl generate ubo handle.
+		if (*uniform_buffer == OPENGL_INVALID_HANDEL) {
+			// psag 24-standard: rbo warn_num: 64.
+			glGenBuffers(1, uniform_buffer);
+			glBindBuffer(GL_UNIFORM_BUFFER, *uniform_buffer);
+
+			PsagLowLog(LogInfo, PSAG_OGLMAG_UNIFORMBUFFER, "uniform_buffer.gen create.");
 			return DEF_PSAGSTAT_SUCCESS;
-			ATC_UNIFORM_ERROR_FLAG = false;
 		}
-		ATC_UNIFORM_ERROR_FLAG = true;
+		// handle duplicate creation.
+		PsagLowLog(LogWarning, PSAG_OGLMAG_UNIFORMBUFFER, "uniform_buffer.gen duplicate create.");
 		return DEF_PSAGSTAT_FAILED;
 	}
+
+	void PsagUniformBufferOGL::CreateUniformInfo(size_t struct_size) {
+		if (struct_size == NULL)
+			PsagLowLog(LogError, PSAG_OGLMAG_UNIFORMBUFFER, "uniform_buffer struct_size = null.");
+		UniformStructDataBytes = struct_size;
+	}
+
+	bool PsagUniformBufferOGL::CreateUniformBuffer(uint32_t binding) {
+		if (CreateBindUniformBuffer(&UniformBuffer)) {
+			// alloc memory => uniform_buffer.
+			glBufferData(GL_UNIFORM_BUFFER, UniformStructDataBytes, nullptr, GL_STATIC_DRAW);
+			glBindBufferBase(GL_UNIFORM_BUFFER, binding, UniformBuffer);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+			ReturnResourceFlag = DEFRES_FLAG_NORMAL;
+			return DEF_PSAGSTAT_SUCCESS;
+		}
+		return DEF_PSAGSTAT_FAILED;
+	}
+
+	PsagUniformBuffer PsagUniformBufferOGL::_MS_GETRES(ResourceFlag& flag) {
+		flag = ReturnResourceFlag;
+		return UniformBuffer;
+	}
+
+	// **************************************** Uniform ****************************************
+	// OpenGL 4.6 GLSL uniform variable, Update: 2023_12_30. RCSZ
+	std::atomic<bool> ATC_UNIFORM_ERROR_FLAG = false;
 
 	void PsagUniformOGL::UniformMatrix3x3(PsagShader program, const char* name, const PsagMatrix3& matrix) {
 		// uniform upload matrix.3x3
@@ -625,21 +646,35 @@ namespace PSAG_OGL_MAG {
 }
 
 namespace RenderingSupport {
-	OpenGLApiContext PsagOpenGLApiRenderOper::ApiThisStateContext = NullContext;
+	OpenGLApiContext PsagOpenGLApiRenderState::ApiThisStateContext = NullContext;
 
-	void PsagOpenGLApiRenderOper::RenderBindShader(const PsagShader& program) {
+	void PsagOpenGLApiDataFlow::FrameUpdateSampler() {
+#if PSAG_DEBUG_MODE
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now() - SampleTimer
+		).count() >= 500 ) {
+			DataBytesUpload.vector_y   = DataBytesUpload.vector_x * 2;
+			DataBytesDownload.vector_y = DataBytesDownload.vector_x * 2;
+			// clear counter state.
+			DataBytesUpload.vector_x   = NULL;
+			DataBytesDownload.vector_x = NULL;
+		}
+#endif
+	}
+
+	void PsagOpenGLApiRenderState::RenderBindShader(const PsagShader& program) {
 		// rendering context enable shader_program.
 		glUseProgram(program);
 		ApiThisStateContext = ShaderContext;
 	}
 
-	void PsagOpenGLApiRenderOper::RenderBindTexture(const PsagTextureAttrib& texture) {
+	void PsagOpenGLApiRenderState::RenderBindTexture(const PsagTextureAttribute& texture) {
 		glActiveTexture(GL_TEXTURE0 + texture.TextureSamplerCount);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texture.Texture);
 		ApiThisStateContext = TextureContext;
 	}
 
-	void PsagOpenGLApiRenderOper::RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
+	void PsagOpenGLApiRenderState::RenderBindFrameBuffer(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
 		// clear color_buffer & depth_buffer.
@@ -647,38 +682,43 @@ namespace RenderingSupport {
 		ApiThisStateContext = FrameContext;
 	}
 
-	void PsagOpenGLApiRenderOper::RenderBindFrameBufferNCC(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
+	void PsagOpenGLApiRenderState::RenderBindFrameBufferNCC(const PsagFrameBuffer& framebuffer, uint32_t attachment) {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachment);
 		ApiThisStateContext = FrameContext;
 	}
 
-	void PsagOpenGLApiRenderOper::DrawVertexGroup(const PsagVertexBufferAttrib& model) {
-		glBindVertexArray(model.DataAttrib);
+	void PsagOpenGLApiRenderState::DrawVertexGroup(const PsagVertexBufferAttribute& model) {
+		glBindVertexArray(model.DataAttribute);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);
 		glDrawArrays(GL_TRIANGLES, NULL, GLsizei(model.VerticesDataBytes / model.VertexBytes));
 		glBindVertexArray(NULL);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
 
-	void PsagOpenGLApiRenderOper::DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t vert_len, size_t vert_off) {
+	void PsagOpenGLApiRenderState::DrawVertexGroupSeg(
+		const PsagVertexBufferAttribute& model, size_t vertex_num, size_t vertex_offset
+	) {
 		// 非全部绘制: "model.VertexBytes", "model.VerticesDataBytes" 成员无效.
-		glBindVertexArray(model.DataAttrib);
+		glBindVertexArray(model.DataAttribute);
 		glBindBuffer(GL_ARRAY_BUFFER, model.DataBuffer);
-		glDrawArrays(GL_TRIANGLES, (GLint)vert_off, (GLsizei)vert_len);
+		glDrawArrays(GL_TRIANGLES, (GLint)vertex_offset, (GLsizei)vertex_num);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindVertexArray(NULL);
 	}
 
-	void PsagOpenGLApiRenderOper::UploadVertexDataset(PsagVertexBufferAttrib* model, float* verptr, size_t bytes, GLenum type) {
+	void PsagOpenGLApiRenderState::UploadVertexDataset(PsagVertexBufferAttribute* model, float* verptr, size_t bytes, GLenum type) {
 		// update vertices dataset bytes_param.
 		model->VerticesDataBytes = bytes;
 		glBindBuffer(GL_ARRAY_BUFFER, model->DataBuffer);
 		glBufferData(GL_ARRAY_BUFFER, bytes, verptr, type);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
+#if PSAG_DEBUG_MODE
+		DataOperateUpload(bytes);
+#endif
 	}
 
-	void PsagOpenGLApiRenderOper::UploadTextureLayer(
+	void PsagOpenGLApiRenderState::UploadTextureLayer(
 		const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr, uint32_t channels
 	) {
 		GLenum ColorChannelsType = GL_RGBA;
@@ -690,9 +730,21 @@ namespace RenderingSupport {
 			GL_UNSIGNED_BYTE, dataptr
 		);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
+#if PSAG_DEBUG_MODE
+		DataOperateUpload(size_t(size.vector_x * size.vector_y * channels));
+#endif
 	}
 
-	std::vector<float> PsagOpenGLApiRenderOper::ReadVertexDatasetFP32(PsagVertexBuffer vbo) {
+	void PsagOpenGLApiRenderState::UploadUniformData(const PsagUniformBuffer& uniform_buffer, void* dataptr, size_t bytes) {
+		glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, bytes, dataptr);
+		glBindBuffer(GL_UNIFORM_BUFFER, NULL);
+#if PSAG_DEBUG_MODE
+		DataOperateUpload(bytes);
+#endif
+	}
+
+	std::vector<float> PsagOpenGLApiRenderState::ReadVertexDatasetFP32(PsagVertexBuffer vbo) {
 		std::vector<float> ReadDataTemp = {};
 		GLint GpuBufferSize = NULL;
 
@@ -704,18 +756,21 @@ namespace RenderingSupport {
 		ReadDataTemp.insert(ReadDataTemp.begin(), DataPtr, DataPtr + ElementCount);
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
+#if PSAG_DEBUG_MODE
+		DataOperateDownload(ReadDataTemp.size() * sizeof(float));
+#endif
 		return ReadDataTemp;
 	}
 
-	void PsagOpenGLApiRenderOper::RenderUnbindShader() {
+	void PsagOpenGLApiRenderState::RenderUnbindShader() {
 		glUseProgram(NULL);
 		ApiThisStateContext = NullContext;
 	}
-	void PsagOpenGLApiRenderOper::RenderUnbindTexture() {
+	void PsagOpenGLApiRenderState::RenderUnbindTexture() {
 		glBindTexture(GL_TEXTURE_2D_ARRAY, NULL);
 		ApiThisStateContext = NullContext;
 	}
-	void PsagOpenGLApiRenderOper::RenderUnbindFrameBuffer() {
+	void PsagOpenGLApiRenderState::RenderUnbindFrameBuffer() {
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 		ApiThisStateContext = NullContext;
 	}
@@ -724,7 +779,7 @@ namespace RenderingSupport {
 // **************************************** Information ****************************************
 // OpenGL 4.6 get device info. [2023_12_30]
 // Update: 2024_01_25. RCSZ
-StaticStrLABEL PSAG_OGLMAG_INFO_LABEL = "PSAG_OGL_MAG_INFO";
+StaticStrLABEL PSAG_OGLMAG_INFORMATION = "PSAG_OGL_INFORMATION";
 
 Vector2T<int32_t> SysPsagInformationOGL::InfoGetVertexUnitsMax() {
 	Vector2T<int32_t> GraphVaoVboUnits = {};
@@ -733,8 +788,8 @@ Vector2T<int32_t> SysPsagInformationOGL::InfoGetVertexUnitsMax() {
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &GraphVaoVboUnits.vector_y);
 
 	if (LoggerPrintInformation) {
-		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (vao)attribs_max units: %d entry", GraphVaoVboUnits.vector_x);
-		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (vbo)buffer_max units: %d entry",  GraphVaoVboUnits.vector_y);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device (vao)attribs_max units: %d entry", GraphVaoVboUnits.vector_x);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device (vbo)buffer_max units: %d entry",  GraphVaoVboUnits.vector_y);
 	}
 	return GraphVaoVboUnits;
 }
@@ -747,7 +802,7 @@ int32_t SysPsagInformationOGL::InfoGetTextureUnitsMax() {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MaterialMappingUnitsMax);
 
 	if (LoggerPrintInformation)
-		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device [tmu]texture_max units: %d entry", MaterialMappingUnitsMax);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device [tmu]texture_max units: %d entry", MaterialMappingUnitsMax);
 
 	return MaterialMappingUnitsMax;
 }
@@ -760,7 +815,7 @@ float SysPsagInformationOGL::InfoGetGPUmemoryCapacity() {
 	float GMCmibytes = float(GraphMemoryCapacity) / 1024.0f;
 
 	if (LoggerPrintInformation)
-		PsagLowLog(LogPerfmac, PSAG_OGLMAG_INFO_LABEL, "device memory[capacity]: %.2f mib", GMCmibytes);
+		PsagLowLog(LogPerfmac, PSAG_OGLMAG_INFORMATION, "device memory[capacity]: %.2f mib", GMCmibytes);
 
 	return GMCmibytes;
 }
@@ -773,7 +828,7 @@ float SysPsagInformationOGL::InfoGetGPUmemoryUsage() {
 	float GMUmibytes = float(GraphMemoryUsage) / 1024.0f;
 
 	if (LoggerPrintInformation)
-		PsagLowLog(LogPerfmac, PSAG_OGLMAG_INFO_LABEL, "device memory[usage]: %.2f mib", GMUmibytes);
+		PsagLowLog(LogPerfmac, PSAG_OGLMAG_INFORMATION, "device memory[usage]: %.2f mib", GMUmibytes);
 
 	return GMUmibytes;
 }
@@ -785,15 +840,15 @@ Vector2T<int32_t> SysPsagInformationOGL::InfoGetShaderUniform() {
 	glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &GraphShaderUniform.vector_y);
 
 	if (LoggerPrintInformation) {
-		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (vert)uniform_max items: %d", GraphShaderUniform.vector_x);
-		PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device (frag)uniform_max items: %d", GraphShaderUniform.vector_y);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device (vert)uniform_max items: %d", GraphShaderUniform.vector_x);
+		PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device (frag)uniform_max items: %d", GraphShaderUniform.vector_y);
 	}
 	return GraphShaderUniform;
 }
 
 void SysPsagInformationOGL::InfoPrintPlatformParameters() {
-	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device gpu supplier: %s",   (const char*)glGetString(GL_VENDOR));
-	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device gpu model: %s",      (const char*)glGetString(GL_RENDERER));
-	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device version opengl: %s", (const char*)glGetString(GL_VERSION));
-	PsagLowLog(LogInfo, PSAG_OGLMAG_INFO_LABEL, "device version glsl: %s",   (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device gpu supplier: %s",   (const char*)glGetString(GL_VENDOR));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device gpu model: %s",      (const char*)glGetString(GL_RENDERER));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device version opengl: %s", (const char*)glGetString(GL_VERSION));
+	PsagLowLog(LogInfo, PSAG_OGLMAG_INFORMATION, "device version glsl: %s",   (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 }

@@ -65,6 +65,7 @@ using PsagShader          = GLuint;
 using PsagTexture         = GLuint;
 using PsagVertexBuffer    = GLuint;
 using PsagVertexAttribute = GLuint;
+using PsagUniformBuffer   = GLuint;
 using PsagFrameBuffer     = GLuint;
 using PsagRenderBuffer    = GLuint;
 

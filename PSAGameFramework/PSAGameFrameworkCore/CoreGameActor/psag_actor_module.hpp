@@ -124,11 +124,11 @@ namespace GameComponents {
 	};
 
 	class ActorRendering :
-		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender  = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender  = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                 ShaderUniform = {};
 	public:
 		ResUnique ShaderIndex      = NULL;
@@ -252,7 +252,7 @@ namespace GameActorCore {
 	};
 
 	class GameActorShader :
-		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData
 	{
 	private:
@@ -555,7 +555,7 @@ namespace GameBrickCore {
 	};
 
 	class GameBrickExecutor :
-		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public PhysicsEngine::PhyEngineCoreDataset 

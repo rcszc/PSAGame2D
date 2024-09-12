@@ -21,20 +21,19 @@ namespace PSAGGL_LOWLEVEL {
 				LFUNC(LogError, PSAG_LLRES_LABEL, "LLRES FREE_RES %s = NULLPTR.", LABEL);
 				return DEF_PSAGSTAT_FAILED;
 			}
-			else {
-				PSAG_LLRES_DELETE(POINTER)
-				return DEF_PSAGSTAT_SUCCESS;
-			}
+			PSAG_LLRES_DELETE(POINTER)
+			return DEF_PSAGSTAT_SUCCESS;
 		}
 	protected:
 		// resource data(lowlevel_resource).
-		static PSAG_OGL_RES::PsagResTexSamplerOGL*   LLRES_Samplers;
-		static PSAG_OGL_RES::PsagResShadersOGL*      LLRES_Shaders;
-		static PSAG_OGL_RES::PsagResTextureOGL*      LLRES_Textures;
-		static PSAG_OGL_RES::PsagResVertexBufferOGL* LLRES_VertexBuffers;
-		static PSAG_OGL_RES::PsagResVertexAttribOGL* LLRES_VertexAttributes;
-		static PSAG_OGL_RES::PsagResFrameBufferOGL*  LLRES_FrameBuffers;
-		static PSAG_OGL_RES::PsagResRenderBufferOGL* LLRES_RenderBuffers;
+		static PSAG_OGL_RES::PsagResTexSamplerOGL*    GraphicSamplers;
+		static PSAG_OGL_RES::PsagResShadersOGL*       GraphicShaders;
+		static PSAG_OGL_RES::PsagResTextureOGL*       GraphicTextures;
+		static PSAG_OGL_RES::PsagResVertexBufferOGL*  GraphicVertexBuffers;
+		static PSAG_OGL_RES::PsagResVertexAttribOGL*  GraphicVertexAttributes;
+		static PSAG_OGL_RES::PsagResFrameBufferOGL*   GraphicFrameBuffers;
+		static PSAG_OGL_RES::PsagResRenderBufferOGL*  GraphicRenderBuffers;
+		static PSAG_OGL_RES::PsagResUniformBufferOGL* GraphicUniformBuffers;
 
 		static size_t LLRES_GET_ALLSIZE();
 
@@ -44,17 +43,18 @@ namespace PSAGGL_LOWLEVEL {
 
 	namespace GRAPHICS_OPER {
 		namespace PsagRender = RenderingSupport;
-		// psag graphics class. low_level => framework_middle level.
-		// init, shader, texture, model, rbo, fbo, uniform.
+		// psag graphics class. low_level => framework middle_level.
+		// init, shader, texture, vertex, rbo, fbo, ubo, uniform.
 
-		using PsagGraphicsSysinit      = PSAG_OGL_MAG::PsagInitOGL;
-		using PsagGraphicsShader       = PSAG_OGL_MAG::PsagShadersOGL;
-		using PsagGraphicsTexture      = PSAG_OGL_MAG::PsagTextureOGL;
-		using PsagGraphicsDepTexture   = PSAG_OGL_MAG::PsagTextureDepthOGL;
-		using PsagGraphicsModel        = PSAG_OGL_MAG::PsagModelOGL;
-		using PsagGraphicsRenderBuffer = PSAG_OGL_MAG::PasgRenderbufferOGL;
-		using PsagGraphicsFrameBuffer  = PSAG_OGL_MAG::PsagFramebufferOGL;
-		using PsagGraphicsUniform      = PSAG_OGL_MAG::PsagUniformOGL;
+		using PsagGraphicsSystemInit    = PSAG_OGL_MAG::PsagInitOGL;
+		using PsagGraphicsShader        = PSAG_OGL_MAG::PsagShadersOGL;
+		using PsagGraphicsTexture       = PSAG_OGL_MAG::PsagTextureOGL;
+		using PsagGraphicsDepTexture    = PSAG_OGL_MAG::PsagTextureDepthOGL;
+		using PsagGraphicsVertex        = PSAG_OGL_MAG::PsagVertexSystemOGL;
+		using PsagGraphicsRenderBuffer  = PSAG_OGL_MAG::PasgRenderbufferOGL;
+		using PsagGraphicsFrameBuffer   = PSAG_OGL_MAG::PsagFramebufferOGL;
+		using PsagGraphicsUniform       = PSAG_OGL_MAG::PsagUniformOGL;
+		using PsagGraphicsUniformBuffer = PSAG_OGL_MAG::PsagUniformBufferOGL;
 
 		// non-texture 'LLRES' manger. 
 		using PsagGraphicsTextureView = PSAG_OGL_MAG::PsagTextureViewOGL;

@@ -43,20 +43,20 @@ namespace GraphicsEnginePVFX {
 		TextureViewItem = CreateTexView.CreateTexture();
 
 		if (clear_buffer)
-			BindFrameBufferFunc = [&]() { ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0); };
+			BindFrameBufferFunc = [&]() { ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0); };
 		BindFrameBufferFunc = [&]() { 
 			// NCC: non-clear (frame)buffer.
-			ShaderRender.RenderBindFrameBufferNCC(LLRES_FrameBuffers->ResourceFind(FrameBufferItem), 0);
+			ShaderRender.RenderBindFrameBufferNCC(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0);
 		};
 		
 		if (CreateFrameBuffer.CreateFrameBuffer()) {
 			FrameBufferItem = GenResourceID.PsagGenUniqueKey();
 			// create bind frame_buffer.
-			PsagTextureAttrib TexAttribTemp = {};
+			PsagTextureAttribute TexAttribTemp = {};
 			TexAttribTemp.Texture = TextureViewItem.Texture;
 
 			CreateFrameBuffer.TextureBindFBO(TexAttribTemp, 0);
-			LLRES_FrameBuffers->ResourceStorage(FrameBufferItem, &CreateFrameBuffer);
+			GraphicFrameBuffers->ResourceStorage(FrameBufferItem, &CreateFrameBuffer);
 			PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system init.");
 			return;
 		}
@@ -75,7 +75,7 @@ namespace GraphicsEnginePVFX {
 
 	PsagGLEngineFxCaptureView::~PsagGLEngineFxCaptureView() {
 		// free capture_view resource.
-		LLRES_FrameBuffers->ResourceDelete(FrameBufferItem);
+		GraphicFrameBuffers->ResourceDelete(FrameBufferItem);
 		glDeleteTextures(1, &TextureViewItem.Texture);
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system free.");
 	}
@@ -98,7 +98,7 @@ namespace GraphicsEnginePVFX {
 		// create & storage fx_sequence_shader.
 		if (ShaderProcess.CreateCompileShader()) {
 			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
+			GraphicShaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
 		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
@@ -126,12 +126,12 @@ namespace GraphicsEnginePVFX {
 	PsagGLEngineFxSequence::~PsagGLEngineFxSequence() {
 		// free graphics sequence resource.
 		VirTextureItemFree(VirTextureItem);
-		LLRES_Shaders->ResourceDelete(ShaderPostProgram);
+		GraphicShaders->ResourceDelete(ShaderPostProgram);
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "graphics_engine free post_shader(system).");
 	}
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderPostProgram);
+		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
 		ShaderRender.RenderBindShader(ShaderTemp);
 		
 		// system parset uniform.

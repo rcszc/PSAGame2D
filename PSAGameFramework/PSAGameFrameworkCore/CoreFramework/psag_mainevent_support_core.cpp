@@ -20,9 +20,9 @@ namespace PsagFrameworkCore {
     GameLogic::FrameworkParams PSAGame2DFramework::FrameworkParams = {};
 
     void PSAGame2DFramework::FrameworkRendererLowinit(const string& gl_version) {
-        PsagLow::PsagSupGraphicsOper::PsagGraphicsSysinit GLINIT;
+        PsagLow::PsagSupGraphicsOper::PsagGraphicsSystemInit GLINIT;
         // in_logger funcptr => init.
-        GLINIT.LoggerFunc(PushLogger);
+        GLINIT.LoggerFunction(PushLogger);
         GLINIT.RendererInit(FrameworkGraphicsParams, gl_version);
     }
 
@@ -120,13 +120,16 @@ namespace PsagFrameworkCore {
         GLINFO.InfoGetShaderUniform();
 
         // init create(alloc) OGL[LLRES], ver_system(s). 
-        GraphicsEngineDataset::GLEngineStcVertexData::LowLevelResourceCreate(PushLogger, 30);
+        GraphicsEngineDataset::GLEngineStaticVertexData::LowLevelResourceCreate(PushLogger, 30);
 
         // graphics system create.
         // dynamic vertex, static vertex, virtual textures.
         DynamicVertexDataObjectCreate();
         StaticVertexDataObjectCreate();
         VirtualTextureDataObjectCreate(RenderingVirTexBasicSize, VirTexturesMax);
+
+        // create global matrix uniform_matrix.
+        CreateMatrixUniform();
 
         // sound system create.
         CoreInitErrorFlag |= !CreateSoundDevice();
@@ -180,7 +183,7 @@ namespace PsagFrameworkCore {
         CoreInitErrorFlag |= !PhysicsWorldDelete("DEFAULT_PHY_WORLD");
 
         ImGuiFree();
-        CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStcVertexData::LowLevelResourceFree();
+        CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStaticVertexData::LowLevelResourceFree();
         CoreInitErrorFlag |= !GLFWwindowFree();
         return CoreInitErrorFlag;
     }

@@ -33,9 +33,9 @@ namespace GraphicsEngineDataset {
 	// "GraphicsEnginePost::PsagGLEnginePost"
 	// "GraphicsEngineBackground::PsagGLEngineBackground"
 	// [Actor] [FX]
-	class GLEngineStcVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
+	class GLEngineStaticVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
-		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender;
 		// opengl vao,vbo handle(res).
 		static ResUnique VertexAttribute;
 		static ResUnique VertexBuffer;
@@ -49,10 +49,11 @@ namespace GraphicsEngineDataset {
 		// width: +-10.0f, height: +-10.0f
 		ResUnique GetPresetRect() { return SystemPresetRectangle; }
 
-		bool VerStcDataItemAlloc(ResUnique rukey, const std::vector<float>& data); // T-SAFE
-		bool VerStcDataItemFree(ResUnique rukey); // T-SAFE
-
-		bool VerStcOperFrameDraw(ResUnique rukey); // T-SAFE
+		// ALLOC & FREE : [T-SAFE]
+		bool VerStcDataItemAlloc(ResUnique rukey, const std::vector<float>& data);
+		bool VerStcDataItemFree(ResUnique rukey);
+		// DRAW [T-SAFE]
+		bool VerStcOperFrameDraw(ResUnique rukey);
 
 		// static vertex system: framework oper.
 		void StaticVertexDataObjectCreate();
@@ -63,9 +64,9 @@ namespace GraphicsEngineDataset {
 	// => MODULE(update: 20240505):
 	// derive class:
 	// "GraphicsEngineParticle::PsagGLEngineParticle"
-	class GLEngineDyVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
+	class GLEngineDynamicVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
-		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender;
 		// opengl vao,vbo handle(res).
 		static ResUnique VertexAttribute;
 		static ResUnique VertexBuffer;
@@ -79,18 +80,18 @@ namespace GraphicsEngineDataset {
 		// dataset thread: vertex(dynamic) resource mutex.
 		static std::mutex DatasetResMutex;
 	protected:
-		bool VerDyDataItemAlloc(ResUnique rukey); // T-SAFE
-		bool VerDyDataItemFree(ResUnique rukey); // T-SAFE
+		bool VerDyDataItemAlloc(ResUnique rukey); // [T-SAFE]
+		bool VerDyDataItemFree(ResUnique rukey);  // [T-SAFE]
 
-		bool VerDyOperFramePushData(ResUnique rukey, const std::vector<float>& data); // T-SAFE
-		bool VerDyOperFrameDraw(ResUnique rukey); // T-SAFE
+		bool VerDyOperFramePushData(ResUnique rukey, const std::vector<float>& data); // [T-SAFE]
+		bool VerDyOperFrameDraw(ResUnique rukey); // [T-SAFE]
 
 		// dynamic vertex system: framework oper.
 		void DynamicVertexDataObjectCreate();
 		void DynamicVertexDataObjectDelete();
 
-		// framework core system_update.
-		void SystemFrameUpdateNewState(); // T-SAFE
+		// framework core system_update. [T-SAFE]
+		void SystemFrameUpdateNewState();
 	};
 
 	// 纹理数层组分配器 => "VirTexturesGenParams".
@@ -155,7 +156,7 @@ namespace GraphicsEngineDataset {
 	// derive class:
 	class GLEngineSmpTextureData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
-		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender;
 		static PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform;
 
 		static SamplerTextures TexturesSize1X; // 1/8 resolution.
@@ -245,8 +246,9 @@ namespace GraphicsEngineMatrix {
 		{}
 	};
 
-	class PsagGLEngineMatrix {
+	class PsagGLEngineMatrix :public PsagLow::PsagSupGraphicsLLRES {
 	private:
+		ResUnique UniformBuffer = {};
 		glm::mat4 GetOrthoProjMatrix(float scale_size);
 	protected:
 		static MatrixTransParams MatrixWorldCamera;
@@ -255,6 +257,8 @@ namespace GraphicsEngineMatrix {
 
 		glm::mat4 UpdateCalcMatrix(const glm::mat4& in_matrix, const MatrixTransParams& params);
 		PsagMatrix4 UpdateEncodeMatrix(const glm::mat4& matrix, float scale);
+
+		void CreateMatrixUniform();
 	};
 }
 
@@ -290,9 +294,9 @@ namespace GraphicsEnginePost {
 		{}
 	};
 
-	class PsagGLEnginePost :public GraphicsEngineDataset::GLEngineStcVertexData {
+	class PsagGLEnginePost :public GraphicsEngineDataset::GLEngineStaticVertexData {
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
@@ -373,11 +377,11 @@ namespace GraphicsEngineBackground {
 	};
 
 	class PsagGLEngineBackground :
-		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public PsagGLEngineBackgroundBase
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
@@ -530,7 +534,7 @@ namespace GraphicsEngineParticle {
 	};
 
 	class PsagGLEngineParticle :
-		public GraphicsEngineDataset::GLEngineDyVertexData,
+		public GraphicsEngineDataset::GLEngineDynamicVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public __GRAPHICS_ENGINE_TIMESETP
@@ -546,7 +550,7 @@ namespace GraphicsEngineParticle {
 
 		std::function<void(std::vector<ParticleAttributes>&, float, float)> UPDATE_CALC_FUNC = {};
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
 		std::vector<ParticleAttributes> DataParticles = {};
@@ -605,7 +609,7 @@ namespace GraphicsEnginePVFX {
 	// captrue => texture_view.
 	class PsagGLEngineFxCaptureView :public PsagLow::PsagSupGraphicsLLRES {
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
 		PsagTextureView TextureViewItem = {};
 		ResUnique FrameBufferItem = {};
 
@@ -632,13 +636,13 @@ namespace GraphicsEnginePVFX {
 	// 特效序列帧贴图.
 	class PsagGLEngineFxSequence :
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
-		public GraphicsEngineDataset::GLEngineStcVertexData,
+		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	protected:
 		static float SystemTimeStep;
 
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderOper ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
 		SequencePlayer  PlayerParams   = {};

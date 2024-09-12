@@ -24,7 +24,7 @@ namespace GameActorCore {
 			VirTextureItemFree(__VIR_TEXTURE_ITEM);
 
 		// delete opengl shader.
-		LLRES_Shaders->ResourceDelete(__ACTOR_SHADER_ITEM);
+		GraphicShaders->ResourceDelete(__ACTOR_SHADER_ITEM);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader delete.");
 	}
 
@@ -37,14 +37,14 @@ namespace GameActorCore {
 
 		if (ShaderProcess.CreateCompileShader()) {
 			__ACTOR_SHADER_ITEM = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
+			GraphicShaders->ResourceStorage(__ACTOR_SHADER_ITEM, &ShaderProcess);
 		}
 		else {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed create.");
 			return false;
 		}
 		// find => shader_handle_temp => uniform.
-		S_HANDLE = LLRES_Shaders->ResourceFind(__ACTOR_SHADER_ITEM);
+		S_HANDLE = GraphicShaders->ResourceFind(__ACTOR_SHADER_ITEM);
 
 		__ACTOR_VERTEX_ITEM = GenResourceID.PsagGenUniqueKey();
 		if (VerticesPosition != nullptr) {

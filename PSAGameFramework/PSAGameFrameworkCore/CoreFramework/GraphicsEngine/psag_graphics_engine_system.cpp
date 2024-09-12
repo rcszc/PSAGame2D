@@ -6,6 +6,8 @@ using namespace PSAG_LOGGER;
 using namespace GraphicsShaderCode;
 
 namespace GraphicsEngineMatrix {
+	StaticStrLABEL PSAGM_GLENGINE_MAT_LABEL = "PSAG_GL_MATRIX";
+
 	MatrixTransParams PsagGLEngineMatrix::MatrixWorldCamera = {};
 	PsagMatrix4       PsagGLEngineMatrix::MatrixDataRect    = {};
 	PsagMatrix4       PsagGLEngineMatrix::MatrixDataWindow  = {};
@@ -47,6 +49,20 @@ namespace GraphicsEngineMatrix {
 		memcpy_s(EncMatrixTemp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 		return EncMatrixTemp;
 	}
+
+	void PsagGLEngineMatrix::CreateMatrixUniform() {
+		// generate unique_id.
+		PSAG_SYS_GENERATE_KEY GenResourceID;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniformBuffer MatrixUniform;
+
+		MatrixUniform.CreateUniformInfo(sizeof(PsagMatrix4));
+
+		if (MatrixUniform.CreateUniformBuffer(1)) {
+			UniformBuffer = GenResourceID.PsagGenUniqueKey();
+			GraphicUniformBuffers->ResourceStorage(UniformBuffer, &MatrixUniform);
+		}
+		PushLogger(LogInfo, PSAGM_GLENGINE_MAT_LABEL, "graphics_engine create matrix ubo.");
+	}
 }
 
 float __GRAPHICS_ENGINE_TIMESETP::GraphicsEngineTimeStep = 1.0f;
@@ -58,10 +74,10 @@ namespace GraphicsEnginePost {
 	}
 
 	void PsagGLEnginePost::ShaderRenderingLight() {
-		auto LightShader = LLRES_Shaders->ResourceFind(ShaderVolumLight);
+		auto LightShader = GraphicShaders->ResourceFind(ShaderVolumLight);
 
 		// 2D全局光照(体积光)处理.
-		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(LightFrameBuffer), 0);
+		ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(LightFrameBuffer), 0);
 		ShaderRender.RenderBindShader(LightShader);
 		{
 			// framework preset uniform.
@@ -80,7 +96,7 @@ namespace GraphicsEnginePost {
 			ShaderUniform.UniformInteger(LightShader, "LightSampleStep",     RenderParameters.LightSampleStep);
 
 			// COLOR_BUFFER_TEX.
-			auto ColorTextureTemp = LLRES_Textures->ResourceFind(ProcessTextures);
+			auto ColorTextureTemp = GraphicTextures->ResourceFind(ProcessTextures);
 			ShaderRender.RenderBindTexture(ColorTextureTemp);
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(LightShader, "PostTextures", ColorTextureTemp.TextureSamplerCount);
@@ -96,10 +112,10 @@ namespace GraphicsEnginePost {
 	}
 
 	void PsagGLEnginePost::ShaderRenderingBloom() {
-		auto FilterShader = LLRES_Shaders->ResourceFind(ShaderFilter);
+		auto FilterShader = GraphicShaders->ResourceFind(ShaderFilter);
 
 		// 片元纹理(高亮)过滤处理.
-		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(FilterFrameBuffer), 0);
+		ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FilterFrameBuffer), 0);
 		ShaderRender.RenderBindShader(FilterShader);
 		{
 			// framework preset uniform.
@@ -109,7 +125,7 @@ namespace GraphicsEnginePost {
 			ShaderUniform.UniformVec3 (FilterShader, "PostFilterColor", RenderParameters.GameSceneFilterCOL);
 			ShaderUniform.UniformFloat(FilterShader, "PostFilterAvg",   RenderParameters.GameSceneFilterAVG);
 			
-			auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
+			auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
 			ShaderRender.RenderBindTexture(TextureTempScene);
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(FilterShader, "PostTextures", TextureTempScene.TextureSamplerCount);
@@ -120,12 +136,12 @@ namespace GraphicsEnginePost {
 		ShaderRender.RenderUnbindFrameBuffer();
 
 		PsagShader ShaderTemp[2] = {};
-		ShaderTemp[0] = LLRES_Shaders->ResourceFind(ShaderBloomH);
-		ShaderTemp[1] = LLRES_Shaders->ResourceFind(ShaderBloomV);
+		ShaderTemp[0] = GraphicShaders->ResourceFind(ShaderBloomH);
+		ShaderTemp[1] = GraphicShaders->ResourceFind(ShaderBloomV);
 
 		// 2次(横纵)高斯模糊处理.
 		for (size_t i = 0; i < 2; ++i) {
-			ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(BloomFrameBuffers[i]), 0);
+			ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(BloomFrameBuffers[i]), 0);
 			ShaderRender.RenderBindShader(ShaderTemp[i]);
 			{
 				// framework preset uniform.
@@ -134,7 +150,7 @@ namespace GraphicsEnginePost {
 
 				ShaderUniform.UniformInteger(ShaderTemp[i], "PostBloomRadius", RenderParameters.GameSceneBloomRadius);
 
-				auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
+				auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
 				ShaderRender.RenderBindTexture(TextureTempScene);
 				// bind texture context => sampler(tmu) => unbind.
 				ShaderUniform.UniformInteger(ShaderTemp[i], "PostTextures", TextureTempScene.TextureSamplerCount);
@@ -159,7 +175,7 @@ namespace GraphicsEnginePost {
 		// create & storage post_shader.
 		if (ShaderPost.CreateCompileShader()) {
 			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderPost);
+			GraphicShaders->ResourceStorage(ShaderPostProgram, &ShaderPost);
 		}
 
 		// **************** (volumetric)light shader ****************
@@ -172,7 +188,7 @@ namespace GraphicsEnginePost {
 
 		if (ShaderLight.CreateCompileShader()) {
 			ShaderVolumLight = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderVolumLight, &ShaderLight);
+			GraphicShaders->ResourceStorage(ShaderVolumLight, &ShaderLight);
 		}
 
 		// **************** color_filter shader ****************
@@ -186,7 +202,7 @@ namespace GraphicsEnginePost {
 
 		if (ShaderColorFilter.CreateCompileShader()) {
 			ShaderFilter = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderFilter, &ShaderColorFilter);
+			GraphicShaders->ResourceStorage(ShaderFilter, &ShaderColorFilter);
 		}
 
 		// **************** bloom h&v shader ****************
@@ -201,7 +217,7 @@ namespace GraphicsEnginePost {
 		if (ShaderBloomHPCS.CreateCompileShader()) {
 			// bloom_process shader, h(横向采样).	
 			ShaderBloomH = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderBloomH, &ShaderBloomHPCS);
+			GraphicShaders->ResourceStorage(ShaderBloomH, &ShaderBloomHPCS);
 		}
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderBloomVPCS;
@@ -214,7 +230,7 @@ namespace GraphicsEnginePost {
 		if (ShaderBloomVPCS.CreateCompileShader()) {
 			// bloom_process shader, v(纵向采样).	
 			ShaderBloomV = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderBloomV, &ShaderBloomVPCS);
+			GraphicShaders->ResourceStorage(ShaderBloomV, &ShaderBloomVPCS);
 		}
 
 		RenderRect = GenResourceID.PsagGenUniqueKey();
@@ -233,7 +249,7 @@ namespace GraphicsEnginePost {
 
 		if (DepRenderBufferCreate.CreateRenderBufferDepth(render_resolution.vector_x, render_resolution.vector_y)) {
 			GameSceneRenderBuffer = GenResourceID.PsagGenUniqueKey();
-			LLRES_RenderBuffers->ResourceStorage(GameSceneRenderBuffer, &DepRenderBufferCreate);
+			GraphicRenderBuffers->ResourceStorage(GameSceneRenderBuffer, &DepRenderBufferCreate);
 		}
 		
 		// **************** create texture & framebuffer ****************
@@ -242,7 +258,7 @@ namespace GraphicsEnginePost {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboGameScene;
 
 		TextureCreate.SetTextureParam(render_resolution.vector_x, render_resolution.vector_y, LinearFiltering);
-		TextureCreate.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
+		TextureCreate.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
 
 		// create 5-layers textures. 20240617.
 		for (size_t i = 0; i < 5; ++i)
@@ -250,7 +266,7 @@ namespace GraphicsEnginePost {
 
 		if (TextureCreate.CreateTexture()) {
 			ProcessTextures = GenResourceID.PsagGenUniqueKey();
-			LLRES_Textures->ResourceStorage(ProcessTextures, &TextureCreate);
+			GraphicTextures->ResourceStorage(ProcessTextures, &TextureCreate);
 		}
 
 		// 游戏场景 (捕获输入)
@@ -258,10 +274,10 @@ namespace GraphicsEnginePost {
 			GameSceneFrameBuffer = GenResourceID.PsagGenUniqueKey();
 			// bind scene color_buffer & render_buffer(depth).
 			// depth_info get: "gl_FragCoord.z"
-			FboGameScene.RenderBufferBindFBO(LLRES_RenderBuffers->ResourceFind(GameSceneRenderBuffer));
-			FboGameScene.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 0);
+			FboGameScene.RenderBufferBindFBO(GraphicRenderBuffers->ResourceFind(GameSceneRenderBuffer));
+			FboGameScene.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 0);
 
-			LLRES_FrameBuffers->ResourceStorage(GameSceneFrameBuffer, &FboGameScene);
+			GraphicFrameBuffers->ResourceStorage(GameSceneFrameBuffer, &FboGameScene);
 		}
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboVolumLight;
@@ -269,8 +285,8 @@ namespace GraphicsEnginePost {
 		// 2D灯光处理 (体积光)
 		if (FboVolumLight.CreateFrameBuffer()) {
 			LightFrameBuffer = GenResourceID.PsagGenUniqueKey();
-			FboVolumLight.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 1);
-			LLRES_FrameBuffers->ResourceStorage(LightFrameBuffer, &FboVolumLight);
+			FboVolumLight.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 1);
+			GraphicFrameBuffers->ResourceStorage(LightFrameBuffer, &FboVolumLight);
 		}
 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboColorFilter;
@@ -278,8 +294,8 @@ namespace GraphicsEnginePost {
 		// 纹理过滤 (图元颜色提取)
 		if (FboColorFilter.CreateFrameBuffer()) {
 			FilterFrameBuffer = GenResourceID.PsagGenUniqueKey();
-			FboColorFilter.TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, 2);
-			LLRES_FrameBuffers->ResourceStorage(FilterFrameBuffer, &FboColorFilter);
+			FboColorFilter.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 2);
+			GraphicFrameBuffers->ResourceStorage(FilterFrameBuffer, &FboColorFilter);
 		}
 
 		// 泛光 (2次采样高斯模糊)
@@ -289,8 +305,8 @@ namespace GraphicsEnginePost {
 			BloomFrameBuffers[i] = GenResourceID.PsagGenUniqueKey();
 			if (FboGameBloom[i].CreateFrameBuffer()) {
 				// fbo_h => bind layer2, fbo_v => bind layer3.
-				FboGameBloom[i].TextureLayerBindFBO(LLRES_Textures->ResourceFind(ProcessTextures).Texture, (uint32_t)i + 3);
-				LLRES_FrameBuffers->ResourceStorage(BloomFrameBuffers[i], &FboGameBloom[i]);
+				FboGameBloom[i].TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, (uint32_t)i + 3);
+				GraphicFrameBuffers->ResourceStorage(BloomFrameBuffers[i], &FboGameBloom[i]);
 			}
 		}
 		RenderingResolution = Vector2T<float>((float)render_resolution.vector_x, (float)render_resolution.vector_y);
@@ -299,20 +315,20 @@ namespace GraphicsEnginePost {
 
 	PsagGLEnginePost::~PsagGLEnginePost() {
 		// free graphics post resource.
-		LLRES_RenderBuffers->ResourceDelete(GameSceneRenderBuffer);
+		GraphicRenderBuffers->ResourceDelete(GameSceneRenderBuffer);
 
-		LLRES_FrameBuffers->ResourceDelete(BloomFrameBuffers[0]);
-		LLRES_FrameBuffers->ResourceDelete(BloomFrameBuffers[1]);
-		LLRES_FrameBuffers->ResourceDelete(FilterFrameBuffer);
-		LLRES_FrameBuffers->ResourceDelete(GameSceneFrameBuffer);
+		GraphicFrameBuffers->ResourceDelete(BloomFrameBuffers[0]);
+		GraphicFrameBuffers->ResourceDelete(BloomFrameBuffers[1]);
+		GraphicFrameBuffers->ResourceDelete(FilterFrameBuffer);
+		GraphicFrameBuffers->ResourceDelete(GameSceneFrameBuffer);
 
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(ProcessTextures).TextureSamplerCount);
-		LLRES_Textures->ResourceDelete(ProcessTextures);
+		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(ProcessTextures).TextureSamplerCount);
+		GraphicTextures->ResourceDelete(ProcessTextures);
 
-		LLRES_Shaders->ResourceDelete(ShaderFilter);
-		LLRES_Shaders->ResourceDelete(ShaderBloomH);
-		LLRES_Shaders->ResourceDelete(ShaderBloomV);
-		LLRES_Shaders->ResourceDelete(ShaderPostProgram);
+		GraphicShaders->ResourceDelete(ShaderFilter);
+		GraphicShaders->ResourceDelete(ShaderBloomH);
+		GraphicShaders->ResourceDelete(ShaderBloomV);
+		GraphicShaders->ResourceDelete(ShaderPostProgram);
 
 		PushLogger(LogInfo, PSAGM_GLENGINE_POST_LABEL, "graphics_engine free post_shader(system).");
 	}
@@ -320,7 +336,7 @@ namespace GraphicsEnginePost {
 	bool PsagGLEnginePost::CaptureGameScene(const function<bool()>& rendering_func) {
 		bool ReturnFlagTemp = PSAG_FALSE;
 		// game scene frame_buffer: color & depth.
-		ShaderRender.RenderBindFrameBuffer(LLRES_FrameBuffers->ResourceFind(GameSceneFrameBuffer), 0);
+		ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(GameSceneFrameBuffer), 0);
 		{
 			// render game_scene => fbo.
 			ReturnFlagTemp = rendering_func();
@@ -333,7 +349,7 @@ namespace GraphicsEnginePost {
 		ShaderRenderingLight();
 		ShaderRenderingBloom();
 
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderPostProgram);
+		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
 		ShaderRender.RenderBindShader(ShaderTemp);
 		
 		// framework preset uniform.
@@ -344,7 +360,7 @@ namespace GraphicsEnginePost {
 		ShaderUniform.UniformFloat(ShaderTemp, "PostBloomSource", RenderParameters.GameSceneBloomBlend.vector_x);
 		ShaderUniform.UniformFloat(ShaderTemp, "PostBloomBlur",   RenderParameters.GameSceneBloomBlend.vector_y);
 
-		auto TextureTempScene = LLRES_Textures->ResourceFind(ProcessTextures);
+		auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
 		ShaderRender.RenderBindTexture(TextureTempScene);
 		// bind texture context => sampler(tmu) => unbind.
 		ShaderUniform.UniformInteger(ShaderTemp, "PostTextures", TextureTempScene.TextureSamplerCount);
@@ -372,7 +388,7 @@ namespace GraphicsEngineBackground {
 		// create & storage background_shader.
 		if (ShaderProcess.CreateCompileShader()) {
 			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
-			LLRES_Shaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
+			GraphicShaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
 		BackgroundRect = GenResourceID.PsagGenUniqueKey();
@@ -391,14 +407,14 @@ namespace GraphicsEngineBackground {
 			PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture BackTexture;
 
 			BackTexture.SetTextureParam(imgdataset[0].Width, imgdataset[0].Height, LinearFiltering);
-			BackTexture.SetTextureSamplerCount(LLRES_Samplers->AllocTmuCount());
+			BackTexture.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
 
 			for (const auto& LayerData : imgdataset)
 				BackTexture.PushCreateTexData(TextureParam(1.0f, 1.0f), DEF_IMG_CHANNEL_RGBA, LayerData.ImagePixels);
 
 			if (BackTexture.CreateTexture()) {
 				BackgroundTextures = GenResourceID.PsagGenUniqueKey();
-				LLRES_Textures->ResourceStorage(BackgroundTextures, &BackTexture);
+				GraphicTextures->ResourceStorage(BackgroundTextures, &BackTexture);
 			}
 			TextureTopLayer = float(imgdataset.size() - 1);
 		}
@@ -409,14 +425,14 @@ namespace GraphicsEngineBackground {
 
 	PsagGLEngineBackground::~PsagGLEngineBackground() {
 		// free graphics back resource.
-		LLRES_Samplers->FreeTmuCount(LLRES_Textures->ResourceFind(BackgroundTextures).TextureSamplerCount);
-		LLRES_Textures->ResourceDelete(BackgroundTextures);
-		LLRES_Shaders->ResourceDelete(ShaderPostProgram);
+		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(BackgroundTextures).TextureSamplerCount);
+		GraphicTextures->ResourceDelete(BackgroundTextures);
+		GraphicShaders->ResourceDelete(ShaderPostProgram);
 		PushLogger(LogInfo, PSAGM_GLENGINE_BACK_LABEL, "graphics_engine free back_shader(system).");
 	}
 
 	void PsagGLEngineBackground::RenderingBackgroundModule() {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderPostProgram);
+		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
 		ShaderRender.RenderBindShader(ShaderTemp);
 		
 		// framework preset uniform.
@@ -432,7 +448,7 @@ namespace GraphicsEngineBackground {
 		ShaderUniform.UniformVec2(ShaderTemp,  "BackStrength",   RenderParameters.BackgroundStrength);
 		ShaderUniform.UniformVec4(ShaderTemp,  "BackBlendColor", RenderParameters.BackgroundColor);
 
-		auto TextureTemp = LLRES_Textures->ResourceFind(BackgroundTextures);
+		auto TextureTemp = GraphicTextures->ResourceFind(BackgroundTextures);
 		ShaderRender.RenderBindTexture(TextureTemp);
 		ShaderUniform.UniformInteger(ShaderTemp, "MultipleBackTex", TextureTemp.TextureSamplerCount);
 

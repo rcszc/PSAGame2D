@@ -13,32 +13,32 @@ void main()
 {
     vec2 LightPos = LightPosition;
 
-    // µ±Ç°Æ¬¶ÎÎ»ÖÃÍ¶Éä¹âÏß.
+    // å½“å‰ç‰‡æ®µä½ç½®æŠ•å°„å…‰çº¿.
     vec2 Delta = FxCoord - LightPos;
     vec2 Step = Delta / float(LightSampleStep);
 
-    // ÀÛ»ı¹âÇ¿¶È.
+    // ç´¯ç§¯å…‰å¼ºåº¦.
     float AccumulatedLightIntensity = 0.0;
 
     for (int i = 0; i < LightSampleStep; i++) {
         vec2 CurrentPos = LightPos + Step * float(i);
         vec4 SampleColor = texture(PostTextures, vec3(CurrentPos, 0.0));
 
-        // ¹âÏß¾àÀëË¥¼õ.
+        // å…‰çº¿è·ç¦»è¡°å‡.
         float Distance = length(CurrentPos - LightPos);
         float CurrentLightIntensity = LightIntensity * exp(-Distance * LightIntensityDecay);
 
-        // Æ¬¶Î×èµ²¹ıÂË.
+        // ç‰‡æ®µé˜»æŒ¡è¿‡æ»¤.
         if ((SampleColor.r + SampleColor.g + SampleColor.b) / 3.0 > 0.1) {
             CurrentLightIntensity *= LightIntensityDecay * 0.01;
         }
         AccumulatedLightIntensity += CurrentLightIntensity;
     }
 
-    // ¼ÆËãÆ½¾ù¹âÇ¿¶È.
+    // è®¡ç®—å¹³å‡å…‰å¼ºåº¦.
     float AverageLightIntensity = AccumulatedLightIntensity / float(LightSampleStep);
 
-    // Êä³ö»ìºÏÆ¬¶ÎÑÕÉ«.
+    // è¾“å‡ºæ··åˆç‰‡æ®µé¢œè‰².
     vec4 OriginalColor = texture(PostTextures, vec3(FxCoord, 0.0));
     FragColor = OriginalColor + vec4(LightColor, 1.0) * AverageLightIntensity;
 }

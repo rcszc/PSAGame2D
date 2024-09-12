@@ -115,7 +115,7 @@ namespace GameComponents {
 	}
 
 	void ActorRendering::UpdateActorRendering(const RenderingParams& params, float time_count) {
-		auto ShaderTemp = LLRES_Shaders->ResourceFind(ShaderIndex);
+		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderIndex);
 		ShaderRender.RenderBindShader(ShaderTemp);
 
 		// framework preset uniform.

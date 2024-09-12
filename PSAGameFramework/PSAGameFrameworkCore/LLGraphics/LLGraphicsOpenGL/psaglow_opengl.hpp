@@ -8,37 +8,31 @@
 #include "../framework_renderer_ext.h"
 
 class PsagOGLsystemLogger {
-protected: static RendererLogger PsagLowLog;
+protected: 
+	static RendererLogger PsagLowLog;
 };
-
 // Manager Module [Renderer "Manager" Interface] 20240101.
-// Update: 2024_05_13. RCSZ
+// Update: 2024_09_12. RCSZ
 namespace PSAG_OGL_MAG {
-	StaticStrLABEL PSAG_OGLMAG_LABEL = "PSAG_OGL_MAG";
-
-	/* 弃用:
-	* system.persets data, 2 * triangle_att dataset.
-	* constexpr float ShaderTemplateRect[72] = { ... };
-	*/
-	// depth_rect. [20240621]
+	// psagame2d: framework_preset: depth_rect. [20240621]
 	std::vector<float> ShaderTemplateRectDep(float zlayer = 0.0f);
 
 	class PsagInitOGL :public PsagOGLsystemLogger, public PSAGGL_GLOBAL_INIT {
 	protected:
-		std::string GLEWshaderVersion = {};
+		std::string GlewShaderVersion = {};
 	public:
 		// opengl initialization.
 		INIT_RETURN RendererInit(INIT_PARAMETERS init_param, const std::string& version) override;
 		// framework logger function, (before init).
-		void LoggerFunc(RendererLogger function) override;
+		bool LoggerFunction(RendererLogger function) override;
 	};
 
 	class PsagShadersOGL :public PsagOGLsystemLogger, public PsagGLmanagerShader {
 	private:
 		std::vector<std::string> ShaderCodeVS = {}, ShaderCodeFS = {};
-		GLuint ShaderVS = NULL, ShaderFS = NULL;
+		GLuint ShaderVert = NULL, ShaderFrag = NULL;
 
-		ResourceFlag ReturnResFlag = DEFRES_FLAG_NORMAL;
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_NORMAL;
 		PsagShader ShaderProgram = NULL;
 
 		std::string FileLoaderText(const std::string& file);
@@ -46,7 +40,6 @@ namespace PSAG_OGL_MAG {
 
 		void LoaderVertShader(const std::vector<std::string>& vs);
 		void LoaderFragShader(const std::vector<std::string>& fs);
-
 	public:
 		PsagShadersOGL() : ShaderProgram(glCreateProgram()) {}
 		// loader: vertex,fragment. script: [glsl], update: 20240524.
@@ -64,56 +57,55 @@ namespace PSAG_OGL_MAG {
 		PsagShader _MS_GETRES(ResourceFlag& flag) override;
 	};
 
-	class PsagModelOGL :public PsagOGLsystemLogger, public PsagGLmanagerModel {
+	class PsagVertexSystemOGL :public PsagOGLsystemLogger, public PsagGLmanagerVertex {
 	private:
-		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
-		PsagVertexBufferAttrib VerBufferAttrib = {};
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
+		PsagVertexBufferAttribute VertexBufferAttribute = {};
 
-		void VertexBufferSet(GLuint vao, GLuint vbo, size_t bytes, const float* verptr, uint32_t type);
-
+		void VertexBufferUpload(GLuint vao, GLuint vbo, size_t bytes, const float* verptr, uint32_t type);
 	public:
 		PsagVertexAttribute CreateVertexAttribute(uint32_t type, uint32_t begin_location = 0) override;
-		PsagVertexBuffer CreateVertexBuffer() override;
+		PsagVertexBuffer    CreateVertexBuffer() override;
 
-		bool CreateStaticModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) override;
+		bool CreateStaticModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes)  override;
 		bool CreateDynamicModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) override;
 
-		PsagVertexBufferAttrib _MS_GETRES(ResourceFlag& flag) override;
+		PsagVertexBufferAttribute _MS_GETRES(ResourceFlag& flag) override;
 	};
 
 	class PasgRenderbufferOGL :public PsagOGLsystemLogger, public PsagGLmanagerRenderBuffer {
 	private:
-		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
-		PsagRenderBufferAttrib RenderBuffer = {};
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
+		PsagRenderBufferAttribute RenderBuffer = {};
 
-		bool CreateBindRenderbuffer(PsagRenderBuffer& renderbuf);
-		bool CreateConfigRenderbuffer(uint32_t width, uint32_t height, bool depth);
+		bool CreateBindRenderBuffer(PsagRenderBuffer& renderbuf);
+		bool CreateConfigRenderBuffer(uint32_t width, uint32_t height, bool depth);
 	public:
 		bool CreateRenderBufferDepth(uint32_t width, uint32_t height) override;
 
 		bool CreateRenderBuffer(uint32_t width, uint32_t height) override;
-		ImageRawData ReadRenderBuffer(PsagRenderBufferAttrib buffer) override;
+		ImageRawData ReadRenderBuffer(PsagRenderBufferAttribute buffer) override;
 
-		PsagRenderBufferAttrib _MS_GETRES(ResourceFlag& flag) override;
+		PsagRenderBufferAttribute _MS_GETRES(ResourceFlag& flag) override;
 	};
 
 	class PsagFramebufferOGL :public PsagOGLsystemLogger, public PsagGLmanagerFrameBuffer {
 	private:
-		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
 		PsagFrameBuffer FrameBuffer = NULL;
 
-		bool CreateBindFamebuffer(PsagFrameBuffer& framebuf);
-		bool CheckFramebuffer(PsagFrameBuffer& framebuf, ResourceFlag& flag);
+		bool CreateBindFameBuffer(PsagFrameBuffer& framebuf);
+		bool CheckFrameBuffer(PsagFrameBuffer& framebuf, ResourceFlag& flag);
 		// texture & depth_texture bind, dep_flag: false: std, true: dep.
-		bool TextureBaseBind(const PsagTextureAttrib& texture, uint32_t attachment, bool dep_flag);
+		bool TextureBaseBind(const PsagTextureAttribute& texture, uint32_t attachment, bool dep_flag);
 
 	public:
 		bool CreateFrameBuffer() override;
 
-		bool TextureBindFBO(const PsagTextureAttrib& texture, uint32_t attachment = 0) override;
-		bool TextureDepBindFBO(const PsagTextureAttrib& texture) override;
+		bool TextureBindFBO(const PsagTextureAttribute& texture, uint32_t attachment = 0) override;
+		bool TextureDepBindFBO(const PsagTextureAttribute& texture) override;
 
-		bool RenderBufferBindFBO(PsagRenderBufferAttrib buffer) override;
+		bool RenderBufferBindFBO(PsagRenderBufferAttribute buffer) override;
 
 		// bind => texture_array: layer, ext.20240507
 		bool TextureLayerBindFBO(PsagTexture texture_hd, uint32_t layer, uint32_t attachment = 0);
@@ -121,18 +113,30 @@ namespace PSAG_OGL_MAG {
 		PsagFrameBuffer _MS_GETRES(ResourceFlag& flag) override;
 	};
 
+	class PsagUniformBufferOGL :public PsagOGLsystemLogger, public PsagGLmanagerUniformBuffer {
+	protected:
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
+		PsagUniformBuffer UniformBuffer = NULL;
+
+		size_t UniformStructDataBytes = NULL;
+		bool CreateBindUniformBuffer(PsagUniformBuffer* uniform_buffer);
+	public:
+		void CreateUniformInfo(size_t struct_size);
+		bool CreateUniformBuffer(uint32_t binding);
+
+		PsagUniformBuffer _MS_GETRES(ResourceFlag& flag);
+	};
+
 	// uniform error(true): invalid shader program, atomic_boolean.
 	extern std::atomic<bool> ATC_UNIFORM_ERROR_FLAG;
 
 	class PsagUniformOGL :public PsagOGLsystemLogger, public PsagGLmanagerUniform {
-	private:
-		bool ProgramHandle(GLuint program, const char* label);
 	public:
 		void UniformMatrix3x3(PsagShader program, const char* name, const PsagMatrix3& matrix) override;
 		void UniformMatrix4x4(PsagShader program, const char* name, const PsagMatrix4& matrix) override;
 
 		void UniformInteger(PsagShader program, const char* name, const int32_t& value) override;
-		void UniformFloat(PsagShader program, const char* name, const float& value) override;
+		void UniformFloat  (PsagShader program, const char* name, const float& value)   override;
 
 		void UniformVec2(PsagShader program, const char* name, const Vector2T<float>& value) override;
 		void UniformVec3(PsagShader program, const char* name, const Vector3T<float>& value) override;
@@ -145,24 +149,23 @@ namespace PSAG_OGL_MAG {
 		bool CreateBindTexture(PsagTexture& texture);
 	};
 
-	struct __SystemCreateTex {
+	struct SystemCreateTexture {
 		RawDataStream IamgeRawData;
 		TextureParam  Param;
 
-		__SystemCreateTex() : IamgeRawData({}), Param({}) {}
-		__SystemCreateTex(const RawDataStream& data, const TextureParam& param) : IamgeRawData(data), Param(param) {}
+		SystemCreateTexture() : IamgeRawData({}), Param({}) {}
+		SystemCreateTexture(const RawDataStream& data, const TextureParam& param) : IamgeRawData(data), Param(param) {}
 	};
 	// psag texture system, texture(array).
 	class PsagTextureOGL :public TextureSystemBase, public PsagGLmanagerTexture, 
 		public PsagGLmangerTextureStorage 
 	{
 	private:
-		std::vector<__SystemCreateTex> CreateDataIndex = {};
+		std::vector<SystemCreateTexture> CreateDataIndex = {};
 		bool SetTextureAttrFlag = false;
 
-		PsagTextureAttrib TextureAttrCreate = {};
-		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
-
+		PsagTextureAttribute ColorTextureCreate = {};
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
 	public:
 		bool SetTextureParam(uint32_t width, uint32_t height, TextureFilterMode mode) override;
 		bool SetTextureSamplerCount(uint32_t count) override;
@@ -173,21 +176,21 @@ namespace PSAG_OGL_MAG {
 
 		bool CreateTexture() override;
 
-		PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) override;
+		PsagTextureAttribute _MS_GETRES(ResourceFlag& flag) override;
 	};
 
 	class PsagTextureDepthOGL :public PsagOGLsystemLogger, public PsagGLmanagerTextureDepth, 
 		public PsagGLmangerTextureStorage 
 	{
 	private:
-		PsagTextureAttrib TextureAttrCreate = {};
-		ResourceFlag ReturnResFlag = DEFRES_FLAG_INVALID;
+		PsagTextureAttribute DepthTextureCreate = {};
+		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
 
 		bool CreateBindTextureDep(PsagTexture& texture);
 	public:
 		bool CreateDepthTexture(uint32_t width, uint32_t height, uint32_t sampler_count) override;
 
-		PsagTextureAttrib _MS_GETRES(ResourceFlag& flag) override;
+		PsagTextureAttribute _MS_GETRES(ResourceFlag& flag) override;
 	};
 
 	// psag texture view, texture2d. non "LLRES" manager.
@@ -215,30 +218,54 @@ namespace RenderingSupport {
 		RenderContext  = 1 << 4  // render buffer.
 	};
 
-	class PsagOpenGLApiRenderOper {
+	// opengl api rendering_state data_oper, debug_mode.
+	class PsagOpenGLApiDataFlow {
+	private:
+		std::chrono::steady_clock::time_point SampleTimer = std::chrono::steady_clock::now();
+		// vector_x: counter, vector_y: rate.
+		Vector2T<size_t> DataBytesUpload   = {};
+		Vector2T<size_t> DataBytesDownload = {};
+	protected:
+		void DataOperateUpload(size_t bytes)   { DataBytesUpload.vector_x   += bytes; }
+		void DataOperateDownload(size_t bytes) { DataBytesDownload.vector_x += bytes; }
+
+		Vector2T<size_t> GetRenderingDataFlow() {
+			return Vector2T<size_t>(DataBytesUpload.vector_y, DataBytesDownload.vector_y);
+		}
+		// sampler timer const_vaule: 500ms.
+		void FrameUpdateSampler();
+	};
+
+	// opengl api rendering_state context oper.
+	class PsagOpenGLApiRenderState :public PsagOpenGLApiDataFlow {
 	protected:
 		static OpenGLApiContext ApiThisStateContext;
 	public:
 		void RenderBindShader(const PsagShader& program);
-		void RenderBindTexture(const PsagTextureAttrib& texture);
+		void RenderBindTexture(const PsagTextureAttribute& texture);
 
 		void RenderBindFrameBuffer   (const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
 		void RenderBindFrameBufferNCC(const PsagFrameBuffer& framebuffer, uint32_t attachment = 0);
 
-		void DrawVertexGroup(const PsagVertexBufferAttrib& model);
-		void DrawVertexGroupSeg(const PsagVertexBufferAttrib& model, size_t vert_len, size_t vert_off);
+		void DrawVertexGroup(const PsagVertexBufferAttribute& model);
+		void DrawVertexGroupSeg(const PsagVertexBufferAttribute& model, size_t vertex_num, size_t vertex_offset);
 
 		// **************** UPLOAD (CPU => GPU), READ (GPU => CPU) ****************
 
 		void UploadVertexDataset(
-			PsagVertexBufferAttrib* model, float* verptr, size_t bytes,
-			GLenum type = GL_DYNAMIC_DRAW // gpu memory storage mode.
+			PsagVertexBufferAttribute* model, float* verptr, size_t bytes,
+			// gpu memory storage mode default: dynamic_draw.
+			GLenum type = GL_DYNAMIC_DRAW
 		);
 		void UploadTextureLayer(
 			const PsagTexture& texture, uint32_t layer, const Vector2T<uint32_t>& size, uint8_t* dataptr,
-			uint32_t channels = 4 // texture(image) data channels.
+			// texture(image) data channels.
+			uint32_t channels = 4
 		);
+		void UploadUniformData(const PsagUniformBuffer& uniform_buffer, void* dataptr, size_t bytes);
 		std::vector<float> ReadVertexDatasetFP32(PsagVertexBuffer vbo);
+
+		// **************** UNBIND CONTEXT ****************
 
 		void RenderUnbindShader();
 		void RenderUnbindTexture();
@@ -246,6 +273,10 @@ namespace RenderingSupport {
 
 		// global state: opengl context. (non-thread-safe)
 		OpenGLApiContext GET_THIS_CONTEXT() { return ApiThisStateContext; };
+
+		void DATA_FLOW_FRAMEUPDATE() { FrameUpdateSampler(); }
+		// oper_data flow info: x: upload, y: download.
+		Vector2T<size_t> DATA_FLOW_INFOGET() { return GetRenderingDataFlow(); }
 	};
 }
 
@@ -280,6 +311,7 @@ namespace PSAG_OGL_RES {
 		std::atomic<size_t> ResourceVAO     = NULL;
 		std::atomic<size_t> ResourceFBO     = NULL;
 		std::atomic<size_t> ResourceRBO     = NULL;
+		std::atomic<size_t> ResourceUBO     = NULL;
 	};
 	extern PsagDebugInvalidKeyCount GLOBAL_DEBUG_COUNT;
 
@@ -287,22 +319,20 @@ namespace PSAG_OGL_RES {
 	protected:
 		std::vector<bool> TmuStateFlag = {};
 		std::mutex TmuStateMutex = {};
-
 	public:
 		PsagResTexSamplerOGL(size_t tmu_size) {
 			std::lock_guard<std::mutex> Lock(TmuStateMutex);
 			TmuStateFlag.resize(tmu_size);
 		}
 		// GPU-TMU unit alloc & free, res_count.
-		uint32_t AllocTmuCount() override;
-		void FreeTmuCount(uint32_t count) override;
+		uint32_t AllocTexMapUnitCount() override;
+		void FreeTexMapUnitCount(uint32_t count) override;
 	};
 
 	class PsagResShadersOGL :public PsagOGLsystemLogger, public PsagGLresourceShader {
 	protected:
-		std::unordered_map<ResUnique, PsagShader> ResourceShaderMap   = {};
+		std::unordered_map<ResUnique, PsagShader> ResourceShaderMap = {};
 		std::mutex ResourceShaderMutex = {};
-
 	public:
 		PsagShader ResourceFind(ResUnique key) override;
 		bool ResourceStorage(ResUnique key, PsagGLmanagerShader* res) override;
@@ -314,29 +344,25 @@ namespace PSAG_OGL_RES {
 		}
 
 		~PsagResShadersOGL() override {
-			uint32_t InvalidCountHD = NULL;
+			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(shader).
 			for (const auto& item : ResourceShaderMap) {
-				// 删除无效句柄无害 [OGLAPI]
-				// func_pointer: __glewDeleteProgram
-				glDeleteProgram(item.second);
 				if (item.second == OPENGL_INVALID_HANDEL)
-					++InvalidCountHD;
+					++ErrObjectsCount;
+				glDeleteProgram(item.second);
 			}
-			// print_log: free_count, invalid_count.
+			if (ErrObjectsCount > NULL)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(shader): %u items", ErrObjectsCount);
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(shader): %u items", ResourceSize());
-			if (InvalidCountHD)
-				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(shader): %u items", InvalidCountHD);
 		}
 	};
 
 	class PsagResTextureOGL :public PsagOGLsystemLogger, public PsagGLresourceTexture {
 	protected:
-		std::unordered_map<ResUnique, PsagTextureAttrib> ResourceTextureMap = {};
+		std::unordered_map<ResUnique, PsagTextureAttribute> ResourceTextureMap = {};
 		std::mutex ResourceTextureMutex = {};
-
 	public:
-		PsagTextureAttrib ResourceFind(ResUnique key) override;
+		PsagTextureAttribute ResourceFind(ResUnique key) override;
 		bool ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) override;
 		bool ResourceDelete(ResUnique key) override;
 		
@@ -346,34 +372,32 @@ namespace PSAG_OGL_RES {
 		}
 
 		~PsagResTextureOGL() override {
-			uint32_t InvalidCountHD = NULL;
+			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(texture).
 			for (const auto& item : ResourceTextureMap) {
-				// func_pointer: 'GLAPI void GLAPIENTRY glDeleteTextures'
-				glDeleteTextures(1, &item.second.Texture);
 				if (item.second.Texture == OPENGL_INVALID_HANDEL)
-					++InvalidCountHD;
+					++ErrObjectsCount;
+				glDeleteTextures(1, &item.second.Texture);
 			}
-			// print_log: free_count, invalid_count.
+			if (ErrObjectsCount > NULL)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(texture): %u items", ErrObjectsCount);
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(texture): %u items", ResourceSize());
-			if (InvalidCountHD)
-				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(texture): %u items", InvalidCountHD);
 		}
 	};
 
 	class PsagResVertexBufferOGL :public PsagOGLsystemLogger, public PsagGLresourceVertexBuffer {
 	protected:
-		std::unordered_map<ResUnique, PsagVertexBufferAttrib> ResourceVertexBufferMap = {};
+		std::unordered_map<ResUnique, PsagVertexBufferAttribute> ResourceVertexBufferMap = {};
 		std::mutex ResourceVertexBufferMutex = {};
 
 	public:
-		PsagVertexBufferAttrib ResourceFind(ResUnique key) override;
-		bool ResourceStorage(ResUnique key, PsagGLmanagerModel* res) override;
+		PsagVertexBufferAttribute ResourceFind(ResUnique key) override;
+		bool ResourceStorage(ResUnique key, PsagGLmanagerVertex* res) override;
 		bool ResourceDelete(ResUnique key) override;
 
 		// VBO 资源持久映射(用于动态更新,非标准接口).
 		// warning: non-ptr-safe.
-		PsagVertexBufferAttrib* ExtResourceMapping(ResUnique key);
+		PsagVertexBufferAttribute* ExtResourceMapping(ResUnique key);
 
 		size_t ResourceSize() override {
 			std::lock_guard<std::mutex> Lock(ResourceVertexBufferMutex);
@@ -381,18 +405,16 @@ namespace PSAG_OGL_RES {
 		}
 
 		~PsagResVertexBufferOGL() override {
-			uint32_t InvalidCountHD = NULL;
+			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(vertex_buffer).
 			for (const auto& item : ResourceVertexBufferMap) {
-				// func_pointer: __glewDeleteBuffers
+				if (item.second.DataBuffer == OPENGL_INVALID_HANDEL)
+					++ErrObjectsCount;
 				glDeleteBuffers(1, &item.second.DataBuffer);
-				if (item.second.DataBuffer == OPENGL_INVALID_HANDEL) 
-					++InvalidCountHD;
 			}
-			// print_log: free_count, invalid_count.
+			if (ErrObjectsCount > NULL)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(vertex_buffer): %u items", ErrObjectsCount);
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(vertex_buffer): %u items", ResourceSize());
-			if (InvalidCountHD)
-				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(vertex_buffer): %u items", InvalidCountHD);
 		}
 	};
 
@@ -413,18 +435,16 @@ namespace PSAG_OGL_RES {
 		}
 
 		~PsagResVertexAttribOGL() override {
-			uint32_t InvalidCountHD = NULL;
+			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(vertex_attribute).
 			for (const auto& item : ResourceVertexAttrMap) {
-				// func_pointer: __glewDeleteVertexArrays
-				glDeleteVertexArrays(1, &item.second);
 				if (item.second == OPENGL_INVALID_HANDEL)
-					++InvalidCountHD;
+					++ErrObjectsCount;
+				glDeleteVertexArrays(1, &item.second);
 			}
-			// print_log: free_count, invalid_count.
+			if (ErrObjectsCount > NULL)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(vertex_attribute): %u items", ErrObjectsCount);
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(vertex_attribute): %u items", ResourceSize());
-			if (InvalidCountHD)
-				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(vertex_attribute): %u items", InvalidCountHD);
 		}
 	};
 
@@ -444,28 +464,26 @@ namespace PSAG_OGL_RES {
 		}
 
 		~PsagResFrameBufferOGL() override {
-			uint32_t InvalidCountHD = NULL;
+			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(frame_buffer).
 			for (const auto& item : ResourceFrameBufferMap) {
-				// func_pointer: __glewDeleteFramebuffers
-				glDeleteFramebuffers(1, &item.second);
 				if (item.second == OPENGL_INVALID_HANDEL)
-					++InvalidCountHD;
+					++ErrObjectsCount;
+				glDeleteFramebuffers(1, &item.second);
 			}
-			// print_log: free_count, invalid_count.
+			if (ErrObjectsCount > NULL)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(frame_buffer): %u items", ErrObjectsCount);
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(frame_buffer): %u items", ResourceSize());
-			if (InvalidCountHD)
-				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(frame_buffer): %u items", InvalidCountHD);
 		}
 	};
 
 	class PsagResRenderBufferOGL :public PsagOGLsystemLogger, public PsagGLresourceRenderBuffer {
 	protected:
-		std::unordered_map<ResUnique, PsagRenderBufferAttrib> ResourceRenderBufferMap = {};
+		std::unordered_map<ResUnique, PsagRenderBufferAttribute> ResourceRenderBufferMap = {};
 		std::mutex ResourceRenderBufferMutex = {};
 
 	public:
-		PsagRenderBufferAttrib ResourceFind(ResUnique key) override;
+		PsagRenderBufferAttribute ResourceFind(ResUnique key) override;
 		bool ResourceStorage(ResUnique key, PsagGLmanagerRenderBuffer* res) override;
 		bool ResourceDelete(ResUnique key) override;
 
@@ -475,18 +493,45 @@ namespace PSAG_OGL_RES {
 		}
 
 		~PsagResRenderBufferOGL() override {
-			uint32_t InvalidCountHD = NULL;
+			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(render_buffer).
 			for (const auto& item : ResourceRenderBufferMap) {
-				// func_pointer: __glewDeleteRenderbuffers
-				glDeleteRenderbuffers(1, &item.second.RenderBuffer);
 				if (item.second.RenderBuffer == OPENGL_INVALID_HANDEL)
-					++InvalidCountHD;
+					++ErrObjectsCount;
+				glDeleteRenderbuffers(1, &item.second.RenderBuffer);
 			}
-			// print_log: free_count, invalid_count.
+			if (ErrObjectsCount > NULL)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(render_buffer): %u items", ErrObjectsCount);
 			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(render_buffer): %u items", ResourceSize());
-			if (InvalidCountHD)
-				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(render_buffer): %u items", InvalidCountHD);
+		}
+	};
+
+	class PsagResUniformBufferOGL :public PsagOGLsystemLogger, public PsagGLresourceUniformBuffer {
+	protected:
+		std::unordered_map<ResUnique, PsagUniformBuffer> ResourceRenderBufferMap = {};
+		std::mutex ResourceRenderBufferMutex = {};
+
+	public:
+		PsagUniformBuffer ResourceFind(ResUnique key) override;
+		bool ResourceStorage(ResUnique key, PsagGLmanagerUniformBuffer* res) override;
+		bool ResourceDelete(ResUnique key) override;
+
+		size_t ResourceSize() override {
+			std::lock_guard<std::mutex> Lock(ResourceRenderBufferMutex);
+			return ResourceRenderBufferMap.size();
+		}
+
+		~PsagResUniformBufferOGL() override {
+			uint32_t ErrObjectsCount = NULL;
+			// clear hashmap data(uniform_buffer).
+			for (const auto& item : ResourceRenderBufferMap) {
+				if (item.second == OPENGL_INVALID_HANDEL)
+					++ErrObjectsCount;
+				glDeleteBuffers(1, &item.second);
+			}
+			if (ErrObjectsCount)
+				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(uniform_buffer): %u items", ErrObjectsCount);
+			PsagLowLog(LogTrace, PSAG_OGLRES_LABEL, "free resource(uniform_buffer): %u items", ResourceSize());
 		}
 	};
 }
