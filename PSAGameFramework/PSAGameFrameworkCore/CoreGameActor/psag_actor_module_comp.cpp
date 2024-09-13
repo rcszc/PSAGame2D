@@ -116,12 +116,11 @@ namespace GameComponents {
 
 	void ActorRendering::UpdateActorRendering(const RenderingParams& params, float time_count) {
 		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderIndex);
-		ShaderRender.RenderBindShader(ShaderTemp);
+		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 
 		// framework preset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",       *RenderMatrix);
-		ShaderUniform.UniformVec2     (ShaderTemp, "RenderResolution", RenderResolution);
-		ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime",       time_count);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderResolution", RenderResolution);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",       time_count);
 
 		ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",    params.RenderPosition);
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", PSAG_M_DEGRAD(params.RenderRotate));
@@ -131,7 +130,7 @@ namespace GameComponents {
 
 		RenderingTextureFunc(ShaderTemp);
 		VerStcOperFrameDraw(VertexGroupIndex);
-		ShaderRender.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindShader();
 	}
 
 	void ActorRendering::UpdateActorRenderingTexture(PsagShader shader) {
@@ -147,12 +146,12 @@ namespace GameComponents {
 
 		// position - camera_position.
 		Vector2T<float> ActorMapping(
-			position.vector_x + MatrixWorldCamera.MatrixPosition.vector_x / 10.0f,
-			position.vector_y - MatrixWorldCamera.MatrixPosition.vector_y / 10.0f
+			position.vector_x + MatrixMainCamera.MatrixPosition.vector_x / 10.0f,
+			position.vector_y - MatrixMainCamera.MatrixPosition.vector_y / 10.0f
 		);
 		return Vector2T<float>(
-			ActorMapping.vector_x * ValueScale / (SystemRenderingOrthoSpace * MatrixWorldCamera.MatrixScale.vector_x) * LossWidth + LossWidth,
-			ActorMapping.vector_y / (SystemRenderingOrthoSpace * MatrixWorldCamera.MatrixScale.vector_y) * LossHeight + LossHeight
+			ActorMapping.vector_x * ValueScale / (SystemRenderingOrthoSpace * MatrixMainCamera.MatrixScale.vector_x) * LossWidth + LossWidth,
+			ActorMapping.vector_y / (SystemRenderingOrthoSpace * MatrixMainCamera.MatrixScale.vector_y) * LossHeight + LossHeight
 		);
 	}
 }

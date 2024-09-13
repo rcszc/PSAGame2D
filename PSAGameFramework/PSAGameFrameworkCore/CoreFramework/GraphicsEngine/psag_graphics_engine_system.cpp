@@ -8,9 +8,9 @@ using namespace GraphicsShaderCode;
 namespace GraphicsEngineMatrix {
 	StaticStrLABEL PSAGM_GLENGINE_MAT_LABEL = "PSAG_GL_MATRIX";
 
-	MatrixTransParams PsagGLEngineMatrix::MatrixWorldCamera = {};
-	PsagMatrix4       PsagGLEngineMatrix::MatrixDataRect    = {};
-	PsagMatrix4       PsagGLEngineMatrix::MatrixDataWindow  = {};
+	MatrixTransParams PsagGLEngineMatrix::MatrixMainCamera = {};
+	PsagMatrix4       PsagGLEngineMatrix::MatrixDataRect   = {};
+	PsagMatrix4       PsagGLEngineMatrix::MatrixDataWindow = {};
 
 	glm::mat4 PsagGLEngineMatrix::GetOrthoProjMatrix(float scale_size) {
 		return glm::ortho(
@@ -26,7 +26,7 @@ namespace GraphicsEngineMatrix {
 			MatrixCalcTemp, glm::vec3(
 				-params.MatrixPosition.vector_x * 0.1f,
 				 params.MatrixPosition.vector_y * 0.1f,
-				0.0f
+				 0.0f
 			));
 		// camera rotate trans.
 		MatrixCalcTemp = glm::rotate(MatrixCalcTemp, params.MatrixRotate, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -57,11 +57,20 @@ namespace GraphicsEngineMatrix {
 
 		MatrixUniform.CreateUniformInfo(sizeof(PsagMatrix4));
 
-		if (MatrixUniform.CreateUniformBuffer(1)) {
+		if (MatrixUniform.CreateUniformBuffer(0)) {
 			UniformBuffer = GenResourceID.PsagGenUniqueKey();
 			GraphicUniformBuffers->ResourceStorage(UniformBuffer, &MatrixUniform);
 		}
 		PushLogger(LogInfo, PSAGM_GLENGINE_MAT_LABEL, "graphics_engine create matrix ubo.");
+	}
+
+	void PsagGLEngineMatrix::UpdateMatrixUniform(float roatio_value) {
+		ProcessUniform.UploadUniformData(
+			GraphicUniformBuffers->ResourceFind(UniformBuffer), MatrixDataWindow.matrix, sizeof(PsagMatrix4)
+		);
+		// global: calc camera & world matrix.
+		MatrixDataRect   = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixMainCamera), 1.0f);
+		MatrixDataWindow = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixMainCamera), roatio_value);
 	}
 }
 
@@ -77,8 +86,8 @@ namespace GraphicsEnginePost {
 		auto LightShader = GraphicShaders->ResourceFind(ShaderVolumLight);
 
 		// 2D全局光照(体积光)处理.
-		ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(LightFrameBuffer), 0);
-		ShaderRender.RenderBindShader(LightShader);
+		OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(LightFrameBuffer), 0);
+		OGLAPI_OPER.RenderBindShader(LightShader);
 		{
 			// framework preset uniform.
 			ShaderUniform.UniformMatrix4x4(LightShader, "MvpMatrix", RenderingMatrixMvp);
@@ -97,7 +106,7 @@ namespace GraphicsEnginePost {
 
 			// COLOR_BUFFER_TEX.
 			auto ColorTextureTemp = GraphicTextures->ResourceFind(ProcessTextures);
-			ShaderRender.RenderBindTexture(ColorTextureTemp);
+			OGLAPI_OPER.RenderBindTexture(ColorTextureTemp);
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(LightShader, "PostTextures", ColorTextureTemp.TextureSamplerCount);
 
@@ -107,16 +116,16 @@ namespace GraphicsEnginePost {
 			// frame draw(command).
 			VerStcOperFrameDraw(RenderRect);
 		}
-		ShaderRender.RenderUnbindShader();
-		ShaderRender.RenderUnbindFrameBuffer();
+		OGLAPI_OPER.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindFrameBuffer();
 	}
 
 	void PsagGLEnginePost::ShaderRenderingBloom() {
 		auto FilterShader = GraphicShaders->ResourceFind(ShaderFilter);
 
 		// 片元纹理(高亮)过滤处理.
-		ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FilterFrameBuffer), 0);
-		ShaderRender.RenderBindShader(FilterShader);
+		OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FilterFrameBuffer), 0);
+		OGLAPI_OPER.RenderBindShader(FilterShader);
 		{
 			// framework preset uniform.
 			ShaderUniform.UniformMatrix4x4(FilterShader, "MvpMatrix", RenderingMatrixMvp);
@@ -126,14 +135,14 @@ namespace GraphicsEnginePost {
 			ShaderUniform.UniformFloat(FilterShader, "PostFilterAvg",   RenderParameters.GameSceneFilterAVG);
 			
 			auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
-			ShaderRender.RenderBindTexture(TextureTempScene);
+			OGLAPI_OPER.RenderBindTexture(TextureTempScene);
 			// bind texture context => sampler(tmu) => unbind.
 			ShaderUniform.UniformInteger(FilterShader, "PostTextures", TextureTempScene.TextureSamplerCount);
 			// frame draw(command).
 			VerStcOperFrameDraw(RenderRect);
 		}
-		ShaderRender.RenderUnbindShader();
-		ShaderRender.RenderUnbindFrameBuffer();
+		OGLAPI_OPER.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindFrameBuffer();
 
 		PsagShader ShaderTemp[2] = {};
 		ShaderTemp[0] = GraphicShaders->ResourceFind(ShaderBloomH);
@@ -141,8 +150,8 @@ namespace GraphicsEnginePost {
 
 		// 2次(横纵)高斯模糊处理.
 		for (size_t i = 0; i < 2; ++i) {
-			ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(BloomFrameBuffers[i]), 0);
-			ShaderRender.RenderBindShader(ShaderTemp[i]);
+			OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(BloomFrameBuffers[i]), 0);
+			OGLAPI_OPER.RenderBindShader(ShaderTemp[i]);
 			{
 				// framework preset uniform.
 				ShaderUniform.UniformMatrix4x4(ShaderTemp[i], "MvpMatrix", RenderingMatrixMvp);
@@ -151,14 +160,14 @@ namespace GraphicsEnginePost {
 				ShaderUniform.UniformInteger(ShaderTemp[i], "PostBloomRadius", RenderParameters.GameSceneBloomRadius);
 
 				auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
-				ShaderRender.RenderBindTexture(TextureTempScene);
+				OGLAPI_OPER.RenderBindTexture(TextureTempScene);
 				// bind texture context => sampler(tmu) => unbind.
 				ShaderUniform.UniformInteger(ShaderTemp[i], "PostTextures", TextureTempScene.TextureSamplerCount);
 				// frame draw(command).
 				VerStcOperFrameDraw(RenderRect);
 			}
-			ShaderRender.RenderUnbindShader();
-			ShaderRender.RenderUnbindFrameBuffer();
+			OGLAPI_OPER.RenderUnbindShader();
+			OGLAPI_OPER.RenderUnbindFrameBuffer();
 		}
 	}
 
@@ -336,12 +345,12 @@ namespace GraphicsEnginePost {
 	bool PsagGLEnginePost::CaptureGameScene(const function<bool()>& rendering_func) {
 		bool ReturnFlagTemp = PSAG_FALSE;
 		// game scene frame_buffer: color & depth.
-		ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(GameSceneFrameBuffer), 0);
+		OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(GameSceneFrameBuffer), 0);
 		{
 			// render game_scene => fbo.
 			ReturnFlagTemp = rendering_func();
 		}
-		ShaderRender.RenderUnbindFrameBuffer();
+		OGLAPI_OPER.RenderUnbindFrameBuffer();
 		return ReturnFlagTemp;
 	}
 
@@ -350,7 +359,7 @@ namespace GraphicsEnginePost {
 		ShaderRenderingBloom();
 
 		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
-		ShaderRender.RenderBindShader(ShaderTemp);
+		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 		
 		// framework preset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderingMatrixMvp);
@@ -361,13 +370,13 @@ namespace GraphicsEnginePost {
 		ShaderUniform.UniformFloat(ShaderTemp, "PostBloomBlur",   RenderParameters.GameSceneBloomBlend.vector_y);
 
 		auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
-		ShaderRender.RenderBindTexture(TextureTempScene);
+		OGLAPI_OPER.RenderBindTexture(TextureTempScene);
 		// bind texture context => sampler(tmu) => unbind.
 		ShaderUniform.UniformInteger(ShaderTemp, "PostTextures", TextureTempScene.TextureSamplerCount);
 
 		// frame draw(command).
 		VerStcOperFrameDraw(RenderRect);
-		ShaderRender.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindShader();
 	}
 }
 
@@ -433,7 +442,7 @@ namespace GraphicsEngineBackground {
 
 	void PsagGLEngineBackground::RenderingBackgroundModule() {
 		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
-		ShaderRender.RenderBindShader(ShaderTemp);
+		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 		
 		// framework preset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderingMatrixMvp);
@@ -449,11 +458,11 @@ namespace GraphicsEngineBackground {
 		ShaderUniform.UniformVec4(ShaderTemp,  "BackBlendColor", RenderParameters.BackgroundColor);
 
 		auto TextureTemp = GraphicTextures->ResourceFind(BackgroundTextures);
-		ShaderRender.RenderBindTexture(TextureTemp);
+		OGLAPI_OPER.RenderBindTexture(TextureTemp);
 		ShaderUniform.UniformInteger(ShaderTemp, "MultipleBackTex", TextureTemp.TextureSamplerCount);
 
 		// frame draw(command).
 		VerStcOperFrameDraw(BackgroundRect);
-		ShaderRender.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindShader();
 	}
 }

@@ -50,15 +50,13 @@ namespace PsagFrameworkCore {
         PhysicsSystemUpdateState();
 
         ActorModulesTimeStep = FrameworkParams.GameRunTimeStep;
-        
-        FrameworkParams.CameraParams = &MatrixWorldCamera;
 
+        // calc & update global_matrix.
         float RoatioValue = (float)RenderingWindowSize.vector_x / (float)RenderingWindowSize.vector_y;
-        // global: calc camera & world matrix.
-        MatrixDataRect   = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), 1.0f);
-        MatrixDataWindow = UpdateEncodeMatrix(UpdateCalcMatrix(glm::mat4(1.0f), MatrixWorldCamera), RoatioValue);
+        FrameworkParams.CameraParams = &MatrixMainCamera;
+        UpdateMatrixUniform(RoatioValue);
 
-        // opengl render_event loop(ogl,imgui).
+        // framework context event.
         RenderContextAbove();
         {
             RenderGuiContextA();

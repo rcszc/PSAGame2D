@@ -385,7 +385,7 @@ namespace GraphicsEngineParticle {
 
 	void PsagGLEngineParticle::RenderParticleFX() {
 		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
-		ShaderRender.RenderBindShader(ShaderTemp);
+		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  MatrixDataWindow);
@@ -401,7 +401,7 @@ namespace GraphicsEngineParticle {
 		// draw particles vertex.
 		VerDyOperFrameDraw(DyVertexSysItem);
 
-		ShaderRender.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindShader();
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL * GraphicsEngineTimeStep;
 	}
 

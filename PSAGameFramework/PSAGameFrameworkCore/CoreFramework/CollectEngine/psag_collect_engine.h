@@ -104,7 +104,11 @@ namespace CollectEngineCamera {
 			const Vector2T<float>& rect_range, const Vector2T<uint32_t>& window_size, 
 			float hardness
 		);
+		void PlayerCameraLerpValue(float value);
+
 		void PlayerCameraRun(const Vector2T<float>& window_coord, const Vector2T<float>& actor_speed);
+		void PlayerCameraRunFixed(const Vector2T<float>& actor_position);
+
 		// calc_target => calc_position, out_pos = pos + offset.
 		Vector2T<float> GetCameraPosition(const Vector2T<float>& camera_offset = Vector2T<float>());
 	};

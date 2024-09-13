@@ -65,7 +65,6 @@ namespace GameActorCore {
 			ActorCompRendering->RenderResolution = RenderingResolution;
 			ActorCompRendering->ShaderIndex      = ActorRenderRes->__ACTOR_SHADER_ITEM;
 			ActorCompRendering->VertexGroupIndex = ActorRenderRes->__ACTOR_VERTEX_ITEM;
-			ActorCompRendering->RenderMatrix     = &MatrixDataWindow;
 			
 			// load rendering texture.
 			if (VirTextureExist(ActorRenderRes->__VIR_TEXTURE_ITEM)) {

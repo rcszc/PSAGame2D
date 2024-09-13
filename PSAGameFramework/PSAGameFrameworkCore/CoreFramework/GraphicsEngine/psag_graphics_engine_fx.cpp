@@ -15,7 +15,9 @@ namespace GraphicsEnginePVFX {
 
 		TextureViewItem = CreateTexView.CreateTexture();
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx image_view system, create: %u x %u", 
-			image_data.Width, image_data.Height);
+			image_data.Width, image_data.Height
+		);
+		// image_view: managed by object.
 	}
 
 	PsagGLEngineFxImageView::~PsagGLEngineFxImageView() {
@@ -29,7 +31,7 @@ namespace GraphicsEnginePVFX {
 	};
 
 	PsagGLEngineFxCaptureView::PsagGLEngineFxCaptureView(
-		const Vector2T<uint32_t>& render_resolution, bool clear_buffer
+		const Vector2T<uint32_t>& render_resolution, bool clear_oper
 	) {
 		// generate unique_id.
 		PSAG_SYS_GENERATE_KEY GenResourceID;
@@ -42,11 +44,11 @@ namespace GraphicsEnginePVFX {
 
 		TextureViewItem = CreateTexView.CreateTexture();
 
-		if (clear_buffer)
-			BindFrameBufferFunc = [&]() { ShaderRender.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0); };
+		if (clear_oper)
+			BindFrameBufferFunc = [&]() { OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0); };
 		BindFrameBufferFunc = [&]() { 
-			// NCC: non-clear (frame)buffer.
-			ShaderRender.RenderBindFrameBufferNCC(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0);
+			// NCC: non clear frame_buffer.
+			OGLAPI_OPER.RenderBindFrameBufferNCC(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0);
 		};
 		
 		if (CreateFrameBuffer.CreateFrameBuffer()) {
@@ -70,7 +72,7 @@ namespace GraphicsEnginePVFX {
 
 	void PsagGLEngineFxCaptureView::CaptureContextEnd() {
 		// opengl api context unbind.
-		ShaderRender.RenderUnbindFrameBuffer();
+		OGLAPI_OPER.RenderUnbindFrameBuffer();
 	}
 
 	PsagGLEngineFxCaptureView::~PsagGLEngineFxCaptureView() {
@@ -101,8 +103,6 @@ namespace GraphicsEnginePVFX {
 			GraphicShaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
 		}
 
-		// model(mag): "GraphicsEngineDataset::GLEngineStcVertexData". 
-
 		// porj matrix + scale.
 		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 		// convert: glm matrix => imfx matrix.
@@ -132,7 +132,7 @@ namespace GraphicsEnginePVFX {
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
 		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
-		ShaderRender.RenderBindShader(ShaderTemp);
+		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 		
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);
@@ -166,7 +166,7 @@ namespace GraphicsEnginePVFX {
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
 		// frame draw(command).
 		VerStcOperFrameDraw(GetPresetRect());
-		ShaderRender.RenderUnbindShader();
+		OGLAPI_OPER.RenderUnbindShader();
 
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
 #if PSAG_DEBUG_MODE

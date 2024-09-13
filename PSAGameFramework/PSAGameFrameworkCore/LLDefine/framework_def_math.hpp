@@ -15,6 +15,8 @@ constexpr float SystemRenderingOrthoSpace = 100.0f;
 #define __psag_bit_min(a, b) ((b) ^ (((a) ^ (b)) & -((a) < (b))))
 #define __psag_bit_max(a, b) ((a) ^ (((a) ^ (b)) & -((a) < (b))))
 
+#define PSAG_MEM_FMT_STD140 alignas(16)
+
 // vector 2d x, y.
 template <typename mvec>
 struct Vector2T {
@@ -48,9 +50,9 @@ struct Vector4T {
 	const mvec* data() const { return &vector_x; }
 };
 
-struct PsagMatrix2 { float matrix[2 * 2]; };
-struct PsagMatrix3 { float matrix[3 * 3]; };
-struct PsagMatrix4 { float matrix[4 * 4]; };
+struct PSAG_MEM_FMT_STD140 PsagMatrix2 { float matrix[2 * 2]; };
+struct PSAG_MEM_FMT_STD140 PsagMatrix3 { float matrix[3 * 3]; };
+struct PSAG_MEM_FMT_STD140 PsagMatrix4 { float matrix[4 * 4]; };
 
 #define PsagClamp(val, min, max) ((val) < (min) ? (min) : ((val) > (max) ? (max) : (val)))
 

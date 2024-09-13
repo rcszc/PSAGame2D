@@ -108,10 +108,13 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	PawnActorOBJ->ActorModifyState(PawnActorOBJ->ActorGetPosition(), PawnActorAngle);
 
 	// camera move pawn.
-	PlayerCamera->PlayerCameraRun(MappingWinCoord, PawnActorOBJ->ActorGetMoveSpeed());
-
+	//PlayerCamera->PlayerCameraRunFixed(MappingWinCoord, PawnActorOBJ->ActorGetMoveSpeed());
+	   
 	// 摄像机抖动.
-	RunningState.CameraParams->MatrixPosition = PlayerCamera->GetCameraPosition();
+	RunningState.CameraParams->MatrixPosition = Vector2T<float>(
+		-PawnActorOBJ->ActorGetPosition().vector_x * 10.0f,
+		PawnActorOBJ->ActorGetPosition().vector_y * 10.0f
+	);
 
 	// 鼠标左键, 循环计时器, 剩余子弹,  非换弹时间.
 	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerFlagGet() && 
@@ -187,5 +190,11 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	RunningState.CameraParams->MatrixScale = Vector2T<float>(1.32f, 1.32f);
 	RunningState.PostShaderParams->GameSceneFilterAVG   = 0.28f;
 	RunningState.PostShaderParams->GameSceneBloomRadius = 18;
+
+	RunningState.PostShaderParams->LightPosition = Vector2T<float>(-128.0f, -128.0f);
+	RunningState.PostShaderParams->LightIntensity = 0.2f;
+	RunningState.PostShaderParams->LightColor = Vector3T<float>(1.0f, 0.92f, 0.72f);
+	RunningState.PostShaderParams->LightIntensityDecay = 0.0f;
+	RunningState.PostShaderParams->LightSampleStep = 160;
 	return true;
 }

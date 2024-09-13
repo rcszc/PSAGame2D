@@ -128,54 +128,49 @@ namespace GameComponents {
 		public GraphicsEngineDataset::GLEngineSmpTextureData
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender  = {};
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                 ShaderUniform = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER  = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                  ShaderUniform = {};
 	public:
 		ResUnique ShaderIndex      = NULL;
 		ResUnique VertexGroupIndex = NULL;
 
 		Vector2T<float> RenderResolution = {};
-		// referencing global static_pointer(matrix).
-		PsagMatrix4* RenderMatrix = nullptr;
-
+		
 		std::function<void(PsagShader)> RenderingTextureFunc = [&](PsagShader) {};
-		ResUnique VirTexItem = NULL;
 		GraphicsEngineDataset::VirTextureUniformName VirTexUniform = {};
+		ResUnique VirTexItem = NULL;
 
 		virtual void UpdateActorRendering(const RenderingParams& params, float time_count);
 		virtual void UpdateActorRenderingTexture(PsagShader shader);
 	};
 
-	// non-NULL_OBJ.
+	// actor coordinate_convert tool(s).
 	class ActorCoordConvert :public GraphicsEngineMatrix::PsagGLEngineMatrix {
 	public:
 		Vector2T<float> ConvertSceneToWindow(Vector2T<uint32_t> window_size, Vector2T<float> position);
 	};
 
 	namespace null {
-		// NULL_OBJ: 'ActorActionLogic'.
+		// actor_action_logic components: [NULL-OBJ].
 		class ActorActionLogicNULL :public ActorActionLogic {
 		public:
 			ActorActionLogicNULL() {};
 			void UpdateActorActionLogic(Actor* actor_this) override {};
 		};
-
-		// NULL_OBJ: 'ActorSpaceTrans'.
+		// actor_space_trans components: [NULL-OBJ].
 		class ActorSpaceTransNULL :public ActorSpaceTrans {
 		public:
 			ActorSpaceTransNULL(const std::string& phy_world, PhyBodyKey phy_body) : ActorSpaceTrans(phy_world, phy_body) {}
 			void UpdateActorTrans(Vector2T<float>& position, float& rotate) override {};
 			void SetActorState(const Vector2T<float>& pos, float angle) override {};
 		};
-
-		// NULL_OBJ: 'ActorHealthTrans'.
+		// actor_health_trans components: [NULL-OBJ].
 		class ActorHealthTransNULL : public ActorHealthTrans {
 		public:
 			ActorHealthTransNULL() {};
 			void UpdateActorHealthTrans() override {};
 		};
-
-		// NULL_OBJ: 'ActorRendering'.
+		// actor_rendering components: [NULL-OBJ].
 		class ActorRenderingNULL : public ActorRendering {
 		public:
 			void UpdateActorRendering(const RenderingParams& params, float time_count) override {};
@@ -325,15 +320,14 @@ namespace GameActorCore {
 		GameComponents::ActorPrivateINFO ThisActor = {};
 		GameComponents::ActorPrivateINFO ThatActor = {};
 
-		GameCollisionPAIR(
-			const GameComponents::ActorPrivateINFO& a_this,
-			const GameComponents::ActorPrivateINFO& a_that
-		) : ThisActor(a_this), ThatActor(a_that) {}
+		GameCollisionPAIR(const GameComponents::ActorPrivateINFO& a_this, const GameComponents::ActorPrivateINFO& a_that) :
+			ThisActor(a_this), ThatActor(a_that) 
+		{}
 	};
 
 	enum ActorPhyMode {
-		ActorPhysicsMove  = 1 << 1,
-		ActorPhysicsFixed = 1 << 2
+		ActorPhysicsFixed = 1 << 1,
+		ActorPhysicsMove  = 1 << 2,
 	};
 	// init(config) descriptor.
 	struct GameActorExecutorDESC {
@@ -390,7 +384,6 @@ namespace GameActorCore {
 	class GameActorExecutor :
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
-		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public __ACTOR_MODULES_TIMESTEP
 	{
 	protected:
@@ -557,7 +550,6 @@ namespace GameBrickCore {
 	class GameBrickExecutor :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineSmpTextureData,
-		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:

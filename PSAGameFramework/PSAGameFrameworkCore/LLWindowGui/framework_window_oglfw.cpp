@@ -141,7 +141,10 @@ namespace PSAG_WINDOW_OGLFW {
 
         // COMPAT PROFILE ¼æÈÝÄ£Ê½.
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-
+#if PSAG_DEBUG_MODE == false
+        // opengl_ext:"GL_KHR_no_error" => no_err_state. psag(release).
+        glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_TRUE);
+#endif
         // glfw.version 3.2+ [profile].
         // glfw.version 3.0+
         if (version[0] > GLFW_VERSION_HEADER) {

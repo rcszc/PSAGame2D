@@ -28,14 +28,10 @@ namespace GraphicsEngineDataset {
 	};
 
 	// LLRES => stc_vertex_data system. (static vertex data)
-	// => MODULE(update: 20240506):
-	// derive class:
-	// "GraphicsEnginePost::PsagGLEnginePost"
-	// "GraphicsEngineBackground::PsagGLEngineBackground"
-	// [Actor] [FX]
+	// static vertex_data alloc/delete, thread_safe.
 	class GLEngineStaticVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
-		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER;
 		// opengl vao,vbo handle(res).
 		static ResUnique VertexAttribute;
 		static ResUnique VertexBuffer;
@@ -61,12 +57,10 @@ namespace GraphicsEngineDataset {
 	};
 
 	// LLRES => dy_vertex_data system. (dynamic vertex data)
-	// => MODULE(update: 20240505):
-	// derive class:
-	// "GraphicsEngineParticle::PsagGLEngineParticle"
+	// dynamic vertex_data alloc/delete/push, thread_safe.
 	class GLEngineDynamicVertexData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
-		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER;
 		// opengl vao,vbo handle(res).
 		static ResUnique VertexAttribute;
 		static ResUnique VertexBuffer;
@@ -124,7 +118,7 @@ namespace GraphicsEngineDataset {
 		uint32_t ResolutionType;
 		ResUnique Texture;
 
-		uint32_t        SampleLayers;   // simpler-z offset
+		uint32_t        SampleLayers;   // texture layers_offset.
 		Vector2T<float> SampleCropping; // x,y:[0.0f,1.0f]
 		Vector2T<float> SampleSize;     // x,y:[image_size]
 
@@ -135,10 +129,10 @@ namespace GraphicsEngineDataset {
 	};
 
 	struct VirTextureUniformName {
-		const char* TexParamSampler;  // u_type"sampler2DArray"
-		const char* TexParamLayer;    // u_type"int"
-		const char* TexParamCropping; // u_type"vec2"
-		const char* TexParamSize;     // u_type"vec2"
+		const char* TexParamSampler;  // uniform_type: "sampler2DArray"
+		const char* TexParamLayer;    // uniform_type: "int"
+		const char* TexParamCropping; // uniform_type: "vec2"
+		const char* TexParamSize;     // uniform_type: "vec2"
 	};
 
 	// global textures generate numbers.
@@ -156,7 +150,7 @@ namespace GraphicsEngineDataset {
 	// derive class:
 	class GLEngineSmpTextureData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
-		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender;
+		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER;
 		static PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform;
 
 		static SamplerTextures TexturesSize1X; // 1/8 resolution.
@@ -227,6 +221,7 @@ namespace GraphicsShaderCode {
 	extern GraphicsEngineLayerRes GLOBALRES;
 }
 
+// graphics_engine timestep, mainevent => GE.
 class __GRAPHICS_ENGINE_TIMESETP {
 protected:
 	static float GraphicsEngineTimeStep;
@@ -248,17 +243,20 @@ namespace GraphicsEngineMatrix {
 
 	class PsagGLEngineMatrix :public PsagLow::PsagSupGraphicsLLRES {
 	private:
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ProcessUniform = {};
 		ResUnique UniformBuffer = {};
 		glm::mat4 GetOrthoProjMatrix(float scale_size);
 	protected:
-		static MatrixTransParams MatrixWorldCamera;
+		static MatrixTransParams MatrixMainCamera;
 		static PsagMatrix4       MatrixDataRect;
 		static PsagMatrix4       MatrixDataWindow;
 
 		glm::mat4 UpdateCalcMatrix(const glm::mat4& in_matrix, const MatrixTransParams& params);
 		PsagMatrix4 UpdateEncodeMatrix(const glm::mat4& matrix, float scale);
 
+		// framework main_event call update.
 		void CreateMatrixUniform();
+		void UpdateMatrixUniform(float roatio_value);
 	};
 }
 
@@ -296,7 +294,7 @@ namespace GraphicsEnginePost {
 
 	class PsagGLEnginePost :public GraphicsEngineDataset::GLEngineStaticVertexData {
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
@@ -321,7 +319,7 @@ namespace GraphicsEnginePost {
 		// 0:framebuffer_h, 1:framebuffer_v.
 		ResUnique BloomFrameBuffers[2] = {};
 
-		// texture_array(5-layers):
+		// texture_array(5-layers constant):
 		// 0: light_process
 		// 1: color_filter, 2:frame_buffer_tex, 3:bloom_h_tex, 4:bloom_v_tex
 		ResUnique ProcessTextures = {};
@@ -351,8 +349,6 @@ namespace GraphicsEngineBackground {
 	StaticStrLABEL PSAGM_GLENGINE_BACK_LABEL = "PSAG_GL_BACK";
 
 	struct BackFxParameters {
-		// value[0.0,1.0]
-		float BackgroundVisibility;
 		// strength x:back_v, y:front_v.
 		Vector2T<float> BackgroundStrength;
 		Vector4T<float> BackgroundColor;
@@ -360,12 +356,15 @@ namespace GraphicsEngineBackground {
 		Vector2T<float> BackgroundMove;
 		Vector2T<float> BackgroundScale;
 
+		// value: 0.0f - 1.0f (多级能见度强度).
+		float BackgroundVisibility;
+
 		BackFxParameters() :
-			BackgroundVisibility(1.0f), 
 			BackgroundColor     (Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
 			BackgroundStrength  (Vector2T<float>(1.0f, 1.0f)),
 			BackgroundMove      (Vector2T<float>(0.0f, 0.0f)),
-			BackgroundScale     (Vector2T<float>(1.0f, 1.0f))
+			BackgroundScale     (Vector2T<float>(1.0f, 1.0f)),
+			BackgroundVisibility(1.0f)
 		{}
 	};
 
@@ -381,7 +380,7 @@ namespace GraphicsEngineBackground {
 		public PsagGLEngineBackgroundBase
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 		// shader rendering size, shader_uniform.
 		Vector2T<float> RenderingResolution = {};
@@ -447,6 +446,8 @@ namespace GraphicsEngineParticle {
 		float ParticleScaleSize;
 		float ParticleLife;
 		bool  ParticleLifeSwitch;
+
+		// particle color(system) channels draw_type mode.
 		ParticlesGenMode::ColorChannelMode ParticleModeType;
 
 		constexpr ParticleAttributes() :
@@ -540,17 +541,17 @@ namespace GraphicsEngineParticle {
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	private:
-		// clac_mode: CALC_PARALLEL => create.
+		// clac_mode: CALC_PARALLEL => create thread_pool.
 		PSAG_THREAD_POOL::PsagThreadTasks* ThreadsParallel = nullptr;
 		size_t DataBlockSize = NULL;
 
-		void CalcUpdateParticlesPARA(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
 		void CalcUpdateParticlesNULL(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {};
+		void CalcUpdateParticlesPARA(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
 		void CalcUpdateParticles    (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
 
 		std::function<void(std::vector<ParticleAttributes>&, float, float)> UPDATE_CALC_FUNC = {};
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
 		std::vector<ParticleAttributes> DataParticles = {};
@@ -609,14 +610,14 @@ namespace GraphicsEnginePVFX {
 	// captrue => texture_view.
 	class PsagGLEngineFxCaptureView :public PsagLow::PsagSupGraphicsLLRES {
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagTextureView TextureViewItem = {};
 		ResUnique FrameBufferItem = {};
 
 		std::function<void()> BindFrameBufferFunc = [&]() {};
 	public:
 		PsagGLEngineFxCaptureView(
-			const Vector2T<uint32_t>& render_resolution, bool clear_buffer = true
+			const Vector2T<uint32_t>& render_resolution, bool clear_oper = true
 		);
 		~PsagGLEngineFxCaptureView();
 
@@ -642,16 +643,16 @@ namespace GraphicsEnginePVFX {
 	protected:
 		static float SystemTimeStep;
 
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState ShaderRender = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
+		ResUnique ShaderPostProgram = {};
 
 		SequencePlayer  PlayerParams   = {};
 		Vector2T<float> PlayerPosition = {};
 		float           PlayerTimer    = 0.0f;
 
-		ResUnique   ShaderPostProgram = {};
-		float       RenderTimer       = 0.0f;
-		PsagMatrix4 RenderMatrix      = {};
+		float       RenderTimer  = 0.0f;
+		PsagMatrix4 RenderMatrix = {};
 
 		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};

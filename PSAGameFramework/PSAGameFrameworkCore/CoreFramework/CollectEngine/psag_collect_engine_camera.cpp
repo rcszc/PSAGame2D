@@ -20,6 +20,11 @@ namespace CollectEngineCamera {
 		CALC_LERP_SCALE = hardness;
 	}
 
+	void GamePlayerComaeraMP::PlayerCameraLerpValue(float value) {
+		if (value < 0.0f || value > 20.0f) return;
+		CALC_LERP_SCALE = value;
+	}
+
 	void GamePlayerComaeraMP::PlayerCameraRun(const Vector2T<float>& window_coord, const Vector2T<float>& actor_speed) {
 		// clac camera x+-,y+- > win_range ? => move camera.
 		if (window_coord.vector_x > WindowResolution.vector_x * (0.5f - WindowRectRange.vector_x))
@@ -36,6 +41,14 @@ namespace CollectEngineCamera {
 
 		CameraPosition.vector_x += (CameraPositionTarget.vector_x - CameraPosition.vector_x) * 0.05f * CALC_LERP_SCALE;
 		CameraPosition.vector_y += (CameraPositionTarget.vector_y - CameraPosition.vector_y) * 0.05f * CALC_LERP_SCALE;
+	}
+
+#define CAMERA_COORD_SACLE 10.0f
+	void GamePlayerComaeraMP::PlayerCameraRunFixed(const Vector2T<float>& actor_position) {
+		CameraPosition = Vector2T<float>(
+			actor_position.vector_x * -CAMERA_COORD_SACLE,
+			actor_position.vector_y *  CAMERA_COORD_SACLE
+		);
 	}
 
 	Vector2T<float> GamePlayerComaeraMP::GetCameraPosition(const Vector2T<float>& camera_offset) {
