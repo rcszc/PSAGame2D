@@ -308,6 +308,9 @@
     <None Include="PSAGameFrameworkCore\framework_config.json">
       <Filter>源文件\PSAGameFrameworkCore</Filter>
     </None>
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_template_actor.vert">
+      <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\public</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h">

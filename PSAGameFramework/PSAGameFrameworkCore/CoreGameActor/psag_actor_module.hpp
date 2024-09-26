@@ -180,8 +180,6 @@ namespace GameComponents {
 }
 
 namespace GameActorScript {
-	// vertex_shader public: 'actor', 'brick'.
-	extern const char* PsagShaderPublicVert;
 	extern const char* PsagShaderPrivateFrag_Brick;
 }
 

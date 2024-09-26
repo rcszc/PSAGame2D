@@ -80,6 +80,9 @@ namespace PsagFrameworkCore {
 		// config system shaders.
 		GraphicsShaderCode::GraphicsShadersDESC GraphShaders = {};
 
+		GraphShaders.PublicShaders.ShaderVertTemplateActor =
+			PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_template_actor.vert");
+
 		GraphShaders.PublicShaders.ShaderVertTemplate = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_template.vert");
 		GraphShaders.PublicShaders.ShaderFragTools    = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_tools.frag");
 		GraphShaders.PublicShaders.ShaderFragHeader   = PsagLow::PsagSupLoader::TextFileLoader("PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_header.frag");

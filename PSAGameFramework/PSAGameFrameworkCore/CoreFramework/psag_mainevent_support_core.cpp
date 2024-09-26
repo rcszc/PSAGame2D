@@ -14,7 +14,7 @@ namespace PsagFrameworkCore {
 
     // **************** core static init ****************
 
-    GraphicsEngineFinal::PsagGLEngineFinal*                 PSAGame2DFramework::RendererPostFX = nullptr;
+    GraphicsEngineFinal::PsagGLEngineFinal*               PSAGame2DFramework::RendererPostFX = nullptr;
     GraphicsEngineBackground::PsagGLEngineBackgroundBase* PSAGame2DFramework::RendererBackFX = nullptr;
 
     GameLogic::FrameworkParams PSAGame2DFramework::FrameworkParams = {};
@@ -62,17 +62,17 @@ namespace PsagFrameworkCore {
             RenderGuiContextA();
 #if PSAG_DEBUG_MODE 
             if (RendererPostFX != nullptr) {
+                // game scene => final shaders porcessing.
                 auto GAME_SCENE = [&]() { return FrameworkRenderingGameScene(); };
                 CoreErrorFlag |= !RendererPostFX->CaptureGameScene(GAME_SCENE);
                 // render_pipline out_render.
                 RendererPostFX->RenderingPostModule();
-                //FrameworkRenderingGameScene();
             }
 #else
             auto GAME_SCENE = [&]() { return FrameworkRenderingGameScene(); };
             CoreErrorFlag |= !RendererPostFX->CaptureGameScene(GAME_SCENE);
-#endif
             RendererPostFX->RenderingPostModule();
+#endif
             RenderGuiContextB();
         }
         RenderContextBelow();

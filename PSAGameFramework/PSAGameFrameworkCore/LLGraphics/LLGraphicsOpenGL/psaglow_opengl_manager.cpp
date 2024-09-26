@@ -776,6 +776,16 @@ namespace RenderingSupport {
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 		ApiThisStateContext = NullContext;
 	}
+
+	void PsagOpenGLApiRenderState::SwitchRenderModeLINES() {
+		glLineWidth(2.0f);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	void PsagOpenGLApiRenderState::SwitchRenderModeFILL() {
+		glLineWidth(1.0f);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 // **************************************** Information ****************************************

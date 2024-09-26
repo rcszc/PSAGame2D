@@ -18,7 +18,7 @@ namespace GameLogic {
     // framework run parameters.
     struct FrameworkParams {
         GraphicsEngineMatrix::MatrixTransParams*    CameraParams;
-        GraphicsEngineFinal::PostFxParameters*       PostShaderParams;
+        GraphicsEngineFinal::FinalFxParameters*     PostShaderParams;
         GraphicsEngineBackground::BackFxParameters* BackShaderParams;
 
         Vector2T<uint32_t> WindowResolution;

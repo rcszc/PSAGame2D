@@ -216,6 +216,7 @@
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_vollight.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_header.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_template.vert" />
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_template_actor.vert" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_tools.frag" />
     <None Include="PSAGameFrameworkCore\framework_config.json" />
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json" />

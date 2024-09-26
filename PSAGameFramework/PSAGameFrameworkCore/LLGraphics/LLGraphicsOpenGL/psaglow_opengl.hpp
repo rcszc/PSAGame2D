@@ -271,6 +271,9 @@ namespace RenderingSupport {
 		void RenderUnbindTexture();
 		void RenderUnbindFrameBuffer();
 
+		void SwitchRenderModeLINES();
+		void SwitchRenderModeFILL();
+
 		// global state: opengl context. (non-thread-safe)
 		OpenGLApiContext GET_THIS_CONTEXT() { return ApiThisStateContext; };
 

@@ -189,9 +189,11 @@ namespace GraphicsShaderCode {
 
 	struct PublicDESC {
 		std::string ShaderVertTemplate;
+		std::string ShaderVertTemplateActor;
 		std::string ShaderFragTools;
 		std::string ShaderFragHeader;
 	};
+
 	struct PrivateDESC {
 		std::string shaderFragMultFilter; // [final_shaders]
 		std::string ShaderFragBloomH;     // [final_shaders]
@@ -264,7 +266,7 @@ namespace GraphicsEngineMatrix {
 namespace GraphicsEngineFinal {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
-	struct PostFxParameters {
+	struct FinalFxParameters {
 		Vector3T<float> GameSceneFilterCOL; // lv1: color_channels.
 		float           GameSceneFilterAVG; // lv2: color_avg.
 
@@ -282,7 +284,7 @@ namespace GraphicsEngineFinal {
 		// light fragment rgb_avg_value collision.
 		float LightCollisionValue;
 		
-		PostFxParameters() :
+		FinalFxParameters() :
 			GameSceneFilterCOL  (Vector3T<float>()),
 			GameSceneFilterAVG  (0.0f),
 			GameSceneBloomRadius(1),
@@ -337,7 +339,7 @@ namespace GraphicsEngineFinal {
 		void ShaderRenderingLight();
 		void ShaderRenderingBloom();
 
-		PostFxParameters RenderParameters = {};
+		FinalFxParameters RenderParameters = {};
 	public:
 		PsagGLEngineFinal(const Vector2T<uint32_t>& render_resolution);
 		~PsagGLEngineFinal();
@@ -347,7 +349,7 @@ namespace GraphicsEngineFinal {
 
 		// rendering-event.
 		void RenderingPostModule();
-		PostFxParameters* GetRenderParameters() { return &RenderParameters; }
+		FinalFxParameters* GetRenderParameters() { return &RenderParameters; }
 	};
 }
 
