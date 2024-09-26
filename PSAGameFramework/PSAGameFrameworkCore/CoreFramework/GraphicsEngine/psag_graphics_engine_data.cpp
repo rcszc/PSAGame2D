@@ -339,17 +339,17 @@ namespace GraphicsEngineDataset {
 		}
 	}
 
-	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState GLEngineSmpTextureData::OGLAPI_OPER = {};
-	PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform GLEngineSmpTextureData::ShaderUniform = {};
+	PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState GLEngineVirTextureData::OGLAPI_OPER = {};
+	PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform GLEngineVirTextureData::ShaderUniform = {};
 
-	SamplerTextures GLEngineSmpTextureData::TexturesSize1X = {};
-	SamplerTextures GLEngineSmpTextureData::TexturesSize2X = {};
-	SamplerTextures GLEngineSmpTextureData::TexturesSize4X = {};
-	SamplerTextures GLEngineSmpTextureData::TexturesSize8X = {};
+	SamplerTextures GLEngineVirTextureData::TexturesSize1X = {};
+	SamplerTextures GLEngineVirTextureData::TexturesSize2X = {};
+	SamplerTextures GLEngineVirTextureData::TexturesSize4X = {};
+	SamplerTextures GLEngineVirTextureData::TexturesSize8X = {};
 
-	unordered_map<ResUnique, VirTextureParam> GLEngineSmpTextureData::TexIndexItems = {};
+	unordered_map<ResUnique, VirTextureParam> GLEngineVirTextureData::TexIndexItems = {};
 
-	uint32_t GLEngineSmpTextureData::CheckResolutionType(const Vector2T<uint32_t>& size) {
+	uint32_t GLEngineVirTextureData::CheckResolutionType(const Vector2T<uint32_t>& size) {
 		uint32_t ResolutionType = NULL;
 		auto CheckSizeFunc = [&](const Vector2T<uint32_t>& size, const Vector2T<uint32_t>& base) {
 			return bool(size.vector_x <= base.vector_x && size.vector_y <= base.vector_y);
@@ -362,13 +362,13 @@ namespace GraphicsEngineDataset {
 		return ResolutionType;
 	}
 
-	VirTextureParam* GLEngineSmpTextureData::FindTexIndexItems(ResUnique rukey) {
+	VirTextureParam* GLEngineVirTextureData::FindTexIndexItems(ResUnique rukey) {
 		// unqiue number != 0(null).
 		if (rukey == NULL) return nullptr;
 		return (TexIndexItems.find(rukey) != TexIndexItems.end()) ? &TexIndexItems[rukey] : nullptr;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemAlloc(ResUnique rukey, const ImageRawData& image) {
+	bool GLEngineVirTextureData::VirTextureItemAlloc(ResUnique rukey, const ImageRawData& image) {
 		SamplerTextures* TextureIndex = nullptr;
 		const char* TexResLabel = "NULL";
 		
@@ -449,7 +449,7 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemAllocEmpty(ResUnique rukey, const Vector2T<uint32_t>& size) {
+	bool GLEngineVirTextureData::VirTextureItemAllocEmpty(ResUnique rukey, const Vector2T<uint32_t>& size) {
 		ImageRawData EmptyImageTemp = {};
 		EmptyImageTemp.ImagePixels = {};
 		// set virtual resolution.
@@ -463,7 +463,7 @@ namespace GraphicsEngineDataset {
 		return true;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemFree(ResUnique rukey) {
+	bool GLEngineVirTextureData::VirTextureItemFree(ResUnique rukey) {
 		SamplerTextures* TextureIndex = nullptr;
 		
 		VirTextureParam* TexParam = FindTexIndexItems(rukey);
@@ -498,11 +498,11 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureExist(ResUnique rukey) {
+	bool GLEngineVirTextureData::VirTextureExist(ResUnique rukey) {
 		return FindTexIndexItems(rukey) == nullptr ? false : true;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemDraw(ResUnique rukey, PsagShader shader, const VirTextureUniformName& uniform_name) {
+	bool GLEngineVirTextureData::VirTextureItemDraw(ResUnique rukey, PsagShader shader, const VirTextureUniformName& uniform_name) {
 		// find virtual texture item_idx.
 		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
@@ -525,7 +525,7 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	bool GLEngineSmpTextureData::VirTextureItemIndex(ResUnique rukey, PsagTexture& texture, uint32_t layer_index) {
+	bool GLEngineVirTextureData::VirTextureItemIndex(ResUnique rukey, PsagTexture& texture, uint32_t layer_index) {
 		// find virtual texture item_idx.
 		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
@@ -542,7 +542,7 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
-	void GLEngineSmpTextureData::VirtualTextureDataObjectCreate(Vector2T<uint32_t> base_size, const VirTexturesGenParams& params) {
+	void GLEngineVirTextureData::VirtualTextureDataObjectCreate(Vector2T<uint32_t> base_size, const VirTexturesGenParams& params) {
 		if (base_size.vector_x < 512 || base_size.vector_y < 512)
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_create texture, base_size > 512.");
 
@@ -625,7 +625,7 @@ namespace GraphicsEngineDataset {
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "vir_create texture[1x] size: %s", PrintSizeFunc(TexturesSize1X.TextureResolution).c_str());
 	}
 
-	void GLEngineSmpTextureData::VirtualTextureDataObjectDelete() {
+	void GLEngineVirTextureData::VirtualTextureDataObjectDelete() {
 		// free sampler & free textures.
 		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(TexturesSize8X.TextureArrayIndex).TextureSamplerCount);
 		GraphicSamplers->FreeTexMapUnitCount(GraphicTextures->ResourceFind(TexturesSize4X.TextureArrayIndex).TextureSamplerCount);

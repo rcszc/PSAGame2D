@@ -6,7 +6,7 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace GameActorScript {
-	const char* PsagShaderPublicVS = R"(
+	const char* PsagShaderPublicVert = R"(
 #version 460 core
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec4 VertexColor;
@@ -41,7 +41,7 @@ void main()
 	FxCoord = VertexTexture;
 }
 )";
-	const char* PsagShaderPrivateFS_Brick = R"(
+	const char* PsagShaderPrivateFrag_Brick = R"(
 #version 460 core
 
 in vec4 FxColor;

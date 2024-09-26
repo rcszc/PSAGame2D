@@ -70,7 +70,7 @@ namespace GameBrickCore {
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode     = BrickUniqueID;
-		ActorPhyConfig.CollVertexGroup     = PhysicsEngine::PresetVertexGroupSqua(); // default vertex_group.
+		ActorPhyConfig.CollVertexGroup     = PhysicsEngine::PresetVertexGroupRECT(); // default vertex_group.
 		ActorPhyConfig.PhysicsModeTypeFlag = false;
 
 		// 多边形碰撞,非传感器.

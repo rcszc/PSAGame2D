@@ -1,4 +1,5 @@
 // psag_graphics_engine_system. RCSZ. [middle_level_engine]
+// update: 2024_09_26.
 
 #ifndef __PSAG_GRAPHICS_ENGINE_H
 #define __PSAG_GRAPHICS_ENGINE_H
@@ -148,7 +149,7 @@ namespace GraphicsEngineDataset {
 	// LLRES => texture(array) data system. (sampler texture data)
 	// => MODULE(update: 20240513):
 	// derive class:
-	class GLEngineSmpTextureData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
+	class GLEngineVirTextureData :public PsagLow::PsagSupGraphicsLLRES, public GLEngineDataSTATE {
 	private:
 		static PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER;
 		static PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform;
@@ -192,10 +193,10 @@ namespace GraphicsShaderCode {
 		std::string ShaderFragHeader;
 	};
 	struct PrivateDESC {
-		std::string shaderFragColorFilter; // [post_sh_group]
-		std::string ShaderFragBloomH;      // [post_sh_group]
-		std::string ShaderFragBloomV;      // [post_sh_group]
-		std::string ShaderFragFinalPhase;  // [post_sh_group]
+		std::string shaderFragMultFilter; // [final_shaders]
+		std::string ShaderFragBloomH;     // [final_shaders]
+		std::string ShaderFragBloomV;     // [final_shaders]
+		std::string ShaderFragFinalPhase; // [final_shaders]
 		std::string ShaderFragBackground;
 		std::string ShaderFragLight;
 		std::string ShaderFragParticle;
@@ -260,7 +261,7 @@ namespace GraphicsEngineMatrix {
 	};
 }
 
-namespace GraphicsEnginePost {
+namespace GraphicsEngineFinal {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
 	struct PostFxParameters {
@@ -277,6 +278,9 @@ namespace GraphicsEnginePost {
 		float           LightIntensity;
 		float           LightIntensityDecay;
 		int32_t         LightSampleStep;
+
+		// light fragment rgb_avg_value collision.
+		float LightCollisionValue;
 		
 		PostFxParameters() :
 			GameSceneFilterCOL  (Vector3T<float>()),
@@ -284,15 +288,16 @@ namespace GraphicsEnginePost {
 			GameSceneBloomRadius(1),
 			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),
 
-			LightPosition      (Vector2T<float>()),
+			LightPosition      (Vector2T<float>(0.0f, 0.0f)),
 			LightColor         (Vector3T<float>(1.0f, 1.0f, 1.0f)),
 			LightIntensity     (0.0f),
 			LightIntensityDecay(0.0f),
+			LightCollisionValue(0.08554f),
 		    LightSampleStep    (1)
 		{}
 	};
 
-	class PsagGLEnginePost :public GraphicsEngineDataset::GLEngineStaticVertexData {
+	class PsagGLEngineFinal :public GraphicsEngineDataset::GLEngineStaticVertexData {
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
@@ -304,12 +309,13 @@ namespace GraphicsEnginePost {
 
 		// bloom shader hv mvp != scene mvp.
 		PsagMatrix4 RenderingMatrixMvp = {};
-		ResUnique ShaderPostProgram = {};
+		ResUnique ShaderProcessFinal = {};
+
 		// scene => volumetric_light.
 		ResUnique ShaderVolumLight = {};
 
-		// filter => bloom_h + bloom_v => post_shader.
-		ResUnique ShaderFilter = {}, ShaderBloomH = {}, ShaderBloomV = {};
+		// light => filter => blur(bloom)_h + blur(bloom)_v => final_shader.
+		ResUnique ShaderFilter = {}, ShaderBlurXaxis = {}, ShaderBlurYaxis = {};
 		
 		ResUnique GameSceneFrameBuffer  = {};
 		ResUnique GameSceneRenderBuffer = {};
@@ -320,10 +326,10 @@ namespace GraphicsEnginePost {
 		ResUnique BloomFrameBuffers[2] = {};
 
 		// texture_array(5-layers constant):
-		// 0: light_process
-		// 1: color_filter, 2:frame_buffer_tex, 3:bloom_h_tex, 4:bloom_v_tex
+		// 0: vollight_light process.
+		// 1: color_filter, 2:frame_buffer_tex, 3:blur_h_texture, 4:blur_v_texture.
 		ResUnique ProcessTextures = {};
-		// topmost, fmt: -1.0f
+		// topmost, format_z layer: -1.0f
 		ResUnique RenderRect = {};
 
 		// vertex default: move,scale.
@@ -333,8 +339,8 @@ namespace GraphicsEnginePost {
 
 		PostFxParameters RenderParameters = {};
 	public:
-		PsagGLEnginePost(const Vector2T<uint32_t>& render_resolution);
-		~PsagGLEnginePost();
+		PsagGLEngineFinal(const Vector2T<uint32_t>& render_resolution);
+		~PsagGLEngineFinal();
 
 		// game_main scene => capture => process.
 		bool CaptureGameScene(const std::function<bool()>& rendering_func);
@@ -386,7 +392,7 @@ namespace GraphicsEngineBackground {
 		Vector2T<float> RenderingResolution = {};
 		PsagMatrix4     RenderingMatrixMvp  = {};
 
-		ResUnique ShaderPostProgram = {};
+		ResUnique ShaderProcessFinal = {};
 
 		float TextureTopLayer = 0.0f;
 		// texture_array(n * layers), x:tex_idx[1,n-1], y:tex_idx[n].
@@ -536,7 +542,7 @@ namespace GraphicsEngineParticle {
 
 	class PsagGLEngineParticle :
 		public GraphicsEngineDataset::GLEngineDynamicVertexData,
-		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public GraphicsEngineDataset::GLEngineVirTextureData,
 		public GraphicsEngineMatrix::PsagGLEngineMatrix,
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
@@ -557,7 +563,7 @@ namespace GraphicsEngineParticle {
 		std::vector<ParticleAttributes> DataParticles = {};
 		std::vector<float>              DataVertices  = {};
 
-		ResUnique ShaderPostProgram = {};
+		ResUnique ShaderProcessFinal = {};
 		ResUnique DyVertexSysItem   = {};
 
 		float           RenderTimer  = 0.0f;
@@ -634,9 +640,9 @@ namespace GraphicsEnginePVFX {
 		float VaxisFrameNumber;
 	};
 
-	// Ãÿ–ß–Ú¡–÷°Ã˘Õº.
+	// fx frame_sequence, player.
 	class PsagGLEngineFxSequence :
-		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public GraphicsEngineDataset::GLEngineVirTextureData,
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
@@ -645,7 +651,7 @@ namespace GraphicsEnginePVFX {
 
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
-		ResUnique ShaderPostProgram = {};
+		ResUnique ShaderProcessFinal = {};
 
 		SequencePlayer  PlayerParams   = {};
 		Vector2T<float> PlayerPosition = {};

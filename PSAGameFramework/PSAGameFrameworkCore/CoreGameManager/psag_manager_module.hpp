@@ -46,7 +46,7 @@ namespace GameManagerCore {
 
 				ParticlesVecRandom(Vector2T<float>(-1.0f, 1.0f)),
 				ParticlesPosRandom(Vector2T<float>(-1.0f, 1.0f)),
-				ParticlesPosOffset(Vector2T<float>(0.0f, 0.0f))
+				ParticlesPosOffset(Vector2T<float>( 0.0f, 0.0f))
 			{}
 		};
 

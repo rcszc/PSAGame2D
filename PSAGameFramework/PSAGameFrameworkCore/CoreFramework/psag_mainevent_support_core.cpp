@@ -14,7 +14,7 @@ namespace PsagFrameworkCore {
 
     // **************** core static init ****************
 
-    GraphicsEnginePost::PsagGLEnginePost*                 PSAGame2DFramework::RendererPostFX = nullptr;
+    GraphicsEngineFinal::PsagGLEngineFinal*                 PSAGame2DFramework::RendererPostFX = nullptr;
     GraphicsEngineBackground::PsagGLEngineBackgroundBase* PSAGame2DFramework::RendererBackFX = nullptr;
 
     GameLogic::FrameworkParams PSAGame2DFramework::FrameworkParams = {};
@@ -66,6 +66,7 @@ namespace PsagFrameworkCore {
                 CoreErrorFlag |= !RendererPostFX->CaptureGameScene(GAME_SCENE);
                 // render_pipline out_render.
                 RendererPostFX->RenderingPostModule();
+                //FrameworkRenderingGameScene();
             }
 #else
             auto GAME_SCENE = [&]() { return FrameworkRenderingGameScene(); };
@@ -135,7 +136,7 @@ namespace PsagFrameworkCore {
         CoreInitErrorFlag |= !PhysicsWorldCreate("DEFAULT_PHY_WORLD", Vector2T<float>());
 
         // create game2d post-shader & background(null)-shader.
-        RendererPostFX = new GraphicsEnginePost::PsagGLEnginePost(RenderingWindowSize);
+        RendererPostFX = new GraphicsEngineFinal::PsagGLEngineFinal(RenderingWindowSize);
         RendererBackFX = new GraphicsEngineBackground::PsagGLEngineBackgroundNULL();
 
         // init imgui_core system.

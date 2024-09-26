@@ -91,7 +91,7 @@ namespace GameActorCore {
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode = ActorUniqueInfo.ActorUniqueCode;
-		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupSqua(); // default vertex_group.
+		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupRECT(); // default vertex_group.
 
 		// 多边形碰撞,非传感器.
 		ActorPhyConfig.PhyShapeType        = PhysicsEngine::POLYGON_TYPE;

@@ -18,7 +18,7 @@ namespace GameLogic {
     // framework run parameters.
     struct FrameworkParams {
         GraphicsEngineMatrix::MatrixTransParams*    CameraParams;
-        GraphicsEnginePost::PostFxParameters*       PostShaderParams;
+        GraphicsEngineFinal::PostFxParameters*       PostShaderParams;
         GraphicsEngineBackground::BackFxParameters* BackShaderParams;
 
         Vector2T<uint32_t> WindowResolution;
@@ -147,21 +147,21 @@ namespace PsagFrameworkCore {
         public PsagLow::PsagSupWindowGuiEventImGui,
         // update global matrix.
         public GraphicsEngineMatrix::PsagGLEngineMatrix,
-        // public PsagLow::PsagSupGraphicsLLRES, (与"GLEngineVertexDyData"冲突)
+        // public PsagLow::PsagSupGraphicsLLRES. => "GLEngineVertexDyData".
         // init vertex_group_mag(vao,vbo) & vir_texture system.
-        public GraphicsEngineDataset::GLEngineDynamicVertexData,   // dyamic vertex.
-        public GraphicsEngineDataset::GLEngineStaticVertexData,  // static vertex.
-        public GraphicsEngineDataset::GLEngineSmpTextureData, // textures.
+        public GraphicsEngineDataset::GLEngineDynamicVertexData, // vertex_group(dyamic_flag).
+        public GraphicsEngineDataset::GLEngineStaticVertexData,  // vertex_group(static_flag).
+        public GraphicsEngineDataset::GLEngineVirTextureData,    // virtual textures.
         // init physics system.
         public PhysicsEngine::PhyEngineCoreDataset,
         // system time step.
         public __GRAPHICS_ENGINE_TIMESETP,
         public __ACTOR_MODULES_TIMESTEP,
-        // public __PHYSICS_ENGINE_TIMESETP, (与"PhysicsEngine::PhyEngineCoreDataset"冲突)
+        // public __PHYSICS_ENGINE_TIMESETP. => "PhysicsEngine::PhyEngineCoreDataset".
         public __COLLECT_ENGINE_TIMESETP
     {
     private:
-        static GraphicsEnginePost::PsagGLEnginePost* RendererPostFX;
+        static GraphicsEngineFinal::PsagGLEngineFinal* RendererPostFX;
         static GraphicsEngineBackground::PsagGLEngineBackgroundBase* RendererBackFX;
 
         static GameLogic::FrameworkParams FrameworkParams;
@@ -254,7 +254,7 @@ namespace RegisterDevClass {
         }
     };
 
-    class ProfxReflection {
+    class PsagReflectionSYS {
     public:
         template <typename Object>
         // framework devobj_object 获取对象.
@@ -278,7 +278,7 @@ namespace RegisterDevClass {
         void ReflectionObjectDelete(const char* UniqueName);
     };
     // framework reflection call global objects.
-    extern ProfxReflection GAMEREF;
+    extern PsagReflectionSYS GAMEREF;
 }
 // 注册用户类 (inheritance "INTERFACE_DEVCLASS_GAME").
 #define PSAGCLASS(UserClass) \

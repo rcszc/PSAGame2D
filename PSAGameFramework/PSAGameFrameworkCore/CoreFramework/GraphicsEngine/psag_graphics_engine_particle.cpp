@@ -338,8 +338,8 @@ namespace GraphicsEngineParticle {
 
 		// create & storage particles_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
-			GraphicShaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
+			ShaderProcessFinal = GenResourceID.PsagGenUniqueKey();
+			GraphicShaders->ResourceStorage(ShaderProcessFinal, &ShaderProcess);
 		}
 
 		// => mag"GraphicsEngineDataset::GLEngineStcVertexData".
@@ -368,7 +368,7 @@ namespace GraphicsEngineParticle {
 		// free graphics particle resource.
 		VirTextureItemFree(VirTextureItem);
 		VerDyDataItemFree(DyVertexSysItem);
-		GraphicShaders->ResourceDelete(ShaderPostProgram);
+		GraphicShaders->ResourceDelete(ShaderProcessFinal);
 
 		if (ThreadsParallel != nullptr)
 			delete ThreadsParallel;
@@ -384,7 +384,7 @@ namespace GraphicsEngineParticle {
 	}
 
 	void PsagGLEngineParticle::RenderParticleFX() {
-		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
+		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderProcessFinal);
 		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 
 		// system parset uniform.

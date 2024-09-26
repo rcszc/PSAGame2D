@@ -9,14 +9,14 @@ namespace GraphicsShaderCode {
 	
 	void GraphicsEngineLayerRes::Set(const GraphicsShadersDESC& desc) {
 		{
-			lock_guard<mutex> ResLock(ResourceMutex);
+			lock_guard<mutex> ResourceLock(ResourceMutex);
 			ResourecShaders = desc;
 		}
 		PushLogger(LogInfo, PSAGM_GLENGINE_SHADER_LABEL, "graphics_engine config system_glsl.");
 	}
 
 	GraphicsShadersDESC GraphicsEngineLayerRes::Get() {
-		lock_guard<mutex> ResLock(ResourceMutex);
+		lock_guard<mutex> ResourceLock(ResourceMutex);
 		return ResourecShaders;
 	}
 

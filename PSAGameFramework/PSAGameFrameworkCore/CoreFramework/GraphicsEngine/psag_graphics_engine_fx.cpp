@@ -46,23 +46,24 @@ namespace GraphicsEnginePVFX {
 
 		if (clear_oper)
 			BindFrameBufferFunc = [&]() { OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0); };
-		BindFrameBufferFunc = [&]() { 
+		BindFrameBufferFunc = [&]() {
 			// NCC: non clear frame_buffer.
 			OGLAPI_OPER.RenderBindFrameBufferNCC(GraphicFrameBuffers->ResourceFind(FrameBufferItem), 0);
 		};
-		
-		if (CreateFrameBuffer.CreateFrameBuffer()) {
-			FrameBufferItem = GenResourceID.PsagGenUniqueKey();
-			// create bind frame_buffer.
-			PsagTextureAttribute TexAttribTemp = {};
-			TexAttribTemp.Texture = TextureViewItem.Texture;
 
-			CreateFrameBuffer.TextureBindFBO(TexAttribTemp, 0);
-			GraphicFrameBuffers->ResourceStorage(FrameBufferItem, &CreateFrameBuffer);
-			PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system init.");
+		if (!CreateFrameBuffer.CreateFrameBuffer()) {
+			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system: failed create fbo.");
 			return;
 		}
-		PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system: failed create fbo.");
+		FrameBufferItem = GenResourceID.PsagGenUniqueKey();
+		// create bind frame_buffer.
+		PsagTextureAttribute TexAttributeTemp = {};
+		TexAttributeTemp.Texture = TextureViewItem.Texture;
+
+		CreateFrameBuffer.TextureBindFBO(TexAttributeTemp, 0);
+		GraphicFrameBuffers->ResourceStorage(FrameBufferItem, &CreateFrameBuffer);
+
+		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx capture_view system init.");
 	}
 
 	void PsagGLEngineFxCaptureView::CaptureContextBegin() {
@@ -99,8 +100,8 @@ namespace GraphicsEnginePVFX {
 
 		// create & storage fx_sequence_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderPostProgram = GenResourceID.PsagGenUniqueKey();
-			GraphicShaders->ResourceStorage(ShaderPostProgram, &ShaderProcess);
+			ShaderProcessFinal = GenResourceID.PsagGenUniqueKey();
+			GraphicShaders->ResourceStorage(ShaderProcessFinal, &ShaderProcess);
 		}
 
 		// porj matrix + scale.
@@ -126,12 +127,12 @@ namespace GraphicsEnginePVFX {
 	PsagGLEngineFxSequence::~PsagGLEngineFxSequence() {
 		// free graphics sequence resource.
 		VirTextureItemFree(VirTextureItem);
-		GraphicShaders->ResourceDelete(ShaderPostProgram);
+		GraphicShaders->ResourceDelete(ShaderProcessFinal);
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "graphics_engine free post_shader(system).");
 	}
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
-		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderPostProgram);
+		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderProcessFinal);
 		OGLAPI_OPER.RenderBindShader(ShaderTemp);
 		
 		// system parset uniform.
@@ -161,6 +162,7 @@ namespace GraphicsEnginePVFX {
 			PlayerPosition.vector_x += 1.0f / PlayerParams.UaxisFrameNumber;
 		}
 		PlayerTimer += PSAGM_VIR_TICKSTEP_GL * 2.0f * GraphicsEngineTimeStep;
+		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
@@ -168,7 +170,6 @@ namespace GraphicsEnginePVFX {
 		VerStcOperFrameDraw(GetPresetRect());
 		OGLAPI_OPER.RenderUnbindShader();
 
-		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
 #if PSAG_DEBUG_MODE
 		if (ShaderTemp == OPENGL_INVALID_HANDEL)
 			return false;

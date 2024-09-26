@@ -125,7 +125,7 @@ namespace GameComponents {
 
 	class ActorRendering :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
-		public GraphicsEngineDataset::GLEngineSmpTextureData
+		public GraphicsEngineDataset::GLEngineVirTextureData
 	{
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER  = {};
@@ -181,8 +181,8 @@ namespace GameComponents {
 
 namespace GameActorScript {
 	// vertex_shader public: 'actor', 'brick'.
-	extern const char* PsagShaderPublicVS;
-	extern const char* PsagShaderPrivateFS_Brick;
+	extern const char* PsagShaderPublicVert;
+	extern const char* PsagShaderPrivateFrag_Brick;
 }
 
 namespace GameActorCore {
@@ -211,7 +211,7 @@ namespace GameActorCore {
 	class GameActorPresetScript {
 	public:
 		SScript TmpScriptBrickImage() {
-			return GameActorScript::PsagShaderPrivateFS_Brick;
+			return GameActorScript::PsagShaderPrivateFrag_Brick;
 		};
 	};
 
@@ -248,7 +248,7 @@ namespace GameActorCore {
 
 	class GameActorShader :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
-		public GraphicsEngineDataset::GLEngineSmpTextureData
+		public GraphicsEngineDataset::GLEngineVirTextureData
 	{
 	private:
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform U_LOADER = {};
@@ -382,7 +382,7 @@ namespace GameActorCore {
 	};
 
 	class GameActorExecutor :
-		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public GraphicsEngineDataset::GLEngineVirTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
 		public __ACTOR_MODULES_TIMESTEP
 	{
@@ -549,7 +549,7 @@ namespace GameBrickCore {
 
 	class GameBrickExecutor :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
-		public GraphicsEngineDataset::GLEngineSmpTextureData,
+		public GraphicsEngineDataset::GLEngineVirTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset 
 	{
 	protected:

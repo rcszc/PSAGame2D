@@ -281,10 +281,10 @@
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_background.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
     </None>
-    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_bloom_h.frag">
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_blurh.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
     </None>
-    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_bloom_v.frag">
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_blurv.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
     </None>
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final.frag">
@@ -299,10 +299,10 @@
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_header.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\public</Filter>
     </None>
-    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_colorfilter.frag">
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_multfilter.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
     </None>
-    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_vollight.frag">
+    <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_vollight.frag">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\private</Filter>
     </None>
     <None Include="PSAGameFrameworkCore\framework_config.json">

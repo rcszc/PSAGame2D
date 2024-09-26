@@ -9,11 +9,10 @@ uniform float RenderTwist;
 
 const vec2 Pivot = vec2(0.5, 0.5);
 
-float ComputeAlpha(float Life, float DecayPoint) {
+float ComputeColorAhpla(float Life, float DecayPoint)
+{
     float LogLife = log(Life + 1.0);
-    float AdjustedLife = LogLife / (LogLife + pow(DecayPoint, 2.0));
-    
-    return AdjustedLife;
+    return LogLife / (LogLife + pow(DecayPoint, 2.0));
 }
 
 void main()
@@ -34,7 +33,7 @@ void main()
 	
 	vec4 Color = texture(ParticleVirTex, vec3(uv, float(ParticleVirTexLayer)));
 	// particle_system: FxNvec3.x = life.
-	vec3 OutRGB = Color.rgb * ComputeAlpha(FxNvec3.x, 1.2) * 1.6;
+	vec3 OutRGB = Color.rgb * ComputeColorAhpla(FxNvec3.x, 1.2) * 1.6;
 
 	FragColor = vec4(vec3(OutRGB), Color.a) * FxColor;
 }

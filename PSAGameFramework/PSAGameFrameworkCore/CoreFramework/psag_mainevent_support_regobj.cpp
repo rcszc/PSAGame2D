@@ -6,7 +6,7 @@ using namespace PSAG_LOGGER;
 
 namespace RegisterDevClass {
 	
-	void ProfxReflection::ReflectionObjectCreate(const char* ClassName, const char* UniqueName) {
+	void PsagReflectionSYS::ReflectionObjectCreate(const char* ClassName, const char* UniqueName) {
 		auto& Registry = ReflectionFactory::GetRegistry();
 		// find unique_name => register.
 		auto it = Registry.find(ClassName);
@@ -17,8 +17,8 @@ namespace RegisterDevClass {
 		PushLogger(LogError, PSAGM_FRAME_DEVREG_LABEL, "failed: class not found in the registry.");
 	}
 
-	void ProfxReflection::ReflectionObjectDelete(const char* UniqueName) {
+	void PsagReflectionSYS::ReflectionObjectDelete(const char* UniqueName) {
 		PsagFrameworkStart::System::GLOBAL_FMC_OBJECT->GameDeleteObject(UniqueName);
 	}
-	ProfxReflection GAMEREF;
+	PsagReflectionSYS GAMEREF;
 }

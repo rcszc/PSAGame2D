@@ -188,13 +188,13 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	ImGui::PopStyleColor(4);
 
 	RunningState.CameraParams->MatrixScale = Vector2T<float>(1.32f, 1.32f);
-	RunningState.PostShaderParams->GameSceneFilterAVG   = 0.28f;
-	RunningState.PostShaderParams->GameSceneBloomRadius = 18;
 
-	RunningState.PostShaderParams->LightPosition = Vector2T<float>(-128.0f, -128.0f);
-	RunningState.PostShaderParams->LightIntensity = 0.2f;
-	RunningState.PostShaderParams->LightColor = Vector3T<float>(1.0f, 0.92f, 0.72f);
+	RunningState.PostShaderParams->GameSceneFilterAVG   = 0.28f;
+	RunningState.PostShaderParams->GameSceneBloomRadius = 12;
+
+	RunningState.PostShaderParams->LightIntensity      = 0.2f;
+	RunningState.PostShaderParams->LightColor          = Vector3T<float>(1.0f, 0.92f, 0.72f);
 	RunningState.PostShaderParams->LightIntensityDecay = 0.0f;
-	RunningState.PostShaderParams->LightSampleStep = 160;
+	RunningState.PostShaderParams->LightSampleStep     = 160;
 	return true;
 }

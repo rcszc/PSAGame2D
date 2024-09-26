@@ -8,7 +8,7 @@ namespace GameActorCore {
 
 	GameActorShader::GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION) {
 		// system actor default vert_shader.
-		ShaderScript.vector_x = GameActorScript::PsagShaderPublicVS;
+		ShaderScript.vector_x = GameActorScript::PsagShaderPublicVert;
 		ShaderScript.vector_y = SHADER_FRAG;
 
 		__RENDER_RESOLUTION = RESOLUTION;

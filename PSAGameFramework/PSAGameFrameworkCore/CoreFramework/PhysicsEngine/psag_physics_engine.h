@@ -31,7 +31,7 @@ namespace PhysicsEngine {
 	};
 
 	// square, length: +-10.0f.
-	std::vector<b2Vec2> PresetVertexGroupSqua();
+	std::vector<b2Vec2> PresetVertexGroupRECT();
 	std::vector<b2Vec2> VertexPosToBox2dVec(const std::vector<Vector2T<float>>& data);
 
 	enum BodyShapeType {
@@ -41,10 +41,10 @@ namespace PhysicsEngine {
 	
 	struct PhysicsBodyConfig {
 		size_t IndexUniqueCode;
+		BodyShapeType PhyShapeType;
+
 		// 2D碰撞顶点组 (封闭多边形).
 		std::vector<b2Vec2> CollVertexGroup;
-
-		BodyShapeType PhyShapeType;
 
 		Vector2T<float> PhyBoxPosition;
 		// rect: x: width, y: height, circle: x = r (y - invalid).
@@ -98,17 +98,18 @@ namespace PhysicsEngine {
 
 	using __PsagPhyCollisionKey = PhysicsCollisionData;
 	// unique_key hash.
-	struct __PsagPhyCollisionKeyHash {
+	struct __PsagPhyCollisionKeyHASH {
 		size_t operator()(const __PsagPhyCollisionKey& key) const {
-			auto HASH1 = std::hash<b2Body*>()(key.CollisionBodyA);
-			auto HASH2 = std::hash<b2Body*>()(key.CollisionBodyB);
+			size_t HASH1 = std::hash<b2Body*>()(key.CollisionBodyA);
+			size_t HASH2 = std::hash<b2Body*>()(key.CollisionBodyB);
 			// clac key_hash value.
 			if (HASH1 > HASH2) std::swap(HASH1, HASH2);
 			return HASH1 ^ (HASH2 << 1);
 		}
 	};
 
-	using CollisionHashMap = std::unordered_map<__PsagPhyCollisionKey, PhysicsCollisionCode, __PsagPhyCollisionKeyHash>;
+	// mode: event: collision_pair => storage pair pointer(key), actor_unique(value) => get total(frame),first.
+	using CollisionHashMap = std::unordered_map<__PsagPhyCollisionKey, PhysicsCollisionCode, __PsagPhyCollisionKeyHASH>;
 	class __PsagPhyContactListener :public b2ContactListener {
 	public:
 		std::unordered_map<PhyBodyKey, PhysicsBodyData> PhysicsDataset = {};

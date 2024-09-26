@@ -19,8 +19,8 @@ namespace PhysicsEngine {
 		if (FixtureA->IsSensor() || FixtureB->IsSensor()) {
 			// sensor and sensor => invalid.
 			if (FixtureA->IsSensor() && FixtureB->IsSensor()) return;
-			// storage coll_event.
-			PhysicsSensor[__PsagPhyCollisionKey(BodyA, BodyB)] = 
+			// storage collision_event.
+			PhysicsSensor[PhysicsCollisionData(BodyA, BodyB)] =
 				PhysicsCollisionCode(PhysicsDataset[BodyA].BindUniqueCode, PhysicsDataset[BodyB].BindUniqueCode);
 			return;
 		}
@@ -55,7 +55,7 @@ namespace PhysicsEngine {
 	// global cycles calc iterations.
 	Vector2T<float> PhyEngineCoreDataset::PhysicsIterations = Vector2T<float>(16.0f, 8.0f);
 
-	vector<b2Vec2> PresetVertexGroupSqua() {
+	vector<b2Vec2> PresetVertexGroupRECT() {
 		vector<b2Vec2> CreateVertGroup = {};
 		CreateVertGroup.push_back(b2Vec2(-10.0f, -10.0f));
 		CreateVertGroup.push_back(b2Vec2( 10.0f, -10.0f));
@@ -121,7 +121,7 @@ namespace PhysicsEngine {
 		}}
 
 		if (config.PhysicsIsSensorFlag) {
-			// Body配置为传感器(无物理碰撞).
+			// Body 配置为传感器(无物理碰撞).
 			DefineFixture.isSensor = true;
 		}
 		else {
@@ -129,7 +129,7 @@ namespace PhysicsEngine {
 			DefineFixture.friction = config.PhyBodyFriction;
 		}
 
-		// 关闭Body碰撞.
+		// 关闭 Body 碰撞.
 		if (!config.PhysicsCollisionFlag)
 			DefineFixture.filter.maskBits = NULL;
 
@@ -235,14 +235,12 @@ namespace PhysicsEngine {
 			return TotalUnqiueIndex;
 #endif
 		for (const auto& COLL : WorldPointer->PhysicsContact->PhysicsCollision) {
-
+			// mode: this_actor => actor : actor => this_actor.
 			if (COLL.first.CollisionBodyA == it->second.Box2dActorPtr ||
 				COLL.first.CollisionBodyB == it->second.Box2dActorPtr
-				) {
-				if (COLL.second.BindUniqueCodeA == it->second.BindUniqueCode)
-					TotalUnqiueIndex.push_back(COLL.second.BindUniqueCodeB);
-				else
-					TotalUnqiueIndex.push_back(COLL.second.BindUniqueCodeA);
+			) {
+				COLL.second.BindUniqueCodeA == it->second.BindUniqueCode ? 
+					TotalUnqiueIndex.push_back(COLL.second.BindUniqueCodeB) : TotalUnqiueIndex.push_back(COLL.second.BindUniqueCodeA);
 			}
 		}
 		return TotalUnqiueIndex;
@@ -268,14 +266,12 @@ namespace PhysicsEngine {
 			return NULL;
 #endif
 		for (const auto& COLL : (*CollisionDataList)) {
-
+			// mode: this_actor => actor : actor => this_actor.
 			if (COLL.first.CollisionBodyA == it->second.Box2dActorPtr ||
 				COLL.first.CollisionBodyB == it->second.Box2dActorPtr
-				) {
-				if (COLL.second.BindUniqueCodeA == it->second.BindUniqueCode)
-					FirstUnqiueIndex = COLL.second.BindUniqueCodeB;
-				else
-					FirstUnqiueIndex = COLL.second.BindUniqueCodeA;
+			) {
+				COLL.second.BindUniqueCodeA == it->second.BindUniqueCode ?
+					FirstUnqiueIndex = COLL.second.BindUniqueCodeB : FirstUnqiueIndex = COLL.second.BindUniqueCodeA;
 				break;
 			}
 		}

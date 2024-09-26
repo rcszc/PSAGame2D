@@ -76,8 +76,8 @@ namespace PSAG_OGL_MAG {
 		glEnable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 
-		glDepthMask(GL_TRUE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
 
 		// opengl init params.
@@ -91,8 +91,10 @@ namespace PSAG_OGL_MAG {
 			glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_DONT_CARE + (GLint)init_param.FragmentDerivative);
 		}
 		GLenum OpenGLErrCode = glGetError();
-		if (OpenGLErrCode != GL_NO_ERROR)
+		if (OpenGLErrCode != GL_NO_ERROR) {
 			PsagLowLog(LogError, PSAG_OGLMAG_INIT, "framework_graphics config params err_code: %u", OpenGLErrCode);
+			PsagLowLog(LogError, PSAG_OGLMAG_INIT, "framework_graphics config err_msg: %s", glewGetErrorString(OpenGLErrCode));
+		}
 		return ReturnValue;
 	}
 
