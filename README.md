@@ -52,7 +52,7 @@ FrameworkCore __Files:__ ```81``` __LoC:__ ```12391```
 
 ## 框架每个版本都会带有对应 DEMO
 
-[__BiliBili视频__](https://www.bilibili.com/video/BV1eesneqEmZ/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b) __Update:__ 2024.10.02
+[__BiliBili视频__](https://www.bilibili.com/video/BV1dA4Ne8EAy/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b) __Update:__ 2024.10.02
 > 动态游戏场景后期画面调色
 
 <img src="PSAGameDesigns/PSAGame2Dv20241002.png"/>
