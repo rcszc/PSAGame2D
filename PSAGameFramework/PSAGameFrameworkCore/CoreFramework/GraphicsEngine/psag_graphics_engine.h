@@ -267,13 +267,19 @@ namespace GraphicsEngineFinal {
 	StaticStrLABEL PSAGM_GLENGINE_POST_LABEL = "PSAG_GL_POST";
 
 	struct FinalFxParameters {
-		Vector3T<float> GameSceneFilterCOL; // lv1: color_channels.
-		float           GameSceneFilterAVG; // lv2: color_avg.
+		Vector3T<float> GameSceneFilterCOL; // [Lv1]: color_channels.
+		float           GameSceneFilterAVG; // [Lv2]: color_avg.
 
-		// bloom_radius [1-32] calc & filter avg_color.
-		uint32_t GameSceneBloomRadius;
-		// bloom_blend x:source, y:blur.
+		// bloom_radius: limit: (1,31).
+		// bloom_blend: x: game_scene y: blur_scene.
+		// rgb color_blend, contrast => blend.
+		// vignette: x: radius y: strength.
+
+		uint32_t        GameSceneBloomRadius;
 		Vector2T<float> GameSceneBloomBlend;
+		float           GameSceneOutContrast; 
+		Vector3T<float> GameSceneOutColor;
+		Vector2T<float> GameSceneOutVignette;
 
 		Vector2T<float> LightPosition;
 		Vector3T<float> LightColor;
@@ -289,6 +295,9 @@ namespace GraphicsEngineFinal {
 			GameSceneFilterAVG  (0.0f),
 			GameSceneBloomRadius(1),
 			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),
+			GameSceneOutContrast(1.0f),
+			GameSceneOutColor   (Vector3T<float>(1.0f, 1.0f, 1.0f)),
+			GameSceneOutVignette(Vector2T<float>(1.0f, 0.0f)),
 
 			LightPosition      (Vector2T<float>(0.0f, 0.0f)),
 			LightColor         (Vector3T<float>(1.0f, 1.0f, 1.0f)),
@@ -328,7 +337,7 @@ namespace GraphicsEngineFinal {
 		ResUnique BloomFrameBuffers[2] = {};
 
 		// texture_array(5-layers constant):
-		// 0: vollight_light process.
+		// 0: vol_light fx process.
 		// 1: color_filter, 2:frame_buffer_tex, 3:blur_h_texture, 4:blur_v_texture.
 		ResUnique ProcessTextures = {};
 		// topmost, format_z layer: -1.0f

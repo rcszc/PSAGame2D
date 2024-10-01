@@ -20,7 +20,7 @@
 #include "../LLThread/framework_thread.hpp"
 #include "../LLWindowGui/framework_window.h"
 #define PSAG_IMGUI_CONTROL_MATHS
-#include "../LLWindowGui/framework_window_imms.h"
+#include "../LLWindowGui/framework_window_imgui_ms.h"
 
 namespace PsagLow {
 	// low_module 'graphics' support.
@@ -63,8 +63,8 @@ namespace PsagLow {
 	using PsagSupWindowGuiConfigWin = PSAG_WINDOW_OGLFW::FwWindowConfig;
 	using PsagSupWindowGuiConfigGui = PSAG_WINDOW_IMGUI::ImGuiConfig;
 
-	using PsagSupWindowGuiEventOglfw = PSAG_WINDOW_OGLFW::SpcaWindowEvent;
-	using PsagSupWindowGuiEventImGui = PSAG_WINDOW_IMGUI::SpcaImGuiEvent;
+	using PsagSupWindowGuiEventOglfw = PSAG_WINDOW_OGLFW::PasgWindowEvent;
+	using PsagSupWindowGuiEventImGui = PSAG_WINDOW_IMGUI::PsagImGuiContextEvent;
 #endif
 }
 

@@ -76,7 +76,7 @@ namespace PSAG_OGL_MAG {
 	class PasgRenderbufferOGL :public PsagOGLsystemLogger, public PsagGLmanagerRenderBuffer {
 	private:
 		ResourceFlag ReturnResourceFlag = DEFRES_FLAG_INVALID;
-		PsagRenderBufferAttribute RenderBuffer = {};
+		PsagRenderBufferAttribute RenderBufferSize = {};
 
 		bool CreateBindRenderBuffer(PsagRenderBuffer& renderbuf);
 		bool CreateConfigRenderBuffer(uint32_t width, uint32_t height, bool depth);
@@ -271,8 +271,8 @@ namespace RenderingSupport {
 		void RenderUnbindTexture();
 		void RenderUnbindFrameBuffer();
 
-		void SwitchRenderModeLINES();
-		void SwitchRenderModeFILL();
+		OLD_FUNCTION void SwitchRenderModeLINES();
+		OLD_FUNCTION void SwitchRenderModeFILL();
 
 		// global state: opengl context. (non-thread-safe)
 		OpenGLApiContext GET_THIS_CONTEXT() { return ApiThisStateContext; };
@@ -499,9 +499,9 @@ namespace PSAG_OGL_RES {
 			uint32_t ErrObjectsCount = NULL;
 			// clear hashmap data(render_buffer).
 			for (const auto& item : ResourceRenderBufferMap) {
-				if (item.second.RenderBuffer == OPENGL_INVALID_HANDEL)
+				if (item.second.RenderBufferSize == OPENGL_INVALID_HANDEL)
 					++ErrObjectsCount;
-				glDeleteRenderbuffers(1, &item.second.RenderBuffer);
+				glDeleteRenderbuffers(1, &item.second.RenderBufferSize);
 			}
 			if (ErrObjectsCount > NULL)
 				PsagLowLog(LogWarning, PSAG_OGLRES_LABEL, "invalid resource(render_buffer): %u items", ErrObjectsCount);

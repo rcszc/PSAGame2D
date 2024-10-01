@@ -134,11 +134,11 @@ struct PsagRenderBufferAttribute {
 	uint32_t Width, Height, Channels;
 	size_t TextureBytes;
 
-	PsagRenderBuffer RenderBuffer;
+	PsagRenderBuffer RenderBufferSize;
 
-	PsagRenderBufferAttribute() : RenderBuffer{}, Width(NULL), Height(NULL), Channels(NULL), TextureBytes(NULL) {}
+	PsagRenderBufferAttribute() : RenderBufferSize{}, Width(NULL), Height(NULL), Channels(NULL), TextureBytes(NULL) {}
 	PsagRenderBufferAttribute(uint32_t x, uint32_t y, uint32_t ch, PsagRenderBuffer rb) :
-		Width(x), Height(y), Channels(ch), TextureBytes(size_t(x * y * ch) * sizeof(float)), RenderBuffer(rb)
+		Width(x), Height(y), Channels(ch), TextureBytes(size_t(x * y * ch) * sizeof(float)), RenderBufferSize(rb)
 	{}
 	size_t SIZE() { return sizeof(PsagRenderBufferAttribute); }
 };

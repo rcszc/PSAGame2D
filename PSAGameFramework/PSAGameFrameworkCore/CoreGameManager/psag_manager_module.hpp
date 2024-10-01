@@ -135,6 +135,51 @@ namespace GameManagerCore {
 		};
 	}
 
+	namespace GameSceneForFinal {
+		StaticStrLABEL PSAGM_MANAGER_FINAL_LABEL = "PSAG_MANAGER_FINAL";
+
+		class FinalParamsLerpSystem {
+		protected:
+			void ParamsLerpFloat1(float* value, float target);
+			void ParamsLerpFloat2(Vector2T<float>* value, const Vector2T<float>& target);
+			void ParamsLerpFloat3(Vector3T<float>* value, const Vector3T<float>& target);
+
+			float LERP_TIMESETP_SEPPD = 1.0f;
+		};
+
+		using SceneFinalParams = GraphicsEngineFinal::FinalFxParameters;
+		class GameFinalProcessing :public FinalParamsLerpSystem {
+		protected:
+			SceneFinalParams* FrameworkFinalParamsPtr = nullptr;
+			SceneFinalParams CurrentFinalParams = {};
+
+			std::vector<std::pair<std::string, SceneFinalParams>> PresetFinalParams = {};
+			size_t DebugTypeIndex = NULL;
+		public:
+			GameFinalProcessing() {
+				// system preset default_params.
+				PresetFinalParams.push_back(std::pair("DEFAULT", SceneFinalParams()));
+			}
+			void GetFinalParamsPonter(SceneFinalParams* pointer) {
+				FrameworkFinalParamsPtr = pointer;
+			}
+			void PushPresetParams(const char* params_name, const SceneFinalParams& params) {
+				PresetFinalParams.push_back(std::pair(params_name, params));
+			}
+			// index_count: push_order, release: keep check.
+			bool TYPE_PARAMS(size_t index) {
+				if (index >= PresetFinalParams.size()) 
+					return false;
+				CurrentFinalParams = PresetFinalParams[index].second;
+				return true;
+			}
+			// render debug_panel => "TYPE_PARAMS" invalid.
+			void RenderDebugParamsPanel(const char* name);
+			// preset params type,lerp.
+			void RunFinalProcessing(float time_step = 1.0f);
+		};
+	}
+
 	// game_view: texture => gui.
 	namespace GameView {
 		using TextureViewImage   = GraphicsEnginePVFX::PsagGLEngineFxImageView;

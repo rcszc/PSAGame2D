@@ -6,7 +6,8 @@ using namespace PSAG_LOGGER;
 
 class ActorLogicNPC :public PsagActor::ActorLogicBase {
 protected:
-	static uint64_t RandomSeedCount;
+	static float TimerOffset;
+	float ThisNPCTimetrOffset = 0.0f;
 
 	PsagActor::ActorsManager* ActorsManagerPointer = nullptr;
 	PsagActor::Actor*         PawnActorPointer     = nullptr;
@@ -17,7 +18,9 @@ public:
 	ActorLogicNPC(
 		PsagActor::Actor* ptr, PsagActor::ActorsManager* mag, function<void(const Vector2T<float>&, float)> bullet_func) :
 		PawnActorPointer(ptr), ActorsManagerPointer(mag), BulletFireFunc(bullet_func)
-	{};
+	{
+		ThisNPCTimetrOffset = TimerOffset += 50.0f;
+	};
 
 	void ActionLogicRun(PsagActor::Actor* actor_object, float timestep) override {
 		if (PawnActorPointer == nullptr)
@@ -32,7 +35,7 @@ public:
 		float TargetDist = PsagManager::Maths::CalcFuncPointsDistance(ActorPosition, ActorTarget);
 
 		float ForceDirection = 0.7f;
-		if (TargetDist < 32.0f) ForceDirection = -2.4f;
+		if (TargetDist < 190.0f) ForceDirection = -2.4f;
 
 		// npc actor ³¯Ïò pawn actor.
 		float NPC_ANGLE = PsagManager::Maths::CalcFuncPointsAngle(actor_object->ActorGetPosition(), PawnActorPointer->ActorGetPosition());
@@ -40,7 +43,7 @@ public:
 
 		if (FireTimer.CycleTimerFlagGet()) {
 			BulletFireFunc(actor_object->ActorGetPosition(), NPC_ANGLE);
-			FireTimer.CycleTimerClearReset(500.0f);
+			FireTimer.CycleTimerClearReset(300.0f + ThisNPCTimetrOffset);
 		}
 
 		// move npc_actor.
@@ -82,7 +85,7 @@ public:
 		ImGui::PopStyleColor(8);
 	}
 };
-uint64_t ActorLogicNPC::RandomSeedCount = 2024;
+float ActorLogicNPC::TimerOffset = 0.0f;
 
 void PsaGameV1Demo::GameCreateNPC(const Vector2T<float>& position) {
 	PsagActor::ActorDESC ConfigNpcActor;

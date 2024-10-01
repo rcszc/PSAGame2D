@@ -53,7 +53,7 @@ namespace PSAG_WINDOW_OGLFW {
 #ifdef DEVICE_ENABLE_WINAPI_PROCESS
 #include <Windows.h>
 #endif
-	class SpcaGlfwSystemCallback {
+	class PsagGLFWsystemCallback {
 	protected:
 		static Vector3T<float> ValueMouseScroll; // x:pos, y:min, z:max
 		static Vector2T<float> ValueMouseCursor; // x:pos.x, y:pos.y
@@ -81,7 +81,7 @@ namespace PSAG_WINDOW_OGLFW {
 
 	using FwSysErrorMessage = const char*;
 	// core-framework inherits window-event.
-	class SpcaWindowEvent :public SpcaGlfwSystemCallback {
+	class PasgWindowEvent :public PsagGLFWsystemCallback {
 	private:
 		static std::chrono::steady_clock::time_point FrameTimer;
 		static float CalcFrameTime;
@@ -89,13 +89,13 @@ namespace PSAG_WINDOW_OGLFW {
 	protected:
 		GLFWwindow* MainWindowObject = {};
 
-		Vector2T<int>   RenderBuffer  = Vector2T<int>(32, 32);
-		Vector4T<float> RenderBgColor = Vector4T<float>();
+		Vector2T<int32_t> RenderBufferSize = Vector2T<int>(32, 32);
+		Vector4T<float>   RenderClearColor = Vector4T<float>();
 
 		FwSysErrorMessage ErrorMessage = nullptr;
 
 		bool GLFWwindowCreate(FwWindowConfig config = {});
-		bool GLFWwindowInit(uint32_t version[2], uint32_t MSAA, bool profile, bool fixedsize);
+		bool GLFWwindowInit(uint32_t version[2], uint32_t MSAA, bool core_mode, bool fixedsize);
 
 		void GLFWwindowSetIcon(const std::string& file);
 
@@ -152,7 +152,8 @@ namespace PSAG_WINDOW_IMGUI {
 		{}
 		ImGuiConfig(
 			const std::string& version, const std::string& path, const Vector4T<float>& color, 
-			float size, float round, float wround) :
+			float size, float round, float wround
+		) :
 			ShaderVersionStr(version),
 			FontsFilepath   (path),
 			FontsGlobalColor(color),
@@ -162,10 +163,10 @@ namespace PSAG_WINDOW_IMGUI {
 		{}
 	};
 
-	class SpcaImGuiEvent {
+	class PsagImGuiContextEvent {
 	protected:
-		void ImGuiInit(GLFWwindow* window_object, ImGuiConfig cfgdata = {});
-		void ImGuiFree();
+		bool ImGuiContextInit(GLFWwindow* window_object, ImGuiConfig im_config = {});
+		void ImGuiContextFree();
 
 		void RenderGuiContextA();
 		void RenderGuiContextB();

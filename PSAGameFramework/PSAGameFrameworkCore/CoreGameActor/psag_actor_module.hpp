@@ -128,7 +128,7 @@ namespace GameComponents {
 		public GraphicsEngineDataset::GLEngineVirTextureData
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER  = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER   = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                  ShaderUniform = {};
 	public:
 		ResUnique ShaderIndex      = NULL;

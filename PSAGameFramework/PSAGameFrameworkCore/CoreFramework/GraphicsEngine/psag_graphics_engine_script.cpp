@@ -19,6 +19,6 @@ namespace GraphicsShaderCode {
 		lock_guard<mutex> ResourceLock(ResourceMutex);
 		return ResourecShaders;
 	}
-
+	// create global_object. [T-SAFE]
 	GraphicsEngineLayerRes GLOBALRES = {};
 }

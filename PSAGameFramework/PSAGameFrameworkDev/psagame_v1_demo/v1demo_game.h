@@ -12,7 +12,7 @@ extern const char* ShaderFragBulletActor;
 extern const char* ShaderFragNPCActor;
 
 constexpr float PawnActorHPmax = 48800.0f;
-constexpr float NpcActorHPmax = 2200.0f;
+constexpr float NpcActorHPmax  = 2200.0f;
 
 class PsaGameV1Demo :public GameLogic::INTERFACE_DEVCLASS_GAME {
 protected:
@@ -35,6 +35,8 @@ protected:
     PsagManager::Tools::Camera::GamePlayerComaeraMP* PlayerCamera = nullptr;
 
     PsagManager::FxView::TextureViewImage* GuiViewImage = nullptr;
+
+    PsagManager::SceneFinal::GameFinalProcessing* FINAL = nullptr;
 
     float PawnActorBullet = 128.0f;
     bool  PawnActorChangeAMM = false;

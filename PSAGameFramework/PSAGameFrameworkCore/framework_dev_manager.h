@@ -21,6 +21,10 @@ namespace PsagManager {
 		using SpriteSheetDESC = GameManagerCore::GameFX::GameFxSpriteSheetDESC;
 		using SpriteSheet     = GameManagerCore::GameFX::GameFxSpriteSheet;
 	}
+
+	namespace SceneFinal = GameManagerCore::GameSceneForFinal;
+	using FINAL_PARAMS = GameManagerCore::GameSceneForFinal::SceneFinalParams;
+
 	namespace FxView     = GameManagerCore::GameView;
 	namespace Maths      = GameManagerCore::GameMathsTools;
 	namespace SyncLoader = GameManagerCore::GameSyncLoader;

@@ -1,6 +1,6 @@
 uniform sampler2DArray ProcessTextures;
 
-// err: failed load depth_texture. [2024.0701]
+// err: failed load depth_texture. [20240701]
 // uniform sampler2D PostTextureDep;
 
 uniform vec2  LightPosition;
@@ -16,6 +16,8 @@ void main()
     vec2 STEP = Delta / float(LightSampleStep);
 
     float AccLightIntensity = 0.0; // 累积光强度.
+    float CollisionValue = 1.0;
+
     for (int i = 0; i < LightSampleStep; i++) 
     {
         vec2 CurrentPosition = LightPosition + STEP * float(i);
@@ -25,14 +27,17 @@ void main()
         float CurrentLightIntensity = LightIntensity * exp(-Distance * LightIntensityDecay);
 
         if ((SampleColor.r + SampleColor.g + SampleColor.b) / 3.0 > LightAvgCollision) {
-            CurrentLightIntensity *= LightIntensityDecay * 0.01; // 片段阻挡过滤.
+            CurrentLightIntensity *= LightIntensityDecay * 0.0125; // 片段阻挡过滤.
+            CollisionValue = 0.92325;
         }
         AccLightIntensity += CurrentLightIntensity;
     }
-    // 计算平均光强度.
+    // calc averge_light.
     float AverageLightIntensity = AccLightIntensity / float(LightSampleStep);
 
-    // 输出混合片段颜色.
-    vec4 OriginalColor = texture(ProcessTextures, vec3(FxCoord, 0.0));
-    FragColor = OriginalColor + vec4(LightColor, 1.0) * AverageLightIntensity;
+    // game scene_fragment blend.
+    vec4 ProcessFragment = texture(ProcessTextures, vec3(FxCoord, 0.0)) * CollisionValue;
+    ProcessFragment += vec4(LightColor, 1.0) * AverageLightIntensity;
+
+    FragColor = ProcessFragment;
 }

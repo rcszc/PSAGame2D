@@ -1,4 +1,4 @@
-// framework_window_imms. RCSZ.
+// framework_window_imgui_ms. RCSZ.
 // version: [x] NORMAL [ ] SIMD [ ] INTEL_SIMD [ ] AMD_SIMD
 // update: 2024.05.01, v0.12
 

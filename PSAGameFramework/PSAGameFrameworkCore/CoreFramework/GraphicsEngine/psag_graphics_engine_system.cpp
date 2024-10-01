@@ -97,8 +97,8 @@ namespace GraphicsEngineFinal {
 				RenderParameters.LightPosition.vector_x / RenderingResolution.vector_x,
 				RenderParameters.LightPosition.vector_y / RenderingResolution.vector_y
 			);
-			ShaderUniform.UniformVec2(LightShader, "LightPosition", LightTexPosition);
-			ShaderUniform.UniformVec3(LightShader, "LightColor",    RenderParameters.LightColor);
+			ShaderUniform.UniformVec2 (LightShader, "LightPosition", LightTexPosition);
+			ShaderUniform.UniformVec3 (LightShader, "LightColor",    RenderParameters.LightColor);
 
 			ShaderUniform.UniformFloat  (LightShader, "LightIntensity",      RenderParameters.LightIntensity);
 			ShaderUniform.UniformFloat  (LightShader, "LightIntensityDecay", RenderParameters.LightIntensityDecay);
@@ -188,7 +188,7 @@ namespace GraphicsEngineFinal {
 			GraphicShaders->ResourceStorage(ShaderProcessFinal, &ShaderFinal);
 		}
 
-		// **************** (volumetric)light shader ****************
+		// ******************************** (volumetric)light shader ********************************
 		// vert_temp, frag_header, frag_private...
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderLight;
 		
@@ -201,7 +201,7 @@ namespace GraphicsEngineFinal {
 			GraphicShaders->ResourceStorage(ShaderVolumLight, &ShaderLight);
 		}
 
-		// **************** color_filter shader ****************
+		// ******************************** color_filter shader ********************************
 		// vert_temp, frag_header, frag_tools, frag_private...
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderColorFilter;
 
@@ -215,7 +215,7 @@ namespace GraphicsEngineFinal {
 			GraphicShaders->ResourceStorage(ShaderFilter, &ShaderColorFilter);
 		}
 
-		// **************** blur(bloom) h&v shader ****************
+		// ******************************** blur(bloom) h&v shader ********************************
 		// vert_temp, frag_header, frag_tools, frag_private... 
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderBloomHPCS;
 
@@ -253,7 +253,7 @@ namespace GraphicsEngineFinal {
 		const float* glmmatptr = glm::value_ptr(MatrixPorj);
 		memcpy_s(RenderingMatrixMvp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
 
-		// **************** create scene(fbo) depth_rbo ****************
+		// ******************************** create scene(fbo) depth_rbo ********************************
 		
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsRenderBuffer DepRenderBufferCreate;
 
@@ -262,10 +262,10 @@ namespace GraphicsEngineFinal {
 			GraphicRenderBuffers->ResourceStorage(GameSceneRenderBuffer, &DepRenderBufferCreate);
 		}
 		
-		// **************** create texture & framebuffer ****************
+		// ******************************** create texture & framebuffer ********************************
 		
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture     TextureCreate;
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboGameScene;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer GameSceneFBO;
 
 		TextureCreate.SetTextureParam(render_resolution.vector_x, render_resolution.vector_y, LinearFiltering);
 		TextureCreate.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
@@ -280,43 +280,41 @@ namespace GraphicsEngineFinal {
 		}
 
 		// 游戏场景 (捕获输入)
-		if (FboGameScene.CreateFrameBuffer()) {
+		if (GameSceneFBO.CreateFrameBuffer()) {
 			// bind scene color_buffer & render_buffer(depth).
 			// depth_info get: "gl_FragCoord.z"
-			FboGameScene.RenderBufferBindFBO(GraphicRenderBuffers->ResourceFind(GameSceneRenderBuffer));
-			FboGameScene.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 0);
+			GameSceneFBO.RenderBufferBindFBO(GraphicRenderBuffers->ResourceFind(GameSceneRenderBuffer));
+			GameSceneFBO.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 0);
 
 			GameSceneFrameBuffer = GenResourceID.PsagGenUniqueKey();
-			GraphicFrameBuffers->ResourceStorage(GameSceneFrameBuffer, &FboGameScene);
+			GraphicFrameBuffers->ResourceStorage(GameSceneFrameBuffer, &GameSceneFBO);
 		}
 
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboVolumLight;
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer VolumLightFBO;
 
 		// 2D点光处理 (体积光)
-		if (FboVolumLight.CreateFrameBuffer()) {
-			FboVolumLight.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 1);
+		if (VolumLightFBO.CreateFrameBuffer()) {
+			VolumLightFBO.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 1);
 			LightFrameBuffer = GenResourceID.PsagGenUniqueKey();
-			GraphicFrameBuffers->ResourceStorage(LightFrameBuffer, &FboVolumLight);
+			GraphicFrameBuffers->ResourceStorage(LightFrameBuffer, &VolumLightFBO);
 		}
 
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboColorFilter;
-
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer ColorFilterFBO;
 		// 纹理过滤 (片段颜色提取)
-		if (FboColorFilter.CreateFrameBuffer()) {
-			FboColorFilter.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 2);
+		if (ColorFilterFBO.CreateFrameBuffer()) {
+			ColorFilterFBO.TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, 2);
 			FilterFrameBuffer = GenResourceID.PsagGenUniqueKey();
-			GraphicFrameBuffers->ResourceStorage(FilterFrameBuffer, &FboColorFilter);
+			GraphicFrameBuffers->ResourceStorage(FilterFrameBuffer, &ColorFilterFBO);
 		}
 
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer FboSceneBlur[2] = {};
-
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer SceneBlurFBO[2];
 		// 模糊,辉光 (2次采样高斯模糊).
 		for (size_t i = 0; i < 2; ++i) {
 			BloomFrameBuffers[i] = GenResourceID.PsagGenUniqueKey();
-			if (FboSceneBlur[i].CreateFrameBuffer()) {
+			if (SceneBlurFBO[i].CreateFrameBuffer()) {
 				// fbo_h => bind layer2, fbo_v => bind layer3.
-				FboSceneBlur[i].TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, (uint32_t)i + 3);
-				GraphicFrameBuffers->ResourceStorage(BloomFrameBuffers[i], &FboSceneBlur[i]);
+				SceneBlurFBO[i].TextureLayerBindFBO(GraphicTextures->ResourceFind(ProcessTextures).Texture, (uint32_t)i + 3);
+				GraphicFrameBuffers->ResourceStorage(BloomFrameBuffers[i], &SceneBlurFBO[i]);
 			}
 		}
 		RenderingResolution = Vector2T<float>((float)render_resolution.vector_x, (float)render_resolution.vector_y);
@@ -368,8 +366,11 @@ namespace GraphicsEngineFinal {
 
 		ShaderVertexDefaultParams(ShaderTemp);
 
-		ShaderUniform.UniformFloat(ShaderTemp, "OutFragmentSource", RenderParameters.GameSceneBloomBlend.vector_x);
-		ShaderUniform.UniformFloat(ShaderTemp, "OutFragmentBlur",   RenderParameters.GameSceneBloomBlend.vector_y);
+		ShaderUniform.UniformFloat(ShaderTemp, "OutFragmentSource",   RenderParameters.GameSceneBloomBlend.vector_x);
+		ShaderUniform.UniformFloat(ShaderTemp, "OutFragmentBlur",     RenderParameters.GameSceneBloomBlend.vector_y);
+		ShaderUniform.UniformFloat(ShaderTemp, "OutFragmentContrast", RenderParameters.GameSceneOutContrast);
+		ShaderUniform.UniformVec3 (ShaderTemp, "OutFragmentBlend",    RenderParameters.GameSceneOutColor);
+		ShaderUniform.UniformVec2 (ShaderTemp, "OutFragmentVignette", RenderParameters.GameSceneOutVignette);
 
 		auto TextureTempScene = GraphicTextures->ResourceFind(ProcessTextures);
 		OGLAPI_OPER.RenderBindTexture(TextureTempScene);

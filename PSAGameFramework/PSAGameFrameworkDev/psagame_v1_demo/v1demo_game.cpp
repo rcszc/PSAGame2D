@@ -50,9 +50,43 @@ bool PsaGameV1Demo::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 	GameInitParticleSystem(WinSize);
 
-	for (float i = 0.0f; i < 361.0f; i += 60.0f) {
+	for (float i = 0.0f; i < 360.0f; i += 60.0f) {
 		GameCreateNPC(Vector2T<float>(sin(PSAG_M_DEGRAD(i)) * 380.0f, cos(PSAG_M_DEGRAD(i)) * 380.0f));
 	}
+
+	FINAL = new PsagManager::SceneFinal::GameFinalProcessing();
+
+	PsagManager::FINAL_PARAMS PresetParams0 = {};
+
+	PresetParams0.GameSceneFilterAVG   = 0.325f;
+	PresetParams0.GameSceneBloomRadius = 22;
+	PresetParams0.GameSceneBloomBlend  = Vector2T<float>(1.1128f, 1.1032f);
+
+	PresetParams0.GameSceneOutContrast = 1.2232f;
+	PresetParams0.GameSceneOutColor    = Vector3T<float>(1.28f, 1.14f, 1.0f);
+	PresetParams0.GameSceneOutVignette = Vector2T<float>(0.685f, 0.204f);
+
+	PresetParams0.LightIntensity  = 0.142f;
+	PresetParams0.LightColor      = Vector3T<float>(1.0f, 0.92f, 0.72f);
+	PresetParams0.LightSampleStep = 240;
+
+	FINAL->PushPresetParams("Movie-Mode", PresetParams0);
+
+	PresetParams0 = PsagManager::FINAL_PARAMS();
+
+	PresetParams0.GameSceneFilterAVG   = 0.292f;
+	PresetParams0.GameSceneBloomRadius = 22;
+	PresetParams0.GameSceneBloomBlend  = Vector2T<float>(1.0f, 1.25f);
+
+	PresetParams0.GameSceneOutContrast = 1.0;
+	PresetParams0.GameSceneOutColor    = Vector3T<float>(1.1f, 1.1f, 1.1f);
+
+	PresetParams0.LightIntensity  = 0.158f;
+	PresetParams0.LightColor      = Vector3T<float>(1.0f, 0.72f, 0.912f);
+	PresetParams0.LightSampleStep = 200;
+
+	FINAL->PushPresetParams("Dream-Mode", PresetParams0);
+
 	return true;
 }
 
@@ -178,23 +212,20 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	ImGui::ProgressBar(PawnActorOBJ->ActorGetHealth(0) / PawnActorHPmax);
 	ImGui::End();
 
-	ImGui::SetNextWindowPos(ImGui::GetMousePos() - 64.0f);
-	ImGui::SetNextWindowSize(ImVec2(128.0f, 128.0f) + IMGUI_ITEM_SPAC * 2.0f);
+	//ImGui::SetNextWindowPos(ImGui::GetMousePos() - 64.0f);
+	//ImGui::SetNextWindowSize(ImVec2(128.0f, 128.0f) + IMGUI_ITEM_SPAC * 2.0f);
 
-	ImGui::Begin("##MOUSE", (bool*)0, FlagsTemp);
-	ImGui::Image((ImTextureID)(uintptr_t)GuiViewImage->GetTextureView(), ImVec2(128.0f, 128.0f));
-	ImGui::End();
+	//ImGui::Begin("##MOUSE", (bool*)0, FlagsTemp);
+	//ImGui::Image((ImTextureID)(uintptr_t)GuiViewImage->GetTextureView(), ImVec2(128.0f, 128.0f));
+	//ImGui::End();
 
 	ImGui::PopStyleColor(4);
 
 	RunningState.CameraParams->MatrixScale = Vector2T<float>(1.32f, 1.32f);
 
-	RunningState.PostShaderParams->GameSceneFilterAVG   = 0.28f;
-	RunningState.PostShaderParams->GameSceneBloomRadius = 12;
+	FINAL->GetFinalParamsPonter(RunningState.ShaderParamsFinal);
 
-	RunningState.PostShaderParams->LightIntensity      = 0.2f;
-	RunningState.PostShaderParams->LightColor          = Vector3T<float>(1.0f, 0.92f, 0.72f);
-	RunningState.PostShaderParams->LightIntensityDecay = 0.0f;
-	RunningState.PostShaderParams->LightSampleStep     = 160;
+	FINAL->RenderDebugParamsPanel("GAME FINAL FX");
+	FINAL->RunFinalProcessing(RunningState.GameRunTimeSTEP);
 	return true;
 }

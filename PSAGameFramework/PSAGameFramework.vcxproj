@@ -177,6 +177,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_manager.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_shader.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_script.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_final.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_capture.cpp" />
@@ -257,7 +258,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLSound\framework_sound.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
-    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imms.h" />
+    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
     <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

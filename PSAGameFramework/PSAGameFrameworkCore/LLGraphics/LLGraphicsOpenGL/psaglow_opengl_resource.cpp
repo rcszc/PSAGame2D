@@ -328,7 +328,7 @@ namespace PSAG_OGL_RES {
 		auto it = ResourceRenderBufferMap.find(key);
 		if (it != ResourceRenderBufferMap.end()) {
 			// delete rbo handle => clear map_item.
-			glDeleteFramebuffers(1, &it->second.RenderBuffer);
+			glDeleteFramebuffers(1, &it->second.RenderBufferSize);
 			ResourceRenderBufferMap.erase(it);
 
 			PsagLowLog(LogInfo, PSAG_OGLRES_LABEL, "render_buffer: delete key: %u", key);

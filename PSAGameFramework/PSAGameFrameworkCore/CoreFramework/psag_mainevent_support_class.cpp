@@ -24,7 +24,7 @@ namespace PsagFrameworkCore {
 				resolution, LayersRawImages
 			);
 			// load pointer.
-			FrameworkParams.BackShaderParams = RendererBackFX->GetRenderParameters();
+			FrameworkParams.ShaderParamsBackground = RendererBackFX->GetRenderParameters();
 			PushLogger(LogInfo, PSAGM_FRAME_COREMAG_LABEL, "background create, layers: %u", LayersRawImages.size());
 		}
 	}

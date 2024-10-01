@@ -267,6 +267,9 @@
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_final.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -361,7 +364,7 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imms.h">
+    <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.h">

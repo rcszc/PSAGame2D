@@ -8,7 +8,7 @@
   "RenderTexGenNum": [ 25, 20, 10, 5 ],
   "GuiWindowRounding": 3.8,
   "GuiFrameRounding": 5.8,
-  "GuiFontsFilepath": "PSAGameSystemFiles/YouSheBiaoTiHei.ttf",
-  "GuiFontsSize": 46.0,
+  "GuiFontsFilepath": "PSAGameSystemFiles/JetBrainsMonoBold.ttf",
+  "GuiFontsSize": 32.0,
   "GuiFontsColor": [ 0.0, 1.0, 1.0, 0.92 ]
 }

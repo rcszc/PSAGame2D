@@ -17,12 +17,13 @@
 namespace GameLogic {
     // framework run parameters.
     struct FrameworkParams {
-        GraphicsEngineMatrix::MatrixTransParams*    CameraParams;
-        GraphicsEngineFinal::FinalFxParameters*     PostShaderParams;
-        GraphicsEngineBackground::BackFxParameters* BackShaderParams;
+        GraphicsEngineMatrix::MatrixTransParams* CameraParams;
+
+        GraphicsEngineFinal::FinalFxParameters*     ShaderParamsFinal;
+        GraphicsEngineBackground::BackFxParameters* ShaderParamsBackground;
 
         Vector2T<uint32_t> WindowResolution;
-        float GameRunTimeStep;
+        float GameRunTimeSTEP;
     };
 
     // frameowrk game_logic interface.
@@ -185,7 +186,7 @@ namespace PsagFrameworkCore {
         bool     RendererWindowFixed = false;
 
         // renderer event_loop params.
-        Vector4T<float>* RenderingFrameColorPtr = &RenderBgColor;
+        Vector4T<float>* RenderingFrameColorPtr = &RenderClearColor;
 
         Vector2T<uint32_t> RenderingWindowSize      = {};
         Vector2T<uint32_t> RenderingVirTexBasicSize = {};

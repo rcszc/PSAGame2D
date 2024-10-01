@@ -375,18 +375,18 @@ namespace PSAG_OGL_MAG {
 
 #define RBO_PIXEL_SIZE 4
 	bool PasgRenderbufferOGL::CreateConfigRenderBuffer(uint32_t width, uint32_t height, bool depth) {
-		if (CreateBindRenderBuffer(RenderBuffer.RenderBuffer)) {
+		if (CreateBindRenderBuffer(RenderBufferSize.RenderBufferSize)) {
 			// GL_DEPTH24_STENCIL8 - d.24bit s.8bit 32bit(4byte)
 			// alloc rbo memory(set render size).
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, (int)width, (int)height);
 			if (depth) {
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RenderBuffer.RenderBuffer);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RenderBufferSize.RenderBufferSize);
 				PsagLowLog(LogInfo, PSAG_OGLMAG_RENDREBUFFER, "render_buffer config depth.");
 			}
-			RenderBuffer.Width        = width;
-			RenderBuffer.Height       = height;
-			RenderBuffer.Channels     = 4;
-			RenderBuffer.TextureBytes = RenderBuffer.Width * RenderBuffer.Height * RBO_PIXEL_SIZE;
+			RenderBufferSize.Width        = width;
+			RenderBufferSize.Height       = height;
+			RenderBufferSize.Channels     = 4;
+			RenderBufferSize.TextureBytes = RenderBufferSize.Width * RenderBufferSize.Height * RBO_PIXEL_SIZE;
 
 			// render buffer pixel memory_size(mib)
 			float PixelMemory = (float)width * (float)height * RBO_PIXEL_SIZE / 1048576.0f;
@@ -417,7 +417,7 @@ namespace PSAG_OGL_MAG {
 		RenderRawData.Height   = buffer.Height;
 		RenderRawData.Channels = buffer.Channels;
 
-		glBindFramebuffer(GL_FRAMEBUFFER, buffer.RenderBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, buffer.RenderBufferSize);
 		// read render_buffer pixel.
 		glReadPixels(NULL, NULL, RenderRawData.Width, RenderRawData.Height, GL_RGBA, GL_UNSIGNED_BYTE, RenderRawData.ImagePixels.data());
 		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
@@ -427,7 +427,7 @@ namespace PSAG_OGL_MAG {
 
 	PsagRenderBufferAttribute PasgRenderbufferOGL::_MS_GETRES(ResourceFlag& flag) {
 		flag = ReturnResourceFlag;
-		return RenderBuffer;
+		return RenderBufferSize;
 	}
 
 	// **************************************** FrameBuffer ****************************************
@@ -510,13 +510,13 @@ namespace PSAG_OGL_MAG {
 		bool ResultFlag = false;
 		// texture => framebuffer.
 		glBindFramebuffer(GL_FRAMEBUFFER, FrameBuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, buffer.RenderBuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, buffer.RenderBufferSize);
 		{
-			if (buffer.RenderBuffer == OPENGL_INVALID_HANDEL) {
+			if (buffer.RenderBufferSize == OPENGL_INVALID_HANDEL) {
 				PsagLowLog(LogError, PSAG_OGLMAG_FRAMEBUFFER, "invalid handle render_buffer.");
 				return DEF_PSAGSTAT_FAILED;
 			}
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer.RenderBuffer);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer.RenderBufferSize);
 			ResultFlag = CheckFrameBuffer(FrameBuffer, ReturnResourceFlag);
 		}
 		// unbind fbo,rbo.

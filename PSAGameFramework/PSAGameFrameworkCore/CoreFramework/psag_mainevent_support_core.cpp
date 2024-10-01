@@ -44,12 +44,12 @@ namespace PsagFrameworkCore {
         ClacFrameTimeStepBegin();
         
         // update time_step.
-        GraphicsEngineTimeStep = FrameworkParams.GameRunTimeStep;
-        PhysicsEngineTimeStep  = FrameworkParams.GameRunTimeStep;
-        CollectEngineTimeStep  = FrameworkParams.GameRunTimeStep;
+        GraphicsEngineTimeStep = FrameworkParams.GameRunTimeSTEP;
+        PhysicsEngineTimeStep  = FrameworkParams.GameRunTimeSTEP;
+        CollectEngineTimeStep  = FrameworkParams.GameRunTimeSTEP;
         PhysicsSystemUpdateState();
 
-        ActorModulesTimeStep = FrameworkParams.GameRunTimeStep;
+        ActorModulesTimeStep = FrameworkParams.GameRunTimeSTEP;
 
         // calc & update global_matrix.
         float RoatioValue = (float)RenderingWindowSize.vector_x / (float)RenderingWindowSize.vector_y;
@@ -78,7 +78,7 @@ namespace PsagFrameworkCore {
         RenderContextBelow();
         
         // clac_frame global time_step.
-        FrameworkParams.GameRunTimeStep = CalcFrameTimeStepEnd(RenderingBaseFPS);
+        FrameworkParams.GameRunTimeSTEP = CalcFrameTimeStepEnd(RenderingBaseFPS);
         // glfw close_window flag & renderer block error.
         return !(CloseFlag() || CoreErrorFlag);
     }
@@ -139,14 +139,14 @@ namespace PsagFrameworkCore {
         RendererPostFX = new GraphicsEngineFinal::PsagGLEngineFinal(RenderingWindowSize);
         RendererBackFX = new GraphicsEngineBackground::PsagGLEngineBackgroundNULL();
 
-        // init imgui_core system.
-        ImGuiInit(MainWindowObject, ImGuiInitConfig);
+        // init,config imgui_context system.
+        CoreInitErrorFlag |= !ImGuiContextInit(MainWindowObject, ImGuiInitConfig);
 
         // load pointer.
-        FrameworkParams.PostShaderParams = RendererPostFX->GetRenderParameters();
+        FrameworkParams.ShaderParamsFinal = RendererPostFX->GetRenderParameters();
         FrameworkParams.WindowResolution = RenderingWindowSize;
         // non-create using default values.
-        FrameworkParams.BackShaderParams = RendererBackFX->GetRenderParameters();
+        FrameworkParams.ShaderParamsBackground = RendererBackFX->GetRenderParameters();
        
         // registration dev_class, objects.
         InitializeRegistrationDev();
@@ -181,7 +181,7 @@ namespace PsagFrameworkCore {
         // physics system delete.
         CoreInitErrorFlag |= !PhysicsWorldDelete("DEFAULT_PHY_WORLD");
 
-        ImGuiFree();
+        ImGuiContextFree();
         CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStaticVertexData::LowLevelResourceFree();
         CoreInitErrorFlag |= !GLFWwindowFree();
         return CoreInitErrorFlag;

@@ -2,7 +2,7 @@
 # PSAGame2D
 > PomeloStar 2D游戏开发框架.
 
-__当前版本:__ `V1-20240926` __开发文档:__ 暂无(赶工中..ing)
+__当前版本:__ `V1-20241002` __开发文档:__ 暂无(赶工中..ing)
 
 > 目前长期施工中🙂, 许多模块还处于开发阶段. ( 希望别弃坑了~~前面还有一堆坑~~
 
@@ -14,9 +14,9 @@ __当前版本:__ `V1-20240926` __开发文档:__ 暂无(赶工中..ing)
 
 目前主要兼容 __WindowsX86__ 平台. 内置帧性能监控, 使用简单的控制反转(IOC), 降低游戏代码与框架的耦合度, 框架内置多级 后期处理&背景处理 着色器管线. 使用描述符(DESC), 描述各构建对象以及挂载组件, 简化手动创建等.
 
-- __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 92%
+- __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 94%
 
-FrameworkCore __Files:__ ```79``` __LoC:__ ```12178```
+FrameworkCore __Files:__ ```81``` __LoC:__ ```12391```
 
 ---
 
@@ -33,9 +33,9 @@ FrameworkCore __Files:__ ```79``` __LoC:__ ```12178```
 ### 框架层级 & 渲染架构
 
 <p align="center">
-  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:45%"/>
-  <span style="display:inline-block; width:1%;"></span>
-  <img src="PSAGameDesigns/RendererArch.png" style="width:51%;"/>
+  <img src="PSAGameDesigns/RendererArch.png" style="width:49%;"/>
+   <span style="display:inline-block; width:1%;"></span>
+  <img src="PSAGameDesigns/EngineLayersArch.png" style="width:48%"/>
 </p>
 
 ### 纹理管理器架构 & 顶点组管理器架构
@@ -52,9 +52,10 @@ FrameworkCore __Files:__ ```79``` __LoC:__ ```12178```
 
 ## 框架每个版本都会带有对应 DEMO
 
-[__BiliBili视频__](https://www.bilibili.com/video/BV1eesneqEmZ/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b) __Update:__ 2024.08.27
+[__BiliBili视频__](https://www.bilibili.com/video/BV1eesneqEmZ/?share_source=copy_web&vd_source=13ed11b7c6628f0aef39803f8e802f5b) __Update:__ 2024.10.02
+> 动态游戏场景后期画面调色
 
-<img src="PSAGameDesigns/PSAGame2Dv20240826.png"/>
+<img src="PSAGameDesigns/PSAGame2Dv20241002.png"/>
 
 ---
 
