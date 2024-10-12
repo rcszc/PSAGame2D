@@ -135,12 +135,12 @@ namespace GameComponents {
 
 	void ActorRendering::UpdateActorRenderingTexture(PsagShader shader) {
 		// draw virtual texture.
-		VirTextureItemDraw(VirTexItem, shader, VirTexUniform);
+		VirTextureItemDraw(VirTexture, shader, VirTexUniform);
 	}
 
 	Vector2T<float> ActorCoordConvert::ConvertSceneToWindow(Vector2T<uint32_t> window_size, Vector2T<float> position) {
 		// scene virtual coord = > window coord.
-			float ValueScale = (float)window_size.vector_y / (float)window_size.vector_x;
+		float ValueScale = (float)window_size.vector_y / (float)window_size.vector_x;
 		float LossWidth  = window_size.vector_x * 0.5f;
 		float LossHeight = window_size.vector_y * 0.5f;
 

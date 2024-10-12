@@ -91,6 +91,9 @@
     <Filter Include="源文件\DevSupport">
       <UniqueIdentifier>{43b8c5eb-d94c-4be0-89de-2d78f2909925}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\A-PSAGameFrameworkDev\PSA实验室">
+      <UniqueIdentifier>{8ab63cea-36ac-481c-a91b-74fe3277fbc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -270,6 +273,9 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_final.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -314,6 +320,9 @@
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_template_actor.vert">
       <Filter>源文件\PSAGameFrameworkCore\CoreShaderScript\public</Filter>
     </None>
+    <None Include="PSAGameFrameworkCore\framework_config_shaders.json">
+      <Filter>源文件\PSAGameFrameworkCore</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h">
@@ -332,9 +341,6 @@
       <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_ext.h">
-      <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
-    </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_std.h">
       <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.h">
@@ -412,10 +418,10 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\framework_dev_actor.h">
+    <ClInclude Include="PSAGameFrameworkCore\framework_header_actor.h">
       <Filter>源文件\DevSupport</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\framework_dev_manager.h">
+    <ClInclude Include="PSAGameFrameworkCore\framework_header_manager.h">
       <Filter>源文件\DevSupport</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp">
@@ -426,6 +432,12 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_std.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLLogger</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

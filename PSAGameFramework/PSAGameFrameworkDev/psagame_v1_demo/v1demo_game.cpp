@@ -152,7 +152,7 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 
 	// 鼠标左键, 循环计时器, 剩余子弹,  非换弹时间.
 	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerFlagGet() && 
-		PawnActorBullet > 0.0f && !PawnActorChangeAMM
+		PawnActorBullet > 0.0f && !PawnActorChangeAMM && ImGui::IsItemHovered()
 	) {
 		// 创建Actor子弹 => 减弹夹 => 重置计时器.
 		GameCreateBulletPawn(PawnActorOBJ->ActorGetPosition(), PawnActorOBJ->ActorGetRotate());

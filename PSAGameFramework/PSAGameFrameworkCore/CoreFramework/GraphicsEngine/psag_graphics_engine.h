@@ -176,6 +176,8 @@ namespace GraphicsEngineDataset {
 		// virtual texture & layer_index.
 		bool VirTextureItemIndex(ResUnique rukey, PsagTexture& texture, uint32_t layer_index);
 
+		VirTextureParam VirTextureItemGet(ResUnique rukey);
+
 		// virtual texture system: framework oper.
 		void VirtualTextureDataObjectCreate(
 			Vector2T<uint32_t> base_size, const VirTexturesGenParams& params = VirTexturesGenParams()
@@ -195,7 +197,7 @@ namespace GraphicsShaderCode {
 	};
 
 	struct PrivateDESC {
-		std::string shaderFragMultFilter; // [final_shaders]
+		std::string ShaderFragMultFilter; // [final_shaders]
 		std::string ShaderFragBloomH;     // [final_shaders]
 		std::string ShaderFragBloomV;     // [final_shaders]
 		std::string ShaderFragFinalPhase; // [final_shaders]
@@ -583,7 +585,7 @@ namespace GraphicsEngineParticle {
 		float           RenderRotate = 0.0f;
 		float           RenderTwist  = 0.0f;
 
-		ResUnique VirTextureItem = {};
+		VirTextureUnqiue VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
 		void VertexDataConvert(
@@ -658,27 +660,32 @@ namespace GraphicsEnginePVFX {
 		public __GRAPHICS_ENGINE_TIMESETP
 	{
 	protected:
-		static float SystemTimeStep;
-
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
-		ResUnique ShaderProcessFinal = {};
+		ResUnique ShaderSequenceRun = {};
 
 		SequencePlayer  PlayerParams   = {};
 		Vector2T<float> PlayerPosition = {};
 		float           PlayerTimer    = 0.0f;
 
-		float       RenderTimer  = 0.0f;
 		PsagMatrix4 RenderMatrix = {};
+		float       RenderTimer  = 0.0f;
 
 		ResUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
+
+		// rendering => capture => virtual_texture.
+		VirTextureUnqiue CaptureVirTexture = {};
+		ResUnique CaptureFrameBuffer = {};
 	public:
 		PsagGLEngineFxSequence(const ImageRawData& image, const SequencePlayer& params);
 		~PsagGLEngineFxSequence();
 
 		bool DrawFxSequence(const Vector4T<float>& blend_color);
 		size_t PlayerCyclesCount = NULL;
+
+		// get fx_sequence virtual_texture index.
+		ResUnique GetFxSequenceTexture();
 	};
 }
 

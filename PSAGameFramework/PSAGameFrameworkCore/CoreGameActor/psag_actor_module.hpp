@@ -138,7 +138,7 @@ namespace GameComponents {
 		
 		std::function<void(PsagShader)> RenderingTextureFunc = [&](PsagShader) {};
 		GraphicsEngineDataset::VirTextureUniformName VirTexUniform = {};
-		ResUnique VirTexItem = NULL;
+		VirTextureUnqiue VirTexture = NULL;
 
 		virtual void UpdateActorRendering(const RenderingParams& params, float time_count);
 		virtual void UpdateActorRenderingTexture(PsagShader shader);
@@ -297,7 +297,7 @@ namespace GameActorCore {
 		void UniformVec3(const char* name, const Vector3T<float>& value);
 		void UniformVec4(const char* name, const Vector4T<float>& value);
 
-		ResUnique                                    __VIR_TEXTURE_ITEM = NULL;
+		VirTextureUnqiue                             __VIR_TEXTURE_ITEM = NULL;
 		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM = {};
 		
 		ResUnique __ACTOR_SHADER_ITEM = NULL;

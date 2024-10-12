@@ -542,6 +542,12 @@ namespace GraphicsEngineDataset {
 		return false;
 	}
 
+	VirTextureParam GLEngineVirTextureData::VirTextureItemGet(ResUnique rukey) {
+		if (!VirTextureExist(rukey)) return VirTextureParam();
+		// virtual texture exis => return(copy).
+		return *FindTexIndexItems(rukey);
+	}
+
 	void GLEngineVirTextureData::VirtualTextureDataObjectCreate(Vector2T<uint32_t> base_size, const VirTexturesGenParams& params) {
 		if (base_size.vector_x < 512 || base_size.vector_y < 512)
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_create texture, base_size > 512.");

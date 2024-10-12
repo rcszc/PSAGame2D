@@ -42,7 +42,7 @@ namespace GameBrickCore {
 					[this](PsagShader shader) { BirckCompRendering->UpdateActorRenderingTexture(shader); };
 
 				// virtual texture_unqiue, unifrom.
-				BirckCompRendering->VirTexItem    = BrickRenderRes->__VIR_TEXTURE_ITEM;
+				BirckCompRendering->VirTexture    = BrickRenderRes->__VIR_TEXTURE_ITEM;
 				BirckCompRendering->VirTexUniform = BrickRenderRes->__VIR_UNIFORM_ITEM;
 			}
 		}

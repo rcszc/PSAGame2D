@@ -132,6 +132,8 @@ namespace GameManagerCore {
 			}
 			Vector4T<float> BackgroundColorBlend = Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f);
 			void FxSpriteSheetRendering();
+
+			VirTextureUnqiue FxSpriteSheetTexture();
 		};
 	}
 

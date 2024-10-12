@@ -208,7 +208,7 @@ namespace GraphicsEngineFinal {
 		ShaderColorFilter.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate,     StringScript);
 		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,       StringScript);
 		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragTools,        StringScript);
-		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.shaderFragMultFilter, StringScript);
+		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.ShaderFragMultFilter, StringScript);
 
 		if (ShaderColorFilter.CreateCompileShader()) {
 			ShaderFilter = GenResourceID.PsagGenUniqueKey();

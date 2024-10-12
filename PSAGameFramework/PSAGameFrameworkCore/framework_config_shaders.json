@@ -1,0 +1,15 @@
+{
+  "system_shaders_version": "1.1.2",
+  "public_vertex_template_actor": "PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_template_actor.vert",
+  "public_vertex_template": "PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_template.vert",
+  "public_fragment_tools": "PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_tools.frag",
+  "public_fragment_header": "PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_header.frag",
+  "private_fragment_light": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_vollight.frag",
+  "private_fragment_mulfilter": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_multfilter.frag",
+  "private_fragment_bloom_h": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_blurh.frag",
+  "private_fragment_bloom_v": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_blurv.frag",
+  "private_fragment_final_phase": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final.frag",
+  "private_fragment_background": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_background.frag",
+  "private_fragment_particle": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_particle.frag",
+  "private_fragment_fx_sequence": "PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_fx_sequence.frag"
+}

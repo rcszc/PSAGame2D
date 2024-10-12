@@ -1,10 +1,10 @@
-// v1demo_game. 2024_08_022 RCSZ.
+// v1demo_game. 2024_08_22 RCSZ.
 // Framework DemoV1.
 
 #ifndef __V1DEMO_GAME_H
 #define __V1DEMO_GAME_H
-#include "../../PSAGameFrameworkCore/framework_dev_actor.h"
-#include "../../PSAGameFrameworkCore/framework_dev_manager.h"
+#include "../../PSAGameFrameworkCore/framework_header_actor.h"
+#include "../../PSAGameFrameworkCore/framework_header_manager.h"
 
 extern const char* ShaderFragBackground;
 extern const char* ShaderFragPawnActor;

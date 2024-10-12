@@ -118,7 +118,7 @@ namespace PSAG_THREAD_POOL {
     };
 }
 #define ENABLE_AVX256_CALC_FUNC
-// PSAG thread(calc) function: SIMD AVX-256, X86.
+// PSAG thread(calc) function: SIMD AVX-256, X86-64.
 namespace PSAG_THREAD_SIMD {
 #ifdef ENABLE_AVX256_CALC_FUNC
     // device intel-avx-isa.

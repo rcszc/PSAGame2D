@@ -104,5 +104,9 @@ namespace GameManagerCore {
 		void GameFxSpriteSheet::FxSpriteSheetRendering() {
 			FxSpriteSheetObject->DrawFxSequence(BackgroundColorBlend);
 		}
+
+		VirTextureUnqiue GameFxSpriteSheet::FxSpriteSheetTexture() {
+			return FxSpriteSheetObject->GetFxSequenceTexture();
+		}
 	}
 }

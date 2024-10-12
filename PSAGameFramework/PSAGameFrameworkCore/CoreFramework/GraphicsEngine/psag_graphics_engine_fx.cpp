@@ -100,8 +100,8 @@ namespace GraphicsEnginePVFX {
 
 		// create & storage fx_sequence_shader.
 		if (ShaderProcess.CreateCompileShader()) {
-			ShaderProcessFinal = GenResourceID.PsagGenUniqueKey();
-			GraphicShaders->ResourceStorage(ShaderProcessFinal, &ShaderProcess);
+			ShaderSequenceRun = GenResourceID.PsagGenUniqueKey();
+			GraphicShaders->ResourceStorage(ShaderSequenceRun, &ShaderProcess);
 		}
 
 		// porj matrix + scale.
@@ -121,59 +121,86 @@ namespace GraphicsEnginePVFX {
 		VirTextureUniform.TexParamCropping = "SequeVirTexCropping";
 		VirTextureUniform.TexParamSize     = "SequeVirTexSize";
 
+		// ******************************** create virtual_texture & fbo ******************************** 
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsFrameBuffer CreateFrameBuffer;
+
+		CaptureVirTexture = GenResourceID.PsagGenUniqueKey();
+		if (!VirTextureItemAlloc(CaptureVirTexture, image)) {
+			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system: failed create vir_tex.");
+			return;
+		}
+		if (!CreateFrameBuffer.CreateFrameBuffer()) {
+			PushLogger(LogError, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system: failed create fbo.");
+			return;
+		}
+		CaptureFrameBuffer = GenResourceID.PsagGenUniqueKey();
+		// virtual_texture(layer) =bind=> frame_buffer. 
+		CreateFrameBuffer.TextureLayerBindFBO(
+			GraphicTextures->ResourceFind(VirTextureItemGet(CaptureVirTexture).Texture).Texture,
+			VirTextureItemGet(CaptureVirTexture).SampleLayers
+		);
+		GraphicFrameBuffers->ResourceStorage(CaptureFrameBuffer, &CreateFrameBuffer);
+
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "psag_fx sequence system init.");
 	}
 
 	PsagGLEngineFxSequence::~PsagGLEngineFxSequence() {
 		// free graphics sequence resource.
 		VirTextureItemFree(VirTextureItem);
-		GraphicShaders->ResourceDelete(ShaderProcessFinal);
+		GraphicShaders->ResourceDelete(ShaderSequenceRun);
 		PushLogger(LogInfo, PSAGM_GLENGINE_PVFX_LABEL, "graphics_engine free post_shader(system).");
 	}
 
 	bool PsagGLEngineFxSequence::DrawFxSequence(const Vector4T<float>& blend_color) {
-		auto ShaderTemp = GraphicShaders->ResourceFind(ShaderProcessFinal);
-		OGLAPI_OPER.RenderBindShader(ShaderTemp);
-		
-		// system parset uniform.
-		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  RenderMatrix);
-		ShaderUniform.UniformFloat    (ShaderTemp, "RenderTime", RenderTimer);
+		OGLAPI_OPER.RenderBindFrameBuffer(GraphicFrameBuffers->ResourceFind(CaptureFrameBuffer));
+		{
+			auto ShaderTemp = GraphicShaders->ResourceFind(ShaderSequenceRun);
+			OGLAPI_OPER.RenderBindShader(ShaderTemp);
 
-		ShaderUniform.UniformVec2(ShaderTemp, "RenderMove",  Vector2T<float>(0.0f, 0.0f));
-		ShaderUniform.UniformVec2(ShaderTemp, "RenderScale", Vector2T<float>(1.0f, 1.0f));
-		// player sequence frame.
-		ShaderUniform.UniformVec2(ShaderTemp, "RenderUvSize",
-			Vector2T<float>(1.0f / PlayerParams.UaxisFrameNumber, 1.0f / PlayerParams.VaxisFrameNumber)
-		);
-		ShaderUniform.UniformVec2(ShaderTemp, "RenderUvOffset", PlayerPosition);
-		ShaderUniform.UniformVec4(ShaderTemp, "RenderColorBlend", blend_color);
+			// system parset uniform.
+			ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderMatrix);
+			ShaderUniform.UniformFloat(ShaderTemp, "RenderTime", RenderTimer);
 
-		// player size & offset uv.
-		if (PlayerTimer * PlayerParams.PlayerSpeedScale >= 1.0f) {
-			if (PlayerPosition.vector_x >= 1.0f - 1.0f / PlayerParams.UaxisFrameNumber) {
-				PlayerPosition.vector_x = 0.0f;
-				PlayerPosition.vector_y += 1.0f / PlayerParams.VaxisFrameNumber;
+			ShaderUniform.UniformVec2(ShaderTemp, "RenderMove",  Vector2T<float>(0.0f, 0.0f));
+			ShaderUniform.UniformVec2(ShaderTemp, "RenderScale", Vector2T<float>(1.0f, 1.0f));
+			// player sequence frame.
+			ShaderUniform.UniformVec2(ShaderTemp, "RenderUvSize",
+				Vector2T<float>(1.0f / PlayerParams.UaxisFrameNumber, 1.0f / PlayerParams.VaxisFrameNumber)
+			);
+			ShaderUniform.UniformVec2(ShaderTemp, "RenderUvOffset",   PlayerPosition);
+			ShaderUniform.UniformVec4(ShaderTemp, "RenderColorBlend", blend_color);
+
+			// player size & offset uv.
+			if (PlayerTimer * PlayerParams.PlayerSpeedScale >= 1.0f) {
+				if (PlayerPosition.vector_x >= 1.0f - 1.0f / PlayerParams.UaxisFrameNumber) {
+					PlayerPosition.vector_x = 0.0f;
+					PlayerPosition.vector_y += 1.0f / PlayerParams.VaxisFrameNumber;
+				}
+				if (PlayerPosition.vector_y >= 1.0f - 1.0f / PlayerParams.VaxisFrameNumber) {
+					PlayerPosition = Vector2T<float>(0.0f, 0.0f);
+					++PlayerCyclesCount;
+				}
+				PlayerTimer = 0.0f;
+				PlayerPosition.vector_x += 1.0f / PlayerParams.UaxisFrameNumber;
 			}
-			if (PlayerPosition.vector_y >= 1.0f - 1.0f / PlayerParams.VaxisFrameNumber) {
-				PlayerPosition = Vector2T<float>(0.0f, 0.0f);
-				++PlayerCyclesCount;
-			}
-			PlayerTimer = 0.0f;
-			PlayerPosition.vector_x += 1.0f / PlayerParams.UaxisFrameNumber;
-		}
-		PlayerTimer += PSAGM_VIR_TICKSTEP_GL * 2.0f * GraphicsEngineTimeStep;
-		RenderTimer += PSAGM_VIR_TICKSTEP_GL;
+			PlayerTimer += PSAGM_VIR_TICKSTEP_GL * 2.0f * GraphicsEngineTimeStep;
+			RenderTimer += PSAGM_VIR_TICKSTEP_GL;
 
-		// draw virtual texture.
-		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
-		// frame draw(command).
-		VerStcOperFrameDraw(GetPresetRect());
-		OGLAPI_OPER.RenderUnbindShader();
-
+			// draw virtual texture.
+			VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
+			// frame draw(command).
+			VerStcOperFrameDraw(GetPresetRect());
+			OGLAPI_OPER.RenderUnbindShader();
 #if PSAG_DEBUG_MODE
-		if (ShaderTemp == OPENGL_INVALID_HANDEL)
-			return false;
+			if (ShaderTemp == OPENGL_INVALID_HANDEL)
+				return false;
 #endif
+		}
+		OGLAPI_OPER.RenderUnbindFrameBuffer();
 		return true;
+	}
+
+	VirTextureUnqiue PsagGLEngineFxSequence::GetFxSequenceTexture() {
+		return CaptureVirTexture;
 	}
 }

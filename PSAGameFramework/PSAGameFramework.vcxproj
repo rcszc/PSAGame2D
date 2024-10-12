@@ -199,6 +199,7 @@
     <ClCompile Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_oglfw.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_init.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp" />
@@ -220,6 +221,7 @@
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_template_actor.vert" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\public\psag_graph_tools.frag" />
     <None Include="PSAGameFrameworkCore\framework_config.json" />
+    <None Include="PSAGameFrameworkCore\framework_config_shaders.json" />
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json" />
   </ItemGroup>
   <ItemGroup>
@@ -242,8 +244,8 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug.hpp" />
-    <ClInclude Include="PSAGameFrameworkCore\framework_dev_actor.h" />
-    <ClInclude Include="PSAGameFrameworkCore\framework_dev_manager.h" />
+    <ClInclude Include="PSAGameFrameworkCore\framework_header_actor.h" />
+    <ClInclude Include="PSAGameFrameworkCore\framework_header_manager.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_math.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.h" />
@@ -259,6 +261,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
+    <ClInclude Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.h" />
     <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

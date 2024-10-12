@@ -73,7 +73,7 @@ namespace GameActorCore {
 					[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTexture(shader); };
 
 				// virtual texture_unqiue, uniform.
-				ActorCompRendering->VirTexItem    = ActorRenderRes->__VIR_TEXTURE_ITEM;
+				ActorCompRendering->VirTexture    = ActorRenderRes->__VIR_TEXTURE_ITEM;
 				ActorCompRendering->VirTexUniform = ActorRenderRes->__VIR_UNIFORM_ITEM;
 			}
 		}
