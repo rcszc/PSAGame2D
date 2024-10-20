@@ -19,8 +19,6 @@
 #include "../LLSound/framework_sound.h"
 #include "../LLThread/framework_thread.hpp"
 #include "../LLWindowGui/framework_window.h"
-#define PSAG_IMGUI_CONTROL_MATHS
-#include "../LLWindowGui/framework_window_imgui_ms.h"
 
 namespace PsagLow {
 	// low_module 'graphics' support.

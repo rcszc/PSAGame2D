@@ -49,9 +49,6 @@
     <Filter Include="源文件\PSAGameFrameworkCore\LLLogger">
       <UniqueIdentifier>{fad26808-6b84-407e-9dda-ba80dc40c8e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="资源文件\ImGui">
-      <UniqueIdentifier>{e10cb3d9-3fea-4966-b786-a7551eb9066f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="资源文件\Base64">
       <UniqueIdentifier>{f862cddc-a2c4-427d-9e62-89a2b45f13c4}</UniqueIdentifier>
     </Filter>
@@ -69,9 +66,6 @@
     </Filter>
     <Filter Include="源文件\PSAGameFrameworkCore\CoreShaderScript\public">
       <UniqueIdentifier>{f92f791f-ddfc-486e-9637-f9bf67c29c5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine">
-      <UniqueIdentifier>{f0db884c-4f61-4683-8c7d-cc48786ce092}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\PhysicsEngine">
       <UniqueIdentifier>{402f484e-2d0b-4f4a-8ac4-9b6ad301d9ba}</UniqueIdentifier>
@@ -93,6 +87,15 @@
     </Filter>
     <Filter Include="源文件\A-PSAGameFrameworkDev\PSA实验室">
       <UniqueIdentifier>{8ab63cea-36ac-481c-a91b-74fe3277fbc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\ImGui">
+      <UniqueIdentifier>{669c97ac-5586-4008-8b4d-a25882db1706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\ImGui\ImGuiCore">
+      <UniqueIdentifier>{e10cb3d9-3fea-4966-b786-a7551eb9066f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine">
+      <UniqueIdentifier>{f0db884c-4f61-4683-8c7d-cc48786ce092}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -196,43 +199,37 @@
       <Filter>资源文件\Base64</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_demo.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_draw.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_glfw.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl2.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_tables.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_random.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_shader.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_pawn.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
@@ -246,9 +243,6 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_comp.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_camera.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
     </ClCompile>
@@ -261,9 +255,6 @@
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine_timer.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
     </ClCompile>
@@ -275,6 +266,27 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test_panel.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_camera.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_temp.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_pawn.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_random.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_timer.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -386,37 +398,34 @@
       <Filter>资源文件\Base64</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imconfig.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_glfw.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl2.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3_loader.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_internal.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_rectpack.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_textedit.h">
-      <Filter>资源文件\ImGui</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_truetype.h">
-      <Filter>资源文件\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\CollectEngine\psag_collect_engine.h">
-      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\CollectEngine</Filter>
+      <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\framework_header_actor.h">
       <Filter>源文件\DevSupport</Filter>
@@ -438,6 +447,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.h">
       <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine.h">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

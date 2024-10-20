@@ -19,10 +19,9 @@ size_t LogWarringLines = NULL, LogErrorLines = NULL;
 
 #include <iomanip>
 // time [xxxx.xx.xx.xx:xx:xx:xx ms].
-string __get_timestamp() {
-	auto timenow = chrono::system_clock::now();
-	auto timemillisecond = chrono::duration_cast<chrono::milliseconds>(timenow.time_since_epoch()) % 1000;
-	auto t = chrono::system_clock::to_time_t(timenow);
+string __get_timestamp(const chrono::system_clock::time_point& time_point) {
+	auto timemillisecond = chrono::duration_cast<chrono::milliseconds>(time_point.time_since_epoch()) % 1000;
+	auto t = chrono::system_clock::to_time_t(time_point);
 	tm _time = {};
 #ifdef _WIN32
 	localtime_s(&_time, &t);
@@ -33,6 +32,10 @@ string __get_timestamp() {
 	_sstream << put_time(&_time, "[%Y.%m.%d %H:%M:%S") << " " << setfill('0') << setw(3) << timemillisecond.count() << " ms]";
 	// windows / linux time stamp.
 	return _sstream.str();
+}
+
+string FMT_TIME_STAMP(const chrono::system_clock::time_point& time_point) {
+	return __get_timestamp(time_point);
 }
 
 // global const hashlable.
@@ -75,7 +78,8 @@ namespace PSAG_LOGGER {
 		}
 
 		string FmtModuleName = "[" + module_name + "]: ";
-		string FmtLog = __get_timestamp() + ":" + LogLabelTemp + ":" + FmtModuleName + logstr_text;
+		string FmtLog = __get_timestamp(chrono::system_clock::now()) + ":" + LogLabelTemp + ":" + FmtModuleName + logstr_text;
+
 		// => read logger chache & logger process(print).
 		GLOBAL_LOG_CACHE.push_back(PRLC::LogCache(FmtLog, module_name, label));
 		LogWriteQueue.push(PRLC::LogCache(FmtLog, module_name, label));

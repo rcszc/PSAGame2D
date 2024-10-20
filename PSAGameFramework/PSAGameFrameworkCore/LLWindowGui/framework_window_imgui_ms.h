@@ -5,6 +5,7 @@
 #ifndef _FRAMEWORK_WINDOW_IMMS_H
 #define _FRAMEWORK_WINDOW_IMMS_H
 
+#define IMGUI_ENABLE_FREETYPE
 #include "imgui_glfw3/imgui.h"
 #include "imgui_glfw3/imgui_internal.h"
 

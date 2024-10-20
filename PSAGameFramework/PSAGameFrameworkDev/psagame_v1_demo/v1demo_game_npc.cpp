@@ -41,7 +41,7 @@ public:
 		float NPC_ANGLE = PsagManager::Maths::CalcFuncPointsAngle(actor_object->ActorGetPosition(), PawnActorPointer->ActorGetPosition());
 		actor_object->ActorModifyState(actor_object->ActorGetPosition(), NPC_ANGLE);
 
-		if (FireTimer.CycleTimerFlagGet()) {
+		if (FireTimer.CycleTimerGetFlag()) {
 			BulletFireFunc(actor_object->ActorGetPosition(), NPC_ANGLE);
 			FireTimer.CycleTimerClearReset(300.0f + ThisNPCTimetrOffset);
 		}
@@ -119,7 +119,7 @@ void PsaGameV1Demo::GameCreateNPC(const Vector2T<float>& position) {
 			// NPC¿ÛÑª + Clamp.
 			float SetHP = ThisActor->ActorGetHealth(0) <= 0.0f ?
 				0.0f :
-				ThisActor->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFunc(220.0f, 240.0f);
+				ThisActor->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFuncFP32(220.0f, 240.0f);
 			ThisActor->ActorModifyHealth(0, SetHP);
 		}
 	};

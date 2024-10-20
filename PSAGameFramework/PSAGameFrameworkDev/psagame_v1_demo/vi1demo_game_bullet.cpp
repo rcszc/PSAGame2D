@@ -33,7 +33,7 @@ void PsaGameV1Demo::GameCreateBulletPawn(const Vector2T<float>& position, float 
                 // PawnActor ×Óµ¯Åö×² NPC ¿ÛÑª.
                 auto NpcActorOBJ = DemoActors->FindGameActor(ActorInfo.ActorUniqueCode);
                 NpcActorOBJ->ActorModifyHealth(
-                    0, NpcActorOBJ->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFunc(160.0f, 128.0f)
+                    0, NpcActorOBJ->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFuncFP32(160.0f, 128.0f)
                 );
             }
         }
@@ -80,7 +80,7 @@ void PsaGameV1Demo::GameCreateBulletNPC(const Vector2T<float>& position, float a
                 // NPC ×Óµ¯Åö×² PawnActor ¿ÛÑª.
                 auto PawnActorOBJ = DemoActors->FindGameActor(PawnActorUnqiue);
                 PawnActorOBJ->ActorModifyHealth(
-                    0, PawnActorOBJ->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFunc(160.0f, 128.0f)
+                    0, PawnActorOBJ->ActorGetHealth(0) - PsagManager::Tools::RAND::GenerateRandomFuncFP32(160.0f, 128.0f)
                 );
             }
         }

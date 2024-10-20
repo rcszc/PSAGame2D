@@ -5,7 +5,7 @@
 // graphics & collect engine => manager_module.
 #define ENABLE_LOWMODULE_FILESYS
 #include "../CoreFramework/GraphicsEngine/psag_graphics_engine.h"
-#include "../CoreFramework/CollectEngine/psag_collect_engine.h"
+#include "../CoreFramework/ToolkitsEngine/psag_toolkits_engine.h"
 
 namespace GameManagerCore {
 	namespace GameFX {

@@ -14,6 +14,8 @@ StaticStrLABEL PSAG_LOGGER_LABEL = "PSAG_LOGGER";
 
 // format number => string, %d(fill_zero).
 std::string FMT_NUMBER_FILLZERO(uint32_t number, int32_t digits);
+// format time_point: "[xxxx.xx.xx.xx:xx:xx:xx ms]".
+std::string FMT_TIME_STAMP(const std::chrono::system_clock::time_point& time_point);
 
 namespace PSAG_LOGGER {
 	// @param "label" (level label), "module_name" (module), "logstr_text" (log information)

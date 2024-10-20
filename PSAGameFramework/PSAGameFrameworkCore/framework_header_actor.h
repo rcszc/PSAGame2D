@@ -31,7 +31,9 @@ namespace PsagActor {
 	using ActorsManager = GameCoreManager::GameActorExecutorManager;
 	using BricksManager = GameCoreManager::GameBrickExecutorManager;
 
+	// physical_world operate: create, delete. 
 	using OperPhysicalWorld = GamePhysicsOper::GamePhysicalWorld;
+	// system preset actor shader_script.
 	using PresetScript = GameActorCore::GameActorPresetScript;
 }
 #define ACTOR_COLL_FUNC [&](PsagActor::Actor* ThisActor)

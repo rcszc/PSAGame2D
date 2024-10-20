@@ -46,7 +46,7 @@ bool PsaGameV1Demo::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 	// 创建玩家 输入控制,相机运动.
 	PlayerPawn   = new PsagManager::Tools::Pawn::GamePlayerPawn(Vector2T<float>(128.0f, 128.0f));
-	PlayerCamera = new PsagManager::Tools::Camera::GamePlayerComaeraMP(Vector2T<float>(0.0f, 0.0f), WinSize, 0.5f);
+	PlayerCamera = new PsagManager::Tools::Camera::GamePlayerCameraMP(Vector2T<float>(0.0f, 0.0f), WinSize, 0.5f);
 
 	GameInitParticleSystem(WinSize);
 
@@ -151,7 +151,7 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	);
 
 	// 鼠标左键, 循环计时器, 剩余子弹,  非换弹时间.
-	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerFlagGet() && 
+	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerGetFlag() && 
 		PawnActorBullet > 0.0f && !PawnActorChangeAMM && ImGui::IsItemHovered()
 	) {
 		// 创建Actor子弹 => 减弹夹 => 重置计时器.
@@ -160,7 +160,7 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 		PActorFIRE->CycleTimerClearReset(50.0f);
 	}
 
-	if (PawnActorChangeAMM && PActorCAMM->CycleTimerFlagGet()) {
+	if (PawnActorChangeAMM && PActorCAMM->CycleTimerGetFlag()) {
 		GameCreateParticlesPActorCAMM(8.0f);
 		PawnActorBullet += 4.0f;
 		PActorCAMM->CycleTimerClearReset(200.0f);
@@ -171,10 +171,10 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	if (PlayerPawn->KeyboardPressed_R() && PawnActorBullet < 1.0f)
 		PawnActorChangeAMM = true;
 
-	if (PlayerPawn->MouseButtonPressed_R() && PActorHP->CycleTimerFlagGet()) {
+	if (PlayerPawn->MouseButtonPressed_R() && PActorHP->CycleTimerGetFlag()) {
 		// 回血 => 粒子 => 重置计时器.
 		PawnActorOBJ->ActorModifyHealth(
-			0, PawnActorOBJ->ActorGetHealth(0) + PsagManager::Tools::RAND::GenerateRandomFunc(896.0f, 768.0f)
+			0, PawnActorOBJ->ActorGetHealth(0) + PsagManager::Tools::RAND::GenerateRandomFuncFP32(896.0f, 768.0f)
 		);
 		GameCreateParticlesPActorADHP(16.0f);
 		PActorHP->CycleTimerClearReset(1200.0f);

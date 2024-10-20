@@ -32,7 +32,7 @@ protected:
     PsagManager::Fx::Particle* DemoParticleBullet  = nullptr; // ×Óµ¯»÷ÖÐÁ£×Ó.
 
     PsagManager::Tools::Pawn::GamePlayerPawn*        PlayerPawn   = nullptr;
-    PsagManager::Tools::Camera::GamePlayerComaeraMP* PlayerCamera = nullptr;
+    PsagManager::Tools::Camera::GamePlayerCameraMP* PlayerCamera = nullptr;
 
     PsagManager::FxView::TextureViewImage* GuiViewImage = nullptr;
 

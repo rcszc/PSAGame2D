@@ -46,7 +46,7 @@ namespace PsagFrameworkCore {
         // update time_step.
         GraphicsEngineTimeStep = FrameworkParams.GameRunTimeSTEP;
         PhysicsEngineTimeStep  = FrameworkParams.GameRunTimeSTEP;
-        CollectEngineTimeStep  = FrameworkParams.GameRunTimeSTEP;
+        ToolkitsEngineTimeStep  = FrameworkParams.GameRunTimeSTEP;
         PhysicsSystemUpdateState();
 
         ActorModulesTimeStep = FrameworkParams.GameRunTimeSTEP;

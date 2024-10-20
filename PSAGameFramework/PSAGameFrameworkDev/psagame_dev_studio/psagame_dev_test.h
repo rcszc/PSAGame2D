@@ -5,8 +5,51 @@
 #include "../../PSAGameFrameworkCore/framework_header_actor.h"
 #include "../../PSAGameFrameworkCore/framework_header_manager.h"
 
+template<typename T>
+struct ThreadSafeResource {
+    T Resource = {};
+    std::mutex ResourceMutex = {};
+};
+
+struct RunSettingLimitParams {
+    size_t RunMaxCycles = NULL; // tick
+    size_t RunMaxMemory = NULL; // bytes
+};
+
+class GLOBAL_SAFE_RESOURCE {
+protected:
+    static ThreadSafeResource<RunSettingLimitParams> RunThreadParams;
+    static ThreadSafeResource<std::string>           RunThreadStrLog;
+
+    static std::atomic<bool> ThreadFlagStart;
+    static std::atomic<bool> ThreadFlagExit;
+
+    static std::atomic<size_t> RunThreadTickCount;
+    static std::atomic<size_t> RunThreadDataCount;
+};
+
+namespace PSA_PANEL {
+    using SYS_CLOCK = std::chrono::system_clock::time_point;
+
+    class MainControlPanel :public GLOBAL_SAFE_RESOURCE {
+    protected:
+        SYS_CLOCK StartTimePoint = std::chrono::system_clock::now();
+        SYS_CLOCK RunTimePoint   = std::chrono::system_clock::now();
+
+        int32_t SettingRunCycles    = NULL;
+        float   SettingRunMemoryMib = 0.0f;
+        
+        void RunThreadFlagsProcess();
+    public:
+        void RenderPanel();
+    };
+}
+
 class PsaGameDevTest :public GameLogic::INTERFACE_DEVCLASS_GAME {
 protected:
+    PSA_PANEL::MainControlPanel* MainControlPanel = nullptr;
+
+    PsagManager::GuiTools::ImMegaPlotDataView* TestImGuiPlot = nullptr;
    
 public:
     // init: return flag: false:failed, true:success.

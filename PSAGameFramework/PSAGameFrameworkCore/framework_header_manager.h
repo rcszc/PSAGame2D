@@ -30,12 +30,14 @@ namespace PsagManager {
 	namespace SyncLoader = GameManagerCore::GameSyncLoader;
 
 	namespace Tools {
-		namespace RAND   = CollectEngineRandom::Func;
-		namespace Random = CollectEngineRandom;
-		namespace Pawn   = CollectEnginePawn;
-		namespace Camera = CollectEngineCamera;
-		namespace Timer  = CollectEngineTimerClock;
+		namespace RAND   = ToolkitsEngineRandom::Func;
+		namespace Random = ToolkitsEngineRandom;
+		namespace Pawn   = ToolkitsEnginePawn;
+		namespace Camera = ToolkitsEngineCamera;
+		namespace Timer  = ToolkitsEngineTimerClock;
 	}
+	// imgui gui_template.
+	namespace GuiTools = ToolkitsEngineGuiTemp;
 }
 
 #endif
