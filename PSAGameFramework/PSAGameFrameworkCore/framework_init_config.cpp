@@ -5,90 +5,87 @@
 // func: before initialization.
 namespace PsagFrameworkCore {
 	bool PSAGame2DFramework::FrameworkInitConfig(const std::string& gl_version) {
-		// framework load_json config_file.
-		auto FileMode = PSAG_FILESYS_JSON::InputJsonFileName;
-
-		PsagLow::PsagSupFilesysJson JsonConfigLoaderParams("PSAGameFrameworkCore/framework_config.json", FileMode);
-		PsagLow::PsagSupFilesysJson JsonConfigLoaderShaders("PSAGameFrameworkCore/framework_config_shaders.json", FileMode);
-
-		if (!JsonConfigLoaderParams.GetLoaderStatusFlag() || !JsonConfigLoaderShaders.GetLoaderStatusFlag()) {
-			// load,read config_file err.
-			PSAG_LOGGER::PushLogger(LogError, "PSAG_INIT", "config loader: failed load (json)file.");
-			return false;
-		}
+		// read file => decode json => config.
 		
-		rapidjson::Document* JsonObject[2] = { 
-			JsonConfigLoaderParams.GetLoaderJsonObj(), JsonConfigLoaderShaders.GetLoaderJsonObj() 
+		PsagLow::PsagSupLoader::PsagFilesysDecoderLoader<PsagLow::PsagSupDCH::JsonDecodeChannel> 
+			ConfigFiles[2] = 
+		{
+			{ "PSAGameFrameworkCore/framework_config.json" },
+			{ "PSAGameFrameworkCore/framework_config_shaders.json" }
 		};
-		if ((JsonObject[0]->HasParseError() || !JsonObject[0]->IsObject()) || 
-			(JsonObject[1]->HasParseError() || !JsonObject[1]->IsObject())
+
+		rapidjson::Document* DecodeOutput[2] 
+			= { ConfigFiles[0].OperateDecoderOBJ()->GetDocumentOutput(), ConfigFiles[1].OperateDecoderOBJ()->GetDocumentOutput() };
+		// check json data[2].
+		if ((DecodeOutput[0]->HasParseError() || !DecodeOutput[0]->IsObject()) || 
+			(DecodeOutput[1]->HasParseError() || !DecodeOutput[1]->IsObject())
 		) {
 			// processing json => object err.
 			PSAG_LOGGER::PushLogger(LogError, "PSAG_INIT", "config loader: json_object error.");
 			return false;
 		}
 
-		if (JsonObject[0]->HasMember("WindowName") && (*JsonObject[0])["WindowName"].IsString())
-			WindowInitConfig.WindowName = (*JsonObject[0])["WindowName"].GetString();
+		if (DecodeOutput[0]->HasMember("WindowName") && (*DecodeOutput[0])["WindowName"].IsString())
+			WindowInitConfig.WindowName = (*DecodeOutput[0])["WindowName"].GetString();
 
-		if (JsonObject[0]->HasMember("WindowFull") && (*JsonObject[0])["WindowFull"].IsBool())
-			WindowInitConfig.WindowFullFlag = (*JsonObject[0])["WindowFull"].GetBool();
+		if (DecodeOutput[0]->HasMember("WindowFull") && (*DecodeOutput[0])["WindowFull"].IsBool())
+			WindowInitConfig.WindowFullFlag = (*DecodeOutput[0])["WindowFull"].GetBool();
 
-		if (JsonObject[0]->HasMember("WindowSize") && (*JsonObject[0])["WindowSize"].IsArray()) {
+		if (DecodeOutput[0]->HasMember("WindowSize") && (*DecodeOutput[0])["WindowSize"].IsArray()) {
 			// type: uint32_t, array: 0:x(width), 1:y(height).
-			WindowInitConfig.WindowSizeWidth  = (uint32_t)(*JsonObject[0])["WindowSize"][0].GetInt();
-			WindowInitConfig.WindowSizeHeight = (uint32_t)(*JsonObject[0])["WindowSize"][1].GetInt();
+			WindowInitConfig.WindowSizeWidth  = (uint32_t)(*DecodeOutput[0])["WindowSize"][0].GetInt();
+			WindowInitConfig.WindowSizeHeight = (uint32_t)(*DecodeOutput[0])["WindowSize"][1].GetInt();
 		}
 
-		if (JsonObject[0]->HasMember("RenderMSAA") && (*JsonObject[0])["RenderMSAA"].IsInt())
-			RendererMSAA = (*JsonObject[0])["RenderMSAA"].GetInt();
+		if (DecodeOutput[0]->HasMember("RenderMSAA") && (*DecodeOutput[0])["RenderMSAA"].IsInt())
+			RendererMSAA = (*DecodeOutput[0])["RenderMSAA"].GetInt();
 
-		if (JsonObject[0]->HasMember("RenderWindowFixed") && (*JsonObject[0])["RenderWindowFixed"].IsBool())
-			RendererWindowFixed = (*JsonObject[0])["RenderWindowFixed"].GetBool();
+		if (DecodeOutput[0]->HasMember("RenderWindowFixed") && (*DecodeOutput[0])["RenderWindowFixed"].IsBool())
+			RendererWindowFixed = (*DecodeOutput[0])["RenderWindowFixed"].GetBool();
 
-		if (JsonObject[0]->HasMember("RenderBasicSize") && (*JsonObject[0])["RenderBasicSize"].IsArray()) {
+		if (DecodeOutput[0]->HasMember("RenderBasicSize") && (*DecodeOutput[0])["RenderBasicSize"].IsArray()) {
 			// type: uint32_t, array: 0:u(x), 1:v(y).
-			RenderingVirTexBasicSize.vector_x = (uint32_t)(*JsonObject[0])["RenderBasicSize"][0].GetInt();
-			RenderingVirTexBasicSize.vector_y = (uint32_t)(*JsonObject[0])["RenderBasicSize"][1].GetInt();
+			RenderingVirTexBasicSize.vector_x = (uint32_t)(*DecodeOutput[0])["RenderBasicSize"][0].GetInt();
+			RenderingVirTexBasicSize.vector_y = (uint32_t)(*DecodeOutput[0])["RenderBasicSize"][1].GetInt();
 		}
 
-		if (JsonObject[0]->HasMember("RenderTexGenNum") && (*JsonObject[0])["RenderTexGenNum"].IsArray()) {
+		if (DecodeOutput[0]->HasMember("RenderGenTexure") && (*DecodeOutput[0])["RenderGenTexure"].IsArray()) {
 			// type: size_t, array: 0: 1/8x, 1: 1/4x, 2: 1/2x, 3: 1/1x.
-			VirTexturesMax.Tex1Xnum = (size_t)(*JsonObject[0])["RenderTexGenNum"][0].GetInt();
-			VirTexturesMax.Tex2Xnum = (size_t)(*JsonObject[0])["RenderTexGenNum"][1].GetInt();
-			VirTexturesMax.Tex4Xnum = (size_t)(*JsonObject[0])["RenderTexGenNum"][2].GetInt();
-			VirTexturesMax.Tex8Xnum = (size_t)(*JsonObject[0])["RenderTexGenNum"][3].GetInt();
+			VirTexturesMax.Tex1Xnum = (size_t)(*DecodeOutput[0])["RenderGenTexure"][0].GetInt();
+			VirTexturesMax.Tex2Xnum = (size_t)(*DecodeOutput[0])["RenderGenTexure"][1].GetInt();
+			VirTexturesMax.Tex4Xnum = (size_t)(*DecodeOutput[0])["RenderGenTexure"][2].GetInt();
+			VirTexturesMax.Tex8Xnum = (size_t)(*DecodeOutput[0])["RenderGenTexure"][3].GetInt();
 		}
 		ImGuiInitConfig.ShaderVersionStr = gl_version;
 
-		if (JsonObject[0]->HasMember("GuiWindowRounding") && (*JsonObject[0])["GuiWindowRounding"].IsFloat())
-			ImGuiInitConfig.WindowRounding = (*JsonObject[0])["GuiWindowRounding"].GetFloat();
+		if (DecodeOutput[0]->HasMember("GuiWindowRounding") && (*DecodeOutput[0])["GuiWindowRounding"].IsFloat())
+			ImGuiInitConfig.WindowRounding = (*DecodeOutput[0])["GuiWindowRounding"].GetFloat();
 
-		if (JsonObject[0]->HasMember("GuiFrameRounding") && (*JsonObject[0])["GuiFrameRounding"].IsFloat())
-			ImGuiInitConfig.FrameRounding = (*JsonObject[0])["GuiFrameRounding"].GetFloat();
+		if (DecodeOutput[0]->HasMember("GuiFrameRounding") && (*DecodeOutput[0])["GuiFrameRounding"].IsFloat())
+			ImGuiInitConfig.FrameRounding = (*DecodeOutput[0])["GuiFrameRounding"].GetFloat();
 
-		if (JsonObject[0]->HasMember("GuiFontsFilepath") && (*JsonObject[0])["GuiFontsFilepath"].IsString())
-			ImGuiInitConfig.FontsFilepath = (*JsonObject[0])["GuiFontsFilepath"].GetString();
+		if (DecodeOutput[0]->HasMember("GuiFontsFilepath") && (*DecodeOutput[0])["GuiFontsFilepath"].IsString())
+			ImGuiInitConfig.FontsFilepath = (*DecodeOutput[0])["GuiFontsFilepath"].GetString();
 
-		if (JsonObject[0]->HasMember("GuiFontsSize") && (*JsonObject[0])["GuiFontsSize"].IsFloat())
-			ImGuiInitConfig.FontsGlobalSize = (*JsonObject[0])["GuiFontsSize"].GetFloat();
+		if (DecodeOutput[0]->HasMember("GuiFontsSize") && (*DecodeOutput[0])["GuiFontsSize"].IsFloat())
+			ImGuiInitConfig.FontsGlobalSize = (*DecodeOutput[0])["GuiFontsSize"].GetFloat();
 
-		if (JsonObject[0]->HasMember("GuiFontsColor") && (*JsonObject[0])["GuiFontsColor"].IsArray()) {
+		if (DecodeOutput[0]->HasMember("GuiFontsColor") && (*DecodeOutput[0])["GuiFontsColor"].IsArray()) {
 			// type: float32, array: 0: color_r, 1: color_g, 2: color_b, 3: color_a.
-			ImGuiInitConfig.FontsGlobalColor.vector_x = (*JsonObject[0])["GuiFontsColor"][0].GetFloat();
-			ImGuiInitConfig.FontsGlobalColor.vector_y = (*JsonObject[0])["GuiFontsColor"][1].GetFloat();
-			ImGuiInitConfig.FontsGlobalColor.vector_z = (*JsonObject[0])["GuiFontsColor"][2].GetFloat();
-			ImGuiInitConfig.FontsGlobalColor.vector_w = (*JsonObject[0])["GuiFontsColor"][3].GetFloat();
+			ImGuiInitConfig.FontsGlobalColor.vector_x = (*DecodeOutput[0])["GuiFontsColor"][0].GetFloat();
+			ImGuiInitConfig.FontsGlobalColor.vector_y = (*DecodeOutput[0])["GuiFontsColor"][1].GetFloat();
+			ImGuiInitConfig.FontsGlobalColor.vector_z = (*DecodeOutput[0])["GuiFontsColor"][2].GetFloat();
+			ImGuiInitConfig.FontsGlobalColor.vector_w = (*DecodeOutput[0])["GuiFontsColor"][3].GetFloat();
 		}
 
 		// config system shaders.
 		GraphicsShaderCode::GraphicsShadersDESC GraphShaders = {};
 
-		namespace PPS = PsagLow::PsagSupLoader;
+		namespace LPS = PsagLow::PsagSupLoader;
 		// find hash_value.
 		auto GetShaderScript = [&](const char* key_name) {
-			if (JsonObject[1]->HasMember(key_name) && (*JsonObject[1])[key_name].IsString())
-				return PPS::TextFileLoader((*JsonObject[1])[key_name].GetString());
+			if (DecodeOutput[1]->HasMember(key_name) && (*DecodeOutput[1])[key_name].IsString())
+				return LPS::EasyFileReadString((*DecodeOutput[1])[key_name].GetString());
 			// failed find hash_value.
 			PSAG_LOGGER::PushLogger(LogError, "PSAG_INIT", "shader_config loader: failed find_value: %s", key_name);
 			return std::string();

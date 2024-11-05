@@ -136,12 +136,18 @@ namespace GameComponents {
 
 		Vector2T<float> RenderResolution = {};
 		
-		std::function<void(PsagShader)> RenderingTextureFunc = [&](PsagShader) {};
-		GraphicsEngineDataset::VirTextureUniformName VirTexUniform = {};
-		VirTextureUnqiue VirTexture = NULL;
+		std::function<void(PsagShader)> RenderingTextureNFunc = [&](PsagShader) {};
+		std::function<void(PsagShader)> RenderingTextureHFunc = [&](PsagShader) {};
+
+		GraphicsEngineDataset::VirTextureUniformName VirTexUniform    = {};
+		GraphicsEngineDataset::VirTextureUniformName VirTexUniformHDR = {};
+
+		VirTextureUnqiue VirTexture    = NULL;
+		VirTextureUnqiue VirTextureHDR = NULL;
 
 		virtual void UpdateActorRendering(const RenderingParams& params, float time_count);
-		virtual void UpdateActorRenderingTexture(PsagShader shader);
+		virtual void UpdateActorRenderingTextureN(PsagShader shader);
+		virtual void UpdateActorRenderingTextureH(PsagShader shader);
 	};
 
 	// actor coordinate_convert tool(s).
@@ -174,12 +180,17 @@ namespace GameComponents {
 		class ActorRenderingNULL : public ActorRendering {
 		public:
 			void UpdateActorRendering(const RenderingParams& params, float time_count) override {};
-			void UpdateActorRenderingTexture(PsagShader shader) override {};
+
+			void UpdateActorRenderingTextureN(PsagShader shader) override {};
+			void UpdateActorRenderingTextureH(PsagShader shader) override {};
 		};
 	}
 }
 
 namespace GameActorScript {
+	extern const char* PsagShaderPublicFrag_Header;
+	extern const char* PsagShaderPublicFrag_Tools;
+
 	extern const char* PsagShaderPrivateFrag_Brick;
 }
 
@@ -236,7 +247,7 @@ namespace GameActorCore {
 		std::string VertexShaderScript;
 
 		GameActorShaderVerticesDESC() :
-			ShaderDefaultColor     (Vector4T<float>(0.0f, 0.2f, 0.2f, 0.92f)),
+			ShaderDefaultColor   (Vector4T<float>(0.0f, 0.2f, 0.2f, 0.92f)),
 			ShaderVertexCollision({}),
 			ShaderVertexUvCoord  ({}),
 			VertexShaderEnable   (false),
@@ -270,6 +281,8 @@ namespace GameActorCore {
 
 		std::vector<Vector2T<float>>* VerticesPosition = nullptr;
 		std::vector<Vector2T<float>>* VerticesUvCoord  = nullptr;
+
+		bool ShaderImageTextureLoad(VirTextureUnqiue* ref_texture, const ImageRawData& image);
 	public:
 		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
 		~GameActorShader();
@@ -277,12 +290,14 @@ namespace GameActorCore {
 		bool CreateShaderResource();
 
 		// load vertices(pos,uv) resource. (warn: ref)
-		bool ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC);
+		bool ShaderVerticesLoad(GameActorShaderVerticesDESC& VER_DESC);
 
 		// referencing virtual texture(non-delete).
 		bool ShaderLoadVirTexture(VirTextureUnqiue virtex);
-		// create virtual texture.
-		bool ShaderLoadImage(const ImageRawData& image);
+
+		// create virtual texture. base + hdr_blend. rgb color add.
+		bool ShaderImageLoad(const ImageRawData& image);
+		bool ShaderImageLoadHDR(const ImageRawData& image);
 
 		// => uniform context (shader_context) => set_uniform.
 		void UniformSetContext(std::function<void()> context_func);
@@ -297,8 +312,11 @@ namespace GameActorCore {
 		void UniformVec3(const char* name, const Vector3T<float>& value);
 		void UniformVec4(const char* name, const Vector4T<float>& value);
 
-		VirTextureUnqiue                             __VIR_TEXTURE_ITEM = NULL;
-		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM = {};
+		VirTextureUnqiue __VIR_TEXTURE_ITEM     = NULL;
+		VirTextureUnqiue __VIR_TEXTURE_HDR_ITEM = NULL;
+
+		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM     = {};
+		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_HDR_ITEM = {};
 		
 		ResUnique __ACTOR_SHADER_ITEM = NULL;
 		ResUnique __ACTOR_VERTEX_ITEM = NULL;

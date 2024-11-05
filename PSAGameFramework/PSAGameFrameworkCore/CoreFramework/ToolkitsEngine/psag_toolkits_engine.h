@@ -5,11 +5,10 @@
 #ifndef __PSAG_TOOLKITS_ENGINE_H
 #define __PSAG_TOOLKITS_ENGINE_H
 
-#define ENABLE_LOWMODULE_FILESYS
-#define ENABLE_LOWMODULE_SOUND
-#define ENABLE_LOWMODULE_THREAD
+#define ENABLE_LOWMODULE_AUDIO
 #include "../psag_lowlevel_support.h"
 
+// toolkits_engine timestep, mainevent => TE.
 class __TOOLKITS_ENGINE_TIMESETP {
 protected:
 	static float ToolkitsEngineTimeStep;
@@ -129,6 +128,23 @@ namespace ToolkitsEngineTimerClock {
 
 		// now time_point return: milliseconds.
 		float GetTimeNowCount();
+	};
+}
+
+namespace ToolkitsEngineSound {
+	StaticStrLABEL PSAGM_TOOLKITS_SOUND = "PSAG_TOOL_SOUND";
+
+	// framework low => manager.
+	class GamePlayerSound :public PsagLow::PsagSupAudioLLRES {
+	protected:
+		PsagLow::PsagSupAudioDataPlayer* AudioPlayer = nullptr;
+		ResUnique RawStreamResource = {};
+
+	public:
+		GamePlayerSound(const RawAudioStream& data);
+		~GamePlayerSound();
+
+		PsagLow::PsagSupAudioDataPlayer* AudioPlayerOperate();
 	};
 }
 

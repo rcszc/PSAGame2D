@@ -7,6 +7,12 @@
 #define ENABLE_LOWMODULE_GRAPHICS
 #include "../psag_lowlevel_support.h"
 
+// graphics_engine timestep, mainevent => GE.
+class __GRAPHICS_ENGINE_TIMESETP {
+protected:
+	static float GraphicsEngineTimeStep;
+};
+
 #define PSAGM_VIR_TICKSTEP_GL 0.058f
 
 // 统一数据集管理,单一共享 VAO,VBO,TEXTURE(TMU).
@@ -225,12 +231,6 @@ namespace GraphicsShaderCode {
 	// global resource object.
 	extern GraphicsEngineLayerRes GLOBALRES;
 }
-
-// graphics_engine timestep, mainevent => GE.
-class __GRAPHICS_ENGINE_TIMESETP {
-protected:
-	static float GraphicsEngineTimeStep;
-};
 
 namespace GraphicsEngineMatrix {
 	// matrix_trans params => world matrix calc.

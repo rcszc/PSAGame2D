@@ -1,7 +1,7 @@
 # 上层(模块)调用表
 > ©PomeloStar Studio 2024-2025
 
-__Developers:__ ```RCSZ``` __Update:__ ```2024.08.26```
+__Developer(s):__ ```RCSZ``` __Update:__ ```2024.10.23```
 
 __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编号 `01` 组内编号
 
@@ -104,6 +104,8 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 `P-M1104` ```PsagManager::Tools::Camera::```
 
 `P-M1105` ```PsagManager::Tools::Timer::```
+
+`P-M1106` ```PsagManager::Tools::Sound::```
 
 > M11
 

@@ -7,45 +7,50 @@
 // LLSound PSA - L.4 (=> logger).
 #include "../LLLogger/framework_logger.hpp"
 
-namespace PSAG_SOUND_PLAYER {
-	StaticStrLABEL PSAG_SOUND_LABEL = "PSAG_SOUND";
+namespace PSAG_AUDIO_PLAYER {
+	StaticStrLABEL PSAG_AUDIO_LABEL = "PSAG_AUDIO";
+
+#define OPENAL_INVALID_HANDEL (ALuint)NULL
 	namespace system {
-		class __PsagSoundDeviceHandle {
+		class PsagAudioSystemDevice {
 		private:
-			static ALCdevice*  SoundDevicePtr;
-			static ALCcontext* SoundContextPtr;
+			static ALCdevice*  HDPTR_OPENAL_DEVICE;
+			static ALCcontext* HDPTR_OPENAL_CONTEXT;
 		protected:
 			bool CreateSoundDevice();
 			bool DeleteSoundDevice();
 		};
 	}
 
-	class PsagSoundDataResource {
+	class PsagAudioDataResource {
 	protected:
-		ALuint BufferObjectHandle = NULL;
+		ALuint HANDLE_AUDIO_BUFFER = OPENAL_INVALID_HANDEL;
 		// create openal buffer_object handle.
-		bool CreateBufHandle(ALuint& handle);
+		bool CreateBufferHandle(ALuint& handle);
 	public:
-		PsagSoundDataResource(const RawSoundStream& rawdata);
-		~PsagSoundDataResource();
+		PsagAudioDataResource(const RawAudioStream& rawdata);
+		~PsagAudioDataResource();
 
 		ALuint _MS_GETRES() {
-			return BufferObjectHandle;
+			return HANDLE_AUDIO_BUFFER;
 		}
 	};
 
-	class PsagSoundDataPlayer {
+	class PsagAudioDataPlayer {
 	protected:
-		ALuint BufferObjectHandle = NULL;
-		ALuint SourceObjectHandle = NULL;
+		PsagAudioDataResource* ResourceLoader = nullptr;
+
+		ALuint HANDLE_AUDIO_BUFFER = OPENAL_INVALID_HANDEL;
+		ALuint HANDLE_SRC_OBJECT   = OPENAL_INVALID_HANDEL;
+
 		bool Sound3DEnabelFlag = false;
 	public:
-		PsagSoundDataPlayer(PsagSoundDataResource& loader);
-		~PsagSoundDataPlayer();
+		PsagAudioDataPlayer(PsagAudioDataResource* loader);
+		~PsagAudioDataPlayer();
 
 		void SoundPlayer();
 	    void SoundPause();
-		void SetPlayerBegin();
+		void SoundBeginPosition();
 
 		bool PlayerEndedFlag();
 
@@ -59,25 +64,33 @@ namespace PSAG_SOUND_PLAYER {
 	};
 }
 
-// psag sound low_level, resource.
+// psag audio low_level, resource.
 namespace PSAGSD_LOWLEVEL {
-	StaticStrLABEL PSAG_SOUND_DATA_LABEL = "PSAG_SOUND_DATA";
+	StaticStrLABEL PSAG_AUDIO_DATA_LABEL = "PSAG_AUDIO_DATA";
 	// PSA - CVT.1 func.
-	RawSoundStream SOUND_LLRES_CONVERT_FUNC(const RawDataStream& dataset);
+	RawAudioStream AUDIO_LLRES_CONVERT_FUNC(const RawDataStream& dataset);
 
-	// PSAG framework lowlevel sound dataset.
-	class PSAG_SOUND_LLRES {
+	// PSAG framework lowlevel audio dataset.
+	class PsagResAudioSourceData {
 	protected:
-		std::unordered_map<ResUnique, RawSoundStream> ResourceRawShoudMap = {};
-		std::mutex ResourceRawShoudMutex = {};
+		std::unordered_map<ResUnique, RawAudioStream> ResourceRawAudioMap = {};
+		std::mutex ResourceRawAudioMutex = {};
 	public:
-		~PSAG_SOUND_LLRES();
+		~PsagResAudioSourceData();
 
-		RawSoundStream* ResourceFind(ResUnique key);
-		bool ResourceStorage(ResUnique key, const RawSoundStream& res);
+		RawAudioStream* ResourceFind(ResUnique key);
+		bool ResourceStorage(ResUnique key, const RawAudioStream& res);
 		bool ResourceDelete(ResUnique key);
 
 		size_t GetResTotalSizeBytes();
+	};
+
+	class PSAG_AUDIO_LLRES {
+	protected:
+		static PsagResAudioSourceData* AudioResource;
+
+		void LowLevelResourceCreate();
+		bool LowLevelResourceFree();
 	};
 }
 

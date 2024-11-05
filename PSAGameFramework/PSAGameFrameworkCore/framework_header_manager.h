@@ -35,9 +35,12 @@ namespace PsagManager {
 		namespace Pawn   = ToolkitsEnginePawn;
 		namespace Camera = ToolkitsEngineCamera;
 		namespace Timer  = ToolkitsEngineTimerClock;
+		namespace Sound  = ToolkitsEngineSound;
 	}
 	// imgui gui_template.
 	namespace GuiTools = ToolkitsEngineGuiTemp;
+
+#define AudioConvert PsagSupAudioRawCVT
 }
 
 #endif

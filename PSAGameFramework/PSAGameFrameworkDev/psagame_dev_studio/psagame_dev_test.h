@@ -50,6 +50,9 @@ protected:
     PSA_PANEL::MainControlPanel* MainControlPanel = nullptr;
 
     PsagManager::GuiTools::ImMegaPlotDataView* TestImGuiPlot = nullptr;
+
+    PsagActor::BricksManager* TestArchitecture = nullptr;
+    PsagActor::ActorShader* TestShader = nullptr;
    
 public:
     // init: return flag: false:failed, true:success.

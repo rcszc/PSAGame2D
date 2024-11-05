@@ -19,8 +19,8 @@ namespace ToolkitsEngineRandom {
 			if (seed != 0) SEED_CODE = seed;
 			// const seed: milliseconds_time, set_value.
 			mt19937_64 MtGenerator(SEED_CODE);
-			uniform_real_distribution<T> Distribution(min, max);
-			return Distribution(MtGenerator);
+			uniform_real_distribution<float> Distribution((float)min, (float)max);
+			return (T)Distribution(MtGenerator);
 		}
 
 		// easy generate float32 random_value.
@@ -31,7 +31,7 @@ namespace ToolkitsEngineRandom {
 		// easy generate signed.integer32 random_value.
 		float GenerateRandomFuncFP32(float max, float min, uint64_t seed) {
 			if (max < min) swap(max, min);
-			return GenerateRandomFuncBase<int32_t>(max, min, seed);
+			return GenerateRandomFuncBase<float>(max, min, seed);
 		}
 	}
 
@@ -86,7 +86,7 @@ namespace ToolkitsEngineRandom {
 			return false;
 		}
 		float SafeMax = 0.0f;
-		// 范围内生成数量与稀疏度安全.
+		// 范围内生成数量与安全稀疏度.
 		if (!IsMinDistanceSafe(number, limit, min_distance, SafeMax))
 			PushLogger(LogWarning, PSAGM_TOOLKITS_RAND_LABEL, "random(2d) system: number: %u safe_max: %.2f", number, SafeMax);
 		

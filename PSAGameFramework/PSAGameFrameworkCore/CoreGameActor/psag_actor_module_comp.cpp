@@ -128,14 +128,20 @@ namespace GameComponents {
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",      params.RenderLayerHeight);
 		ShaderUniform.UniformVec4 (ShaderTemp, "ActorColor",  params.RenderColorBlend);
 
-		RenderingTextureFunc(ShaderTemp);
+		RenderingTextureNFunc(ShaderTemp);
+		RenderingTextureHFunc(ShaderTemp);
+
 		VerStcOperFrameDraw(VertexGroupIndex);
 		OGLAPI_OPER.RenderUnbindShader();
 	}
 
-	void ActorRendering::UpdateActorRenderingTexture(PsagShader shader) {
-		// draw virtual texture.
+	void ActorRendering::UpdateActorRenderingTextureN(PsagShader shader) {
+		// draw virtual normal texture.
 		VirTextureItemDraw(VirTexture, shader, VirTexUniform);
+	}
+	void ActorRendering::UpdateActorRenderingTextureH(PsagShader shader) {
+		// draw virtual height texture.
+		VirTextureItemDraw(VirTextureHDR, shader, VirTexUniformHDR);
 	}
 
 	Vector2T<float> ActorCoordConvert::ConvertSceneToWindow(Vector2T<uint32_t> window_size, Vector2T<float> position) {

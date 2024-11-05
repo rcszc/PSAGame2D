@@ -170,6 +170,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_temp.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_pawn.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_random.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_sound.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_timer.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp" />
@@ -185,8 +186,9 @@
     <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_thread.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_register.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_json.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_string.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_manager.cpp" />
@@ -252,8 +254,8 @@
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_math.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.h" />
-    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.h" />
-    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.h" />
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_dec_channels.h" />
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_ext.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_std.h" />

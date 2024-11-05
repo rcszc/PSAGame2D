@@ -6,7 +6,7 @@
 
 #define ENABLE_LOWMODULE_GRAPHICS
 #define ENABLE_LOWMODULE_FILESYS
-#define ENABLE_LOWMODULE_SOUND
+#define ENABLE_LOWMODULE_AUDIO
 #define ENABLE_LOWMODULE_THREAD
 #define ENABLE_LOWMODULE_WINDOWGUI
 #include "psag_lowlevel_support.h"
@@ -143,9 +143,10 @@ namespace PsagFrameworkCore {
 
     class PSAGame2DFramework :public PsagFrameworkStart::CoreMidFrameworkBase,
         // init & free sound_system.
-        public PsagLow::PsagSupSoundSystem::__PsagSoundDeviceHandle,
-        public PsagLow::PsagSupWindowGuiEventOglfw,
-        public PsagLow::PsagSupWindowGuiEventImGui,
+        public PsagLow::PsagSupAudioSystem::PsagAudioSystemDevice, // sound device init.
+        public PsagLow::PsagSupAudioLLRES,                         // sound resource manager.
+        public PsagLow::PsagSupWindowGuiEventOGLFW,
+        public PsagLow::PsagSupWindowGuiEventIMGUI,
         // update global matrix.
         public GraphicsEngineMatrix::PsagGLEngineMatrix,
         // public PsagLow::PsagSupGraphicsLLRES. => "GLEngineVertexDyData".

@@ -205,9 +205,9 @@ namespace GraphicsEngineFinal {
 		// vert_temp, frag_header, frag_tools, frag_private...
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderColorFilter;
 
-		ShaderColorFilter.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate,     StringScript);
-		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,       StringScript);
-		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragTools,        StringScript);
+		ShaderColorFilter.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate,    StringScript);
+		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragHeader,      StringScript);
+		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PublicShaders.ShaderFragTools,       StringScript);
 		ShaderColorFilter.ShaderLoaderPushFS(GLOBALRES.Get().PrivateShaders.ShaderFragMultFilter, StringScript);
 
 		if (ShaderColorFilter.CreateCompileShader()) {
@@ -421,7 +421,7 @@ namespace GraphicsEngineBackground {
 		}
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture BackTexture;
 
-		BackTexture.SetTextureParam(imgdataset[0].Width, imgdataset[0].Height, LinearFiltering);
+		BackTexture.SetTextureParam(imgdataset[0].Width, imgdataset[0].Height, LinearFiltering | AnisotropicFiltering);
 		BackTexture.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
 
 		for (const auto& LayerData : imgdataset)

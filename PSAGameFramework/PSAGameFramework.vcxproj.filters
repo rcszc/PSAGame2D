@@ -97,6 +97,9 @@
     <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine">
       <UniqueIdentifier>{f0db884c-4f61-4683-8c7d-cc48786ce092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\LLFilesys\decode_channels">
+      <UniqueIdentifier>{3da887e0-6648-46e6-ac53-780f5fba77c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -115,9 +118,6 @@
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLSound\framework_sound_player.cpp">
@@ -288,6 +288,15 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_timer.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_sound.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_json.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys\decode_channels</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_string.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys\decode_channels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -358,10 +367,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_compress.h">
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.h">
-      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
-    </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_json.h">
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_loader.hpp">
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLSound\framework_sound.h">
@@ -450,6 +456,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_dec_channels.h">
+      <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

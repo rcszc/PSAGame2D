@@ -18,8 +18,8 @@ namespace PSAG_FILESYS_COMPR {
 		int32_t CompressionLevel  = NULL;
 		int32_t CompressionMethod = NULL;
 
-		uint32_t CompressChecksum   = NULL; // 压缩数据校验码.
-		uint32_t DecompressChecksum = NULL; // 解压数据校验码.
+		uint32_t ChecksumCompress   = NULL; // 压缩数据校验码.
+		uint32_t ChecksumDecompress = NULL; // 解压数据校验码.
 	public:
 		PsagFilesysCompress(int32_t level = Z_DEFAULT_COMPRESSION, int32_t method = Z_DEFLATED) :
 			CompressionLevel(level), CompressionMethod(method) 
@@ -31,8 +31,8 @@ namespace PSAG_FILESYS_COMPR {
 		RawDataStream CompressRawData(const RawDataStream& input_data);
 		RawDataStream DecompressRawData(const RawDataStream& input_data);
 
-		uint32_t GetCompressChecksum()   { return CompressChecksum;   };
-		uint32_t GetDecompressChecksum() { return DecompressChecksum; };
+		uint32_t GetCompressChecksum()   { return ChecksumCompress;   };
+		uint32_t GetDecompressChecksum() { return ChecksumDecompress; };
 	};
 }
 

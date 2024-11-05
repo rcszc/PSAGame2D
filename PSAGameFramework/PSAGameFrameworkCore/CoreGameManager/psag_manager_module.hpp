@@ -189,13 +189,13 @@ namespace GameManagerCore {
 	}
 
 	namespace GameSyncLoader {
-		using SyncBinFileLoad = PsagLow::PsagSupFilesysLoaderBin;
-		using SyncStrFileLoad = PsagLow::PsagSupFilesysLoaderStr;
-
-		using SyncJsonMode     = PsagLow::PsagSupFilesysJsonMode;
-		using SyncJsonFileLoad = PsagLow::PsagSupFilesysJson;
-
-		using SyncDecodeImage = PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat;
+		// psag file_system.
+		namespace FSLD = PsagLow::PsagSupLoader;
+		// psag decoder / encoder channels.
+		namespace DCH = PsagLow::PsagSupDCH;
+		namespace ECH = PsagLow::PsagSupECH;
+		// psag graphics.
+		using SyncEncDecImage = PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat;
 	}
 
 	namespace GameMathsTools {

@@ -88,11 +88,12 @@ namespace PSAG_OGL_MAG {
 
 		// opengl api, create texture_array. [GL_TEX_01]
 		// internal_format = pixel_format. [20240704]
-		// internal_format RGBA12 (HDR12), pixel_format RGBA8888. [20240717]
+		// internal_format RGBA12  (HDR12), pixel_format RGBA8888. [20240717]
+		// internal_format RGBA16F (HDR16), pixel_format RGBA8888. [20241030]
 		if (ModeType == GL_TEXTURE_2D_ARRAY)
-			glTexImage3D(ModeType, NULL, GL_RGBA12, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage3D(ModeType, NULL, GL_RGBA16F, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
 		if (ModeType == GL_TEXTURE_2D)
-			glTexImage2D(ModeType, NULL, GL_RGBA12, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(ModeType, NULL, GL_RGBA16F, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// config texture2d. surround,filter.

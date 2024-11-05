@@ -68,13 +68,27 @@ namespace GameActorCore {
 			
 			// load rendering texture.
 			if (VirTextureExist(ActorRenderRes->__VIR_TEXTURE_ITEM)) {
-				// rendering texture func.
-				ActorCompRendering->RenderingTextureFunc = 
-					[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTexture(shader); };
+				// rendering texture(s) func.
+				ActorCompRendering->RenderingTextureNFunc = 
+					[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTextureN(shader); };
 
 				// virtual texture_unqiue, uniform.
 				ActorCompRendering->VirTexture    = ActorRenderRes->__VIR_TEXTURE_ITEM;
 				ActorCompRendering->VirTexUniform = ActorRenderRes->__VIR_UNIFORM_ITEM;
+
+				bool HDRTEX_FLAG = false;
+				// load hdr_blend texture.
+				if (ActorRenderRes->__VIR_TEXTURE_HDR_ITEM != NULL && ActorCompRendering->VirTexture != NULL) {
+					// load render_tex function.
+					ActorCompRendering->RenderingTextureHFunc =
+						[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTextureH(shader); };
+
+					ActorCompRendering->VirTextureHDR    = ActorRenderRes->__VIR_TEXTURE_HDR_ITEM;
+					ActorCompRendering->VirTexUniformHDR = ActorRenderRes->__VIR_UNIFORM_HDR_ITEM;
+					HDRTEX_FLAG = true;
+				}
+				PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor texture loading_completed, hdr: %d",
+					(uint32_t)HDRTEX_FLAG);
 			}
 		}
 		else {

@@ -8,8 +8,8 @@ uniform float OutFragmentContrast; // 最终对比度.
 uniform vec3  OutFragmentBlend;    // 最终混合颜色.
 uniform vec2  OutFragmentVignette; // 最终暗角处理.
 
-const float STD_BLEND_W_SRC  = 1.0;
-const float STD_BLEND_W_BLUR = 1.6;
+const float STD_BLEND_W_SRC  = 0.92;
+const float STD_BLEND_W_BLUR = 0.07;
 
 const vec2 VignetteCenter = vec2(0.5, 0.5);
 

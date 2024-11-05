@@ -1,5 +1,6 @@
 // framework_filesys_loader.
-#include "framework_filesys_loader.h"
+#include <base64/base64.h>
+#include "framework_filesys_loader.hpp"
 
 using namespace std;
 using namespace PSAG_LOGGER;
@@ -7,90 +8,92 @@ using namespace PSAG_LOGGER;
 // file input/output string/binray.
 namespace PSAG_FILESYS_LOADER {
 
-    PsagFilesysLoaderBinary::PsagFilesysLoaderBinary(const string& filename) {
-        ifstream ReadFile(filename, ios::binary);
+#define FILE_SEEKG_OFFSET 0
+    bool __FILE_RawSourceRead(const string& filename, RawDataStream* dataptr) {
+        ifstream READ_FILE_OBJ(filename, ios::binary);
         // read_file status.
-        if (!ReadFile.is_open()) {
-            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed loader(bin) open file: %s", filename.c_str());
-            return;
+        if (!READ_FILE_OBJ.is_open()) {
+            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed load(src) open: %s", filename.c_str());
+            return false;
         }
         // get file size.
-        ReadFile.seekg(0, ios::end);
-        size_t ReadFileSize = (size_t)ReadFile.tellg();
-        ReadFile.seekg(0, ios::beg);
+        READ_FILE_OBJ.seekg(FILE_SEEKG_OFFSET, ios::end);
+        size_t ReadFileSize = (size_t)READ_FILE_OBJ.tellg();
+        READ_FILE_OBJ.seekg(FILE_SEEKG_OFFSET, ios::beg);
 
         // read binary data.
-        ReadFileData.resize(ReadFileSize);
-        ReadFile.read(reinterpret_cast<char*>(ReadFileData.data()), ReadFileSize);
+        dataptr->resize(ReadFileSize);
+        READ_FILE_OBJ.read(reinterpret_cast<char*>(dataptr->data()), ReadFileSize);
 
-        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "loader(bin) open file: %s read_size: %u", filename.c_str(), ReadFileSize);
-        ReadFile.close();
+        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "load(src) read_file: %s read_size: %u", 
+            filename.c_str(), ReadFileSize
+        );
+        READ_FILE_OBJ.close();
+        return true;
     }
 
-    bool PsagFilesysLoaderBinary::WriterFileBinary(const string& filename, const RawDataStream& databin, ios_base::openmode mode) {
-        ofstream WriteFile(filename, ios::binary | mode);
+    bool __FILE_RawSourceWrite(const string& filename, const RawDataStream* dataptr) {
+        ofstream WRITE_FILE_OBJ(filename, ios::binary);
         // write_file status.
-        if (!WriteFile.is_open()) {
-            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed writer(bin) open file: %s", filename.c_str());
+        if (!WRITE_FILE_OBJ.is_open()) {
+            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed write(src) open: %s", filename.c_str());
             return false;
         }
         // write binary data. 
-        WriteFile.write(reinterpret_cast<const char*>(databin.data()), databin.size());
+        WRITE_FILE_OBJ.write(reinterpret_cast<const char*>(dataptr->data()), dataptr->size());
 
-        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "writer(bin) open file: %s write_size: %u", filename.c_str(), databin.size());
-        WriteFile.close();
+        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "writer(src) open_file: %s write_size: %u", 
+            filename.c_str(), dataptr->size()
+        );
+        WRITE_FILE_OBJ.close();
         return true;
     }
 
-    RawDataStream PsagFilesysLoaderBinary::GetDataBinary()    { return ReadFileData; }
-    size_t        PsagFilesysLoaderBinary::GetFileTotalSize() { return ReadFileSize; }
-
-    PsagFilesysLoaderString::PsagFilesysLoaderString(const string& filename) {
-        ifstream ReadFile(filename);
-        // read_file status.
-        if (!ReadFile.is_open()) {
-            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed loader(str) open file: %s", filename.c_str());
-            return;
-        }
-        // get file size.
-        ReadFile.seekg(0, ios::end);
-        size_t ReadFileSize = (size_t)ReadFile.tellg();
-        ReadFile.seekg(0, ios::beg);
-
-        // read string data.
-        string FileContent((istreambuf_iterator<char>(ReadFile)), istreambuf_iterator<char>());
-        ReadFileData = FileContent;
-        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "loader(str) open file: %s read_size: %u", filename.c_str(), ReadFileSize);
+    string EasyFileReadString(const string& filename) {
+        RawDataStream ReadDataCache = {};
+        if (__FILE_RawSourceRead(filename, &ReadDataCache))
+            return string(ReadDataCache.begin(), ReadDataCache.end());
+        PushLogger(LogWarning, PSAG_FILESYS_LOADER_LABEL, "easy read_string failed.");
+        return string();
     }
 
-    bool PsagFilesysLoaderString::WriterFileString(const string& filename, const string& databin, ios_base::openmode mode) {
-        fstream WriteFile(filename, mode);
-        // write_file status.
-        if (!WriteFile.is_open()) {
-            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed writer(str) open file: %s", filename.c_str());
-            return false;
-        }
-        // write string data. 
-        WriteFile.write(databin.data(), databin.size());
+    RawDataStream EasyFileReadRawData(const string& filename) {
+        RawDataStream ReadDataCache = {};
+        if (__FILE_RawSourceRead(filename, &ReadDataCache))
+            return ReadDataCache;
+        PushLogger(LogWarning, PSAG_FILESYS_LOADER_LABEL, "easy read_raw_data failed.");
+        return RawDataStream();
+    }
+}
 
-        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "writer(str) open file: %s write_size: %u", filename.c_str(), databin.size());
-        WriteFile.close();
-        return true;
+namespace PSAG_FILESYS_BASE64 {
+
+    RawDataStream PsagStringToRawData(const string& str_data) {
+        RawDataStream ResultTemp = {};
+        ResultTemp.resize(str_data.size());
+        for (char Cu8t : str_data)
+            ResultTemp.push_back((uint8_t)Cu8t);
+        return ResultTemp;
+    }
+    string PsagRawDataToString(const RawDataStream& raw_data) {
+        string ResultTemp = {};
+        ResultTemp.resize(raw_data.size());
+        for (uint8_t U8tC : raw_data)
+            ResultTemp.push_back((char)U8tC);
+        return ResultTemp;
     }
 
-    string PsagFilesysLoaderString::GetDataString()    { return ReadFileData; }
-    size_t PsagFilesysLoaderString::GetFileTotalSize() { return ReadFileSize; }
+    string PsagBase64Encode(const string& str_data) {
+        return base64_encode(reinterpret_cast<const uint8_t*>(str_data.c_str()), str_data.length());
+    }
+    string PsagBase64Decode(const string& str_data) {
+        return base64_decode(str_data);
+    }
 
-    string TextFileLoader(const string& filename) {
-        ifstream TextRead(filename);
-        // read_file status.
-        if (!TextRead.is_open()) {
-            PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "failed loader(text) open file: %s", filename.c_str());
-            return string();
-        }
-        // read string data.
-        string FileContent((istreambuf_iterator<char>(TextRead)), istreambuf_iterator<char>());
-        PushLogger(LogInfo, PSAG_FILESYS_LOADER_LABEL, "loader(text) open file: %s", filename.c_str());
-        return FileContent;
+    RawDataStream PsagStringToBase64Rawdata(const string& str_data) { 
+        return PsagStringToRawData(PsagBase64Encode(str_data));
+    }
+    string PsagBase64RawdataToString(const RawDataStream& raw_data) { 
+        return PsagBase64Decode(PsagRawDataToString(raw_data));
     }
 }

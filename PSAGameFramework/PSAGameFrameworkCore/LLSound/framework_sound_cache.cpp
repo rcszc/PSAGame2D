@@ -5,57 +5,73 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace PSAGSD_LOWLEVEL {
-	RawSoundStream SOUND_LLRES_CONVERT_FUNC(const RawDataStream& dataset) {
-		return RawSoundStream(dataset);
+	RawAudioStream AUDIO_LLRES_CONVERT_FUNC(const RawDataStream& dataset) {
+		return RawAudioStream(dataset);
 	}
 
-	RawSoundStream* PSAG_SOUND_LLRES::ResourceFind(ResUnique key) {
-		lock_guard<mutex> Lock(ResourceRawShoudMutex);
-		return (ResourceRawShoudMap.find(key) != ResourceRawShoudMap.end()) ? &ResourceRawShoudMap[key] : nullptr;
+	RawAudioStream* PsagResAudioSourceData::ResourceFind(ResUnique key) {
+		unique_lock<mutex> Lock(ResourceRawAudioMutex);
+		return (ResourceRawAudioMap.find(key) != ResourceRawAudioMap.end()) ? &ResourceRawAudioMap[key] : nullptr;
 	}
 
-	bool PSAG_SOUND_LLRES::ResourceStorage(ResUnique key, const RawSoundStream& res) {
-		lock_guard<mutex> Lock(ResourceRawShoudMutex);
+	bool PsagResAudioSourceData::ResourceStorage(ResUnique key, const RawAudioStream& res) {
+		unique_lock<mutex> Lock(ResourceRawAudioMutex);
 
-		auto it = ResourceRawShoudMap.find(key);
-		if (it != ResourceRawShoudMap.end()) {
-			PushLogger(LogWarning, PSAG_SOUND_DATA_LABEL, "raw_sound: failed storage duplicate_key: %u", key);
+		auto it = ResourceRawAudioMap.find(key);
+		if (it != ResourceRawAudioMap.end()) {
+			PushLogger(LogWarning, PSAG_AUDIO_DATA_LABEL, "raw_audio: failed storage duplicate_key: %u", key);
 			return false;
 		}
 		// resource size = empty ?
 		if (!res.empty()) {
-			ResourceRawShoudMap[key] = res;
-			PushLogger(LogInfo, PSAG_SOUND_DATA_LABEL, "raw_sound: storage key: %u", key);
+			ResourceRawAudioMap[key] = res;
+			PushLogger(LogInfo, PSAG_AUDIO_DATA_LABEL, "raw_audio: storage key: %u", key);
 			return true;
 		}
-		PushLogger(LogWarning, PSAG_SOUND_DATA_LABEL, "raw_sound: failed storage, key: %u, data_empty.", key);
+		PushLogger(LogWarning, PSAG_AUDIO_DATA_LABEL, "raw_audio: failed storage, key: %u, data_empty.", key);
 		return false;
 	}
 
-	bool PSAG_SOUND_LLRES::ResourceDelete(ResUnique key) {
-		lock_guard<mutex> Lock(ResourceRawShoudMutex);
+	bool PsagResAudioSourceData::ResourceDelete(ResUnique key) {
+		unique_lock<mutex> Lock(ResourceRawAudioMutex);
 
-		auto it = ResourceRawShoudMap.find(key);
-		if (it != ResourceRawShoudMap.end()) {
+		auto it = ResourceRawAudioMap.find(key);
+		if (it != ResourceRawAudioMap.end()) {
 
-			// vector free => clear map_item.
-			ResourceRawShoudMap.erase(it);
-			PushLogger(LogInfo, PSAG_SOUND_DATA_LABEL, "raw_sound: delete key: %u", key);
+			ResourceRawAudioMap.erase(it);
+			PushLogger(LogInfo, PSAG_AUDIO_DATA_LABEL, "raw_audio: delete key: %u", key);
 			return true;
 		}
-		PushLogger(LogWarning, PSAG_SOUND_DATA_LABEL, "raw_sound: failed delete, not found key.");
+		PushLogger(LogWarning, PSAG_AUDIO_DATA_LABEL, "raw_audio: failed delete, not found key.");
 		return false;
 	}
 
-	size_t PSAG_SOUND_LLRES::GetResTotalSizeBytes() {
+	size_t PsagResAudioSourceData::GetResTotalSizeBytes() {
 		size_t TotalRawSoundData = {};
-		for (const auto& PairTmp : ResourceRawShoudMap)
-			TotalRawSoundData += PairTmp.second.size();
+		for (const auto& PairTemp : ResourceRawAudioMap)
+			TotalRawSoundData += PairTemp.second.size();
 		return TotalRawSoundData;
 	}
 
-	PSAG_SOUND_LLRES::~PSAG_SOUND_LLRES() {
+	PsagResAudioSourceData::~PsagResAudioSourceData() {
 		size_t TotalSizeTemp = GetResTotalSizeBytes();
-		PushLogger(LogTrace, PSAG_SOUND_DATA_LABEL, "free resource(raw_sound): %u bytes", TotalSizeTemp);
+		PushLogger(LogTrace, PSAG_AUDIO_DATA_LABEL, "free resource(raw_audio): %u bytes", TotalSizeTemp);
+	}
+
+	PsagResAudioSourceData* PSAG_AUDIO_LLRES::AudioResource = nullptr;
+
+	void PSAG_AUDIO_LLRES::LowLevelResourceCreate() {
+		AudioResource = new PsagResAudioSourceData();
+		PushLogger(LogInfo, PSAG_AUDIO_DATA_LABEL, "LLRES static_object() create.");
+	}
+
+	bool PSAG_AUDIO_LLRES::LowLevelResourceFree() {
+		if (AudioResource == nullptr) {
+			PushLogger(LogError, PSAG_AUDIO_DATA_LABEL, "LLRES FREE_RES %s = NULLPTR.", "AUDIO");
+			return false;
+		}
+		delete AudioResource;
+		PushLogger(LogInfo, PSAG_AUDIO_DATA_LABEL, "LLRES static_object() delete.");
+		return true;
 	}
 }

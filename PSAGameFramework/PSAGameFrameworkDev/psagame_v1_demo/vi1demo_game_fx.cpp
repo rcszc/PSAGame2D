@@ -5,25 +5,25 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 void PsaGameV1Demo::GameInitParticleSystem(const Vector2T<uint32_t>& w_size) {
-	PsagManager::SyncLoader::SyncDecodeImage DecodeRawImage;
+	PsagManager::SyncLoader::SyncEncDecImage DecodeRawImage;
 	PsagManager::Fx::ParticleDESC CreatePActorParticle = {};
 
-	PsagManager::SyncLoader::SyncBinFileLoad PActorImage1("demo_v1_material/psag_v1_particle2.png");
-	PsagManager::SyncLoader::SyncBinFileLoad PActorImage2("demo_v1_material/psag_v1_particle1.png");
-	PsagManager::SyncLoader::SyncBinFileLoad PActorImage3("demo_v1_material/psag_v1_particle0.png");
+	auto PActorImage1 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1_particle2.png");
+	auto PActorImage2 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1_particle1.png");
+	auto PActorImage3 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1_particle0.png");
 
 	CreatePActorParticle.ParticleRenderResolution = w_size;
 	CreatePActorParticle.ParticlesDisturbance     = 0.0f;
-	CreatePActorParticle.ParticleRenderTexture    = DecodeRawImage.DecodeImageRawData(PActorImage1.GetDataBinary());
+	CreatePActorParticle.ParticleRenderTexture    = DecodeRawImage.DecodeImageRawData(PActorImage1);
 
 	DemoParticlePActor1 = new PsagManager::Fx::Particle(CreatePActorParticle);
 
 	// ∏¥”√ particle DESC.
-	CreatePActorParticle.ParticleRenderTexture = DecodeRawImage.DecodeImageRawData(PActorImage2.GetDataBinary());
+	CreatePActorParticle.ParticleRenderTexture = DecodeRawImage.DecodeImageRawData(PActorImage2);
 	DemoParticlePActor2 = new PsagManager::Fx::Particle(CreatePActorParticle);
 
 	// ∏¥”√ particle DESC.
-	CreatePActorParticle.ParticleRenderTexture = DecodeRawImage.DecodeImageRawData(PActorImage3.GetDataBinary());
+	CreatePActorParticle.ParticleRenderTexture = DecodeRawImage.DecodeImageRawData(PActorImage3);
 	DemoParticleBullet = new PsagManager::Fx::Particle(CreatePActorParticle);
 }
 

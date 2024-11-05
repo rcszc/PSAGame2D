@@ -13,8 +13,8 @@
 #endif
 
 #include "../LLFilesys/framework_filesys_compress.h"
-#include "../LLFilesys/framework_filesys_json.h"
-#include "../LLFilesys/framework_filesys_loader.h"
+#include "../LLFilesys/framework_filesys_loader.hpp"
+// non-swap: C1189:  gl.h included before glew.h | 20241023.
 #include "../LLGraphics/LLGraphicsResource/framework_psaglow_resource.hpp"
 #include "../LLSound/framework_sound.h"
 #include "../LLThread/framework_thread.hpp"
@@ -29,27 +29,27 @@ namespace PsagLow {
 #endif
 	// low_module 'filesys' support.
 #ifdef ENABLE_LOWMODULE_FILESYS
-	using PsagSupFilesysJsonMode = PSAG_FILESYS_JSON::JsonModeType;
-
 	using PsagSupFilesysCompress  = PSAG_FILESYS_COMPR::PsagFilesysCompress;
-	using PsagSupFilesysJson      = PSAG_FILESYS_JSON::PsagFilesysJson;
-	using PsagSupFilesysLoaderBin = PSAG_FILESYS_LOADER::PsagFilesysLoaderBinary;
-	using PsagSupFilesysLoaderStr = PSAG_FILESYS_LOADER::PsagFilesysLoaderString;
 
-	namespace PsagSupFilesysFunc = PSAG_FILESYS_JSON::BASE64_TOOL;
-	namespace PsagSupLoader      = PSAG_FILESYS_LOADER;
+	namespace PsagSupLoader = PSAG_FILESYS_LOADER;
+	namespace PsagSupDCH    = DecoderChannels;
+	namespace PsagSupECH    = EncoderChannels;
+	namespace PsagSupBase64 = PSAG_FILESYS_BASE64;
 #endif
-	// low_module 'sound' support.
-#ifdef ENABLE_LOWMODULE_SOUND
-	using PsagSupSoundLLRES = PSAGSD_LOWLEVEL::PSAG_SOUND_LLRES;
+
+// 宏定义失效问题: "psag_toolkits_engine.h" 定义宏启用底层组件失效.
+// 取消组件启用宏. (未解决). [C24-10203], RCSZ 20241024.
+	// low_module 'audio' support.
+//#ifdef ENABLE_LOWMODULE_AUDIO
+	using PsagSupAudioLLRES = PSAGSD_LOWLEVEL::PSAG_AUDIO_LLRES;
 	// 'RawDataStream' => 'RawSoundStream'
-#define PsagSupSoundRawCVT PSAGSD_LOWLEVEL::SOUND_LLRES_CONVERT_FUNC
+#define PsagSupAudioRawCVT PSAGSD_LOWLEVEL::AUDIO_LLRES_CONVERT_FUNC
 
-	using PsagSupSoundData       = PSAG_SOUND_PLAYER::PsagSoundDataResource;
-	using PsagSupSoundDataPlayer = PSAG_SOUND_PLAYER::PsagSoundDataPlayer;
+	using PsagSupAudioData       = PSAG_AUDIO_PLAYER::PsagAudioDataResource;
+	using PsagSupAudioDataPlayer = PSAG_AUDIO_PLAYER::PsagAudioDataPlayer;
 
-	namespace PsagSupSoundSystem = PSAG_SOUND_PLAYER::system;
-#endif
+	namespace PsagSupAudioSystem = PSAG_AUDIO_PLAYER::system;
+//#endif
 	// low_module 'thread' support.
 #ifdef ENABLE_LOWMODULE_THREAD
 	using PsagSupThreadTasks = PSAG_THREAD_POOL::PsagThreadTasks;
@@ -61,8 +61,8 @@ namespace PsagLow {
 	using PsagSupWindowGuiConfigWin = PSAG_WINDOW_OGLFW::FwWindowConfig;
 	using PsagSupWindowGuiConfigGui = PSAG_WINDOW_IMGUI::ImGuiConfig;
 
-	using PsagSupWindowGuiEventOglfw = PSAG_WINDOW_OGLFW::PasgWindowEvent;
-	using PsagSupWindowGuiEventImGui = PSAG_WINDOW_IMGUI::PsagImGuiContextEvent;
+	using PsagSupWindowGuiEventOGLFW = PSAG_WINDOW_OGLFW::PasgWindowEvent;
+	using PsagSupWindowGuiEventIMGUI = PSAG_WINDOW_IMGUI::PsagImGuiContextEvent;
 #endif
 }
 

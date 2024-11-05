@@ -120,6 +120,8 @@ namespace PsagFrameworkCore {
 
         // init create(alloc) OGL[LLRES], ver_system(s). 
         GraphicsEngineDataset::GLEngineStaticVertexData::LowLevelResourceCreate(PushLogger, 30);
+        // init craete(alloc) OAL[LLRES].
+        PsagLow::PsagSupAudioLLRES::LowLevelResourceCreate();
 
         // graphics system create.
         // dynamic vertex, static vertex, virtual textures.
@@ -182,6 +184,7 @@ namespace PsagFrameworkCore {
         CoreInitErrorFlag |= !PhysicsWorldDelete("DEFAULT_PHY_WORLD");
 
         ImGuiContextFree();
+        CoreInitErrorFlag |= !PsagLow::PsagSupAudioLLRES::LowLevelResourceFree();
         CoreInitErrorFlag |= !GraphicsEngineDataset::GLEngineStaticVertexData::LowLevelResourceFree();
         CoreInitErrorFlag |= !GLFWwindowFree();
         return CoreInitErrorFlag;

@@ -56,8 +56,8 @@ namespace PSAG_FILESYS_COMPR {
         deflateEnd(&DeflateStream);
 
         // 计算压缩校验码.
-        CompressChecksum = crc32(0L, CompressedRawDataTemp.data(), (uInt)CompressedRawDataTemp.size());
-        if (CompressChecksum != Z_NULL)
+        ChecksumCompress = crc32(0L, CompressedRawDataTemp.data(), (uInt)CompressedRawDataTemp.size());
+        if (ChecksumCompress != Z_NULL)
             PushLogger(LogInfo, PSAG_FILESYS_COMPR_LABEL, "compression completed, create checksum.");
         return CompressedRawDataTemp;
 	}
@@ -112,8 +112,8 @@ namespace PSAG_FILESYS_COMPR {
         inflateEnd(&InflateStream);
 
         // 计算解压校验码.
-        DecompressChecksum = crc32(0L, DecompressedRawDataTemp.data(), (uInt)DecompressedRawDataTemp.size());
-        if (DecompressChecksum != Z_NULL)
+        ChecksumDecompress = crc32(0L, DecompressedRawDataTemp.data(), (uInt)DecompressedRawDataTemp.size());
+        if (ChecksumDecompress != Z_NULL)
             PushLogger(LogInfo, PSAG_FILESYS_COMPR_LABEL, "decompression completed, create checksum.");
         return DecompressedRawDataTemp;
     }

@@ -34,7 +34,7 @@ namespace PSAGGL_LOWLEVEL {
 		GraphicUniformBuffers   = new PSAG_OGL_RES::PsagResUniformBufferOGL();
 		// LLRES LOGGER FUNCTION GET.
 		LLRESLoggerFunction = LogFunc;
-		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "LLRES static_object create(global).");
+		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "LLRES static_object(graphics) create.");
 	}
 
 	bool PSAG_GRAPHICS_LLRES::LowLevelResourceFree() {
@@ -47,6 +47,8 @@ namespace PSAGGL_LOWLEVEL {
 		ReturnFlag |= !LLRES_RES_FREE(LLRESLoggerFunction, GraphicFrameBuffers,     "FRAME_BUFFER"  );
 		ReturnFlag |= !LLRES_RES_FREE(LLRESLoggerFunction, GraphicRenderBuffers,    "RENDER_BUFFER" );
 		ReturnFlag |= !LLRES_RES_FREE(LLRESLoggerFunction, GraphicUniformBuffers,   "UNIFORM_BUFFER");
+
+		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "LLRES static_object(graphics) delete.");
 		// llres free status_flag.
 		return !ReturnFlag;
 	}

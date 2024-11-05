@@ -104,10 +104,10 @@ public:
 	RawDataStream() = default;
 	RawDataStream(uint8_t* v_data, size_t v_bytes) : std::vector<uint8_t>(v_data, v_data + v_bytes) {}
 };
-class RawSoundStream :public std::vector<uint8_t> {
+class RawAudioStream :public std::vector<uint8_t> {
 public:
-	RawSoundStream() = default;
-	RawSoundStream(const RawDataStream& data) : std::vector<uint8_t>(data.begin(), data.end()) {}
+	RawAudioStream() = default;
+	RawAudioStream(const RawDataStream& data) : std::vector<uint8_t>(data.begin(), data.end()) {}
 };
 using ResUnique = unsigned long long;
 // virtual texture unique_key. (not llres key)

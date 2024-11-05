@@ -16,7 +16,7 @@ atomic<size_t> GLOBAL_SAFE_RESOURCE::RunThreadDataCount = NULL;
 PsagManager::GuiTools::PlotSmpDataSRC TestDataPoints = {};
 
 bool PsaGameDevTest::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
-
+	/*
 	MainControlPanel = new PSA_PANEL::MainControlPanel();
 
 	TestImGuiPlot = new PsagManager::GuiTools::ImMegaPlotDataView();
@@ -30,20 +30,57 @@ bool PsaGameDevTest::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 	*TestImGuiPlot->GetPlotDatasetPtr() = TestDataPoints;
 
+	PsagManager::SyncLoader::SyncBinFileLoad Loader("demo_v1_material/TEST/TEST_SOUND_MC.ogg");
+	auto AudioData = AudioConvert(Loader.GetDataBinary());
+	*/
+
+	PsagActor::OperPhysicalWorld CreatePhysics("DemoPhysics", 1);
+
+	TestArchitecture = new PsagActor::BricksManager();
+
+	TestShader = new PsagActor::ActorShader(GameActorScript::PsagShaderPrivateFrag_Brick, WinSize);
+
+	PsagManager::SyncLoader::SyncEncDecImage DecodeRawImage;
+
+	TestShader->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(
+		(PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameHDR12-TEST/PSAG_HDR_TEST.png"))
+	));
+	TestShader->ShaderImageLoadHDR(DecodeRawImage.DecodeImageRawData(
+		(PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameHDR12-TEST/PSAG_HDR_TEST_BLEND.png"))
+	));
+
+	TestShader->CreateShaderResource();
+
+	PsagActor::BrickDESC BricksDESC;
+
+	BricksDESC.InitialRenderLayer  = 2.0f;
+	BricksDESC.BrickShaderResource = TestShader;
+	BricksDESC.BrickPhysicsWorld   = "DemoPhysics";
+
+	BricksDESC.InitialScale    = Vector2T<float>(5.0f, 5.0f);
+	BricksDESC.InitialPosition = Vector2T<float>(0.0f, 0.0f);
+
+	TestArchitecture->CreateGameBrick(BricksDESC);
+
 	return true;
 }
 
 void PsaGameDevTest::LogicCloseFree() {
 
-	delete TestImGuiPlot;
-	delete MainControlPanel;
+	//delete TestImGuiPlot;
+	//delete MainControlPanel;
 }
 
 bool PsaGameDevTest::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
 
-	MainControlPanel->RenderPanel();
+	TestArchitecture->RunAllGameBrick();
 
-	TestImGuiPlot->DrawImGuiDataPlot("TEST_PLOT");
+	//MainControlPanel->RenderPanel();
+
+	//TestImGuiPlot->DrawImGuiDataPlot("TEST_PLOT");
+
+	RunningState.ShaderParamsFinal->GameSceneBloomRadius = 12;
+	RunningState.ShaderParamsFinal->GameSceneFilterCOL = Vector3T<float>(0.0f, 0.0f, 1.2f);
 
 	return true;
 }

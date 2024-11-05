@@ -18,7 +18,7 @@ namespace ToolkitsEngineGuiTemp {
 		while (!ThreadObjectExit) {
 			if (!(*SrcDataResource.GetConsumeBuffer()).empty()) {
 
-				cout << "OK" << endl;
+				
 
 				(*SrcDataResource.GetConsumeBuffer()).clear();
 			}

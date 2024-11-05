@@ -38,12 +38,26 @@ namespace GameBrickCore {
 			// load rendering texture.
 			if (VirTextureExist(BrickRenderRes->__VIR_TEXTURE_ITEM)) {
 				// rendering texture func.
-				BirckCompRendering->RenderingTextureFunc = 
-					[this](PsagShader shader) { BirckCompRendering->UpdateActorRenderingTexture(shader); };
+				BirckCompRendering->RenderingTextureNFunc = 
+					[this](PsagShader shader) { BirckCompRendering->UpdateActorRenderingTextureN(shader); };
 
 				// virtual texture_unqiue, unifrom.
 				BirckCompRendering->VirTexture    = BrickRenderRes->__VIR_TEXTURE_ITEM;
 				BirckCompRendering->VirTexUniform = BrickRenderRes->__VIR_UNIFORM_ITEM;
+
+				bool HDRTEX_FLAG = false;
+				// load hdr_blend texture.
+				if (BrickRenderRes->__VIR_TEXTURE_HDR_ITEM != NULL && BirckCompRendering->VirTexture != NULL) {
+					// load render_tex function.
+					BirckCompRendering->RenderingTextureHFunc =
+						[this](PsagShader shader) { BirckCompRendering->UpdateActorRenderingTextureH(shader); };
+
+					BirckCompRendering->VirTextureHDR    = BrickRenderRes->__VIR_TEXTURE_HDR_ITEM;
+					BirckCompRendering->VirTexUniformHDR = BrickRenderRes->__VIR_UNIFORM_HDR_ITEM;
+					HDRTEX_FLAG = true;
+				}
+				PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick texture loading_completed, hdr: %d", 
+					(uint32_t)HDRTEX_FLAG);
 			}
 		}
 		else {

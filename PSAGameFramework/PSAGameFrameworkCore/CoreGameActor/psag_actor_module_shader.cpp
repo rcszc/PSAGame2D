@@ -6,6 +6,22 @@ using namespace PSAG_LOGGER;
 
 namespace GameActorCore {
 
+	bool GameActorShader::ShaderImageTextureLoad(VirTextureUnqiue* ref_texture, const ImageRawData& image) {
+		if (!CheckRepeatTex(*ref_texture)) return false;
+
+		if (!image.ImagePixels.empty()) {
+			PSAG_SYS_GENERATE_KEY GenResourceID;
+			*ref_texture = GenResourceID.PsagGenUniqueKey();
+			// alloc virtual sampler texture.
+			bool VirTextureFlag = VirTextureItemAlloc(*ref_texture, image);
+			if (!VirTextureFlag)
+				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed load_image.");
+			return VirTextureFlag;
+		}
+		PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader image null_pixel.");
+		return false;
+	}
+
 	GameActorShader::GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION) {
 		// system actor system_default vert_shader.
 		ShaderScript.vector_x = GraphicsShaderCode::GLOBALRES.Get().PublicShaders.ShaderVertTemplateActor;
@@ -33,6 +49,9 @@ namespace GameActorCore {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 
 		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
+
+		//ShaderProcess.ShaderLoaderPushFS(GameActorScript::PsagShaderPublicFrag_Header, StringScript);
+		//ShaderProcess.ShaderLoaderPushFS(GameActorScript::PsagShaderPublicFrag_Tools,  StringScript);
 		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
 
 		if (ShaderProcess.CreateCompileShader()) {
@@ -80,7 +99,7 @@ namespace GameActorCore {
 		return true;
 	}
 
-	bool GameActorShader::ShaderLoadVertices(GameActorShaderVerticesDESC& VER_DESC) {
+	bool GameActorShader::ShaderVerticesLoad(GameActorShaderVerticesDESC& VER_DESC) {
 		if (VER_DESC.VertexShaderEnable) {
 			if (VER_DESC.VertexShaderScript.empty()) {
 				// vertex shader non-script.
@@ -116,21 +135,25 @@ namespace GameActorCore {
 		return false;
 	}
 
-	bool GameActorShader::ShaderLoadImage(const ImageRawData& image) {
-		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM)) return false;
-
-		if (!image.ImagePixels.empty()) {
-			PSAG_SYS_GENERATE_KEY GenResourceID;
-			__VIR_TEXTURE_ITEM = GenResourceID.PsagGenUniqueKey();
-			// alloc virtual sampler texture.
-			if (!VirTextureItemAlloc(__VIR_TEXTURE_ITEM, image)) {
-				PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader failed load_image.");
-				return false;
-			}
+	bool GameActorShader::ShaderImageLoad(const ImageRawData& image) {
+		bool TextureLoaderFlag = ShaderImageTextureLoad(&__VIR_TEXTURE_ITEM, image);
+		if (TextureLoaderFlag)
 			__VIR_UNIFORM_ITEM = SystemPresetUname();
-			return true;
-		}
-		return false;
+		return TextureLoaderFlag;
+	}
+
+	bool GameActorShader::ShaderImageLoadHDR(const ImageRawData& image) {
+		GraphicsEngineDataset::VirTextureUniformName U_NAME_HDR = {};
+		// preset shader uniform name.
+		U_NAME_HDR.TexParamSampler  = "VirHDRTexture";
+		U_NAME_HDR.TexParamLayer    = "VirHDRTextureLayer";
+		U_NAME_HDR.TexParamCropping = "VirHDRTextureCropping";
+		U_NAME_HDR.TexParamSize     = "VirHDRTextureSize";
+
+		bool HDRTextureLoaderFlag = ShaderImageTextureLoad(&__VIR_TEXTURE_HDR_ITEM, image);
+		if (HDRTextureLoaderFlag)
+			__VIR_UNIFORM_HDR_ITEM = U_NAME_HDR;
+		return HDRTextureLoaderFlag;
 	}
 
 	// ******************************** upload shader uniform ********************************

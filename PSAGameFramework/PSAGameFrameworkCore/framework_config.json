@@ -5,7 +5,7 @@
   "RenderMSAA": 4,
   "RenderWindowFixed": true,
   "RenderBasicSize": [ 4096, 4096 ],
-  "RenderTexGenNum": [ 25, 20, 10, 5 ],
+  "RenderGenTexure": [ 25, 20, 10, 5 ],
   "GuiWindowRounding": 3.8,
   "GuiFrameRounding": 5.8,
   "GuiFontsFilepath": "PSAGameSystemFiles/JetBrainsMonoBold.ttf",
