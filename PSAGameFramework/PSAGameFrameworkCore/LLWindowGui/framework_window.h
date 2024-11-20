@@ -69,7 +69,7 @@ namespace PSAG_WINDOW_OGLFW {
 		static void CallbackDropFiles  (GLFWwindow* window, int count, const char** paths);
 		static void CallbackWindowSize (GLFWwindow* window, int width, int height);
 
-		static void CallbackWindowClose(GLFWwindow* window);
+		static void CallbackWindowClose  (GLFWwindow* window);
 		static void CallbackWindowRefresh(GLFWwindow* window);
 
 #ifdef DEVICE_ENABLE_WINAPI_PROCESS

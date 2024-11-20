@@ -49,7 +49,7 @@ class PsaGameDevTest :public GameLogic::INTERFACE_DEVCLASS_GAME {
 protected:
     PSA_PANEL::MainControlPanel* MainControlPanel = nullptr;
 
-    PsagManager::GuiTools::ImMegaPlotDataView* TestImGuiPlot = nullptr;
+    PsagManager::GuiTools::Large::ImMegaPlotsDataView* TestImGuiPlot = nullptr;
 
     PsagActor::BricksManager* TestArchitecture = nullptr;
     PsagActor::ActorShader* TestShader = nullptr;

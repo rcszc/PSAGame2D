@@ -206,6 +206,11 @@ namespace GameManagerCore {
 		void CalcFuncLerpVec1(float* ahpla, float* target, float speed);
 		void CalcFuncLerpVec2(Vector2T<float>* ahpla, Vector2T<float>* target, float speed);
 		void CalcFuncLerpVec4(Vector4T<float>* ahpla, Vector4T<float>* target, float speed);
+
+		// 环绕引力轨道, return 'force'. ChatGPT.4O, RCSZ 20241110.
+		Vector2T<float> SurroundingOrbit(
+			Vector2T<float> point_a, Vector2T<float> point_b, float r, float force_scale = 1.0f
+		);
 	}
 }
 

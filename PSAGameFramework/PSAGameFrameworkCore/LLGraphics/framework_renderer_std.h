@@ -72,7 +72,7 @@ public:
 	virtual bool PushCreateTexData(const TextureParam& param, uint32_t channels, const RawDataStream& data) = 0;
 	virtual bool PushCreateTexLoader(const TextureParam& param, const std::string& file) = 0;
 
-	virtual bool CreateTexture() = 0;
+	virtual bool CreateTexture(bool clamp_edge_mode) = 0;
 };
 
 // depth texture, single_channel.

@@ -44,14 +44,20 @@ namespace GameActorCore {
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader delete.");
 	}
 
-	bool GameActorShader::CreateShaderResource() {
+	bool GameActorShader::CreateShaderResource(bool default_is_circle) {
 		PSAG_SYS_GENERATE_KEY GenResourceID;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 
 		ShaderProcess.ShaderLoaderPushVS(ShaderScript.vector_x, StringScript);
 
-		//ShaderProcess.ShaderLoaderPushFS(GameActorScript::PsagShaderPublicFrag_Header, StringScript);
-		//ShaderProcess.ShaderLoaderPushFS(GameActorScript::PsagShaderPublicFrag_Tools,  StringScript);
+		ShaderProcess.ShaderLoaderPushFS(GameActorScript::psag_shader_public_frag_header, StringScript);
+		ShaderProcess.ShaderLoaderPushFS(GameActorScript::psag_shader_public_frag_texnor, StringScript);
+		// hdr_texture index exist => add hdr uniform code.
+		if (__VIR_TEXTURE_HDR_ITEM != NULL) {
+			ShaderProcess.ShaderLoaderPushFS(GameActorScript::psag_shader_public_frag_texhdr, StringScript);
+			PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor enable texture hdr_uniform.");
+		}
+		// system preset "main".
 		ShaderProcess.ShaderLoaderPushFS(ShaderScript.vector_y, StringScript);
 
 		if (ShaderProcess.CreateCompileShader()) {
@@ -85,7 +91,8 @@ namespace GameActorCore {
 		}
 		else {
 			// non-vertex-data. => system_default.
-			__ACTOR_VERTEX_ITEM = GetPresetRect();
+			if (!default_is_circle) __ACTOR_VERTEX_ITEM = GetPresetRect();
+			if (default_is_circle)  __ACTOR_VERTEX_ITEM = GetPresetCircle();
 		}
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader resource create.");
 		return true;
@@ -145,10 +152,10 @@ namespace GameActorCore {
 	bool GameActorShader::ShaderImageLoadHDR(const ImageRawData& image) {
 		GraphicsEngineDataset::VirTextureUniformName U_NAME_HDR = {};
 		// preset shader uniform name.
-		U_NAME_HDR.TexParamSampler  = "VirHDRTexture";
-		U_NAME_HDR.TexParamLayer    = "VirHDRTextureLayer";
-		U_NAME_HDR.TexParamCropping = "VirHDRTextureCropping";
-		U_NAME_HDR.TexParamSize     = "VirHDRTextureSize";
+		U_NAME_HDR.TexParamSampler  = "VirTextureHDR";
+		U_NAME_HDR.TexParamLayer    = "VirTextureHDRLayer";
+		U_NAME_HDR.TexParamCropping = "VirTextureHDRCropping";
+		U_NAME_HDR.TexParamSize     = "VirTextureHDRSize";
 
 		bool HDRTextureLoaderFlag = ShaderImageTextureLoad(&__VIR_TEXTURE_HDR_ITEM, image);
 		if (HDRTextureLoaderFlag)

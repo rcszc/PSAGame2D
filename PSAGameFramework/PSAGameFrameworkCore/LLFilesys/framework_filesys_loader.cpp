@@ -66,34 +66,49 @@ namespace PSAG_FILESYS_LOADER {
     }
 }
 
+#define BASE64_CVT_FLAG_INPUT_NULLPTR    -1
+#define BASE64_CVT_FLAG_TARGET_NOT_EMPTY -2
+#define BASE64_CVT_FLAG_SUCCESS           1
 namespace PSAG_FILESYS_BASE64 {
 
-    RawDataStream PsagStringToRawData(const string& str_data) {
-        RawDataStream ResultTemp = {};
-        ResultTemp.resize(str_data.size());
-        for (char Cu8t : str_data)
-            ResultTemp.push_back((uint8_t)Cu8t);
-        return ResultTemp;
-    }
-    string PsagRawDataToString(const RawDataStream& raw_data) {
-        string ResultTemp = {};
-        ResultTemp.resize(raw_data.size());
-        for (uint8_t U8tC : raw_data)
-            ResultTemp.push_back((char)U8tC);
-        return ResultTemp;
+    string PsagBase64Encode(const string& str_data) {
+        return base64_encode((const uint8_t*)str_data.c_str(), str_data.size());
     }
 
-    string PsagBase64Encode(const string& str_data) {
-        return base64_encode(reinterpret_cast<const uint8_t*>(str_data.c_str()), str_data.length());
-    }
     string PsagBase64Decode(const string& str_data) {
         return base64_decode(str_data);
     }
 
-    RawDataStream PsagStringToBase64Rawdata(const string& str_data) { 
-        return PsagStringToRawData(PsagBase64Encode(str_data));
-    }
-    string PsagBase64RawdataToString(const RawDataStream& raw_data) { 
-        return PsagBase64Decode(PsagRawDataToString(raw_data));
+    int32_t PsagFileSystemConvert(string* str_data, RawDataStream* raw_data, ConvertModeType mode) {
+        if (str_data == nullptr || raw_data == nullptr) {
+            PushLogger(LogError, PSAG_FILESYS_BASE_LABEL, "str | raw ptr = nullptr!");
+            return BASE64_CVT_FLAG_INPUT_NULLPTR;
+        }
+        auto PsagStringToRawData = [](const string& str) {
+            return RawDataStream((uint8_t*)str.data(), str.size());
+        };
+        auto PsagRawDataToString = [](const RawDataStream& raw) {
+            return string(raw.begin(), raw.end());
+        };
+        // data convert, 4-types 20241106 RCSZ.
+        switch (mode) {
+        case(StringToRawData):
+            if (!raw_data->empty()) return BASE64_CVT_FLAG_TARGET_NOT_EMPTY;
+            *raw_data = PsagStringToRawData(*str_data);
+            break;
+        case(RawDataToString):
+            if (!str_data->empty()) return BASE64_CVT_FLAG_TARGET_NOT_EMPTY;
+            *str_data = PsagRawDataToString(*raw_data);
+            break;
+        case(StringToBase64RawData):
+            if (!raw_data->empty()) return BASE64_CVT_FLAG_TARGET_NOT_EMPTY;
+            *raw_data = PsagStringToRawData(PsagBase64Encode(*str_data)); 
+            break;
+        case(Base64RawDataToString):
+            if (!str_data->empty()) return BASE64_CVT_FLAG_TARGET_NOT_EMPTY;
+            *str_data = PsagBase64Decode(PsagRawDataToString(*raw_data)); 
+            break;
+        }
+        return BASE64_CVT_FLAG_SUCCESS;
     }
 }

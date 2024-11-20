@@ -274,7 +274,7 @@ namespace GraphicsEngineFinal {
 		for (size_t i = 0; i < 5; ++i)
 			TextureCreate.PsuhCreateTexEmpty(TextureParam(1.0f, 1.0f));
 
-		if (TextureCreate.CreateTexture()) {
+		if (TextureCreate.CreateTexture(true)) {
 			ProcessTextures = GenResourceID.PsagGenUniqueKey();
 			GraphicTextures->ResourceStorage(ProcessTextures, &TextureCreate);
 		}

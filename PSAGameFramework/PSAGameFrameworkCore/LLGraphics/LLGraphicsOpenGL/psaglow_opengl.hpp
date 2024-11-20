@@ -174,7 +174,7 @@ namespace PSAG_OGL_MAG {
 		bool PushCreateTexData(const TextureParam& param, uint32_t channels, const RawDataStream& data) override;
 		bool PushCreateTexLoader(const TextureParam& param, const std::string& file) override;
 
-		bool CreateTexture() override;
+		bool CreateTexture(bool clamp_edge_mode = false) override;
 
 		PsagTextureAttribute _MS_GETRES(ResourceFlag& flag) override;
 	};

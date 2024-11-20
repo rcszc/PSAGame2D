@@ -20,16 +20,16 @@ void main()
 	vec4 SceneColor     = texture(ProcessTextures, vec3(SampleCoord, 1.0));
 	vec4 SceneBlurColor = texture(ProcessTextures, vec3(SampleCoord, 4.0));
 
-	vec4 FragmentProcess = vec4(0.0);
+	vec3 FragmentProcess = vec3(0.0);
 
-	FragmentProcess += SceneColor     * STD_BLEND_W_SRC  * OutFragmentSource;
-	FragmentProcess += SceneBlurColor * STD_BLEND_W_BLUR * OutFragmentBlur;
+	FragmentProcess += SceneColor.rgb     * STD_BLEND_W_SRC  * OutFragmentSource;
+	FragmentProcess += SceneBlurColor.rgb * STD_BLEND_W_BLUR * OutFragmentBlur;
 
-	FragmentProcess.rgb = (FragmentProcess.rgb - 0.5) * OutFragmentContrast + 0.5;
-	FragmentProcess.rgb *= OutFragmentBlend;
+	FragmentProcess = (FragmentProcess - 0.5) * OutFragmentContrast + 0.5;
+	FragmentProcess *= OutFragmentBlend;
 
     float Dist = length(FxCoord - VignetteCenter);
     float VignetteValue = smoothstep(OutFragmentVignette.x, OutFragmentVignette.x - OutFragmentVignette.y, Dist);
 
-	FragColor = FragmentProcess * vec4(vec3(VignetteValue), 1.0);
+	FragColor = vec4(FragmentProcess, 1.0) * vec4(vec3(VignetteValue), 1.0);
 }

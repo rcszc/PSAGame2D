@@ -31,7 +31,7 @@ protected:
     PsagManager::Fx::Particle* DemoParticlePActor2 = nullptr; // 换弹粒子.
     PsagManager::Fx::Particle* DemoParticleBullet  = nullptr; // 子弹击中粒子.
 
-    PsagManager::Tools::Pawn::GamePlayerPawn*        PlayerPawn   = nullptr;
+    PsagManager::Tools::Pawn::GamePlayerPawn*       PlayerPawn   = nullptr;
     PsagManager::Tools::Camera::GamePlayerCameraMP* PlayerCamera = nullptr;
 
     PsagManager::FxView::TextureViewImage* GuiViewImage = nullptr;
@@ -44,7 +44,7 @@ protected:
     ResUnique PawnActorUnqiue = NULL;
 
     void GameInitActorsShader(const Vector2T<uint32_t>& w_size);
-    void GameInitPawnActor();
+    void GameCreatePawnActor();
     void GameInitBoundary();
     void GameInitParticleSystem(const Vector2T<uint32_t>& w_size);
 

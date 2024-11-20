@@ -38,7 +38,7 @@ bool PsaGameV1Demo::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	PsagActorType::ActorTypeAllotter.ActorTypeCreate("ActorBullet");
 	PsagActorType::ActorTypeAllotter.ActorTypeCreate("ActorNpc");
 
-	GameInitPawnActor();
+	GameCreatePawnActor();
 
 	PActorHP   = new PsagManager::Tools::Timer::GameCycleTimer();
 	PActorFIRE = new PsagManager::Tools::Timer::GameCycleTimer();

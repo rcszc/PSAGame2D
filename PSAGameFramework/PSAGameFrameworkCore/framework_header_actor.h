@@ -18,6 +18,9 @@ namespace PsagActor {
 	using ActorUnique = GameComponents::ActorPrivateINFO;
 	using BirckUnique = size_t;
 
+	using ActorFlagsComp = GameActorCore::ActorComponentFlags;
+	using ActorFlagsPhy  = GameActorCore::ActorCollisionGroup;
+
 	using ActorShader = GameActorCore::GameActorShader;
 	using Actor       = GameActorCore::GameActorExecutor;
 	using Brick       = GameBrickCore::GameBrickExecutor;

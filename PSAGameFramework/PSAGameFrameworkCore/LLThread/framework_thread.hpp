@@ -11,6 +11,19 @@
 namespace PSAG_THREAD_POOL {
     StaticStrLABEL PSAG_THREAD_LABEL = "PSAG_THREAD";
 
+    template<typename TRES>
+    struct DoubleBufferResource {
+        std::atomic<bool> SwapBufferIndex = false;
+
+        TRES* GetProduceBuffer() { return &DoubleBuffer[(size_t)SwapBufferIndex];  }
+        TRES* GetConsumeBuffer() { return &DoubleBuffer[(size_t)!SwapBufferIndex]; }
+
+        void SwapResourceBuffers() {
+            SwapBufferIndex = !SwapBufferIndex;
+        }
+        TRES DoubleBuffer[2] = {};
+    };
+
     // run_time_type_information.
     struct RTTI_OBJECT_INFO {
         std::string ObjectName;
@@ -117,7 +130,7 @@ namespace PSAG_THREAD_POOL {
         void     ResizeWorkers(uint32_t resize);
     };
 }
-#define ENABLE_AVX256_CALC_FUNC
+
 // PSAG thread(calc) function: SIMD AVX-256, X86-64.
 namespace PSAG_THREAD_SIMD {
 #ifdef ENABLE_AVX256_CALC_FUNC
@@ -126,45 +139,77 @@ namespace PSAG_THREAD_SIMD {
 #define AVX256_32B_COUNT 8
 
     // imm register 256bit float32 * 8, 32bytes.
-    using PsagFp32Simd256b = __m256;
+    using PsagFP32SIMD256 = __m256;
 
-    PsagFp32Simd256b PsagSimdLoad8Fp32    (float* dataptr, size_t offset, size_t bytes = 32);
-    void             PsagSimdStore8Fp32   (PsagFp32Simd256b vec, float* dataptr, size_t bytes = 32);
-    PsagFp32Simd256b PsagSimdLoad8Fp32Fill(float* dataptr, size_t count_32b);
+    PsagFP32SIMD256 PsagSimd8Fp32Load    (float* dataptr, size_t offset, size_t bytes = 32);
+    PsagFP32SIMD256 PsagSimd8Fp32FillLoad(float* dataptr, size_t count_32b);
+    void             PsagSimd8Fp32Store  (const PsagFP32SIMD256& vec, float* dataptr, size_t offset, size_t bytes = 32);
 
-    PsagFp32Simd256b PsagSimdCalcADD(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    PsagFp32Simd256b PsagSimdCalcSUB(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    PsagFp32Simd256b PsagSimdCalcMUL(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    PsagFp32Simd256b PsagSimdCalcDIV(PsagFp32Simd256b A, PsagFp32Simd256b B);
+    class PSAG_SIMD_LOAD {
+    protected:
+        std::vector<float>* DatasetPointer = nullptr;
+    public:
+        PSAG_SIMD_LOAD(std::vector<float>* ref) : DatasetPointer(ref) {};
+        size_t GET_SIMD256_ITEMS_NUMBER() {
+            return DatasetPointer->size() / AVX256_32B_COUNT;
+        }
+        PsagFP32SIMD256 LOAD_SIMD256_ITEM(size_t index) {
+            return PsagSimd8Fp32Load(DatasetPointer->data(), index * AVX256_32B_COUNT);
+        }
+    };
+
+    class PSAG_SIMD_STORE {
+    protected:
+        std::vector<float>* DatasetPointer = nullptr;
+    public:
+        PSAG_SIMD_STORE(std::vector<float>* ref) : DatasetPointer(ref) {};
+        size_t GET_SIMD256_ITEMS_NUMBER() {
+            return DatasetPointer->size() / AVX256_32B_COUNT;
+        }
+        void STORE_SIMD256_ITEM(const PsagFP32SIMD256& value, size_t index) {
+            return PsagSimd8Fp32Store(value, DatasetPointer->data(), index * AVX256_32B_COUNT);
+        }
+    };
+
+    PsagFP32SIMD256 operator+(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+    PsagFP32SIMD256 operator-(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+    PsagFP32SIMD256 operator*(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+    PsagFP32SIMD256 operator/(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+
+    PsagFP32SIMD256& operator+=(PsagFP32SIMD256& a, PsagFP32SIMD256 b);
+    PsagFP32SIMD256& operator-=(PsagFP32SIMD256& a, PsagFP32SIMD256 b);
+    PsagFP32SIMD256& operator*=(PsagFP32SIMD256& a, PsagFP32SIMD256 b);
+    PsagFP32SIMD256& operator/=(PsagFP32SIMD256& a, PsagFP32SIMD256 b);
 
     // fma(fused multiply-add), res = a * b + c, [matrix calc].
-    PsagFp32Simd256b PsagSimdCalcFMADD(PsagFp32Simd256b A, PsagFp32Simd256b B, PsagFp32Simd256b C);
+    PsagFP32SIMD256 PsagSimdCalcFMADD(PsagFP32SIMD256 A, PsagFP32SIMD256 B, PsagFP32SIMD256 C);
 
-    PsagFp32Simd256b PsagSimdCalcFABS(PsagFp32Simd256b A);
-    PsagFp32Simd256b PsagSimdCalcSQRT(PsagFp32Simd256b A);
+    PsagFP32SIMD256 PsagSimdCalcFABS(PsagFP32SIMD256 A);
+    PsagFP32SIMD256 PsagSimdCalcSQRT(PsagFP32SIMD256 A);
     enum LIMIT_CALC_TYPE {
         ModeMax = 1 << 1,
         ModeMin = 1 << 2
     };
-    PsagFp32Simd256b PsagSimdCalcLIMIT(PsagFp32Simd256b A, PsagFp32Simd256b B, LIMIT_CALC_TYPE MODE);
+    PsagFP32SIMD256 PsagSimdCalcLIMIT(PsagFP32SIMD256 A, PsagFP32SIMD256 B, LIMIT_CALC_TYPE MODE);
 
     template <int mask>
     // avx-isa: blend values based mask [0,255].
-    PsagFp32Simd256b PsagSimdCalcBLEND(PsagFp32Simd256b A, PsagFp32Simd256b B) {
+    PsagFP32SIMD256 PsagSimdCalcBLEND(PsagFP32SIMD256 A, PsagFP32SIMD256 B) {
         return _mm256_blend_ps(A, B, mask);
     }
 
-    PsagFp32Simd256b PsagSimdCalcRSQRT(PsagFp32Simd256b A);
-    PsagFp32Simd256b PsagSimdCalcRECI (PsagFp32Simd256b A);
-    PsagFp32Simd256b PsagSimdCalcNEG  (PsagFp32Simd256b A);
-    PsagFp32Simd256b PsagSimdCalcHADD (PsagFp32Simd256b A, PsagFp32Simd256b B);
-    PsagFp32Simd256b PsagSimdCalcDOT  (PsagFp32Simd256b A, PsagFp32Simd256b B);
+    PsagFP32SIMD256 PsagSimdCalcRSQRT(PsagFP32SIMD256 A);
+    PsagFP32SIMD256 PsagSimdCalcRECI (PsagFP32SIMD256 A);
+    PsagFP32SIMD256 PsagSimdCalcNEG  (PsagFP32SIMD256 A);
+    PsagFP32SIMD256 PsagSimdCalcHADD (PsagFP32SIMD256 A, PsagFP32SIMD256 B);
+    PsagFP32SIMD256 PsagSimdCalcDOT  (PsagFP32SIMD256 A, PsagFP32SIMD256 B);
 
-    bool PsagSimdCompareEQ(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    bool PsagSimdCompareLT(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    bool PsagSimdCompareLE(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    bool PsagSimdCompareGT(PsagFp32Simd256b A, PsagFp32Simd256b B);
-    bool PsagSimdCompareGE(PsagFp32Simd256b A, PsagFp32Simd256b B);
+    bool operator<(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+    bool operator>(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+
+    bool operator<=(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+    bool operator>=(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
+    bool operator==(const PsagFP32SIMD256& v, const PsagFP32SIMD256& s);
 #endif
 }
 

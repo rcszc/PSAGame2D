@@ -6,7 +6,7 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace GameActorScript {
-	const char* PsagShaderPublicFrag_Header = R"(
+	const char* psag_shader_public_frag_header = R"(
 #version 460 core
 
 in vec4 FxColor;
@@ -18,71 +18,48 @@ uniform float RenderTime;
 out vec4 FragColor;
 )";
 
-	const char* PsagShaderPublicFrag_Tools = R"(
-uniform sampler2DArray VirTexture;
-uniform sampler2DArray VirHDRTexture;
+	const char* psag_shader_public_frag_texnor = R"(
+uniform sampler2DArray VirTextureNOR;
 
-uniform int VirTextureLayer;
-uniform int VirHDRTextureLayer;
+uniform int  VirTextureNORLayer;
+uniform vec2 VirTextureNORCropping;
+uniform vec2 VirTextureNORSize;
 
-uniform vec2 VirTextureCropping;
-uniform vec2 VirHDRTextureCropping;
-
-uniform vec2 VirTextureSize;
-uniform vec2 VirHDRTextureSize;
-
-vec4 SampleTexture(vec2 SmpCoord) {
-	vec2 SamplerCoord = VirTextureCropping * SmpCoord;
-	return texture(VirTexture, vec3(SamplerCoord, float(VirTextureLayer)));
-}
-
-vec4 SampleTextureHDR(vec2 SmpCoord) {
-	vec2 SamplerCoord = VirHDRTextureCropping * SmpCoord;
-	return texture(VirHDRTexture, vec3(SamplerCoord, float(VirHDRTextureLayer)));
+vec4 SampleTextureNOR(vec2 smp_coord) {
+	vec2 SamplerCoord = VirTextureNORCropping * smp_coord;
+	return texture(VirTextureNOR, vec3(SamplerCoord, float(VirTextureNORLayer)));
 }
 )";
 
-	const char* PsagShaderPrivateFrag_Brick = R"(
-#version 460 core
+	const char* psag_shader_public_frag_texhdr = R"(
+uniform sampler2DArray VirTextureHDR;
 
-in vec4 FxColor;
-in vec2 FxCoord;
+uniform int  VirTextureHDRLayer;
+uniform vec2 VirTextureHDRCropping;
+uniform vec2 VirTextureHDRSize;
 
-uniform vec2  RenderResolution;
-uniform float RenderTime;
-
-out vec4 FragColor;
-
-uniform sampler2DArray VirTexture;
-uniform sampler2DArray VirHDRTexture;
-
-uniform int VirTextureLayer;
-uniform int VirHDRTextureLayer;
-
-uniform vec2 VirTextureCropping;
-uniform vec2 VirHDRTextureCropping;
-
-uniform vec2 VirTextureSize;
-uniform vec2 VirHDRTextureSize;
-
-vec4 SampleTexture(vec2 SmpCoord) {
-	vec2 SamplerCoord = VirTextureCropping * SmpCoord;
-	return texture(VirTexture, vec3(SamplerCoord, float(VirTextureLayer)));
+vec4 SampleTextureHDR(vec2 smp_coord) {
+	vec2 SamplerCoord = VirTextureHDRCropping * smp_coord;
+	return texture(VirTextureHDR, vec3(SamplerCoord, float(VirTextureHDRLayer)));
 }
+)";
 
-vec4 SampleTextureHDR(vec2 SmpCoord) {
-	vec2 SamplerCoord = VirHDRTextureCropping * SmpCoord;
-	return texture(VirHDRTexture, vec3(SamplerCoord, float(VirHDRTextureLayer)));
-}
-
+	const char* psag_shader_private_frag_brick_nor = R"(
 void main()
 {
-	vec4 HDRCOLOR = SampleTextureHDR(FxCoord);
-	vec4 BLEND = SampleTexture(FxCoord);
-	if (HDRCOLOR.a > 0.005) {
-		BLEND += HDRCOLOR;
+    FragColor = SampleTextureNOR(FxCoord) * FxColor;
+}
+)";
+
+	const char* psag_shader_private_frag_brick_hdr = R"(
+void main()
+{
+	vec4 HDR_FRAG = SampleTextureHDR(FxCoord);
+	vec4 NOR_FRAG = SampleTextureNOR(FxCoord);
+	if (HDR_FRAG.a > 0.005) {
+		NOR_FRAG += HDRCOLOR;
 	}
-    FragColor = BLEND * FxColor;
+    FragColor = NOR_FRAG * FxColor;
 }
 )";
 }

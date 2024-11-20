@@ -4,6 +4,10 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
+bool ONLY_ONE_FLAG_SET(uint16_t enumflags) {
+	return enumflags != 0 && (enumflags & (enumflags - 1)) == 0;
+}
+
 float __PHYSICS_ENGINE_TIMESETP::PhysicsEngineTimeStep = 1.0f;
 namespace PhysicsEngine {
 	// 碰撞(事件)发生.
@@ -64,6 +68,18 @@ namespace PhysicsEngine {
 		return CreateVertGroup;
 	}
 
+	vector<b2Vec2> PresetVertexGroupCIRCLE(const Vector2T<float>& scale, uint32_t num) {
+		float STEP = 2.0f * PSAG_M_PI / num;
+
+		vector<b2Vec2> CreateVertGroup = {};
+		for (size_t i = 0; i < num; ++i)
+			CreateVertGroup.push_back(b2Vec2(
+				cos((float)i * STEP) * 10.0f * scale.vector_x, 
+				sin((float)i * STEP) * 10.0f * scale.vector_y
+			));
+		return CreateVertGroup;
+	}
+
 	vector<b2Vec2> VertexPosToBox2dVec(const vector<Vector2T<float>>& data) {
 		vector<b2Vec2> DatasetTemp = {};
 		for (const auto& Vert : data)
@@ -83,6 +99,15 @@ namespace PhysicsEngine {
 			return false;
 		}
 
+		if (!ONLY_ONE_FLAG_SET(config.PhysicsCollisionThis)) {
+			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: filter: this_value only one.");
+			return false;
+		}
+		b2Filter FILTER;
+		FILTER.categoryBits = config.PhysicsCollisionThis;
+		FILTER.maskBits     = config.PhysicsCollisionFilter;
+		FILTER.groupIndex   = 0; // default group.
+
 		// 创建 Actor 物理碰撞.
 		b2BodyDef DefineBody;
 		if (config.PhysicsModeTypeFlag) DefineBody.type = b2_dynamicBody;
@@ -97,8 +122,7 @@ namespace PhysicsEngine {
 		b2CircleShape  CollisionCircle;
 
 		b2FixtureDef DefineFixture;
-
-		switch (config.PhyShapeType) {
+		switch (config.PhysicalShapeType) {
 			// 多边形碰撞箱.
 		case(POLYGON_TYPE): {
 			// process scale.
@@ -127,6 +151,7 @@ namespace PhysicsEngine {
 		else {
 			DefineFixture.density  = config.PhyBodyDensity;
 			DefineFixture.friction = config.PhyBodyFriction;
+			DefineFixture.filter   = FILTER;
 		}
 
 		// 关闭 Body 碰撞.

@@ -13,13 +13,13 @@ atomic<bool> GLOBAL_SAFE_RESOURCE::ThreadFlagExit  = true;
 atomic<size_t> GLOBAL_SAFE_RESOURCE::RunThreadTickCount = NULL;
 atomic<size_t> GLOBAL_SAFE_RESOURCE::RunThreadDataCount = NULL;
 
-PsagManager::GuiTools::PlotSmpDataSRC TestDataPoints = {};
+PsagManager::GuiTools::Large::PlotsDatasetSRC TestDataPoints = {};
 
 bool PsaGameDevTest::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
-	/*
+	
 	MainControlPanel = new PSA_PANEL::MainControlPanel();
 
-	TestImGuiPlot = new PsagManager::GuiTools::ImMegaPlotDataView();
+	TestImGuiPlot = new PsagManager::GuiTools::Large::ImMegaPlotsDataView();
 
 	for (size_t set = 0; set < 12; ++set) {
 		vector<float> TempData = {};
@@ -28,12 +28,12 @@ bool PsaGameDevTest::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 		TestDataPoints.push_back(TempData);
 	}
 
-	*TestImGuiPlot->GetPlotDatasetPtr() = TestDataPoints;
+	*TestImGuiPlot->GetPlotsDatasetRef() = TestDataPoints;
 
-	PsagManager::SyncLoader::SyncBinFileLoad Loader("demo_v1_material/TEST/TEST_SOUND_MC.ogg");
-	auto AudioData = AudioConvert(Loader.GetDataBinary());
-	*/
+	//PsagManager::SyncLoader::SyncBinFileLoad Loader("demo_v1_material/TEST/TEST_SOUND_MC.ogg");
+	//auto AudioData = AudioConvert(Loader.GetDataBinary());
 
+	/*
 	PsagActor::OperPhysicalWorld CreatePhysics("DemoPhysics", 1);
 
 	TestArchitecture = new PsagActor::BricksManager();
@@ -61,26 +61,26 @@ bool PsaGameDevTest::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	BricksDESC.InitialPosition = Vector2T<float>(0.0f, 0.0f);
 
 	TestArchitecture->CreateGameBrick(BricksDESC);
-
+	*/
 	return true;
 }
 
 void PsaGameDevTest::LogicCloseFree() {
 
-	//delete TestImGuiPlot;
+	delete TestImGuiPlot;
 	//delete MainControlPanel;
 }
 
 bool PsaGameDevTest::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
 
-	TestArchitecture->RunAllGameBrick();
+	//TestArchitecture->RunAllGameBrick();
 
 	//MainControlPanel->RenderPanel();
 
-	//TestImGuiPlot->DrawImGuiDataPlot("TEST_PLOT");
+	TestImGuiPlot->DrawImGuiDataPlot("TEST_PLOT");
 
-	RunningState.ShaderParamsFinal->GameSceneBloomRadius = 12;
-	RunningState.ShaderParamsFinal->GameSceneFilterCOL = Vector3T<float>(0.0f, 0.0f, 1.2f);
+	//RunningState.ShaderParamsFinal->GameSceneBloomRadius = 12;
+	//RunningState.ShaderParamsFinal->GameSceneFilterCOL = Vector3T<float>(0.0f, 0.0f, 1.2f);
 
 	return true;
 }

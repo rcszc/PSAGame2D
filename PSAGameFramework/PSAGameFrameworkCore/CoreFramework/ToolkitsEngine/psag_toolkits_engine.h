@@ -148,90 +148,50 @@ namespace ToolkitsEngineSound {
 	};
 }
 
-// imgui gui_template. version 0.1
-namespace ToolkitsEngineGuiTemp {
-	StaticStrLABEL PSAGM_TOOLKITS_GUI_TEMP = "PSAG_TOOL_GUI_EXT";
+// imgui gui_extension & gui_component version 0.1
+namespace ToolkitsEngineGuiExt {
+	StaticStrLABEL PSAGM_TOOLKITS_GUI_EXT = "PSAG_TOOL_GUI_EXT";
 
-	// sampler_2d points array.
-	using PlotSmpDataSRC = std::vector<std::vector<float>>;
-	using PlotSmpDataPTR = PlotSmpDataSRC*;
+	void BoxText(const char* text, float box_length, const ImVec4& color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-	struct PlotSmpDataLAB {
-		// array_size: sample_channels. labels: const_params.
-		std::vector<std::vector<float>> DataLabelsChangeRate = {};
-		std::vector<std::vector<float>> DataLabelsAverage    = {};
+	namespace Large {
+		// sampler_2d points array.
+		using PlotsDatasetSRC = std::vector<std::vector<float>>;
+		using PlotsDatasetPTR = PlotsDatasetSRC*;
 
-		// array_size: sample_channels. ch unqiue_value.
-		std::vector<float> DatasetLimitMax = {};
-		std::vector<float> DatasetLimitMin = {};
-		std::vector<float> DatasetStandard = {};
-		std::vector<float> DatasetMaxChangePoints = {};
-	};
+		class ImMegaPlotsDataView {
+		protected:
+			ImVec4 ViewWindowColorsystem = {};
+			ImVec2 ViewWindowSize        = {};
+			ImVec2 ViewWindowYCoordLimit = ImVec2(0.0f, 3000.0f);
 
-	template<typename TRES>
-	struct DoubleBufferResource {
-		std::atomic<bool> SwapBufferIndex = false;
+			std::vector<ImVec4> DrawPlotColors = { ImVec4(0.0f, 1.0f, 1.0f, 1.0f) };
 
-		TRES* GetProduceBuffer() { return &DoubleBuffer[(size_t)SwapBufferIndex];  }
-		TRES* GetConsumeBuffer() { return &DoubleBuffer[(size_t)!SwapBufferIndex]; }
+			float DataSampleRate = 1.0f;
 
-		void SwapResourceBuffers() {
-			SwapBufferIndex = !SwapBufferIndex;
-		}
-		TRES DoubleBuffer[2] = {};
-	};
+			float ViewWindowDwWidthPlots    = 2.5f;
+			float ViewWindowDwWidthRuler    = 0.0f;
+			float ViewWindowDrawLength      = 0.0f;
+			float ViewWindowScrollxPosition = 0.0f;
 
-	class ImMegaPlotDataViewThread {
-	private:
-		std::thread*      ThreadObject     = nullptr;
-		std::atomic<bool> ThreadObjectExit = false;
-		
-		void ThreadCalcEventLoop();
-	protected:
-		// tag_control: proc_t, src_control: draw_t.
-		DoubleBufferResource<PlotSmpDataLAB> TagDataResource = {};
-		DoubleBufferResource<PlotSmpDataSRC> SrcDataResource = {};
+			bool SettingWindowFlag = false;
 
-	public:
-		ImMegaPlotDataViewThread();
-		~ImMegaPlotDataViewThread();
-	};
+			PlotsDatasetSRC SampleDatasetPoints = {};
+			// render: ruler_child_window & view_child_window, [MUL-PLOT].
+			void CoreViewWindowRender(PlotsDatasetPTR data);
+			void SettingWindiwRender(bool* window_open);
+		public:
+			ImMegaPlotsDataView();
+			~ImMegaPlotsDataView() {
+				PSAG_LOGGER::PushLogger(LogInfo, PSAGM_TOOLKITS_GUI_EXT, "plot_comp: object: ptr[%x] delete.", this);
+			}
 
-	class ImMegaPlotDataView :public ImMegaPlotDataViewThread {
-	protected:
-		ImVec4 ViewWindowColorsystem = {};
-		ImVec2 ViewWindowSize        = {};
-		ImVec2 ViewWindowYCoordLimit = ImVec2(0.0f, 3000.0f);
-
-		float DataSampleRate = 1.0f;
-
-		float ViewWindowDwWidthPlot  = 2.5f;
-		float ViewWindowDwWidthRuler = 0.0f;
-		float ViewWindowDrawLength   = 0.0f;
-		float ViewWindowScrollxPos   = 0.0f;
-
-		bool SettingWindowFlag = false;
-
-		PlotSmpDataSRC SampleDatasetPoints = {};
-		// render: ruler_child_window & view_child_window, [MUL-PLOT].
-		void CoreViewWindowRender(PlotSmpDataPTR data);
-
-		size_t SubmitTotal = NULL;
-
-		size_t SubmitDatasetCount = NULL;
-		size_t SubmitDataCount    = NULL;
-		void SourceDataSubmit(size_t data_block);
-	public:
-		ImMegaPlotDataView();
-		~ImMegaPlotDataView() {
-			PSAG_LOGGER::PushLogger(LogInfo, PSAGM_TOOLKITS_GUI_TEMP, "plot_comp: object: ptr[%x] delete.", this);
-		}
-
-		PlotSmpDataPTR GetPlotDatasetPtr() {
-			return &SampleDatasetPoints;
-		}
-		void DrawImGuiDataPlot(const char* window_name);
-	};
+			PlotsDatasetPTR GetPlotsDatasetRef() {
+				return &SampleDatasetPoints;
+			}
+			void DrawImGuiDataPlot(const std::string& window_name, bool fixed = true);
+		};
+	}
 }
 
 #endif

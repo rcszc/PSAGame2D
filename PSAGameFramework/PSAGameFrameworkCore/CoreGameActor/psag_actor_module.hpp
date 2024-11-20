@@ -188,10 +188,12 @@ namespace GameComponents {
 }
 
 namespace GameActorScript {
-	extern const char* PsagShaderPublicFrag_Header;
-	extern const char* PsagShaderPublicFrag_Tools;
+	extern const char* psag_shader_public_frag_header;
+	extern const char* psag_shader_public_frag_texnor;
+	extern const char* psag_shader_public_frag_texhdr;
 
-	extern const char* PsagShaderPrivateFrag_Brick;
+	extern const char* psag_shader_private_frag_brick_nor;
+	extern const char* psag_shader_private_frag_brick_hdr;
 }
 
 namespace GameActorCore {
@@ -219,21 +221,12 @@ namespace GameActorCore {
 	// game_actor render system_preset shader script.
 	class GameActorPresetScript {
 	public:
-		SScript TmpScriptBrickImage() {
-			return GameActorScript::PsagShaderPrivateFrag_Brick;
+		SScript TmpScriptBrickImage(bool HDR = false) {
+			// shader "main" code nor / hdr. 
+			if (HDR) return GameActorScript::psag_shader_private_frag_brick_hdr;
+			return GameActorScript::psag_shader_private_frag_brick_nor;
 		};
 	};
-
-	/* Actor Fragment ShaderTexture:
-		
-		uniform sampler2DArray VirTexture;
-		uniform int            VirTextureLayer;
-		uniform vec2           VirTextureCropping;
-		uniform vec2           VirTextureSize;
-
-		// sample virtual_texture demo:
-		vec4 Frag = texture(VirTexture, vec3(FxCoord, float(VirTextureLayer)));
-	*/
 
 	struct GameActorShaderVerticesDESC {
 		Vector4T<float> ShaderDefaultColor;
@@ -266,10 +259,10 @@ namespace GameActorCore {
 		GraphicsEngineDataset::VirTextureUniformName SystemPresetUname() {
 			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
 			// preset shader uniform name.
-			U_NAME.TexParamSampler  = "VirTexture";
-			U_NAME.TexParamLayer    = "VirTextureLayer";
-			U_NAME.TexParamCropping = "VirTextureCropping";
-			U_NAME.TexParamSize     = "VirTextureSize";
+			U_NAME.TexParamSampler  = "VirTextureNOR";
+			U_NAME.TexParamLayer    = "VirTextureNORLayer";
+			U_NAME.TexParamCropping = "VirTextureNORCropping";
+			U_NAME.TexParamSize     = "VirTextureNORSize";
 			return U_NAME;
 		}
 		bool CheckRepeatTex(VirTextureUnqiue virtex);
@@ -287,7 +280,7 @@ namespace GameActorCore {
 		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
 		~GameActorShader();
 		// create actor shader_resource.
-		bool CreateShaderResource();
+		bool CreateShaderResource(bool default_is_circle = false);
 
 		// load vertices(pos,uv) resource. (warn: ref)
 		bool ShaderVerticesLoad(GameActorShaderVerticesDESC& VER_DESC);
@@ -296,7 +289,7 @@ namespace GameActorCore {
 		bool ShaderLoadVirTexture(VirTextureUnqiue virtex);
 
 		// create virtual texture. base + hdr_blend. rgb color add.
-		bool ShaderImageLoad(const ImageRawData& image);
+		bool ShaderImageLoad   (const ImageRawData& image);
 		bool ShaderImageLoadHDR(const ImageRawData& image);
 
 		// => uniform context (shader_context) => set_uniform.
@@ -337,13 +330,41 @@ namespace GameActorCore {
 		GameComponents::ActorPrivateINFO ThatActor = {};
 
 		GameCollisionPAIR(const GameComponents::ActorPrivateINFO& a_this, const GameComponents::ActorPrivateINFO& a_that) :
-			ThisActor(a_this), ThatActor(a_that) 
+			ThisActor(a_this), ThatActor(a_that)
 		{}
 	};
 
+	enum ActorComponentFlags : uint32_t {
+		ActorEnableLogic     = 1 << 1,
+		ActorEnableTransform = 1 << 2,
+		ActorEnableHealth    = 1 << 3,
+		ActorEnableRender    = 1 << 4,
+		ActorEnableCollision = 1 << 5
+	};
+	ActorComponentFlags  operator| (ActorComponentFlags  a, ActorComponentFlags b);
+	ActorComponentFlags  operator& (ActorComponentFlags  a, ActorComponentFlags b);
+	ActorComponentFlags& operator|=(ActorComponentFlags& a, ActorComponentFlags b);
+
+	// box2d collision filter 16bit => 1 - 32768. [20241110]
+	enum ActorCollisionGroup : uint16_t {
+		ActorPhyGroup0 = 1 << 0, ActorPhyGroup1 = 1 << 1,
+		ActorPhyGroup2 = 1 << 2, ActorPhyGroup3 = 1 << 3,
+		ActorPhyGroup4 = 1 << 4, ActorPhyGroup5 = 1 << 5,
+		ActorPhyGroup6 = 1 << 6, ActorPhyGroup7 = 1 << 7,
+		ActorPhyGroup8 = 1 << 8, ActorPhyGroup9 = 1 << 9,
+
+		ActorPhyGroup10 = 1 << 10, ActorPhyGroup11 = 1 << 11,
+		ActorPhyGroup12 = 1 << 12, ActorPhyGroup13 = 1 << 13,
+		ActorPhyGroup14 = 1 << 14, ActorPhyGroup15 = 1 << 15,
+
+		ActorPhyGroupALL = 0xFFFF
+	};
+	ActorCollisionGroup  operator| (ActorCollisionGroup  a, ActorCollisionGroup b);
+	ActorCollisionGroup& operator|=(ActorCollisionGroup& a, ActorCollisionGroup b);
+
 	enum ActorPhyMode {
 		ActorPhysicsFixed = 1 << 1,
-		ActorPhysicsMove  = 1 << 2,
+		ActorPhysicsMove  = 1 << 2
 	};
 	// init(config) descriptor.
 	struct GameActorExecutorDESC {
@@ -352,6 +373,9 @@ namespace GameActorCore {
 		ActorPhyMode     ActorPhysicalMode;
 
 		bool ForceClacEnable;
+		// collision box preset circle(polygon: 20).
+		bool CollisionBoxIsCircle;
+
 		// params: x:phy_density, y:phy_friction.
 		Vector2T<float> InitialPhysics;
 		Vector2T<float> InitialPosition;
@@ -365,11 +389,14 @@ namespace GameActorCore {
 
 		std::function<void(GameActorExecutor*)> CollisionCallbackFunc =
 			[](GameActorExecutor*) {};
+		// phy_engine bit_filter, max group = 16.
+		ActorCollisionGroup ActorCollisionThis;
+		ActorCollisionGroup ActorCollisionFilter;
 
-		// system core comp switch_flags.
-		bool EnableLogic = false, EnableTrans = true, EnableHealth = true, EnableRendering = true;
-		// physical system setting.
-		bool EnableCollision = true;
+		// cancel: bool comp_enable flags.
+		// update: enum bit flags. RCSZ 2024_11_10.
+		ActorComponentFlags ActorComponentConifg = 
+			ActorEnableTransform | ActorEnableHealth | ActorEnableRender | ActorEnableCollision;
 
 		GameActorHealthDESC ActorHealthSystem;
 
@@ -381,6 +408,7 @@ namespace GameActorCore {
 			ActorPhysicalMode  (ActorPhysicsMove),
 
 			ForceClacEnable(false),
+			CollisionBoxIsCircle(false),
 
 			InitialPhysics    (Vector2T<float>(1.0f, 0.7f)),
 			InitialPosition   (Vector2T<float>(0.0f, 0.0f)),
@@ -392,8 +420,10 @@ namespace GameActorCore {
 
 			InitialVertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
 
-			ActorHealthSystem({}),
-			ActorLogicObject (nullptr)
+			ActorCollisionThis  ((ActorCollisionGroup)0x0001),
+			ActorCollisionFilter((ActorCollisionGroup)0xFFFF),
+			ActorHealthSystem   ({}),
+			ActorLogicObject    (nullptr)
 		{}
 	};
 
@@ -421,6 +451,8 @@ namespace GameActorCore {
 		Vector2T<float> RenderingResolution = {};
 		
 		GameComponents::RenderingParams ActorRenderParams = {};
+
+		Vector2T<float> ActorLastPosition = {};
 
 		// actor basic components.
 		GameComponents::ActorSpaceTrans*   ActorCompSpaceTrans  = nullptr;
@@ -458,6 +490,11 @@ namespace GameActorCore {
 
 		Vector2T<float> ActorGetMoveSpeed()   { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
 		float           ActorGetRotateSpeed() { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
+
+		float ActorGetSpeed() {
+			auto VecSpeed = ActorGetMoveSpeed();
+			return std::sqrt(std::pow(VecSpeed.vector_x, 2.0f) + std::pow(VecSpeed.vector_y, 2.0f));
+		}
 
 		float* ActorLayerValuePtr() { return &ActorRenderParams.RenderLayerHeight; }
 
@@ -522,20 +559,12 @@ namespace GameActorCore {
 namespace GameBrickCore {
 	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
 
-	/* Brick Fragment ShaderTexture:
-
-		uniform sampler2DArray BrickTexture;
-		uniform int            BrickTextureLayer;
-		uniform vec2           BrickTextureCropping;
-		uniform vec2           BrickTextureSize;
-
-		// sample virtual_texture demo:
-		texture(BrickTexture, vec3(FxCoord, float(BrickTextureLayer)));
-	*/
-
 	struct GameBrickExecutorDESC {
 		GameActorCore::GameActorShader* BrickShaderResource;
 		std::string                     BrickPhysicsWorld;
+
+		// collision box preset circle(polygon: 20).
+		bool CollisionBoxIsCircle;
 
 		// params: x:phy_density, y:phy_friction.
 		Vector2T<float> InitialPhysics;
@@ -553,6 +582,8 @@ namespace GameBrickCore {
 		GameBrickExecutorDESC() :
 			BrickShaderResource(nullptr),
 			BrickPhysicsWorld  ({}),
+
+			CollisionBoxIsCircle(false),
 
 			InitialPhysics    (Vector2T<float>(1.0f, 0.7f)),
 			InitialPosition   (Vector2T<float>(0.0f, 0.0f)),
@@ -610,7 +641,9 @@ namespace GameCoreManager {
 		~GameActorShaderManager();
 
 		// call shader"CreateShaderResource" => storage.
-		bool CreateActorShader(const char* shader_name, GameActorCore::GameActorShader* shader);
+		bool CreateActorShader(
+			const char* shader_name, GameActorCore::GameActorShader* shader, bool default_circle = false
+		);
 		bool DeleteActorShader(const char* shader_name);
 		GameActorCore::GameActorShader* FindActorShader(const char* shader_name);
 	};

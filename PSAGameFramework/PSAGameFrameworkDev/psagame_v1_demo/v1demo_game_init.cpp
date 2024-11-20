@@ -74,7 +74,7 @@ void PsaGameV1Demo::GameInitBoundary() {
 	DemoArchitecture->CreateGameBrick(BricksDESC);
 }
 
-void PsaGameV1Demo::GameInitPawnActor() {
+void PsaGameV1Demo::GameCreatePawnActor() {
     PsagActor::ActorDESC ConfigPawnActor;
     PsagActor::ActorHpDESC PawnActorHealthDESC;
 

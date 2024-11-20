@@ -71,9 +71,9 @@
 #define PSAG_FALSE (bool)0
 
 #if defined(_DEBUG) || defined(DEBUG)
-#define PSAG_DEBUG_MODE true
+#define PSAG_DEBUG_MODE 1
 #else
-#define PSAG_DEBUG_MODE false
+#define PSAG_DEBUG_MODE 0
 #endif
 
 #define StaticStrLABEL constexpr const char*
@@ -90,7 +90,7 @@ enum LOGLABEL {
 // fp32 (float):  xxx.xxxx_xx
 using FrameworkSysVersion = double;
 
-// raw bytes_stream data index.
+// raw bytes_stream data ptr.
 struct RawDataStreamIdx {
 	uint8_t* DataPointer;
 	size_t   DataBytes;
@@ -99,11 +99,12 @@ struct RawDataStreamIdx {
 };
 
 // raw bytes_stream data.
-class RawDataStream  :public std::vector<uint8_t> {
+class RawDataStream :public std::vector<uint8_t> {
 public:
 	RawDataStream() = default;
 	RawDataStream(uint8_t* v_data, size_t v_bytes) : std::vector<uint8_t>(v_data, v_data + v_bytes) {}
 };
+// raw audio(bytes_stream) data.
 class RawAudioStream :public std::vector<uint8_t> {
 public:
 	RawAudioStream() = default;

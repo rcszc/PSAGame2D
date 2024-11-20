@@ -19,7 +19,7 @@ namespace PSAG_FILESYS_LOADER {
     > // => template decode_channel interface.
     class PsagFilesysDecoderLoader {
     protected:
-        RawDataStream FileRawSourceDataTemp = {};
+        RawDataStream FileRawSourceCache = {};
         void* DecoderPtrVOID = nullptr;
     public:
         PsagFilesysDecoderLoader(const std::string& filename) {
@@ -30,11 +30,11 @@ namespace PSAG_FILESYS_LOADER {
                 return;
             }
             // load source data. 
-            if (!__FILE_RawSourceRead(filename, &FileRawSourceDataTemp))
+            if (!__FILE_RawSourceRead(filename, &FileRawSourceCache))
                 return;
             // create base => decoder(templateobj).
             PSAG_FILESYS_CH_BASE::PsagFilesysDecodeBase* DecoderObject = new TDEC();
-            DecoderObject->__SystemRawSource(&FileRawSourceDataTemp);
+            DecoderObject->__SystemRawSource(&FileRawSourceCache);
             // call decoder interface.
             if (DecoderObject->__SystemRawDecoding()) {
                 DecoderPtrVOID = (void*)DecoderObject;
@@ -51,8 +51,8 @@ namespace PSAG_FILESYS_LOADER {
             PSAG_LOGGER::PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "dec_object nullptr.");
         }
         
-        RawDataStream* OperateRawDataPTR() { return FileRawSourceDataTemp; }
-        TDEC*          OperateDecoderOBJ() { return (TDEC*)DecoderPtrVOID; }
+        RawDataStream* OperateRawDataPTR() { return FileRawSourceCache; }
+        TDEC* OperateDecoderOBJ() { return (TDEC*)DecoderPtrVOID; }
     };
 
     // FILE SYSTEM: ENCODE.
@@ -61,7 +61,7 @@ namespace PSAG_FILESYS_LOADER {
     > // => template decode_channel interface.
     class PsagFilesysEncoderLoader {
     protected:
-        RawDataStream FileRawSourceDataTemp = {};
+        RawDataStream FileRawSourceCache = {};
         void* EncoderPtrVOID = nullptr;
 
         std::string WriteFilepath = {};
@@ -71,7 +71,7 @@ namespace PSAG_FILESYS_LOADER {
         {
             // create base => encoder(templateobj).
             PSAG_FILESYS_CH_BASE::PsagFilesysEncodeBase* EncoderObject = new TENC();
-            EncoderObject->__SystemRawSource(&FileRawSourceDataTemp);
+            EncoderObject->__SystemRawSource(&FileRawSourceCache);
         }
 
         ~PsagFilesysEncoderLoader() {
@@ -85,18 +85,20 @@ namespace PSAG_FILESYS_LOADER {
         // encode data => write file.
         bool WRITE_FILE() {
             PSAG_FILESYS_CH_BASE::PsagFilesysEncodeBase* CVTPTR 
-                = (PSAG_FILESYS_CH_BASE::PsagFilesysEncodeBase*)FileRawSourceDataTemp;
-            if (FileRawSourceDataTemp.empty()) {
+                = (PSAG_FILESYS_CH_BASE::PsagFilesysEncodeBase*)FileRawSourceCache;
+            if (FileRawSourceCache.empty()) {
                 if (CVTPTR->__SystemRawEecoding()) {
                     PSAG_LOGGER::PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "data encoding failed.");
                     return false;
                 }
+                return __FILE_RawSourceWrite(WriteFilepath, &FileRawSourceCache);
             }
-            return __FILE_RawSourceWrite(WriteFilepath, &FileRawSourceDataTemp);
+            PSAG_LOGGER::PushLogger(LogError, PSAG_FILESYS_LOADER_LABEL, "encode cache not empty!");
+            return false;
         }
 
-        RawDataStream* OperateRawDataPTR() { return FileRawSourceDataTemp; }
-        TENC*          OperateEncoderOBJ() { return (TENC*)EncoderPtrVOID; }
+        RawDataStream* OperateRawDataPTR() { return FileRawSourceCache; }
+        TENC* OperateEncoderOBJ() { return (TENC*)EncoderPtrVOID; }
     };
 
     // 保留快捷文件加载 FUNC(S). 20241101 RCSZ.
@@ -106,15 +108,19 @@ namespace PSAG_FILESYS_LOADER {
 }
 
 namespace PSAG_FILESYS_BASE64 {
+    StaticStrLABEL PSAG_FILESYS_BASE_LABEL = "PSAG_FILESYS_BASE64";
 
-    RawDataStream PsagStringToRawData(const std::string&   str_data);
-    std::string   PsagRawDataToString(const RawDataStream& bin_data);
+    enum ConvertModeType {
+        StringToRawData = 1 << 1, // string => raw data
+        RawDataToString = 1 << 2, // raw dara => string
+        // base enc,dec oper.
+        StringToBase64RawData = 1 << 3, // string => base64(enc) => raw data
+        Base64RawDataToString = 1 << 4  // raw data => base64(dec) => string
+    };
+    int32_t PsagFileSystemConvert(std::string* str_data, RawDataStream* raw_data, ConvertModeType mode);
 
     std::string PsagBase64Encode(const std::string& str_data);
     std::string PsagBase64Decode(const std::string& str_data);
-
-    RawDataStream PsagStringToBase64Rawdata(const std::string&   str_data);
-    std::string   PsagBase64RawdataToString(const RawDataStream& raw_data);
 }
 
 #endif

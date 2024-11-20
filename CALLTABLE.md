@@ -1,7 +1,7 @@
 # 上层(模块)调用表
 > ©PomeloStar Studio 2024-2025
 
-__Developer(s):__ ```RCSZ``` __Update:__ ```2024.10.23```
+__Developer(s):__ ```RCSZ``` __Update:__ ```2024.11.10```
 
 __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编号 `01` 组内编号
 
@@ -40,6 +40,10 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 `P-A2203` ```PsagActor::Brick```
 
 `P-A2204` ```PsagActor::ActorSensor```
+
+`P-A2205` ```PsagActor::ActorFlagsComp```
+
+`P-A2206` ```PsagActor::ActorFlagsPhy```
 
 > A22
 
@@ -92,6 +96,8 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 `P-M1002` ```PsagManager::Maths::```
 
 `P-M1003` ```PsagManager::SyncLoader::```
+
+`P-M1004` ```PsagManager::GuiTools::```
 
 > M10
 

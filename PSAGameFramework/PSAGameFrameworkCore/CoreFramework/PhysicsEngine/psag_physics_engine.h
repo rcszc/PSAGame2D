@@ -32,16 +32,16 @@ namespace PhysicsEngine {
 
 	// square, length: +-10.0f.
 	std::vector<b2Vec2> PresetVertexGroupRECT();
+	std::vector<b2Vec2> PresetVertexGroupCIRCLE(const Vector2T<float>& scale, uint32_t num);
 	std::vector<b2Vec2> VertexPosToBox2dVec(const std::vector<Vector2T<float>>& data);
 
 	enum BodyShapeType {
 		POLYGON_TYPE = 1 << 1,
 		CIRCLE_TYPE  = 1 << 2
 	};
-	
 	struct PhysicsBodyConfig {
+		BodyShapeType PhysicalShapeType;
 		size_t IndexUniqueCode;
-		BodyShapeType PhyShapeType;
 
 		// 2D碰撞顶点组 (封闭多边形).
 		std::vector<b2Vec2> CollVertexGroup;
@@ -56,7 +56,10 @@ namespace PhysicsEngine {
 
 		// true:dynamic_body, false: static_body.
 		bool PhysicsModeTypeFlag;
-		bool PhysicsCollisionFlag;
+
+		uint16_t PhysicsCollisionThis;
+		uint16_t PhysicsCollisionFilter;
+		bool     PhysicsCollisionFlag;
 
 		// 当Body为探测器时无碰撞体积, 碰撞信息在探测器表.
 		bool PhysicsIsSensorFlag;

@@ -67,15 +67,19 @@ namespace PSAG_OGL_MAG {
 		if (filtering_flags & MipmapFiltering)          FuncGenerateMipmaps         (type);
 	}
 
-	inline void ConfigSurroundTex2DParams(GLenum MODE_TYPE) {
-		glTexParameteri(MODE_TYPE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(MODE_TYPE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	inline void ConfigSurroundTex2DParams(GLenum MODE_TYPE, bool T_DEGE) {
+		if (!T_DEGE) {
+			glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			return;
+		}
+		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(MODE_TYPE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
 
 	inline bool ConfigCreateTexture(
-		uint32_t layers, uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, TextureFilterMode mode,
+		uint32_t layers, uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, 
+		TextureFilterMode mode, bool to_edge, 
 		uint32_t border = NULL, GLenum ModeType = GL_TEXTURE_2D_ARRAY
 	) {
 		// error texture2d(array) layers = 0.
@@ -97,7 +101,7 @@ namespace PSAG_OGL_MAG {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// config texture2d. surround,filter.
-		ConfigSurroundTex2DParams(ModeType);
+		ConfigSurroundTex2DParams(ModeType, to_edge);
 		ConfigTextureFilter(mode, ModeType);
 		return true;
 	}
@@ -186,7 +190,7 @@ namespace PSAG_OGL_MAG {
 		return DEF_PSAGSTAT_SUCCESS;
 	}
 
-	bool PsagTextureOGL::CreateTexture() {
+	bool PsagTextureOGL::CreateTexture(bool clamp_edge_mode) {
 		if (!SetTextureAttrFlag) {
 			PsagLowLog(LogError, PSAG_OGLMAG_TEXTURE, "texture create, non set_texture param.");
 			return DEF_PSAGSTAT_FAILED;
@@ -205,7 +209,7 @@ namespace PSAG_OGL_MAG {
 			if (!ConfigCreateTexture(
 				ColorTextureCreate.Layers, ColorTextureCreate.Width, ColorTextureCreate.Height, ColorTextureCreate.Channels,
 				nullptr,
-				ColorTextureCreate.FilterModeType
+				ColorTextureCreate.FilterModeType, clamp_edge_mode
 			)) {
 				PsagLowLog(LogError, PSAG_OGLMAG_TEXTURE, "texture create, opengl_api err.");
 				return DEF_PSAGSTAT_FAILED;

@@ -4,6 +4,57 @@
 using namespace std;
 using namespace PSAG_LOGGER;
 
+void GenerateCircle2D(vector<Vector2T<float>>& vertex, vector<Vector2T<float>>& uv, uint32_t num) {
+	Vector2T<float> CircleCenter  (0.0f, 0.0f);
+	Vector2T<float> CircleCenterUV(0.5f, 0.5f);
+
+	float AngleStep = 2.0f * PSAG_M_PI / num;
+
+	vertex.push_back(CircleCenter);
+	uv.push_back(CircleCenterUV);
+
+	for (size_t i = 0; i < num; ++i) {
+		float Angle = (float)i * AngleStep;
+
+		// pos: 10.0f => uv * 0.5f * 0.1f => 0.05f
+		Vector2T<float> Position(cos(Angle) * 10.0f, sin(Angle) * 10.0f);
+		Vector2T<float> TextureUV(0.5f + 0.05f * Position.vector_x, 0.5f + 0.05f * Position.vector_y);
+
+		vertex.push_back(Position);
+		uv.push_back(TextureUV);
+	}
+
+	for (size_t i = 1; i < num + 1; ++i) {
+		size_t NextPoint = (i % (size_t)num) + 1;
+
+		vertex.push_back(vertex[0]);
+		vertex.push_back(vertex[i]);
+		vertex.push_back(vertex[NextPoint]);
+
+		uv.push_back(uv[0]);
+		uv.push_back(uv[i]);
+		uv.push_back(uv[NextPoint]);
+	}
+}
+vector<float> ShaderTemplateCircleDep(float zlayer) {
+	vector<Vector2T<float>> Vertex = {}, UV = {};
+	GenerateCircle2D(Vertex, UV, 32);
+
+	vector<float> DatasetTemp = {};
+	for (size_t i = 0; i < Vertex.size(); ++i) {
+		// vertex group, std: GL_VERT_01.
+		vector<float> VertexGroup = {
+			// pos: vec3, color: vec4, uv: vec2, normal: vec3
+			Vertex[i].vector_x, Vertex[i].vector_y, zlayer,
+			 1.0f, 0.0f, 1.0f, 1.0f,
+			UV[i].vector_x, UV[i].vector_y,
+			0.0f, 0.0f, 0.0f
+		};
+		DatasetTemp.insert(DatasetTemp.begin(), VertexGroup.begin(), VertexGroup.end());
+	}
+	return DatasetTemp;
+}
+
 namespace IMAGE_TOOLS {
 	// fmt image size. (ZERO_FILL)
 	void IMAGE_TOOL_FILL(
@@ -45,7 +96,9 @@ namespace GraphicsEngineDataset {
 	ResUnique GLEngineStaticVertexData::VertexBuffer    = {};
 
 	unordered_map<ResUnique, VABO_DATASET_INFO> GLEngineStaticVertexData::IndexItems = {};
+
 	ResUnique GLEngineStaticVertexData::SystemPresetRectangle = {};
+	ResUnique GLEngineStaticVertexData::SystemPresetCircle    = {};
 
 	mutex GLEngineStaticVertexData::DatasetResMutex = {};
 
@@ -155,12 +208,20 @@ namespace GraphicsEngineDataset {
 			VertexBuffer = GenResourceID.PsagGenUniqueKey();
 			GraphicVertexBuffers->ResourceStorage(VertexBuffer, &VertexProcess);
 		}
-
-		// alloc system preset.
-		SystemPresetRectangle = GenResourceID.PsagGenUniqueKey();
 		vector<float> DataTemp = {};
+
+		// create system preset: rectangle.
+		SystemPresetRectangle = GenResourceID.PsagGenUniqueKey();
 		DataTemp = PSAG_OGL_MAG::ShaderTemplateRectDep(0.0f);
-		VerStcDataItemAlloc(SystemPresetRectangle, DataTemp);
+		if (VerStcDataItemAlloc(SystemPresetRectangle, DataTemp))
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "preset craete: rectangle.");
+
+		DataTemp.clear();
+		// create system preset: circle.
+		SystemPresetCircle = GenResourceID.PsagGenUniqueKey();
+		DataTemp = ShaderTemplateCircleDep(0.0f);
+		if (VerStcDataItemAlloc(SystemPresetCircle, DataTemp))
+			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "preset craete: circle.");
 
 		PushLogger(LogTrace, PSAGM_GLENGINE_DATA_LABEL, "static vertex data manager_create.");
 	}

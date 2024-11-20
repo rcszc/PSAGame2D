@@ -85,11 +85,17 @@ namespace GameBrickCore {
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
 		ActorPhyConfig.IndexUniqueCode     = BrickUniqueID;
 		ActorPhyConfig.CollVertexGroup     = PhysicsEngine::PresetVertexGroupRECT(); // default vertex_group.
-		ActorPhyConfig.PhysicsModeTypeFlag = false;
 
+		if (INIT_DESC.CollisionBoxIsCircle)
+			ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupCIRCLE(INIT_DESC.InitialScale, 20);
+
+		ActorPhyConfig.PhysicsModeTypeFlag = false;
 		// 多边形碰撞,非传感器.
-		ActorPhyConfig.PhyShapeType        = PhysicsEngine::POLYGON_TYPE;
+		ActorPhyConfig.PhysicalShapeType   = PhysicsEngine::POLYGON_TYPE;
 		ActorPhyConfig.PhysicsIsSensorFlag = false;
+
+		ActorPhyConfig.PhysicsCollisionThis   = GameActorCore::ActorCollisionGroup::ActorPhyGroup15;
+		ActorPhyConfig.PhysicsCollisionFilter = GameActorCore::ActorCollisionGroup::ActorPhyGroupALL;
 
 		if (INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());

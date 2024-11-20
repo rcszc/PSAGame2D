@@ -12,6 +12,10 @@ uniform int   LightSampleStep;
 
 void main()
 {
+    if (LightSampleStep <= 1) {
+        FragColor = texture(ProcessTextures, vec3(FxCoord, 0.0));
+        return;
+    }
     vec2 Delta = FxCoord - LightPosition;
     vec2 STEP = Delta / float(LightSampleStep);
 

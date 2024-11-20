@@ -45,12 +45,14 @@ namespace GraphicsEngineDataset {
 
 		static std::unordered_map<ResUnique, VABO_DATASET_INFO> IndexItems;
 		static ResUnique SystemPresetRectangle;
+		static ResUnique SystemPresetCircle;
 
 		// dataset thread: vertex(static) resource mutex.
 		static std::mutex DatasetResMutex;
 	protected:
 		// width: +-10.0f, height: +-10.0f
-		ResUnique GetPresetRect() { return SystemPresetRectangle; }
+		ResUnique GetPresetRect()   { return SystemPresetRectangle; }
+		ResUnique GetPresetCircle() { return SystemPresetCircle;    }
 
 		// ALLOC & FREE : [T-SAFE]
 		bool VerStcDataItemAlloc(ResUnique rukey, const std::vector<float>& data);
@@ -293,7 +295,7 @@ namespace GraphicsEngineFinal {
 		float LightCollisionValue;
 		
 		FinalFxParameters() :
-			GameSceneFilterCOL  (Vector3T<float>()),
+			GameSceneFilterCOL  (Vector3T<float>(0.0f, 0.0f, 0.0f)),
 			GameSceneFilterAVG  (0.0f),
 			GameSceneBloomRadius(1),
 			GameSceneBloomBlend (Vector2T<float>(1.0f, 1.0f)),

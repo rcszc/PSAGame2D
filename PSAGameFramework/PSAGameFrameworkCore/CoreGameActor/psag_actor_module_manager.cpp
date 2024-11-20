@@ -20,7 +20,9 @@ namespace GameCoreManager {
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "actor_shader manager system delete.");
 	}
 
-	bool GameActorShaderManager::CreateActorShader(const char* shader_name, GameActorCore::GameActorShader* shader) {
+	bool GameActorShaderManager::CreateActorShader(
+		const char* shader_name, GameActorCore::GameActorShader* shader, bool default_circle
+	) {
 		// shader_pointer = null | name != empty.
 		if (shader == nullptr || FindActorShader(shader_name) != nullptr) {
 			PushLogger(LogError, PSAGM_CORE_MAG_LABEL,
@@ -28,7 +30,7 @@ namespace GameCoreManager {
 			return false;
 		}
 		// create shader.
-		shader->CreateShaderResource();
+		shader->CreateShaderResource(default_circle);
 		GameShaderDataset[shader_name] = shader;
 		return true;
 	}

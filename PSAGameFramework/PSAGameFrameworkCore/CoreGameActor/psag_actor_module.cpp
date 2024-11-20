@@ -6,6 +6,26 @@ using namespace PSAG_LOGGER;
 
 float __ACTOR_MODULES_TIMESTEP::ActorModulesTimeStep = 1.0f;
 namespace GameActorCore {
+	// "ActorComponentFlags" operator function.
+	ActorComponentFlags operator|(ActorComponentFlags a, ActorComponentFlags b) {
+		return static_cast<ActorComponentFlags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+	}
+	ActorComponentFlags operator&(ActorComponentFlags a, ActorComponentFlags b) {
+		return static_cast<ActorComponentFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
+	ActorComponentFlags& operator|=(ActorComponentFlags& a, ActorComponentFlags b) {
+		a = static_cast<ActorComponentFlags>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+		return a;
+	}
+	// "ActorCollisionGroup" operator function.
+	ActorCollisionGroup operator|(ActorCollisionGroup a, ActorCollisionGroup b) {
+		return static_cast<ActorCollisionGroup>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b));
+	}
+	ActorCollisionGroup& operator|=(ActorCollisionGroup& a, ActorCollisionGroup b) {
+		a = static_cast<ActorCollisionGroup>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b));
+		return a;
+	}
+	// game actor type_bind object.
 	namespace Type {
 		uint32_t GameActorTypeBind::ActorTypeIs(const string& type_name) {
 			return (ActorTypeINFO.find(type_name) != ActorTypeINFO.end()) ? ActorTypeINFO[type_name] : ActorTypeNULL;
@@ -59,7 +79,7 @@ namespace GameActorCore {
 		// actor自身留有shader资源指针, 目前无操作. 2024_06_04.
 		ActorRenderRes = INIT_DESC.ActorShaderResource;
 
-		if (INIT_DESC.EnableRendering) {
+		if (INIT_DESC.ActorComponentConifg & ActorEnableRender) {
 			ActorCompRendering = new GameComponents::ActorRendering();
 
 			ActorCompRendering->RenderResolution = RenderingResolution;
@@ -107,9 +127,15 @@ namespace GameActorCore {
 		ActorPhyConfig.IndexUniqueCode = ActorUniqueInfo.ActorUniqueCode;
 		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupRECT(); // default vertex_group.
 
+		if (INIT_DESC.CollisionBoxIsCircle)
+			ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupCIRCLE(INIT_DESC.InitialScale, 20);
+
 		// 多边形碰撞,非传感器.
-		ActorPhyConfig.PhyShapeType        = PhysicsEngine::POLYGON_TYPE;
+		ActorPhyConfig.PhysicalShapeType   = PhysicsEngine::POLYGON_TYPE;
 		ActorPhyConfig.PhysicsIsSensorFlag = false;
+		
+		ActorPhyConfig.PhysicsCollisionThis   = INIT_DESC.ActorCollisionThis;
+		ActorPhyConfig.PhysicsCollisionFilter = INIT_DESC.ActorCollisionFilter;
 
 		switch (INIT_DESC.ActorPhysicalMode) {
 		case(ActorPhysicsMove):  { ActorPhyConfig.PhysicsModeTypeFlag = true;  break; }
@@ -120,7 +146,7 @@ namespace GameActorCore {
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.ActorShaderResource->__GET_VERTICES_RES());
 
 		ActorPhyConfig.PhyBoxRotate         = INIT_DESC.InitialAngle;
-		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
+		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.ActorComponentConifg & ActorEnableCollision;
 		ActorPhyConfig.PhyBoxCollisionSize  = INIT_DESC.InitialScale;
 		ActorPhyConfig.PhyBoxPosition       = INIT_DESC.InitialPosition;
 
@@ -128,10 +154,12 @@ namespace GameActorCore {
 		ActorPhyConfig.PhyBodyFriction = INIT_DESC.InitialPhysics.vector_y;
 
 		// ActorPhysicsItem(PhyBodyKey) 由物理引擎分配.
-		PhyBodyItemAlloc(ActorPhysicsWorld, &ActorPhysicsItem, ActorPhyConfig);
-		
+		if (!PhyBodyItemAlloc(ActorPhysicsWorld, &ActorPhysicsItem, ActorPhyConfig)) {
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor alloc phy_body err.");
+			return;
+		}
 		// config space_trans. ture: non-fixed.
-		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.EnableTrans) {
+		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.ActorComponentConifg & ActorEnableTransform) {
 			ActorCompSpaceTrans = new GameComponents::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem, INIT_DESC.ForceClacEnable);
 			// init move(speed_vec), rotate, scale.
 			ActorCompSpaceTrans->ActorTransMoveValue   = INIT_DESC.InitialSpeed;
@@ -154,7 +182,7 @@ namespace GameActorCore {
 			PsagClamp(ActorRenderParams.RenderLayerHeight, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
 
 		// create hp comp.
-		if (INIT_DESC.EnableHealth) {
+		if (INIT_DESC.ActorComponentConifg & ActorEnableHealth) {
 			ActorCompHealthTrans = new GameComponents::ActorHealthTrans();
 			// init health_state, copy hp_value.
 			ActorCompHealthTrans->ActorHealthState = INIT_DESC.ActorHealthSystem.InitialActorHealth;
@@ -164,11 +192,11 @@ namespace GameActorCore {
 		}
 		else {
 			// comp(empty_object): health_trans.
-			ActorCompHealthTrans = new GameComponents::ActorHealthTrans();
+			ActorCompHealthTrans = new GameComponents::null::ActorHealthTransNULL();
 		}
 
 		// create action_logic comp.
-		if (INIT_DESC.EnableLogic) {
+		if (INIT_DESC.ActorComponentConifg & ActorEnableLogic) {
 			ActorCompActionLogic = new GameComponents::ActorActionLogic(INIT_DESC.ActorLogicObject);
 		}
 		else {
@@ -181,8 +209,7 @@ namespace GameActorCore {
 		// create coord_convert comp.
 		ActorCompConvert = new GameComponents::ActorCoordConvert();
 		// create-success => print_log.
-		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor entity create: %u", 
-			ActorUniqueInfo.ActorUniqueCode);
+		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor entity create: %u", ActorUniqueInfo.ActorUniqueCode);
 	}
 
 	GameActorExecutor::~GameActorExecutor() {
@@ -256,7 +283,7 @@ namespace GameActorCore {
 		SensorPhyConfig.IndexUniqueCode = ActorSensorUniqueID;
 		SensorPhyConfig.CollVertexGroup = {}; // sensor: null.
 
-		SensorPhyConfig.PhyShapeType        = PhysicsEngine::CIRCLE_TYPE;
+		SensorPhyConfig.PhysicalShapeType        = PhysicsEngine::CIRCLE_TYPE;
 		SensorPhyConfig.PhysicsIsSensorFlag = true;
 		SensorPhyConfig.PhysicsModeTypeFlag = true;
 
