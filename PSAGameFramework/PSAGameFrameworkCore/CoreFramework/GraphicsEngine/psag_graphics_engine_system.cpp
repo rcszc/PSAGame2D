@@ -24,8 +24,8 @@ namespace GraphicsEngineMatrix {
 		// camera position trans.
 		MatrixCalcTemp = glm::translate(
 			MatrixCalcTemp, glm::vec3(
-				-params.MatrixPosition.vector_x * 0.1f,
-				 params.MatrixPosition.vector_y * 0.1f,
+				 params.MatrixPosition.vector_x,
+				 params.MatrixPosition.vector_y * -1.0f,
 				 0.0f
 			));
 		// camera rotate trans.

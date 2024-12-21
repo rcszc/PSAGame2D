@@ -8,14 +8,14 @@ void GenerateCircle2D(vector<Vector2T<float>>& vertex, vector<Vector2T<float>>& 
 	Vector2T<float> CircleCenter  (0.0f, 0.0f);
 	Vector2T<float> CircleCenterUV(0.5f, 0.5f);
 
-	float AngleStep = 2.0f * PSAG_M_PI / num;
+	float AngleStep = 2.0f * PSAG_M_PI / (float)num;
 
 	vertex.push_back(CircleCenter);
 	uv.push_back(CircleCenterUV);
 
 	for (size_t i = 0; i < num; ++i) {
 		float Angle = (float)i * AngleStep;
-
+		
 		// pos: 10.0f => uv * 0.5f * 0.1f => 0.05f
 		Vector2T<float> Position(cos(Angle) * 10.0f, sin(Angle) * 10.0f);
 		Vector2T<float> TextureUV(0.5f + 0.05f * Position.vector_x, 0.5f + 0.05f * Position.vector_y);
@@ -38,7 +38,7 @@ void GenerateCircle2D(vector<Vector2T<float>>& vertex, vector<Vector2T<float>>& 
 }
 vector<float> ShaderTemplateCircleDep(float zlayer) {
 	vector<Vector2T<float>> Vertex = {}, UV = {};
-	GenerateCircle2D(Vertex, UV, 32);
+	GenerateCircle2D(Vertex, UV, 58);
 
 	vector<float> DatasetTemp = {};
 	for (size_t i = 0; i < Vertex.size(); ++i) {

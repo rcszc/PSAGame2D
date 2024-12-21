@@ -13,7 +13,7 @@ namespace GameManagerCore {
 
 		// ******************************** FX-Particle ********************************
 
-		namespace PartcMode = GraphicsEngineParticle::ParticlesGenMode;
+		namespace ParticleMode = GraphicsEngineParticle::ParticlesGenMode;
 		struct GameFxCreateParticleDESC {
 			float PariclesNumber;
 
@@ -24,17 +24,17 @@ namespace GameManagerCore {
 			Vector2T<float> ParticlesCgRandom; // color_green.
 			Vector2T<float> ParticlesCbRandom; // color_blue.
 			// color: rgb draw_mode.
-			PartcMode::ColorChannelMode ParticlesColorMode;
+			ParticleMode::ColorChannelMode ParticlesColorMode;
 
 			Vector2T<float> ParticlesVecRandom;
 			Vector2T<float> ParticlesPosRandom;
 			Vector2T<float> ParticlesPosOffset;
 
-			PartcMode::EmittersMode ParticlesLaunchMode;
+			ParticleMode::EmittersMode ParticlesLaunchMode;
 
 			GameFxCreateParticleDESC() :
-				ParticlesColorMode (PartcMode::ChannelsRGB),
-				ParticlesLaunchMode(PartcMode::PrtcPoints),
+				ParticlesColorMode (ParticleMode::ChannelsRGB),
+				ParticlesLaunchMode(ParticleMode::PrtcPoints),
 				PariclesNumber     (10.0f),
 
 				ParticlesLifeRandom(Vector2T<float>(128.0f, 256.0f)),

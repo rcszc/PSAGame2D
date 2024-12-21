@@ -105,7 +105,7 @@ void PsaGameV1Demo::GameCreateNPC(const Vector2T<float>& position) {
 	ConfigNpcActor.ActorHealthSystem   = PawnActorHealthDESC;
 	//ConfigNpcActor.ActorLogicObject    = NPCLogicObject;
 
-	ConfigNpcActor.ForceClacEnable = true;
+	ConfigNpcActor.VectorCalcIsForce = true;
 	//ConfigNpcActor.EnableLogic     = true;
 
 	ConfigNpcActor.InitialPhysics  = Vector2T<float>(32.0f, 10.0f);

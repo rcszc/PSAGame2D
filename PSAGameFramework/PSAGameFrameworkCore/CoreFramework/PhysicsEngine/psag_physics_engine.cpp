@@ -98,11 +98,12 @@ namespace PhysicsEngine {
 			PushLogger(LogWarning, PSAGM_PHYENGINE_LABEL, "body_data: failed alloc duplicate_key: %llu", *rukey);
 			return false;
 		}
-
+		/*
 		if (!ONLY_ONE_FLAG_SET(config.PhysicsCollisionThis)) {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: filter: this_value only one.");
 			return false;
 		}
+		*/
 		b2Filter FILTER;
 		FILTER.categoryBits = config.PhysicsCollisionThis;
 		FILTER.maskBits     = config.PhysicsCollisionFilter;
@@ -159,6 +160,7 @@ namespace PhysicsEngine {
 			DefineFixture.filter.maskBits = NULL;
 
 		BodyData->CreateFixture(&DefineFixture);
+		BodyData->SetAwake (true);
 		BodyData->SetBullet(true);
 
 		if (BodyData == nullptr) {

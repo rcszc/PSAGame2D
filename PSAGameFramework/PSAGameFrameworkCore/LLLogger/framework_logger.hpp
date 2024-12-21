@@ -1,4 +1,6 @@
-// framework_logger. 2023_10_11. (移植修改)RCSZ
+// framework_logger. RCSZ 2023_10_11.
+// @pomelo_star studio framework universal comp.
+#define IS_POMELO_STAR_GAME2D
 
 #ifndef _FRAMEWORK_LOG_HPP
 #define _FRAMEWORK_LOG_HPP
@@ -7,9 +9,32 @@
 #include <chrono>
 #include <cstdarg>
 
+#ifndef IS_POMELO_STAR_GAME2D
+#define PSAG_DEBUG_MODE true
+#define StaticStrLABEL constexpr const char*
+// core framework logger label.
+enum LOGLABEL {
+	LogError   = 1 << 1, // 标签 <错误>
+	LogWarning = 1 << 2, // 标签 <警告>
+	LogInfo    = 1 << 3, // 标签 <信息>
+	LogTrace   = 1 << 4, // 标签 <跟踪>
+	LogPerfmac = 1 << 5  // 标签 <性能> (performance)
+};
+
+// vector 3d x, y, z.
+template <typename mvec>
+struct Vector3T {
+	mvec vector_x, vector_y, vector_z;
+	constexpr Vector3T() : vector_x{}, vector_y{}, vector_z{} {}
+	constexpr Vector3T(mvec x, mvec y, mvec z) : vector_x(x), vector_y(y), vector_z(z) {}
+
+	mvec* data() { return &vector_x; }
+	const mvec* data() const { return &vector_x; }
+};
+#else
 #include "../LLDefine/framework_def_header.h"
 #include "../LLDefine/framework_def_math.hpp"
-
+#endif
 StaticStrLABEL PSAG_LOGGER_LABEL = "PSAG_LOGGER";
 
 // format number => string, %d(fill_zero).

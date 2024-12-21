@@ -106,9 +106,28 @@ namespace ToolkitsEngineCamera {
 			float hardness
 		);
 		void PlayerCameraLerpValue(float value);
-
+		// camera system_run.
 		void PlayerCameraRun(const Vector2T<float>& window_coord, const Vector2T<float>& actor_speed);
 		void PlayerCameraRunFixed(const Vector2T<float>& actor_position);
+
+		// calc_target => calc_position, out_pos = pos + offset.
+		Vector2T<float> GetCameraPosition(const Vector2T<float>& camera_offset = Vector2T<float>());
+	};
+
+	class GamePlayerCameraGM :public __TOOLKITS_ENGINE_TIMESETP {
+	protected:
+		Vector2T<Vector2T<float>> CameraPositionRectLimit = {};
+
+		Vector2T<float> CameraPositionTarget = {};
+		Vector2T<float> CameraPosition       = {};
+
+		float CALC_LERP_SCALE = 1.0f;
+	public:
+		GamePlayerCameraGM(const Vector2T<float>& map_limit_min, const Vector2T<float>& map_limit_max);
+
+		void PlayerCameraLerpValue(float value);
+		// camera system_run. speed delta(scale) default = 1.0f
+		void PlayerCameraRun(const Vector2T<float>& mouse_vec_speed, float speed_scale = 1.0f);
 
 		// calc_target => calc_position, out_pos = pos + offset.
 		Vector2T<float> GetCameraPosition(const Vector2T<float>& camera_offset = Vector2T<float>());

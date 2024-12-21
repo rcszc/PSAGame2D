@@ -83,7 +83,7 @@ void PsaGameV1Demo::GameCreatePawnActor() {
     ConfigPawnActor.ActorPhysicsWorld   = "DemoPhysics";
     ConfigPawnActor.ActorShaderResource = DemoShaders->FindActorShader("PawnActor");
 
-    ConfigPawnActor.ForceClacEnable   = false;
+    ConfigPawnActor.VectorCalcIsForce   = false;
     ConfigPawnActor.ActorHealthSystem = PawnActorHealthDESC;
 
     ConfigPawnActor.InitialPhysics  = Vector2T<float>(5.0f, 3.2f);

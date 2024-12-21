@@ -54,7 +54,7 @@ namespace PsagLow {
 #ifdef ENABLE_LOWMODULE_THREAD
 	using PsagSupThreadTasks = PSAG_THREAD_POOL::PsagThreadTasks;
 	// return size_t this_thread_id system count.
-#define PsagSupThreadThisIDCount PSAG_THREAD_POOL::ThisThreadID
+#define PsagSupThisThreadCountID PSAG_THREAD_POOL::ThisThreadID
 #endif
 	// low_module 'windowgui' support.
 #ifdef ENABLE_LOWMODULE_WINDOWGUI

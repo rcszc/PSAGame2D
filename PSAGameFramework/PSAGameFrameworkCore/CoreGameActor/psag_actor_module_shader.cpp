@@ -133,33 +133,45 @@ namespace GameActorCore {
 
 		if (VirTextureExist(virtex)) {
 			__VIR_TEXTURE_ITEM = virtex;
-			__VIR_UNIFORM_ITEM = SystemPresetUname();
+			__VIR_UNIFORM_ITEM = SystemPresetUnameN();
 			// mapping texture flag.
 			MappingTextureFlag = true;
 			return true;
 		}
-		PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor shader invalid vir_texture.");
+		PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, 
+			"game_actor shader invalid ref [nor] virtual_texture."
+		);
+		return false;
+	}
+
+	bool GameActorShader::ShaderLoadVirTextureHDR(VirTextureUnqiue virtex) {
+		if (!CheckRepeatTex(__VIR_TEXTURE_ITEM))
+			return false;
+
+		if (VirTextureExist(virtex)) {
+			__VIR_TEXTURE_ITEM = virtex;
+			__VIR_UNIFORM_ITEM = SystemPresetUnameH();
+			// mapping texture flag.
+			MappingTextureFlag = true;
+			return true;
+		}
+		PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, 
+			"game_actor shader invalid ref [hdr] virtual_texture."
+		);
 		return false;
 	}
 
 	bool GameActorShader::ShaderImageLoad(const ImageRawData& image) {
 		bool TextureLoaderFlag = ShaderImageTextureLoad(&__VIR_TEXTURE_ITEM, image);
 		if (TextureLoaderFlag)
-			__VIR_UNIFORM_ITEM = SystemPresetUname();
+			__VIR_UNIFORM_ITEM = SystemPresetUnameN();
 		return TextureLoaderFlag;
 	}
 
 	bool GameActorShader::ShaderImageLoadHDR(const ImageRawData& image) {
-		GraphicsEngineDataset::VirTextureUniformName U_NAME_HDR = {};
-		// preset shader uniform name.
-		U_NAME_HDR.TexParamSampler  = "VirTextureHDR";
-		U_NAME_HDR.TexParamLayer    = "VirTextureHDRLayer";
-		U_NAME_HDR.TexParamCropping = "VirTextureHDRCropping";
-		U_NAME_HDR.TexParamSize     = "VirTextureHDRSize";
-
 		bool HDRTextureLoaderFlag = ShaderImageTextureLoad(&__VIR_TEXTURE_HDR_ITEM, image);
 		if (HDRTextureLoaderFlag)
-			__VIR_UNIFORM_HDR_ITEM = U_NAME_HDR;
+			__VIR_UNIFORM_HDR_ITEM = SystemPresetUnameH();
 		return HDRTextureLoaderFlag;
 	}
 

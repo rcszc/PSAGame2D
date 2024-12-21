@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -116,6 +116,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <OpenMPSupport>false</OpenMPSupport>
+      <Optimization>Disabled</Optimization>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +139,8 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,9 +177,9 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_random.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_sound.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_timer.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_actor.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_comp.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_components.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_debug.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_manager.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_shader.cpp" />
@@ -220,6 +224,7 @@
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_background.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_blurh.frag" />
     <None Include="PSAGameFrameworkCore\CoreShaderScript\private\psag_graph_final_blurv.frag" />
@@ -271,6 +276,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLLogger\framework_logger.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLSound\framework_sound.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread.hpp" />
+    <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
     <ClInclude Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game.h" />

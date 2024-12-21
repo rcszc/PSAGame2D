@@ -28,4 +28,7 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0678823C-9A04-47DA-A6B7-EDAA6F53B568}
 	EndGlobalSection
+	GlobalSection(CppDepend) = preSolution
+		Project = ".\PSAGameFramework.cdproj"
+	EndGlobalSection
 EndGlobal

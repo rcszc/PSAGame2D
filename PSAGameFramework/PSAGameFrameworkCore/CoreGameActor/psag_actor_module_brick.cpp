@@ -75,7 +75,7 @@ namespace GameBrickCore {
 
 		BrickRenderParams.RenderPosition    = INIT_DESC.InitialPosition;
 		BrickRenderParams.RenderScale       = INIT_DESC.InitialScale;
-		BrickRenderParams.RenderRotate      = INIT_DESC.InitialRotate;
+		BrickRenderParams.RenderRotate      = INIT_DESC.InitialAngle;
 		BrickRenderParams.RenderLayerHeight = INIT_DESC.InitialRenderLayer;
 		// actor space_z value_clamp.
 		BrickRenderParams.RenderLayerHeight = 
@@ -95,12 +95,12 @@ namespace GameBrickCore {
 		ActorPhyConfig.PhysicsIsSensorFlag = false;
 
 		ActorPhyConfig.PhysicsCollisionThis   = GameActorCore::ActorCollisionGroup::ActorPhyGroup15;
-		ActorPhyConfig.PhysicsCollisionFilter = GameActorCore::ActorCollisionGroup::ActorPhyGroupALL;
+		ActorPhyConfig.PhysicsCollisionFilter = GameActorCore::ActorCollisionGroup::ActorPhyGroup0;
 
 		if (INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());
 
-		ActorPhyConfig.PhyBoxRotate         = INIT_DESC.InitialRotate;
+		ActorPhyConfig.PhyBoxRotate         = INIT_DESC.InitialAngle;
 		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
 		ActorPhyConfig.PhyBoxCollisionSize  = INIT_DESC.InitialScale;
 		ActorPhyConfig.PhyBoxPosition       = INIT_DESC.InitialPosition;

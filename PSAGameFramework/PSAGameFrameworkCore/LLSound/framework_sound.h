@@ -41,7 +41,7 @@ namespace PSAG_AUDIO_PLAYER {
 		PsagAudioDataResource* ResourceLoader = nullptr;
 
 		ALuint HANDLE_AUDIO_BUFFER = OPENAL_INVALID_HANDEL;
-		ALuint HANDLE_SRC_OBJECT   = OPENAL_INVALID_HANDEL;
+		ALuint HANDLE_AUDIO_OBJECT = OPENAL_INVALID_HANDEL;
 
 		bool Sound3DEnabelFlag = false;
 	public:

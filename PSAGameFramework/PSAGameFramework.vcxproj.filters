@@ -183,7 +183,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_fx.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_actor.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_script.cpp">
@@ -243,7 +243,7 @@
     <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_thread.cpp">
       <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_comp.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_components.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp">
@@ -368,6 +368,7 @@
     <None Include="PSAGameFrameworkCore\framework_config_shaders.json">
       <Filter>源文件\PSAGameFrameworkCore</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h">
@@ -486,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\framework_header_manager.h">
       <Filter>源文件\DevSupport</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLThread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

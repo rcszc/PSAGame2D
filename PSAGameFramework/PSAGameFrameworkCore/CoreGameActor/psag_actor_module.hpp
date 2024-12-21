@@ -256,13 +256,24 @@ namespace GameActorCore {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform U_LOADER = {};
 		PsagShader S_HANDLE = OPENGL_INVALID_HANDEL;
 	protected:
-		GraphicsEngineDataset::VirTextureUniformName SystemPresetUname() {
+		// 系统预设 [NOR] Virtual Texture Uniform 参数组.
+		GraphicsEngineDataset::VirTextureUniformName SystemPresetUnameN() {
 			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
 			// preset shader uniform name.
 			U_NAME.TexParamSampler  = "VirTextureNOR";
 			U_NAME.TexParamLayer    = "VirTextureNORLayer";
 			U_NAME.TexParamCropping = "VirTextureNORCropping";
 			U_NAME.TexParamSize     = "VirTextureNORSize";
+			return U_NAME;
+		}
+		// 系统预设 [HDR] Virtual Texture Uniform 参数组.
+		GraphicsEngineDataset::VirTextureUniformName SystemPresetUnameH() {
+			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
+			// preset shader uniform name.
+			U_NAME.TexParamSampler  = "VirTextureHDR";
+			U_NAME.TexParamLayer    = "VirTextureHDRLayer";
+			U_NAME.TexParamCropping = "VirTextureHDRCropping";
+			U_NAME.TexParamSize     = "VirTextureHDRSize";
 			return U_NAME;
 		}
 		bool CheckRepeatTex(VirTextureUnqiue virtex);
@@ -285,8 +296,9 @@ namespace GameActorCore {
 		// load vertices(pos,uv) resource. (warn: ref)
 		bool ShaderVerticesLoad(GameActorShaderVerticesDESC& VER_DESC);
 
-		// referencing virtual texture(non-delete).
-		bool ShaderLoadVirTexture(VirTextureUnqiue virtex);
+		// referencing virtual texture(non-delete). base + hdr_blend. rgb color add.
+		bool ShaderLoadVirTexture   (VirTextureUnqiue virtex);
+		bool ShaderLoadVirTextureHDR(VirTextureUnqiue virtex);
 
 		// create virtual texture. base + hdr_blend. rgb color add.
 		bool ShaderImageLoad   (const ImageRawData& image);
@@ -304,6 +316,8 @@ namespace GameActorCore {
 		void UniformVec2(const char* name, const Vector2T<float>& value);
 		void UniformVec3(const char* name, const Vector3T<float>& value);
 		void UniformVec4(const char* name, const Vector4T<float>& value);
+
+		// ================================ system params ================================
 
 		VirTextureUnqiue __VIR_TEXTURE_ITEM     = NULL;
 		VirTextureUnqiue __VIR_TEXTURE_HDR_ITEM = NULL;
@@ -357,7 +371,7 @@ namespace GameActorCore {
 		ActorPhyGroup12 = 1 << 12, ActorPhyGroup13 = 1 << 13,
 		ActorPhyGroup14 = 1 << 14, ActorPhyGroup15 = 1 << 15,
 
-		ActorPhyGroupALL = 0xFFFF
+		ActorPhyGroupALL = 0b1111'1111'1111'1111
 	};
 	ActorCollisionGroup  operator| (ActorCollisionGroup  a, ActorCollisionGroup b);
 	ActorCollisionGroup& operator|=(ActorCollisionGroup& a, ActorCollisionGroup b);
@@ -372,7 +386,7 @@ namespace GameActorCore {
 		std::string      ActorPhysicsWorld;
 		ActorPhyMode     ActorPhysicalMode;
 
-		bool ForceClacEnable;
+		bool VectorCalcIsForce;
 		// collision box preset circle(polygon: 20).
 		bool CollisionBoxIsCircle;
 
@@ -381,7 +395,6 @@ namespace GameActorCore {
 		Vector2T<float> InitialPosition;
 		Vector2T<float> InitialScale;
 		Vector2T<float> InitialSpeed;
-		float           InitialRotate;
 		float           InitialAngle;
 		float           InitialRenderLayer;
 
@@ -407,14 +420,13 @@ namespace GameActorCore {
 			ActorPhysicsWorld  ("SYSTEM_PHY_WORLD"),
 			ActorPhysicalMode  (ActorPhysicsMove),
 
-			ForceClacEnable(false),
+			VectorCalcIsForce   (false),
 			CollisionBoxIsCircle(false),
 
 			InitialPhysics    (Vector2T<float>(1.0f, 0.7f)),
 			InitialPosition   (Vector2T<float>(0.0f, 0.0f)),
 			InitialScale      (Vector2T<float>(1.0f, 1.0f)),
 			InitialSpeed      (Vector2T<float>(0.0f, 0.0f)),
-			InitialRotate     (0.0f),
 			InitialAngle      (0.0f),
 			InitialRenderLayer(50.0f),
 
@@ -570,7 +582,7 @@ namespace GameBrickCore {
 		Vector2T<float> InitialPhysics;
 		Vector2T<float> InitialPosition;
 		Vector2T<float> InitialScale;
-		float           InitialRotate;
+		float           InitialAngle;
 		float           InitialRenderLayer;
 
 		Vector4T<float> InitialVertexColor;
@@ -588,7 +600,7 @@ namespace GameBrickCore {
 			InitialPhysics    (Vector2T<float>(1.0f, 0.7f)),
 			InitialPosition   (Vector2T<float>(0.0f, 0.0f)),
 			InitialScale      (Vector2T<float>(1.0f, 1.0f)),
-			InitialRotate     (0.0f),
+			InitialAngle      (0.0f),
 			InitialRenderLayer(1.0f),
 			InitialVertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f))
 		{}

@@ -34,7 +34,7 @@ void DemoGameOrigin::GameActorPawnTrans(float time_step) {
 	PawnFxActor->ActorModifyState(PawnActor->ActorGetPosition(), PawnActor->ActorGetRotate());
 
 	// ================================ 相机获取"Actor"参数 ================================
-	PlayerCamera->PlayerCameraRun(PawnActor->ActorMappingWindowCoord(), PawnActor->ActorGetMoveSpeed());
+	
 }
 
 void DemoGameOrigin::GamePostProcessing(GameLogic::FrameworkParams& params) {
@@ -72,11 +72,13 @@ bool DemoGameOrigin::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	PawnActorMove.vector_y   = 3.8f;
 	PawnActorRotate.vector_y = 3.2f;
 	
-	PlayerCamera = new PsagManager::Tools::Camera::GamePlayerCameraMP(
-		Vector2T<float>(0.2f, 0.2f), WinSize, 1.2f
+	PlayerCamera = new PsagManager::Tools::Camera::GamePlayerCameraGM(
+		Vector2T<float>(-500.0f, -500.0f), Vector2T<float>(500.0f, 500.0f)
 	);
 
 	GameCreateNpcActor(PawnActorCode, Vector2T<float>(120.0f, 0.0f));
+
+	CameraScaleLerp.x = 0.5f;
 	return true;
 }
 
@@ -99,12 +101,12 @@ bool DemoGameOrigin::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState
 
 	// ================================ "Actor"着色器参数 ================================
 	PawnActorFxLightBarPosition[0] -= RunningState.GameRunTimeSTEP * 0.002f;
-	PawnActorFxLightBarPosition[0] = PawnActorFxLightBarPosition[0] < -0.1f ? 1.1f : PawnActorFxLightBarPosition[0];
+	PawnActorFxLightBarPosition[0] = PawnActorFxLightBarPosition[0] < -0.5f ? 1.5f : PawnActorFxLightBarPosition[0];
 	PawnActorFxLightBarPosition[1] -= RunningState.GameRunTimeSTEP * 0.008f;
 	PawnActorFxLightBarPosition[1] = PawnActorFxLightBarPosition[1] < -0.35f ? 1.35f : PawnActorFxLightBarPosition[1];
 
 	auto PawnUniform = [&]() {
-		PawnActorShader->UniformFP32("BarWidth", 0.2f);
+		PawnActorShader->UniformFP32("BarWidth", 1.0f);
 		PawnActorShader->UniformFP32("BarPosition", PawnActorFxLightBarPosition[0]);
 		PawnActorShader->UniformFP32("Figure", PawnActorFigure);
 	};
@@ -126,6 +128,9 @@ bool DemoGameOrigin::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState
 	// setting scale_lerp value.
 	CameraScaleLerp.x += ImGui::GetIO().MouseWheel * 0.1f;
 	CameraScaleLerp.x = PSAG_IMVEC_CLAMP(CameraScaleLerp.x, 0.2f, 1.32f);
+
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+		PlayerCamera->PlayerCameraRun(Vector2T<float>(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y), CameraScaleLerp.y);
 
 	RunningState.CameraParams->MatrixPosition = PlayerCamera->GetCameraPosition();
 	RunningState.CameraParams->MatrixScale    = Vector2T<float>(CameraScaleLerp.y, CameraScaleLerp.y);

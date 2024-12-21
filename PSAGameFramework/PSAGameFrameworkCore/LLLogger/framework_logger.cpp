@@ -1,7 +1,6 @@
 // framework_logger.
 #include <fstream>
 #include <thread>
-#include <future>
 #include <queue>
 #include <condition_variable>
 #include <filesystem>

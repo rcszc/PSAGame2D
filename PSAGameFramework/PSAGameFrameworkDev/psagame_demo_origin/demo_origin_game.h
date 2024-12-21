@@ -72,9 +72,11 @@ protected:
     // vector_x: value, vector_y: limit.
     Vector2T<float> PawnActorMove = {}, PawnActorRotate = {};
     float PawnActorFxLightBarPosition[2] = { 1.2f, 1.2f };
-    float PawnActorFigure = 0.01f;
+    float PawnActorFigure = 0.98f;
 
-    PsagManager::Tools::Camera::GamePlayerCameraMP* PlayerCamera = nullptr;
+    //PsagManager::Tools::Camera::GamePlayerCameraMP* PlayerCamera = nullptr;
+    PsagManager::Tools::Camera::GamePlayerCameraGM* PlayerCamera = nullptr;
+
     ImVec2 CameraScaleLerp = ImVec2(1.0f, 1.0f);
 
     void GameActorPawnTrans(float time_step);

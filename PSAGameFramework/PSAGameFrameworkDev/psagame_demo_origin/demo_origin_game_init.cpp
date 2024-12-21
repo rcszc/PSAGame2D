@@ -70,13 +70,14 @@ void DemoGameOriginInit::GameCreatePawnActor(ResUnique* u_pawn, ResUnique* u_fx)
 	ConfigPawnActor.ActorShaderResource = DemoShaders->FindActorShader("actor_pawn");
 
 	ConfigPawnActor.ActorCollisionThis   = PsagActor::ActorFlagsPhy::ActorPhyGroup0;
-	ConfigPawnActor.ActorCollisionFilter = PsagActor::ActorFlagsPhy::ActorPhyGroup1;
+	ConfigPawnActor.ActorCollisionFilter = PsagActor::ActorFlagsPhy::ActorPhyGroup1 | PsagActor::ActorFlagsPhy::ActorPhyGroup15;
 
 	ConfigPawnActor.ActorHealthSystem = PawnActorHealthDESC;
 
 	ConfigPawnActor.InitialPhysics  = Vector2T<float>(5.0f, 3.2f);
 	ConfigPawnActor.InitialPosition = Vector2T<float>(0.0f, 0.0f);
 	ConfigPawnActor.InitialScale    = Vector2T<float>(3.2f, 1.8f);
+	ConfigPawnActor.InitialAngle    = -45.0f;
 
 	// ================================ ´´½¨ PawnActor ================================
 	*u_pawn = DemoActors->CreateGameActor(
@@ -113,7 +114,7 @@ void DemoGameOriginInit::GameCreateNpcActor(ResUnique u_pawn, const Vector2T<flo
 	ConfigNpcActor.ActorLogicObject     = LogicObjectNPC;
 
 	ConfigNpcActor.ActorCollisionThis   = PsagActor::ActorFlagsPhy::ActorPhyGroup1;
-	ConfigNpcActor.ActorCollisionFilter = PsagActor::ActorFlagsPhy::ActorPhyGroup0;
+	ConfigNpcActor.ActorCollisionFilter = PsagActor::ActorFlagsPhy::ActorPhyGroup0 | PsagActor::ActorFlagsPhy::ActorPhyGroup15;
 
 	ConfigNpcActor.InitialPhysics  = Vector2T<float>(5.8f, 1.0f);
 	ConfigNpcActor.InitialPosition = position;

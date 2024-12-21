@@ -119,48 +119,48 @@ namespace PSAG_AUDIO_PLAYER {
             PushLogger(LogError, PSAG_AUDIO_LABEL, "audio system: loader error, hd = null.");
         
         // create source => bind buffer.
-        alGenSources(1, &HANDLE_SRC_OBJECT);
-        if (HANDLE_SRC_OBJECT == NULL) {
+        alGenSources(1, &HANDLE_AUDIO_OBJECT);
+        if (HANDLE_AUDIO_OBJECT == NULL) {
             PushLogger(LogError, PSAG_AUDIO_LABEL, "audio system: failed create source.");
             return;
         }
-        alSourcei(HANDLE_SRC_OBJECT, AL_BUFFER, HANDLE_AUDIO_BUFFER);
-        alSourcei(HANDLE_SRC_OBJECT, AL_LOOPING, AL_TRUE);
+        alSourcei(HANDLE_AUDIO_OBJECT, AL_BUFFER, HANDLE_AUDIO_BUFFER);
+        alSourcei(HANDLE_AUDIO_OBJECT, AL_LOOPING, AL_TRUE);
     }
 
     PsagAudioDataPlayer::~PsagAudioDataPlayer() {
         if (ResourceLoader != nullptr)
             delete ResourceLoader;
-        alDeleteSources(1, &HANDLE_SRC_OBJECT);
+        alDeleteSources(1, &HANDLE_AUDIO_OBJECT);
         PushLogger(LogInfo, PSAG_AUDIO_LABEL, "audio system: delete player.");
     };
 
-    void PsagAudioDataPlayer::SoundPlayer() { return alSourcePlay(HANDLE_SRC_OBJECT); }
-    void PsagAudioDataPlayer::SoundPause()  { return alSourcePause(HANDLE_SRC_OBJECT); }
+    void PsagAudioDataPlayer::SoundPlayer() { return alSourcePlay(HANDLE_AUDIO_OBJECT); }
+    void PsagAudioDataPlayer::SoundPause()  { return alSourcePause(HANDLE_AUDIO_OBJECT); }
 
     void PsagAudioDataPlayer::SoundBeginPosition() {
-        alSourceRewind(HANDLE_SRC_OBJECT);
+        alSourceRewind(HANDLE_AUDIO_OBJECT);
         PushLogger(LogInfo, PSAG_AUDIO_LABEL, "audio system: set pos_begin.");
     }
 
     bool PsagAudioDataPlayer::PlayerEndedFlag() {
         ALint StateTemp = NULL;
-        alGetSourcei(HANDLE_SRC_OBJECT, AL_SOURCE_STATE, &StateTemp);
+        alGetSourcei(HANDLE_AUDIO_OBJECT, AL_SOURCE_STATE, &StateTemp);
         return StateTemp == AL_STOPPED ? true : false;
     }
 
     void PsagAudioDataPlayer::SoundSet3DPosition(const Vector3T<float>& position) {
-        alSource3f(HANDLE_SRC_OBJECT, AL_POSITION, position.vector_x, position.vector_y, position.vector_z);
+        alSource3f(HANDLE_AUDIO_OBJECT, AL_POSITION, position.vector_x, position.vector_y, position.vector_z);
     }
     void PsagAudioDataPlayer::SoundSet3DDirection(const Vector3T<float>& direction) {
-        alSource3f(HANDLE_SRC_OBJECT, AL_DIRECTION, direction.vector_x, direction.vector_y, direction.vector_z);
+        alSource3f(HANDLE_AUDIO_OBJECT, AL_DIRECTION, direction.vector_x, direction.vector_y, direction.vector_z);
     }
     void PsagAudioDataPlayer::SoundSet3DGain(float gain) {
-        alSourcef(HANDLE_SRC_OBJECT, AL_GAIN, gain);
+        alSourcef(HANDLE_AUDIO_OBJECT, AL_GAIN, gain);
     }
 
     void PsagAudioDataPlayer::SoundSet3DVelocity(const Vector3T<float>& velocity) {
-        alSource3f(HANDLE_SRC_OBJECT, AL_VELOCITY, velocity.vector_x, velocity.vector_y, velocity.vector_z);
+        alSource3f(HANDLE_AUDIO_OBJECT, AL_VELOCITY, velocity.vector_x, velocity.vector_y, velocity.vector_z);
     }
     void PsagAudioDataPlayer::SoundSet3DVelocityListener(const Vector3T<float>& listener_v) {
         alListener3f(AL_VELOCITY, listener_v.vector_x, listener_v.vector_y, listener_v.vector_z);

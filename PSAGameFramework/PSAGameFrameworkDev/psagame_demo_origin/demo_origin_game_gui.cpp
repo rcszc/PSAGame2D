@@ -5,6 +5,8 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 void DemoGameOrigin::GameRenderGui() {
+	auto PawnActor = DemoActors->FindGameActor(PawnActorCode);
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,    7.2f);
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding,    7.8f);
@@ -37,7 +39,6 @@ void DemoGameOrigin::GameRenderGui() {
 			ImGui::Indent(IMGUI_ITEM_SPAC);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + IMGUI_ITEM_SPAC);
 
-			auto PawnActor = DemoActors->FindGameActor(PawnActorCode);
 			auto Position = PawnActor->ActorGetPosition();
 
 			ImVec4 BoxColor = ImVec4(0.22f, 0.0f, 0.7f, 0.92f);
@@ -81,4 +82,7 @@ void DemoGameOrigin::GameRenderGui() {
 	}
 	ImGui::PopStyleColor(8);
 	ImGui::PopStyleVar(3);
+
+	PsagActor::DebugTools::DebugWindowGuiActorPawn("PAWN_ACTOR", PawnActor);
+	PsagActor::DebugTools::DebugWindowGuiActors("ACTORS", DemoActors->GetSourceData());
 }

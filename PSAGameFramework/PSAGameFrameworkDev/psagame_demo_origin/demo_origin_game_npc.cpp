@@ -25,14 +25,14 @@ void NpcActorLogic::ActionLogicRun(PsagActor::Actor* actor_object, float timeste
 
 void NpcActorLogic::HealthRendering(PsagActor::Actor* actor_object) {
 	// ÐÞ¸Ä ImGui ¿Ø¼þÑÕÉ«.
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.16f, 0.16f, 0.16f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg,       ImVec4(0.16f, 0.16f, 0.16f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBg,        ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
 	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.72f, 0.72f, 0.72f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.22f, 0.22f, 0.22f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.22f, 0.22f, 0.22f, 0.92f));
-	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(1.0f, 0.25f, 0.0f, 0.38f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive,  ImVec4(0.12f, 0.12f, 0.12f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_Text,           ImVec4(0.72f, 0.72f, 0.72f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBg,        ImVec4(0.22f, 0.22f, 0.22f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive,  ImVec4(0.22f, 0.22f, 0.22f, 0.92f));
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram,  ImVec4(1.0f, 0.25f, 0.0f, 0.38f));
 
 	ImGuiWindowFlags FlagsTemp = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 

@@ -7,7 +7,7 @@
 
 namespace PsagManager {
 	namespace Fx {
-		namespace GenMode = GameManagerCore::GameFX::PartcMode;
+		namespace GenMode = GameManagerCore::GameFX::ParticleMode;
 
 		using ParticleDESC    = GameManagerCore::GameFX::GameFxParticleDESC;
 		using ParticleGenDESC = GameManagerCore::GameFX::GameFxCreateParticleDESC;

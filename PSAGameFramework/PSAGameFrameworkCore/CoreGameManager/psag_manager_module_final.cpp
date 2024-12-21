@@ -66,7 +66,7 @@ namespace GameManagerCore {
 					ImGui::SliderFloat3("LightColor",           FrameworkFinalParamsPtr->LightColor.data(),   0.0f, 1.0f);
 					ImGui::SliderFloat ("LightIntensity",      &FrameworkFinalParamsPtr->LightIntensity,      0.0f, 1.0f);
 					ImGui::SliderFloat ("LightIntensityDecay", &FrameworkFinalParamsPtr->LightIntensityDecay, 0.0f, 1.0f);
-					ImGui::SliderInt   ("LightSample",         &FrameworkFinalParamsPtr->LightSampleStep,      1, 512);
+					ImGui::SliderInt   ("LightSample",         &FrameworkFinalParamsPtr->LightSampleStep,     1,    512);
 					ImGui::Unindent(8.0f);
 				}
 				ImGui::EndChild();
