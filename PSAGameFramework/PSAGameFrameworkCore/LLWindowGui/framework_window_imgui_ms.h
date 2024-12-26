@@ -59,5 +59,6 @@ static inline ImVec4& operator+=(ImVec4& v1, const ImVec4& v2) { return v1 = v1 
 static inline ImVec4& operator-=(ImVec4& v1, const ImVec4& v2) { return v1 = v1 - v2; }
 static inline ImVec4& operator*=(ImVec4& v1, const ImVec4& v2) { return v1 = v1 * v2; }
 static inline ImVec4& operator/=(ImVec4& v1, const ImVec4& v2) { return v1 = v1 / v2; }
+
 #endif
 #endif

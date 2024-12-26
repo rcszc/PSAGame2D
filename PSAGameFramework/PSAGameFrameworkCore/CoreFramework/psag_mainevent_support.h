@@ -25,7 +25,7 @@ namespace GameLogic {
         Vector2T<uint32_t> WindowResolution;
         float GameRunTimeSTEP;
     };
-
+    
     // frameowrk game_logic interface.
     class INTERFACE_DEVCLASS_GAME {
     public:

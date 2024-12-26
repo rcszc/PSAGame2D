@@ -39,6 +39,8 @@ namespace PsagManager {
 	}
 	// imgui gui extension_contral.
 	namespace GuiTools = ToolkitsEngineGuiExt;
+	// platform(windows) api tools.
+	namespace Win32Tools = PsagLow::WindowsTools;
 
 #define AudioConvert PsagSupAudioRawCVT
 }

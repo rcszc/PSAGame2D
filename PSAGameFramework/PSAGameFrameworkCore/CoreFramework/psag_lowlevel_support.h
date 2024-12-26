@@ -63,6 +63,8 @@ namespace PsagLow {
 
 	using PsagSupWindowGuiEventOGLFW = PSAG_WINDOW_OGLFW::PasgWindowEvent;
 	using PsagSupWindowGuiEventIMGUI = PSAG_WINDOW_IMGUI::PsagImGuiContextEvent;
+
+	namespace WindowsTools = PSAG_WINDOW_WIN32;
 #endif
 }
 

@@ -1,5 +1,5 @@
-// framework_thread. THREAD_POOL:[移植模块]
-// EasyWorksPool(改), https://github.com/rcszc/EasyWorksPool
+// framework_thread. THREAD_POOL:[??????]
+// EasyWorksPool(??), https://github.com/rcszc/EasyWorksPool
 // Source: RCSZ 2023_08_28, Modify: RCSZ 2024_04_05.
 
 #ifndef _FRAMEWORK_THREAD_HPP
@@ -36,7 +36,7 @@ namespace PSAG_THREAD_POOL {
     namespace Error {
         typedef const char* ERRINFO;
 
-        // 异常处理. std::exception::what, std::exception::name
+        // ??????. std::exception::what, std::exception::name
         class TPerror :public std::exception {
         protected:
             std::string ErrorMessage = {};

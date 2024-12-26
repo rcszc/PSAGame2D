@@ -321,6 +321,9 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_ext.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">

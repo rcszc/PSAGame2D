@@ -208,6 +208,7 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_oglfw.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_actorfx.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_gui.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_init.cpp" />

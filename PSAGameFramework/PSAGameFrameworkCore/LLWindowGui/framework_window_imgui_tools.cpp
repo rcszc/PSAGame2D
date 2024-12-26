@@ -137,8 +137,7 @@ namespace ImPsag {
 	void ListDrawPolyFilled(std::vector<ImVec2>* vertices, const ImVec4& color) {
 		// draw points element.
 		ImGui::GetWindowDrawList()->AddConvexPolyFilled(
-			vertices->data(),
-			(int)vertices->size(),
+			vertices->data(), (int)vertices->size(),
 			IMVEC4_CVT_COLU32(color)
 		);
 	}
@@ -156,9 +155,9 @@ namespace ImPsag {
 		bool ButtonAnim::DrawButton(const char* name, float speed) {
 			bool StateFlagTemp = false;
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ButtonAnimColor);
+			ImGui::PushStyleColor(ImGuiCol_Button,        ButtonAnimColor);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ButtonAnimColor);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ButtonAnimColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive,  ButtonAnimColor);
 
 			// 重叠绘制: InvisibleButton & Button.
 			ImVec2 ReposTemp = ImGui::GetCursorPos();
@@ -167,11 +166,11 @@ namespace ImPsag {
 				size_t TypeIndex = NULL;
 
 				if (!ImGui::IsItemHovered() && !ImGui::IsMouseDown(0)) TypeIndex = 0; // status: normal.
-				if (ImGui::IsItemHovered() && !ImGui::IsMouseDown(0)) TypeIndex = 1; // status: hover.
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDown(0))  TypeIndex = 2; // status: active.
+				if (ImGui::IsItemHovered() && !ImGui::IsMouseDown(0))  TypeIndex = 1; // status: hover.
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDown(0))   TypeIndex = 2; // status: active.
 
 				ButtonAnimColor += (AnimStatColor[TypeIndex] - ButtonAnimColor) * ANIM_STD_STEP_BUTTON * speed;
-				ButtonAnimSize += (AnimStatSize[TypeIndex] - ButtonAnimSize) * ANIM_STD_STEP_BUTTON * speed;
+				ButtonAnimSize  += (AnimStatSize[TypeIndex]  - ButtonAnimSize)  * ANIM_STD_STEP_BUTTON * speed;
 			}
 			ImGui::SetCursorPos(ReposTemp);
 			// 固定中心位置.

@@ -1,7 +1,7 @@
 # 上层(模块)调用表
 > ©PomeloStar Studio 2024-2025
 
-__Developer(s):__ ```RCSZ``` __Update:__ ```2024.11.10```
+__Developer(s):__ ```RCSZ``` __Update:__ ```2024.12.26```
 
 __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编号 `01` 组内编号
 
@@ -98,6 +98,8 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 `P-M1003` ```PsagManager::SyncLoader::```
 
 `P-M1004` ```PsagManager::GuiTools::```
+
+`P-M1005` ```PsagManager::Win32Tools::```
 
 > M10
 

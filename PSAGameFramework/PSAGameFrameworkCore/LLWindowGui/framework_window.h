@@ -19,11 +19,19 @@
 #pragma comment(lib,"legacy_stdio_definitons.lib")
 #endif
 
+#ifdef _WIN32
+// windows platform api.
+#include <windows.h>
+#include <psapi.h>
+#include <dwmapi.h>
+// load system library.
+#pragma comment(lib, "Dwmapi.lib")
+#endif
+
 // LLWindowGui PSA-L.6 (=>logger).
 #include "../LLLogger/framework_logger.hpp"
 
 #define DEVICE_ENABLE_NVIDIA_GPU
-#define DEVICE_ENABLE_WINAPI_PROCESS
 
 namespace PSAG_WINDOW_OGLFW {
 	StaticStrLABEL PSAG_WINDOW_LABEL = "PSAG_WINDOW";
@@ -49,10 +57,7 @@ namespace PSAG_WINDOW_OGLFW {
 		{}
 	};
 
-#ifdef DEVICE_ENABLE_WINAPI_PROCESS
-#include <Windows.h>
-#endif
-	class PsagGLFWsystemCallback {
+	class PsagGLFWsystemCALLBACK {
 	protected:
 		static Vector3T<float> ValueMouseScroll; // x:pos, y:min, z:max
 		static Vector2T<float> ValueMouseCursor; // x:pos.x, y:pos.y
@@ -80,7 +85,7 @@ namespace PSAG_WINDOW_OGLFW {
 
 	using FwSysErrorMessage = const char*;
 	// core-framework inherits window-event.
-	class PasgWindowEvent :public PsagGLFWsystemCallback {
+	class PasgWindowEvent :public PsagGLFWsystemCALLBACK {
 	private:
 		static std::chrono::steady_clock::time_point FrameTimer;
 		static float CalcFrameTime;
@@ -131,6 +136,7 @@ ImU32 PsagConvertVec4ToImU32(const Vector4T<float> color) {
 #define PSAG_DEFCOLOR_YELLOW 0xFFFF00FF // 黄色
 #define PSAG_DEFCOLOR_WHITE  0xFFFFFFFF // 白色
 #endif
+
 namespace PSAG_WINDOW_IMGUI {
 	StaticStrLABEL PSAG_IMGUI_LABEL = "PSAG_IMGUI";
 
@@ -172,6 +178,30 @@ namespace PSAG_WINDOW_IMGUI {
 	};
 }
 
+namespace PSAG_WINDOW_WIN32 {
+#ifdef _WIN32
+	StaticStrLABEL PSAG_WIN32_LABEL = "PSAG_WIN32";
+
+	bool EnableWindowsBlur(HWND hwnd);
+	void EnableWindowsTransparency(HWND hwnd);
+
+	// windows api + opengl glfw api.
+	void SetSystemWindowTitlebarColor(GLFWwindow* window, const ImVec4& border);
+
+	bool   MemoryIsOnHeap     (void* ptr);
+	size_t MemoryHeapSizeBytes(void* ptr);
+
+	struct ProcessMemoryInfo {
+		HANDLE ProcessHandle = {};
+
+		size_t PhyMemory = NULL;
+		size_t VirMemory = NULL;
+	};
+	// 获取当前进程内存信息.[v101]
+	ProcessMemoryInfo CurrentProcMemoryInfo();
+#endif
+}
+
 namespace ImPsag {
 	// color(r,g,b,a): value => r,g,b ahpla => a.
 	ImVec4 ColorGrayscaleScale(const ImVec4& color, float value, float ahpla = 0.0f);
@@ -195,7 +225,7 @@ namespace ImPsag {
 
 	namespace ImAnim {
 #define ANIM_STD_STEP_BUTTON 0.078f
-
+		// chlid_version: 1.1.20241001
 		class ButtonAnim {
 		protected:
 			ImVec4 ButtonAnimColor = {};

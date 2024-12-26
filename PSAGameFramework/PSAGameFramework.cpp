@@ -2,7 +2,7 @@
 // @PomeloStar Studio 2024-2025 GameFramework(Engine).
 // Developers: 
 /*
-* Engine Version: 0.1.2 Alpha (10.20240826)
+* Engine Version: 0.1.2 Alpha (10.20241226)
 * MSVC C11, C++17 x64 Release
 * OpenGL GLSL: 4.6
 * OpenGL GLFW: 3.0
@@ -13,10 +13,9 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_08_26.
-// 10.20240826 - OGL 将是此框架 OpenGL 最后一个版本, 此后将移植 Vulkan. [x]
-// Next: 10.20240xxx - VULKAN
-#define PSAG2D_ENGINE_VER 12.20240826
+// Engine Update: 2024_12_26.
+// Copyright(c) RCSZ.
+#define PSAG2D_ENGINE_VER 12.20241226
 /*
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX
@@ -38,7 +37,7 @@
 int main() {
 	int FrameworkResult = -1;
 	// start(debug) logger thread & debug thread.
-	// FTD update: "PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.cpp"
+	// FTD update: "PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.cpp"
 	// RCSZ. [20240817]
 	PSAG_LOGGER_PROCESS::StartLogProcessing("PSAGameSystemLogs/");
 #if ENABLE_DEBUG_MODE
