@@ -94,7 +94,7 @@ namespace PSAG_THREAD_POOL {
                     try {
                         return std::apply([](auto&&... Args) {
                             return std::make_shared<InClass>(std::forward<decltype(Args)>(Args)...);
-                            }, std::move(Args));
+                        }, std::move(Args));
                     }
                     catch (...) {
                         throw Error::TPerror("failed create object.", ThisThreadID(), "CREATE_OBJ");

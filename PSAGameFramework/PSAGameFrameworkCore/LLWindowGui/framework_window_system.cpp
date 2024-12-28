@@ -1,4 +1,4 @@
-// framework_window_oglfw.
+// framework_window_system.
 #include "framework_window.h"
 
 using namespace std;

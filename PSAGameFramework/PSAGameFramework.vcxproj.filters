@@ -138,7 +138,7 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_oglfw.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLLogger\framework_logger.cpp">
@@ -323,6 +323,9 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_notify.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
