@@ -136,6 +136,9 @@ namespace GraphicsEngineDataset {
 	}
 
 	bool GLEngineStaticVertexData::VerStcDataItemFree(ResUnique rukey) {
+		// system default vertex_group => ignore.
+		if (rukey == SystemPresetRectangle || rukey == SystemPresetCircle)
+			return true;
 		{ // enable [free] TCS.
 			lock_guard<mutex> Lock(DatasetResMutex);
 
@@ -168,7 +171,7 @@ namespace GraphicsEngineDataset {
 				// delete item(vertex_data) index_info.
 				IndexItems.erase(it);
 
-				PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) upload gpu_data: %u bytes", DatasetRewriting.size());
+				PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) update gpu_data: %u bytes", DatasetRewriting.size());
 				PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "ver_data(stc) item: delete key: %u", rukey);
 				return true;
 			}
@@ -543,14 +546,14 @@ namespace GraphicsEngineDataset {
 
 		auto it = TexIndexItems.find(rukey);
 		if (it != TexIndexItems.end()) {
+			// free virtual texture layer.
+			TextureIndex->LayerAllotter->FreeLayerCount(it->second.SampleLayers);
 			// erase item param.
 			it->second = VirTextureParam();
 			TexIndexItems.erase(it);
-			// free virtual texture layer.
-			TextureIndex->LayerAllotter->FreeLayerCount(it->second.SampleLayers);
-			// texture count - 1.
+			// texture layers count - 1.
 			--TextureIndex->ArraySize.vector_y;
-			// sub texture count;
+			// texture entities count - 1;
 			--DataBytesOnlineTexture;
 
 			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: delete key: %u", rukey);

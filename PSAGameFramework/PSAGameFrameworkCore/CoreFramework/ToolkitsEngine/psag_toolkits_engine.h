@@ -7,6 +7,7 @@
 
 #define ENABLE_LOWMODULE_AUDIO
 #include "../psag_lowlevel_support.h"
+#include "psag_toolkits_engine_notify.hpp"
 
 // toolkits_engine timestep, mainevent => TE.
 class __TOOLKITS_ENGINE_TIMESETP {

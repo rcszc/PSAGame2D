@@ -97,9 +97,11 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 `P-M1003` ```PsagManager::SyncLoader::```
 
-`P-M1004` ```PsagManager::GuiTools::```
+`P-M1004` ```PsagManager::Notify::```
 
-`P-M1005` ```PsagManager::Win32Tools::```
+`P-M1005` ```PsagManager::GuiTools::```
+
+`P-M1006` ```PsagManager::Win32Tools::```
 
 > M10
 

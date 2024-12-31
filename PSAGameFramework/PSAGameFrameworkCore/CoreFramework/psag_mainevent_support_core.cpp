@@ -170,9 +170,11 @@ namespace PsagFrameworkCore {
         if (RendererBackFX != nullptr)  delete RendererBackFX;
         if (RendererPostFX != nullptr)  delete RendererPostFX;
 
-        for (auto& ObjectItem : GAME_CORE_CLASS)
+        for (auto& ObjectItem : GAME_CORE_CLASS) {
+            // call free => delete.
+            ObjectItem.second->LogicCloseFree();
             delete ObjectItem.second;
-
+        }
         // graphics system init.
         DynamicVertexDataObjectDelete();
         StaticVertexDataObjectDelete();

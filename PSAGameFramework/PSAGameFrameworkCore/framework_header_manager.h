@@ -28,6 +28,7 @@ namespace PsagManager {
 	namespace FxView     = GameManagerCore::GameView;
 	namespace Maths      = GameManagerCore::GameMathsTools;
 	namespace SyncLoader = GameManagerCore::GameSyncLoader;
+	namespace Notify     = GameManagerCore::GameNotify;
 
 	namespace Tools {
 		namespace RAND   = ToolkitsEngineRandom::Func;

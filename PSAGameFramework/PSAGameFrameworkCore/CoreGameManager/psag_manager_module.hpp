@@ -198,6 +198,16 @@ namespace GameManagerCore {
 		using SyncEncDecImage = PsagLow::PsagSupGraphicsOper::PsagGraphicsImageRawDat;
 	}
 
+	namespace GameNotify {
+		namespace GameDataSER = ToolkitsEngineNotify::NotifySER;
+
+		using SerRawData = ToolkitsEngineNotify::SerializeData;
+		using DataMode   = ToolkitsEngineNotify::MSG_DATA_MODE;
+
+		using StationSystem = ToolkitsEngineNotify::StationSystem;
+		using NotifySystem  = ToolkitsEngineNotify::NotifySystem;
+	}
+
 	namespace GameMathsTools {
 		float           CalcFuncPointsDistance    (Vector2T<float> point0, Vector2T<float> point1);
 		float           CalcFuncPointsAngle       (Vector2T<float> basic_point, Vector2T<float> point);
