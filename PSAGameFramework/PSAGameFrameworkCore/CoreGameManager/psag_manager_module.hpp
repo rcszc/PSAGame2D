@@ -204,7 +204,7 @@ namespace GameManagerCore {
 		using SerRawData = ToolkitsEngineNotify::SerializeData;
 		using DataMode   = ToolkitsEngineNotify::MSG_DATA_MODE;
 
-		using StationSystem = ToolkitsEngineNotify::StationSystem;
+		using StationSystem = ToolkitsEngineNotify::NotifyStationSystem;
 		using NotifySystem  = ToolkitsEngineNotify::NotifySystem;
 	}
 

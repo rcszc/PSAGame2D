@@ -28,9 +28,9 @@ namespace ToolkitsEngineNotify {
 	struct NotifyInformation {
 		UnamePair StationUniqueNamePair = {};
 
-		size_t      NotifyUnqiueID  = NULL;
-		std::string NotifyMessage   = {};
 		uint16_t    NotifyCodeFlags = NULL;
+		std::string NotifyMessage   = {};
+		size_t      NotifyUnqiueID  = NULL;
 
 		MSG_DATA_MODE NotifyDataMode  = NotifyDataMode_None;
 		SerializeData NotifyDataBytes = {};
@@ -114,16 +114,17 @@ namespace ToolkitsEngineNotify {
 		}
 	};
 
-	class StationSystem :public StationSystemInterface {
+	class NotifyStationSystem :public StationSystemInterface {
 	protected:
 		std::string   NotifySystemName = {};
 		NotifySystem* NotifySystemRef  = nullptr;
 
 		bool StationStatusFlag = false;
+		
 		NotifyInformation ReceiveInformation = {};
 		NotifyInformation SendInformation    = {};
-
-		void NotifySettingStatus() override {
+		
+		void NotifySettingStatus() {
 			StationStatusFlag = true;
 		}
 		// thread-safe context.
@@ -135,15 +136,11 @@ namespace ToolkitsEngineNotify {
 			ReceiveInformation.NotifyMessage   = notify.NotifyMessage;
 			ReceiveInformation.NotifyCodeFlags = notify.NotifyCodeFlags;
 
-			if (ReceiveInformation.NotifyDataMode != NotifyDataMode_None) {
-				std::memcpy(
-					ReceiveInformation.NotifyDataBytes.SerRawData.data(),
-					notify.NotifyDataBytes.SerRawData.data(), notify.NotifyDataBytes.SerRawData.size()
-				);
-				// object info string copy.
-				ReceiveInformation.NotifyDataBytes.SerRawDataType
-					= notify.NotifyDataBytes.SerRawDataType;
-			}
+			// data exist: object data & type_info copy.
+			if (ReceiveInformation.NotifyDataMode != NotifyDataMode_None)
+				ReceiveInformation.NotifyDataBytes = notify.NotifyDataBytes;
+			ReceiveInformation.NotifyDataMode = notify.NotifyDataMode;
+
 			std::pair<std::string, std::string> NamePair = notify.StationUniqueNamePair;
 			PSAG_LOGGER::PushLogger(
 				LogInfo, PSAGM_TOOLKITS_NOTFIY_LABEL, "station receive pair: %s/%s, data_size: %u bytes",
@@ -165,7 +162,7 @@ namespace ToolkitsEngineNotify {
 			return false;
 		}
 	public:
-		StationSystem(const std::string& u_name) : NotifySystemName(u_name) {}
+		//NotifyStationSystem(const std::string& u_name) : NotifySystemName(u_name) {}
 
 		bool REC_InfoStatusGet() { return StationStatusFlag; }
 		// clear cache & reset status flag.
@@ -204,7 +201,7 @@ namespace ToolkitsEngineNotify {
 		}
 
 		void SED_SetInfoMessage(const std::string& message) { SendInformation.NotifyMessage = message; }
-		void SED_SetInfoCode(uint16_t code) { SendInformation.NotifyCodeFlags = code; }
+		void SED_SetInfoCode(uint16_t code)                 { SendInformation.NotifyCodeFlags = code; }
 
 		// send infomation & clear cache.
 		bool SED_SendInformation() {
@@ -212,7 +209,7 @@ namespace ToolkitsEngineNotify {
 			SendInformation.NotifyInfoClear();
 			return SendFlag;
 		}
-
+		
 		std::string __STATION_REGISTER(NotifySystem* system_ptr) override {
 			NotifySystemRef = system_ptr;
 			PSAG_LOGGER::PushLogger(

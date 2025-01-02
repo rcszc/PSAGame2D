@@ -76,15 +76,19 @@ bool DemoGameOrigin::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 		Vector2T<float>(-500.0f, -500.0f), Vector2T<float>(500.0f, 500.0f)
 	);
 
+	if (!TestNotify) {
+		cout << "IsNullptr" << endl;
+	}
 	//GameCreateNpcActor(PawnActorCode, Vector2T<float>(120.0f, 0.0f));
-
-	//TestNotify = new PsagManager::Notify::NotifySystem("N_TEST");
-
-	StationTestA = new PsagManager::Notify::StationSystem("SSA");
-	//StationTestREC = new PsagManager::Notify::StationSystem("SSB");
-
-	//TestNotify->RegisterStation(StationTestA);
-	//TestNotify->RegisterStation(StationTestB);
+	TestNotify = std::make_unique<PsagManager::Notify::NotifySystem>("N_TEST");
+	if (!StationTestA) {
+		cout << "IsNullptr" << endl;
+	}
+	StationTestA = std::make_unique<PsagManager::Notify::StationSystem>();
+	StationTestB = std::make_unique<PsagManager::Notify::StationSystem>();
+	
+	TestNotify->RegisterStation(StationTestA.get());
+	TestNotify->RegisterStation(StationTestB.get());
 
 	CameraScaleLerp.x = 0.5f;
 	return true;
@@ -97,11 +101,6 @@ void DemoGameOrigin::LogicCloseFree() {
 	delete DemoActors;
 
 	delete PlayerCamera;
-	cout << "0000" << endl;
-	delete StationTestA;
-	//delete StationTestREC;
-	cout << "0000" << endl;
-	//delete TestNotify;
 
 	PsagActor::OperPhysicalWorld DeletePhysics("DemoOrigin", 2);
 }
@@ -119,9 +118,9 @@ bool DemoGameOrigin::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState
 	PawnActorFxLightBarPosition[1] = PawnActorFxLightBarPosition[1] < -0.35f ? 1.35f : PawnActorFxLightBarPosition[1];
 
 	if (ImGui::IsKeyPressed(ImGuiKey_R)) {
-		//StationTestA->SED_SetInfoMessage("Hello TEST!");
-		//StationTestA->SED_SetInfoTarget("SSB");
-		//StationTestA->SED_SendInformation();
+		StationTestA->SED_SetInfoMessage("Hello TEST!");
+		StationTestA->SED_SetInfoTarget("SSB");
+		StationTestA->SED_SendInformation();
 	}
 
 	auto PawnUniform = [&]() {
@@ -151,10 +150,10 @@ bool DemoGameOrigin::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 		PlayerCamera->PlayerCameraRun(Vector2T<float>(ImGui::GetIO().MouseDelta.x, ImGui::GetIO().MouseDelta.y), CameraScaleLerp.y);
 
-	//if (StationTestB->REC_InfoStatusGet()) {
-		//cout << StationTestB->REC_GetInfoMessage() << endl;
-		//StationTestB->REC_InfoStatusOK();
-	//}
+	if (StationTestB->REC_InfoStatusGet()) {
+		cout << StationTestB->REC_GetInfoMessage() << endl;
+		StationTestB->REC_InfoStatusOK();
+	}
 
 	RunningState.CameraParams->MatrixPosition = PlayerCamera->GetCameraPosition();
 	RunningState.CameraParams->MatrixScale    = Vector2T<float>(CameraScaleLerp.y, CameraScaleLerp.y);

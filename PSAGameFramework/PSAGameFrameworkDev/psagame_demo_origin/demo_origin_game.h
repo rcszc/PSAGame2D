@@ -77,12 +77,12 @@ protected:
     //PsagManager::Tools::Camera::GamePlayerCameraMP* PlayerCamera = nullptr;
     PsagManager::Tools::Camera::GamePlayerCameraGM* PlayerCamera = nullptr;
 
-    //PsagManager::Notify::NotifySystem* TestNotify = {};
-
-    PsagManager::Notify::StationSystem* StationTestA = nullptr;
-    PsagManager::Notify::StationSystem* StationTestREC = nullptr;
-
     ImVec2 CameraScaleLerp = ImVec2(1.0f, 1.0f);
+
+    std::unique_ptr<PsagManager::Notify::NotifySystem> TestNotify = {};
+    
+    std::unique_ptr<PsagManager::Notify::StationSystem> StationTestA = {};
+    std::unique_ptr<PsagManager::Notify::StationSystem> StationTestB = {};
 
     void GameActorPawnTrans(float time_step);
     void GamePostProcessing(GameLogic::FrameworkParams& params);

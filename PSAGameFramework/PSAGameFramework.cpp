@@ -35,7 +35,7 @@
 #pragma comment(lib, "box2d.lib    ")
 
 int main() {
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	int FrameworkResult = -1;
 	// start(debug) logger thread & debug thread.
 	// FTD update: "PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.cpp"
