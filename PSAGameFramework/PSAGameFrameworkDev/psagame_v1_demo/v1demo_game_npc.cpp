@@ -103,10 +103,10 @@ void PsaGameV1Demo::GameCreateNPC(const Vector2T<float>& position) {
 	ConfigNpcActor.ActorPhysicsWorld   = "DemoPhysics";
 	ConfigNpcActor.ActorShaderResource = DemoShaders->FindActorShader("NpcActor");
 	ConfigNpcActor.ActorHealthSystem   = PawnActorHealthDESC;
-	//ConfigNpcActor.ActorLogicObject    = NPCLogicObject;
+	ConfigNpcActor.ActorLogicObject    = NPCLogicObject;
 
 	ConfigNpcActor.VectorCalcIsForce = true;
-	//ConfigNpcActor.EnableLogic     = true;
+	ConfigNpcActor.ActorComponentConifg |= PsagActor::ActorFlagsComp::ActorEnableLogic;
 
 	ConfigNpcActor.InitialPhysics  = Vector2T<float>(32.0f, 10.0f);
 	ConfigNpcActor.InitialPosition = position;

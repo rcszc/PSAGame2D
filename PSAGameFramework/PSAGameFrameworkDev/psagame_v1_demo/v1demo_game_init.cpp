@@ -7,12 +7,12 @@ using namespace PSAG_LOGGER;
 void PsaGameV1Demo::GameInitActorsShader(const Vector2T<uint32_t>& w_size) {
 	PsagManager::SyncLoader::SyncEncDecImage DecodeRawImage;
 
-	auto ImageBackground = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1d_world_tex.png");
-	auto ImageBoundaryH  = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1d_world_Hwall.png");
-	auto ImageBoundaryV  = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1d_world_Vwall.png");
-	auto ImageNPC        = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1d_npc.png");
+	auto ImageBackground = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1d_world_tex.png");
+	auto ImageBoundaryH  = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1d_world_Hwall.png");
+	auto ImageBoundaryV  = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1d_world_Vwall.png");
+	auto ImageNPC        = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1d_npc.png");
 
-	auto ImageGuiCrossHair = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1d_hair.png");
+	auto ImageGuiCrossHair = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1d_hair.png");
 
 	// ±³¾°Ç½×ÅÉ«Æ÷.
 	PsagActor::ActorShader* DemoRenderBackground = new PsagActor::ActorShader(SYS_PRESET_SC.TmpScriptBrickImage(), w_size);

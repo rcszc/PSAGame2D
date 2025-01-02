@@ -132,7 +132,7 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	auto MappingWinCoord = PawnActorOBJ->ActorMappingWindowCoord();
 
 	// actor move pawn.
-	PlayerPawn->PlayerPawnRun(32.0f);
+	PlayerPawn->PlayerPawnRun(10.0f);
 	PawnActorOBJ->ActorApplyForceMove(PlayerPawn->ControlMoveVector);
 
 	DemoArchitecture->RunAllGameBrick();
@@ -142,14 +142,9 @@ bool PsaGameV1Demo::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	PawnActorOBJ->ActorModifyState(PawnActorOBJ->ActorGetPosition(), PawnActorAngle);
 
 	// camera move pawn.
-	//PlayerCamera->PlayerCameraRunFixed(MappingWinCoord, PawnActorOBJ->ActorGetMoveSpeed());
+	PlayerCamera->PlayerCameraRunFixed(PawnActorOBJ->ActorGetPosition());
+	RunningState.CameraParams->MatrixPosition = PlayerCamera->GetCameraPosition();
 	   
-	// 摄像机抖动.
-	RunningState.CameraParams->MatrixPosition = Vector2T<float>(
-		-PawnActorOBJ->ActorGetPosition().vector_x * 10.0f,
-		PawnActorOBJ->ActorGetPosition().vector_y * 10.0f
-	);
-
 	// 鼠标左键, 循环计时器, 剩余子弹,  非换弹时间.
 	if (PlayerPawn->MouseButtonPressed_L() && PActorFIRE->CycleTimerGetFlag() && 
 		PawnActorBullet > 0.0f && !PawnActorChangeAMM && ImGui::IsItemHovered()

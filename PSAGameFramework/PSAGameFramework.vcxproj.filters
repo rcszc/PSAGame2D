@@ -79,14 +79,8 @@
     <Filter Include="源文件\PSAGameFrameworkCore\FTDmodule">
       <UniqueIdentifier>{e9083aa4-28b4-4361-8f1a-c09f69804619}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\A-PSAGameFrameworkDev\psagame_v1_demo">
-      <UniqueIdentifier>{8330f7a9-a0bc-4d19-a99f-355d9fc2e6a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\DevSupport">
       <UniqueIdentifier>{43b8c5eb-d94c-4be0-89de-2d78f2909925}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\A-PSAGameFrameworkDev\PSA实验室">
-      <UniqueIdentifier>{8ab63cea-36ac-481c-a91b-74fe3277fbc5}</UniqueIdentifier>
     </Filter>
     <Filter Include="资源文件\ImGui">
       <UniqueIdentifier>{669c97ac-5586-4008-8b4d-a25882db1706}</UniqueIdentifier>
@@ -100,7 +94,7 @@
     <Filter Include="源文件\PSAGameFrameworkCore\LLFilesys\decode_channels">
       <UniqueIdentifier>{3da887e0-6648-46e6-ac53-780f5fba77c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\A-PSAGameFrameworkDev\psagame_demo_origin">
+    <Filter Include="源文件\A-PSAGameFrameworkDev\psagame_demo">
       <UniqueIdentifier>{37754b3d-3e04-4e40-a220-abd65c242972}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -246,32 +240,8 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_components.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_shader.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_init.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_final.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test_panel.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
@@ -300,24 +270,6 @@
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_string.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys\decode_channels</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_actorfx.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_init.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_logic.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_npc.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_script.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_gui.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_ext.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
@@ -326,6 +278,24 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_notify.hpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_init.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_shader.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -473,20 +443,11 @@
     <ClInclude Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug.hpp">
       <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_v1_demo</Filter>
-    </ClInclude>
-    <ClInclude Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.h">
-      <Filter>源文件\A-PSAGameFrameworkDev\PSA实验室</Filter>
-    </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLFilesys\framework_filesys_dec_channels.h">
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys</Filter>
-    </ClInclude>
-    <ClInclude Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game.h">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo_origin</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLGraphics\framework_renderer_std.h">
       <Filter>源文件\PSAGameFrameworkCore\LLGraphics</Filter>
@@ -496,6 +457,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp">
       <Filter>源文件\PSAGameFrameworkCore\LLThread</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

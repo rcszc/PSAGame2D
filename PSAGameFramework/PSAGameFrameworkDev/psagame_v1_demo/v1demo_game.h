@@ -1,5 +1,5 @@
 // v1demo_game. 2024_08_22 RCSZ.
-// Framework DemoV1.
+// Framework DemoV1. update: 2025_01_02.
 
 #ifndef __V1DEMO_GAME_H
 #define __V1DEMO_GAME_H

@@ -210,14 +210,6 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_actorfx.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_gui.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_init.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_logic.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_npc.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game_script.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test_panel.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_init.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp" />
@@ -281,8 +273,6 @@
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
-    <ClInclude Include="PSAGameFrameworkDev\psagame_demo_origin\demo_origin_game.h" />
-    <ClInclude Include="PSAGameFrameworkDev\psagame_dev_studio\psagame_dev_test.h" />
     <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

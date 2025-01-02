@@ -5,16 +5,6 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 const char* ShaderFragPawnActor = R"(
-#version 460 core
-
-in vec4 FxColor;
-in vec2 FxCoord;
-
-uniform vec2  RenderResolution;
-uniform float RenderTime;
-
-out vec4 FragColor;
-
 vec4 DrawSquare(vec2 uv, vec2 Center, float SideLength, vec4 Color) {
     vec2 SizeHalf = vec2(SideLength * 0.5);
     vec2 MinBound = Center - SizeHalf;
@@ -57,16 +47,6 @@ void main()
 )";
 
 const char* ShaderFragBulletActor = R"(
-#version 460 core
-
-in vec4 FxColor;
-in vec2 FxCoord;
-
-uniform vec2  RenderResolution;
-uniform float RenderTime;
-
-out vec4 FragColor;
-
 const float GlowIntensity = 0.01;
 const float Radius = 0.58;
 const vec2 CircleCenter = vec2(0.5, 0.5);
@@ -81,24 +61,9 @@ void main()
 )";
 
 const char* ShaderFragNPCActor = R"(
-#version 460 core
-
-in vec4 FxColor;
-in vec2 FxCoord;
-
-uniform sampler2DArray VirTexture;
-uniform int            VirTextureLayer;
-uniform vec2           VirTextureCropping;
-uniform vec2           VirTextureSize;
-
-uniform vec2  RenderResolution;
-uniform float RenderTime;
-
-out vec4 FragColor;
-
 void main()
 {
-    vec4 TexColor = texture(VirTexture, vec3(FxCoord, float(VirTextureLayer)));
+    vec4 TexColor = SampleTextureNOR(FxCoord);
     vec4 BlendColor = vec4(1.0, abs(sin(RenderTime * 0.05)) * 0.32, 0.0, 0.98);
     FragColor = TexColor * BlendColor;
 }

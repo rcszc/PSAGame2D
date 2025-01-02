@@ -8,9 +8,9 @@ void PsaGameV1Demo::GameInitParticleSystem(const Vector2T<uint32_t>& w_size) {
 	PsagManager::SyncLoader::SyncEncDecImage DecodeRawImage;
 	PsagManager::Fx::ParticleDESC CreatePActorParticle = {};
 
-	auto PActorImage1 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1_particle2.png");
-	auto PActorImage2 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1_particle1.png");
-	auto PActorImage3 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("demo_v1_material/psag_v1_particle0.png");
+	auto PActorImage1 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1_particle2.png");
+	auto PActorImage2 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1_particle1.png");
+	auto PActorImage3 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData("PSAGameFrameworkDev/psagame_v1_demo/demo_v1_material/psag_v1_particle0.png");
 
 	CreatePActorParticle.ParticleRenderResolution = w_size;
 	CreatePActorParticle.ParticlesDisturbance     = 0.0f;
