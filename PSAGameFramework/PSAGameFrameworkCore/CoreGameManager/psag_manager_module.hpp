@@ -51,9 +51,9 @@ namespace GameManagerCore {
 
 		// value = 'GraphicsEngineParticle::ParticleCalcMode'
 		enum ParticleUpdateMode {
-			CALC_DEFAULT  = 1 << 1, // 默认计算模式.
-			CALC_PARALLEL = 1 << 2, // 并行计算模式.
-			CALC_NO_CALC  = 1 << 3  // 无计算模式.
+			CALC_DEFAULT  = 1 << 1, // 默 霞   模式.
+			CALC_PARALLEL = 1 << 2, //    屑   模式.
+			CALC_NO_CALC  = 1 << 3  //  藜   模式.
 		};
 
 		struct GameFxParticleDESC {
@@ -169,7 +169,7 @@ namespace GameManagerCore {
 				return PtrAddr;
 			}
 			// RTTI: object info string.
-			std::string GetObjectINFO() { return PointerInfo };
+			std::string GetObjectINFO() { return PointerInfo; };
 		};
 	}
 
@@ -253,7 +253,7 @@ namespace GameManagerCore {
 		void CalcFuncLerpVec2(Vector2T<float>* ahpla, Vector2T<float>* target, float speed);
 		void CalcFuncLerpVec4(Vector4T<float>* ahpla, Vector4T<float>* target, float speed);
 
-		// 环绕引力轨道, return 'force'. ChatGPT.4O, RCSZ 20241110.
+		//            , return 'force'. ChatGPT.4O, RCSZ 20241110.
 		Vector2T<float> SurroundingOrbit(
 			Vector2T<float> point_a, Vector2T<float> point_b, float r, float force_scale = 1.0f
 		);
