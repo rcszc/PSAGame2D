@@ -7,7 +7,7 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 ---
 
-## PsagActor
+## PsagActor (23)
 
 `P-A1001` ```PsagActorType::```
 
@@ -71,7 +71,7 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 ---
 
-## PsagManager
+## PsagManager (21)
 
 `P-M2001` ```PsagManager::Fx::ParticleDESC```
 
@@ -97,11 +97,13 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 `P-M1003` ```PsagManager::SyncLoader::```
 
-`P-M1004` ```PsagManager::Notify::```
+`P-M1004` ```PsagManager::PtrMAG::```
 
-`P-M1005` ```PsagManager::GuiTools::```
+`P-M1005` ```PsagManager::Notify::```
 
-`P-M1006` ```PsagManager::Win32Tools::```
+`P-M1006` ```PsagManager::GuiTools::```
+
+`P-M1007` ```PsagManager::Win32Tools::```
 
 > M10
 

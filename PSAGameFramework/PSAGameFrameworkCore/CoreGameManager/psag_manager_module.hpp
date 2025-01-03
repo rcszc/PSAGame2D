@@ -10,7 +10,6 @@
 namespace GameManagerCore {
 	namespace GameFX {
 		StaticStrLABEL PSAGM_MANAGER_FX_LABEL = "PSAG_MANAGER_FX";
-
 		// ******************************** FX-Particle ********************************
 
 		namespace ParticleMode = GraphicsEngineParticle::ParticlesGenMode;
@@ -134,6 +133,43 @@ namespace GameManagerCore {
 			void FxSpriteSheetRendering();
 
 			VirTextureUnqiue FxSpriteSheetTexture();
+		};
+	}
+
+	namespace PointerManager {
+		// version 0.1.0, 2025_01_03 RCSZ.
+		// update: 2025.01.03.
+		template<typename T>
+		// not 'shared_ptr', non ref_counter.
+		class DefinePointer {
+		private:
+			T* PointerDefine;
+			std::string PointerInfo = {};
+		public:
+			DefinePointer() : PointerDefine(nullptr) {}
+			~DefinePointer() {
+				if (PointerDefine != nullptr) {
+					delete PointerDefine; PointerDefine = nullptr;
+				}
+			}
+			// create ptr, return address.
+			template <typename... Args>
+			size_t CreatePointer(Args&&... args) {
+				PointerDefine = new T(std::forward<Args>(args)...);
+				// rtti get object info.
+				PointerInfo = typeid(T).name();
+				return (size_t)PointerDefine;
+			}
+			// delete ptr, return address.
+			size_t DeletePointer() {
+				if (PointerDefine == nullptr) return NULL;
+				size_t PtrAddr = (size_t)PointerDefine;
+				delete PointerDefine;
+				PointerDefine = nullptr;
+				return PtrAddr;
+			}
+			// RTTI: object info string.
+			std::string GetObjectINFO() { return PointerInfo };
 		};
 	}
 
