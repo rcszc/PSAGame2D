@@ -609,7 +609,8 @@ namespace GameBrickCore {
 	class GameBrickExecutor :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineVirTextureData,
-		public PhysicsEngine::PhyEngineCoreDataset 
+		public PhysicsEngine::PhyEngineCoreDataset,
+		public __ACTOR_MODULES_TIMESTEP
 	{
 	protected:
 		size_t                          BrickUniqueID  = NULL;

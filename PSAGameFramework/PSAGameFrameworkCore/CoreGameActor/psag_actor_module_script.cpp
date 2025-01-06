@@ -56,9 +56,8 @@ void main()
 {
 	vec4 HDR_FRAG = SampleTextureHDR(FxCoord);
 	vec4 NOR_FRAG = SampleTextureNOR(FxCoord);
-	if (HDR_FRAG.a > 0.005) {
-		NOR_FRAG += HDRCOLOR;
-	}
+	
+	NOR_FRAG += HDR_FRAG * step(0.005, HDR_FRAG.a);
     FragColor = NOR_FRAG * FxColor;
 }
 )";

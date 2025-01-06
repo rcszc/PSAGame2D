@@ -123,6 +123,7 @@ namespace GameBrickCore {
 	}
 
 	void GameBrickExecutor::BrickRendering() {
+		VirTimerStepSpeed = ActorModulesTimeStep;
 		// rendering brick shader_data.
 		BirckCompRendering->UpdateActorRendering(BrickRenderParams, VirTimerCount);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;

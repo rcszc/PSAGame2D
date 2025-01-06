@@ -271,6 +271,7 @@ namespace GameActorCore {
 	}
 
 	void GameActorExecutor::ActorRendering() {
+		VirTimerStepSpeed = ActorModulesTimeStep;
 		// rendering actor shader_data.
 		ActorCompRendering->UpdateActorRendering(ActorRenderParams, VirTimerCount);
 		VirTimerCount += PSAGM_VIR_TICKSTEP_GL * VirTimerStepSpeed;

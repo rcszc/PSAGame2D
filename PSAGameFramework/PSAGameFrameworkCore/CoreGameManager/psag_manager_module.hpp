@@ -138,7 +138,7 @@ namespace GameManagerCore {
 
 	namespace PointerManager {
 		// version 0.1.0, 2025_01_03 RCSZ.
-		// update: 2025.01.03.
+		// update: 2025.01.08.
 		template<typename T>
 		// not 'shared_ptr', non ref_counter.
 		class DefinePointer {
@@ -156,8 +156,6 @@ namespace GameManagerCore {
 			template <typename... Args>
 			size_t CreatePointer(Args&&... args) {
 				PointerDefine = new T(std::forward<Args>(args)...);
-				// rtti get object info.
-				PointerInfo = typeid(T).name();
 				return (size_t)PointerDefine;
 			}
 			// delete ptr, return address.
@@ -168,8 +166,13 @@ namespace GameManagerCore {
 				PointerDefine = nullptr;
 				return PtrAddr;
 			}
+			T* Get() { return PointerDefine; }
 			// RTTI: object info string.
-			std::string GetObjectINFO() { return PointerInfo; };
+			std::string GetObjectINFO() {
+				// rtti get object info.
+				PointerInfo = typeid(T).name();
+				return PointerInfo;
+			};
 		};
 	}
 

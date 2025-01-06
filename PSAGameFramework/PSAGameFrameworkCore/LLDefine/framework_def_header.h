@@ -39,6 +39,9 @@
 #define PSAG_COMPILE_X64 0
 #endif
 
+#define PSAG_COLSYSTEM_RGBA12
+// #define PSAG_COLSYSTEM_RGBA16
+
 // warring old_function.
 #if defined(_MSC_VER) // MSVC.
 #define OLD_FUNCTION __declspec(deprecated)

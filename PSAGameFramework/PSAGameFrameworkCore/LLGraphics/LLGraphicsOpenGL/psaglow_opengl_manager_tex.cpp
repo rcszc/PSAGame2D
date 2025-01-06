@@ -90,6 +90,12 @@ namespace PSAG_OGL_MAG {
 		GLenum InputFormat = GL_RGB;
 		if (channels == 4) InputFormat = GL_RGBA;
 
+#ifdef PSAG_COLSYSTEM_RGBA16
+		constexpr GLint CONST_FMT = GL_RGBA16F;
+#endif
+#ifdef PSAG_COLSYSTEM_RGBA12
+		constexpr GLint CONST_FMT = GL_RGBA12;
+#endif
 		// opengl api, create texture_array. [GL_TEX_01]
 		// internal_format = pixel_format. [20240704]
 		// internal_format RGBA12  (HDR12), pixel_format RGBA8888. [20240717]
