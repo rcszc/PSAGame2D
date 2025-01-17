@@ -1,5 +1,5 @@
 ﻿// PSAGameFramework. 2024_03_31.
-// @PomeloStar Studio 2024-2025 GameFramework(Engine).
+// @PomeloStar Studio 2024-2026 GameFramework(Engine).
 // Developers: 
 /*
 * Engine Version: 0.1.2 Alpha (10.20241226)
@@ -13,14 +13,13 @@
 * FileCompress: Zlib
 * PhysicsSystem: Box2D
 */
-// Engine Update: 2024_12_26.
+// Engine Update: 2025_01_17.
 // Copyright(c) RCSZ.
-#define PSAG2D_ENGINE_VER 12.20241226
+#define PSAG2D_ENGINE_VER 12.20250117
 /*
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX
 */
-
 #include <cstdlib>
 #include "PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.h"
 // 无丝竹之乱耳~

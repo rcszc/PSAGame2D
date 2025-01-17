@@ -86,7 +86,7 @@ namespace PSAG_THREAD_POOL {
             PSAG_LOGGER::PushLogger(LogInfo, PSAG_THREAD_LABEL, "close(free) thread_pool workers.");
         };
 
-        // thread_pool: push => tasks queue.
+        // thread(pool): push => tasks queue.
         template<typename InClass, typename... ArgsParam>
         std::future<std::shared_ptr<InClass>> PushTask(ArgsParam... Args) {
             auto TaskObject = std::make_shared<std::packaged_task<std::shared_ptr<InClass>()>>(

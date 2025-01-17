@@ -10,27 +10,23 @@
 using namespace std;
 namespace PRLC = PSAG_LOGGER::ReadLogCache;
 
-mutex                 LogMutex      = {};
-queue<PRLC::LogCache> LogWriteQueue = {};
-
-vector<PRLC::LogCache> GLOBAL_LOG_CACHE = {};
+vector<PRLC::LogCache> LogMessageCache = {};
 size_t LogWarringLines = NULL, LogErrorLines = NULL;
+
+mutex LogMutex = {};
+queue<PRLC::LogCache> LogWriteQueue = {};
 
 #include <iomanip>
 // time [xxxx.xx.xx.xx:xx:xx:xx ms].
 string __get_timestamp(const chrono::system_clock::time_point& time_point) {
-	auto timemillisecond = chrono::duration_cast<chrono::milliseconds>(time_point.time_since_epoch()) % 1000;
-	auto t = chrono::system_clock::to_time_t(time_point);
-	tm _time = {};
-#ifdef _WIN32
-	localtime_s(&_time, &t);
-#else
-	localtime_r(&t, &_time);
-#endif
-	stringstream _sstream;
-	_sstream << put_time(&_time, "[%Y.%m.%d %H:%M:%S") << " " << setfill('0') << setw(3) << timemillisecond.count() << " ms]";
+	auto Time   = std::chrono::system_clock::to_time_t(time_point);
+	auto TimeMs = std::chrono::duration_cast<chrono::milliseconds>(time_point.time_since_epoch()) % 1000;
+	// format time stamp.
+	stringstream SStream;
+	SStream << put_time(localtime(&Time), "[%Y.%m.%d %H:%M:%S") << ".";
+	SStream << setfill('0') << setw(3) << TimeMs.count() << " ms]";
 	// windows / linux time stamp.
-	return _sstream.str();
+	return SStream.str();
 }
 
 string FMT_TIME_STAMP(const chrono::system_clock::time_point& time_point) {
@@ -38,7 +34,7 @@ string FMT_TIME_STAMP(const chrono::system_clock::time_point& time_point) {
 }
 
 // global const hashlable.
-const std::unordered_map<int32_t, std::string> HashLogLable = {
+const std::unordered_map<int32_t, std::string> HashLogLevel = {
 	{LogError,   "\033[31m"},
 	{LogWarning, "\033[33m"},
 	{LogInfo,    "\033[90m"},
@@ -67,20 +63,19 @@ namespace PSAG_LOGGER {
 		if (label & LogWarning) { LogWarringLines++; };
 		if (label & LogError)   { LogErrorLines++; };
 
-		const char* LogLabelTemp = "[NULL]";
+		const char* LogLEVEL = "[NULL]";
 		switch (label) {
-		case(LogError):   { LogLabelTemp = "[ERROR]";   break; }
-		case(LogWarning): { LogLabelTemp = "[WARNING]"; break; }
-		case(LogInfo):    { LogLabelTemp = "[INFO]";    break; }
-		case(LogTrace):   { LogLabelTemp = "[TRACE]";   break; }
-		case(LogPerfmac): { LogLabelTemp = "[PERF]";    break; }
+		case(LogError):   { LogLEVEL = "[ERROR]";   break; }
+		case(LogWarning): { LogLEVEL = "[WARNING]"; break; }
+		case(LogInfo):    { LogLEVEL = "[INFO]";    break; }
+		case(LogTrace):   { LogLEVEL = "[TRACE]";   break; }
+		case(LogPerfmac): { LogLEVEL = "[PERF]";    break; }
 		}
-
 		string FmtModuleName = "[" + module_name + "]: ";
-		string FmtLog = __get_timestamp(chrono::system_clock::now()) + ":" + LogLabelTemp + ":" + FmtModuleName + logstr_text;
+		string FmtLog = __get_timestamp(chrono::system_clock::now()) + ":" + LogLEVEL + ":" + FmtModuleName + logstr_text;
 
 		// => read logger chache & logger process(print).
-		GLOBAL_LOG_CACHE.push_back(PRLC::LogCache(FmtLog, module_name, label));
+		LogMessageCache.push_back(PRLC::LogCache(FmtLog, module_name, label));
 		LogWriteQueue.push(PRLC::LogCache(FmtLog, module_name, label));
 	}
 
@@ -99,18 +94,18 @@ namespace PSAG_LOGGER {
 	}
 
 	void SET_PRINTLOG_STATE(bool status_flag) {
-		unique_lock<mutex> LogThreadLock(LogMutex);
+		lock_guard<mutex> LogThreadLock(LogMutex);
 		LOG_PRINT_SWITCH = status_flag; 
 	};
 
 	Vector3T<size_t> LogLinesStatistics() {
 		Vector3T<size_t> ReturnValue = {};
 		{
-			unique_lock<mutex> LogThreadLock(LogMutex);
-
-			ReturnValue.vector_x = GLOBAL_LOG_CACHE.size(); // total   lines.
-			ReturnValue.vector_y = LogWarringLines;         // warning lines.
-			ReturnValue.vector_z = LogErrorLines;           // error   lines.
+			lock_guard<mutex> LogThreadLock(LogMutex);
+			// log lines counting.
+			ReturnValue.vector_x = LogMessageCache.size(); // total   lines.
+			ReturnValue.vector_y = LogWarringLines;        // warning lines.
+			ReturnValue.vector_z = LogErrorLines;          // error   lines.
 		}
 		return ReturnValue;
 	}
@@ -120,12 +115,12 @@ namespace PSAG_LOGGER {
 			vector<LogCache> ReturnLogCache = {};
 			{
 				size_t RetLinesCount =
-					((int64_t)GLOBAL_LOG_CACHE.size() - lines - 1) >= 0 ?
-					((int64_t)GLOBAL_LOG_CACHE.size() - lines - 1) : 0;
+					((int64_t)LogMessageCache.size() - lines - 1) >= 0 ?
+					((int64_t)LogMessageCache.size() - lines - 1) : 0;
 
-				unique_lock<mutex> LogThreadLock(LogMutex);
-				for (size_t i = RetLinesCount; i < GLOBAL_LOG_CACHE.size(); ++i)
-					ReturnLogCache.push_back(GLOBAL_LOG_CACHE[i]);
+				lock_guard<mutex> LogThreadLock(LogMutex);
+				for (size_t i = RetLinesCount; i < LogMessageCache.size(); ++i)
+					ReturnLogCache.push_back(LogMessageCache[i]);
 			}
 			return ReturnLogCache;
 		}
@@ -145,38 +140,39 @@ namespace PSAG_LOGGER_PROCESS {
 	thread* LogProcessThread = {};
 	bool    LogProcessFlag   = true;
 
-	void logprocess_write_file_eventloop(const char* folder) {
-		// create name: folder + name(time) + ext.
-		string LogFileName = 
+	void process_printwrite_file_eventloop(const char* folder) {
+		// create name: folder + name(time) + extensions.
+		string FileNameTemp = 
 			folder + 
-			to_string(chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count()) +
-			LOGFILE_EXTENSION;
+			to_string(chrono::duration_cast<chrono::microseconds>(
+				chrono::steady_clock::now().time_since_epoch()).count()
+			) + LOGFILE_EXTENSION;
 
-		fstream WriteLogFile(LogFileName, ios::out | ios::app);
-		PSAG_LOGGER::PushLogger(LogInfo, PSAG_LOGGER_LABEL, "create log_file: %s", LogFileName.c_str());
+		fstream WriteLogFile(FileNameTemp, ios::out | ios::app);
+		PSAG_LOGGER::PushLogger(LogInfo, PSAG_LOGGER_LABEL, "create log_file: %s", FileNameTemp.c_str());
 		
 		while (LogProcessFlag) {
 			unique_lock<mutex> LogThreadLock(LogMutex);
-
+			// read log cache queue.
 			while (!LogWriteQueue.empty()) {
 				const PRLC::LogCache& LogMsgTemp = LogWriteQueue.front();
 				
 				WriteLogFile << LogMsgTemp.LogString << endl;
-				// print.
+				// print color_log entry.
 #if PSAG_DEBUG_MODE
-				auto FindLevelColor = HashLogLable.find(LogMsgTemp.LogLabel);
-				if (FindLevelColor != HashLogLable.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
+				auto FindLevelColor = HashLogLevel.find(LogMsgTemp.LogLabel);
+				if (FindLevelColor != HashLogLevel.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
 					cout << FindLevelColor->second << LogMsgTemp.LogString << " \033[0m" << endl;
 #endif
-				// delete logmsg_item.
+				// delete log_message item.
 				LogWriteQueue.pop();
 			}
+			LogThreadLock.unlock();
 		}
 		WriteLogFile.close();
 	}
 
 	bool StartLogProcessing(const char* folder) {
-		filesystem::path CreateDir = "PSAGameSystemLogs/";
 		// check logger system folder.
 		if (!filesystem::exists(folder) || !filesystem::is_directory(folder)) {
 			PSAG_LOGGER::PushLogger(LogWarning, PSAG_LOGGER_LABEL, "invalid folder: %s", folder);
@@ -189,7 +185,7 @@ namespace PSAG_LOGGER_PROCESS {
 		}
 		// init logger_thread.
 		try {
-			LogProcessThread = new thread(logprocess_write_file_eventloop, folder);
+			LogProcessThread = new thread(process_printwrite_file_eventloop, folder);
 			PSAG_LOGGER::PushLogger(LogInfo, PSAG_LOGGER_LABEL, "start thread success.");
 		}
 		catch (const exception& err) {
@@ -214,7 +210,7 @@ namespace PSAG_LOGGER_PROCESS {
 	}
 }
 
-std::atomic<size_t> PSAG_SYS_GENERATE_KEY::UniqueCodeCountTemp = NULL;
-
-size_t     PSAG_SYS_GENERATE_KEY::TimeCountBuffer      = {};
-std::mutex PSAG_SYS_GENERATE_KEY::TimeCountBufferMutex = {};
+std::atomic<size_t> PSAG_SYS_GENERATE_KEY::UniqueCodeCounter = {};
+// time counter & resource mutex.
+std::mutex PSAG_SYS_GENERATE_KEY::TimeCounterMutex = {};
+size_t     PSAG_SYS_GENERATE_KEY::TimeCounter      = {};

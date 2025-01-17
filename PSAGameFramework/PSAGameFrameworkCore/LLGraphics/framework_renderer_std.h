@@ -68,8 +68,8 @@ public:
 	virtual bool SetTextureParam(uint32_t width, uint32_t height, TextureFilterMode mode) = 0;
 	virtual bool SetTextureSamplerCount(uint32_t count) = 0;
 
-	virtual bool PsuhCreateTexEmpty(const TextureParam& param) = 0;
-	virtual bool PushCreateTexData(const TextureParam& param, uint32_t channels, const RawDataStream& data) = 0;
+	virtual bool PsuhCreateTexEmpty (const TextureParam& param) = 0;
+	virtual bool PushCreateTexData  (const TextureParam& param, uint32_t channels, const RawDataStream& data) = 0;
 	virtual bool PushCreateTexLoader(const TextureParam& param, const std::string& file) = 0;
 
 	virtual bool CreateTexture(bool clamp_edge_mode) = 0;
@@ -98,7 +98,7 @@ struct ImageRawData;
 class PsagGLmanagerTextureView {
 public:
 	virtual bool CreateTexViewEmpty(uint32_t width, uint32_t height, TextureFilterMode mode) = 0;
-	virtual bool CreateTexViewData(const ImageRawData& image_data, TextureFilterMode mode) = 0;
+	virtual bool CreateTexViewData (const ImageRawData& image_data, TextureFilterMode mode) = 0;
 
 	virtual PsagTextureView CreateTexture() = 0;
 };
@@ -123,7 +123,7 @@ public:
 	virtual PsagVertexAttribute CreateVertexAttribute(uint32_t type, uint32_t begin_location = 0) = 0;
 	virtual PsagVertexBuffer CreateVertexBuffer() = 0;
 
-	virtual bool CreateStaticModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) = 0;
+	virtual bool CreateStaticModel (PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) = 0;
 	virtual bool CreateDynamicModel(PsagVertexAttribute veratt, PsagVertexBuffer verbuf, const float* verptr, size_t bytes) = 0;
 
 	virtual PsagVertexBufferAttribute _MS_GETRES(ResourceFlag& flag) = 0;
@@ -147,7 +147,7 @@ class PsagGLmanagerFrameBuffer {
 public:
 	virtual bool CreateFrameBuffer() = 0;
 
-	virtual bool TextureBindFBO(const PsagTextureAttribute& texture, uint32_t attachment) = 0;
+	virtual bool TextureBindFBO   (const PsagTextureAttribute& texture, uint32_t attachment) = 0;
 	virtual bool TextureDepBindFBO(const PsagTextureAttribute& texture) = 0;
 
 	virtual bool RenderBufferBindFBO(PsagRenderBufferAttribute buffer) = 0;
@@ -205,7 +205,7 @@ class PsagGLresourceShader {
 public:
 	virtual PsagShader ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerShader* res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceShader() = default;
@@ -215,7 +215,7 @@ class PsagGLresourceTexture {
 public:
 	virtual PsagTextureAttribute ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmangerTextureStorage* res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceTexture() = default;
@@ -226,7 +226,7 @@ class PsagGLresourceVertexBuffer {
 public:
 	virtual PsagVertexBufferAttribute ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerVertex* res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceVertexBuffer() = default;
@@ -236,7 +236,7 @@ class PsagGLresourceVertexAttribute {
 public:
 	virtual PsagVertexAttribute ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagVertexAttribute res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceVertexAttribute() = default;
@@ -246,7 +246,7 @@ class PsagGLresourceFrameBuffer {
 public:
 	virtual PsagFrameBuffer ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerFrameBuffer* res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceFrameBuffer() = default;
@@ -256,7 +256,7 @@ class PsagGLresourceRenderBuffer {
 public:
 	virtual PsagRenderBufferAttribute ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerRenderBuffer* res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceRenderBuffer() = default;
@@ -266,7 +266,7 @@ class PsagGLresourceUniformBuffer {
 public:
 	virtual PsagUniformBuffer ResourceFind(ResUnique key) = 0;
 	virtual bool ResourceStorage(ResUnique key, PsagGLmanagerUniformBuffer* res) = 0;
-	virtual bool ResourceDelete(ResUnique key) = 0;
+	virtual bool ResourceDelete (ResUnique key) = 0;
 
 	virtual size_t ResourceSize() = 0;
 	virtual ~PsagGLresourceUniformBuffer() = default;

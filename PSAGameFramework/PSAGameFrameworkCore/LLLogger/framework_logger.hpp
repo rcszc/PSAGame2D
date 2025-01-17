@@ -81,31 +81,30 @@ namespace PSAG_LOGGER_PROCESS {
 // framework global generate_key.
 class PSAG_SYS_GENERATE_KEY {
 private:
-	static std::atomic<size_t> UniqueCodeCountTemp;
+	static std::atomic<size_t> UniqueCodeCounter;
 
-	static size_t     TimeCountBuffer;
-	static std::mutex TimeCountBufferMutex;
+	static std::mutex TimeCounterMutex;
+	static size_t     TimeCounter;
 public:
 	// generate unique number(time:nanoseconds).
 	// time_key => count_key. RCSZ [20240825]
 	size_t PsagGenUniqueKey() {
 		// count: const_add_value: 2.
-		return UniqueCodeCountTemp += 2;
+		return UniqueCodeCounter += 2;
 	}
-
 	// generate unique number(time:nanoseconds). [OLD]
 	size_t PsagGenTimeKey() {
-		std::lock_guard<std::mutex> Lock(TimeCountBufferMutex);
-
-		size_t GenNumberTemp = (size_t)std::chrono::duration_cast
-			<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-
-		if (GenNumberTemp == TimeCountBuffer) {
+		std::lock_guard<std::mutex> Lock(TimeCounterMutex);
+		// ganerate time code(ns).
+		size_t GenNumberTemp = (size_t)std::chrono::duration_cast<std::chrono::nanoseconds>(
+			std::chrono::steady_clock::now().time_since_epoch()
+		).count();
+		if (GenNumberTemp == TimeCounter) {
 			// prevent duplication.
 			std::chrono::nanoseconds ThreadSleep(2);
 			std::this_thread::sleep_for(ThreadSleep);
 		}
-		TimeCountBuffer = GenNumberTemp;
+		TimeCounter = GenNumberTemp;
 		return GenNumberTemp;
 	}
 };

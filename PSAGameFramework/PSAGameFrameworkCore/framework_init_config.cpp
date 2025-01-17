@@ -119,10 +119,9 @@ namespace PsagFrameworkCore {
 		GraphShaders.PrivateShaders.ShaderFragFxSequence = GetShaderScript("private_fragment_fx_sequence");
 		
 		GraphicsShaderCode::GLOBALRES.Set(GraphShaders);
-
 		// use system default.
 		FrameworkGraphicsParams = INIT_PARAMETERS();
 		// config success.
-		return true;
+		return !CHECK_FLAG_WINDOW;
 	}
 }

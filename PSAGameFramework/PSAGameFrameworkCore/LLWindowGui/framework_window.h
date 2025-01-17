@@ -205,6 +205,7 @@ namespace PSAG_WINDOW_WIN32 {
 namespace ImPsag {
 	// color(r,g,b,a): value => r,g,b ahpla => a.
 	ImVec4 ColorGrayscaleScale(const ImVec4& color, float value, float ahpla = 0.0f);
+
 	float ItemCenteredCalcX(float width);
 	float ItemCenteredCalcY(float height);
 

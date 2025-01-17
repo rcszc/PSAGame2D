@@ -53,12 +53,11 @@ bool PsaGameV1Demo::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	for (float i = 0.0f; i < 360.0f; i += 60.0f) {
 		GameCreateNPC(Vector2T<float>(sin(PSAG_M_DEGRAD(i)) * 380.0f, cos(PSAG_M_DEGRAD(i)) * 380.0f));
 	}
-
 	FINAL = new PsagManager::SceneFinal::GameFinalProcessing();
 
 	PsagManager::FINAL_PARAMS PresetParams0 = {};
 
-	PresetParams0.GameSceneFilterAVG   = 0.325f;
+	PresetParams0.GameSceneFilterAVG   = 0.0f;
 	PresetParams0.GameSceneBloomRadius = 22;
 	PresetParams0.GameSceneBloomBlend  = Vector2T<float>(1.1128f, 1.1032f);
 
@@ -74,7 +73,7 @@ bool PsaGameV1Demo::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 	PresetParams0 = PsagManager::FINAL_PARAMS();
 
-	PresetParams0.GameSceneFilterAVG   = 0.292f;
+	PresetParams0.GameSceneFilterAVG   = 0.16f;
 	PresetParams0.GameSceneBloomRadius = 22;
 	PresetParams0.GameSceneBloomBlend  = Vector2T<float>(1.0f, 1.25f);
 

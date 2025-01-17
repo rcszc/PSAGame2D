@@ -18,17 +18,16 @@ namespace GameBrickCore {
 		CapPoint.CaptureSettingTagging("brick create.");
 		CapPoint.CaptureBegin();
 #endif
-		if (INIT_DESC.BrickShaderResource == nullptr) {
-			PushLogger(LogError, PSAGM_BRICK_CORE_LABEL, "game_brick shader_resource = nullptr.");
-			return;
-		}
-		// shader_resolution.
-		auto ResTemp = INIT_DESC.BrickShaderResource->__RENDER_RESOLUTION;
-		RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
-
-		BrickRenderRes = INIT_DESC.BrickShaderResource;
-
 		if (INIT_DESC.EnableRendering) {
+			if (INIT_DESC.BrickShaderResource == nullptr) {
+				PushLogger(LogError, PSAGM_BRICK_CORE_LABEL, "game_brick shader_resource = nullptr.");
+				return;
+			}
+			// shader_sys => get resolution.
+			auto ResTemp = INIT_DESC.BrickShaderResource->__RENDER_RESOLUTION;
+			RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
+
+			BrickRenderRes = INIT_DESC.BrickShaderResource;
 			BirckCompRendering = new GameComponents::ActorRendering();
 
 			BirckCompRendering->RenderResolution = RenderingResolution;
@@ -97,9 +96,13 @@ namespace GameBrickCore {
 		ActorPhyConfig.PhysicsCollisionThis   = GameActorCore::ActorCollisionGroup::ActorPhyGroup15;
 		ActorPhyConfig.PhysicsCollisionFilter = GameActorCore::ActorCollisionGroup::ActorPhyGroup0;
 
-		if (INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr)
-			ActorPhyConfig.CollVertexGroup = PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());
-
+		if (INIT_DESC.BrickShaderResource != nullptr &&
+			INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr
+		) {
+			// render vert => collision vert.
+			ActorPhyConfig.CollVertexGroup =
+				PhysicsEngine::VertexPosToBox2dVec(*INIT_DESC.BrickShaderResource->__GET_VERTICES_RES());
+		}
 		ActorPhyConfig.PhyBoxRotate         = INIT_DESC.InitialAngle;
 		ActorPhyConfig.PhysicsCollisionFlag = INIT_DESC.EnableCollision;
 		ActorPhyConfig.PhyBoxCollisionSize  = INIT_DESC.InitialScale;

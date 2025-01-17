@@ -19,8 +19,8 @@ void PsaGameV1Demo::GameCreateBulletPawn(const Vector2T<float>& position, float 
         PsagManager::Maths::CalcFuncPointAngleDistance(position, angle, 25.0f);
 
     ConfigBulletActor.InitialSpeed = Vector2T<float>(
-            sin(PSAG_M_DEGRAD(-angle - 90.0f)) * BULLET_SPEED, 
-            cos(PSAG_M_DEGRAD(-angle - 90.0f)) * BULLET_SPEED
+            sin(PSAG_M_DEGRAD(angle)) * BULLET_SPEED, 
+            cos(PSAG_M_DEGRAD(angle)) * BULLET_SPEED
         );
 
     ConfigBulletActor.InitialVertexColor    = Vector4T(0.0f, 2.5f, 2.5f, 1.0f);
