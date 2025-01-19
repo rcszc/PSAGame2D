@@ -8,8 +8,11 @@ namespace GameManagerCore {
 	namespace GameFX {
 
 		GameFxParticle::GameFxParticle(const GameFxParticleDESC& INIT_DESC) {
-			FxParticleObject = new 
-				GraphicsEngineParticle::PsagGLEngineParticle(INIT_DESC.ParticleRenderResolution, INIT_DESC.ParticleRenderTexture);
+			// create new particle_system.
+			FxParticleObject = new GraphicsEngineParticle::PsagGLEngineParticle(
+				INIT_DESC.ParticleRenderResolution, 
+				INIT_DESC.ParticleRenderTexture
+			);
 			// set particle calc mode.
 			FxParticleObject->ParticleClacMode(
 				(GraphicsEngineParticle::ParticleCalcMode)INIT_DESC.ParticleUpdateCalcMode
@@ -20,39 +23,23 @@ namespace GameManagerCore {
 
 		GameFxParticle::~GameFxParticle() {
 			delete FxParticleObject;
-
 			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_particle free.");
 		}
 
-		bool GameFxParticle::FxParticlesGroupCreate(const GameFxCreateParticleDESC& CREATE_DESC) {
-			GraphicsEngineParticle::ParticleGenerator ParticleGroupCreate = {};
-
-			if (!ParticleGroupCreate.ConfigCreateNumber(CREATE_DESC.PariclesNumber))
+		bool GameFxParticle::FxParticlesGroupCreate(GraphicsEngineParticle::ParticleGeneratorBase* Generator) {
+			if (Generator == nullptr) {
+				PushLogger(LogError, PSAGM_MANAGER_FX_LABEL, "manager fx_particle generator is nullptr.");
 				return false;
-			ParticleGroupCreate.ConfigCreateMode(CREATE_DESC.ParticlesLaunchMode);
-
-			ParticleGroupCreate.ConfigLifeDispersion(CREATE_DESC.ParticlesLifeRandom);
-			ParticleGroupCreate.ConfigSizeDispersion(CREATE_DESC.ParticlesSizeRandom);
-
-			ParticleGroupCreate.ConfigRandomColorSystem(
-				CREATE_DESC.ParticlesCrRandom,
-				CREATE_DESC.ParticlesCgRandom,
-				CREATE_DESC.ParticlesCbRandom,
-				CREATE_DESC.ParticlesColorMode
-			);
-			ParticleGroupCreate.ConfigRandomDispersion(
-				CREATE_DESC.ParticlesVecRandom,
-				CREATE_DESC.ParticlesPosRandom,
-				Vector3T<float>(CREATE_DESC.ParticlesPosOffset.vector_x, CREATE_DESC.ParticlesPosOffset.vector_y, 0.0f)
-			);
+			}
 			// particle generator => particle system.
-			FxParticleObject->ParticleCreate(&ParticleGroupCreate);
+			FxParticleObject->ParticleCreate(Generator);
+			delete Generator; Generator = nullptr;
 			return true;
 		}
 
 		bool GameFxParticle::FxParticlesAdd(const ParticleAttributes& ADD_PARTICLE) {
 			FxParticleObject->GetParticleDataset()->push_back(ADD_PARTICLE);
-			return true; // non-err 20240729.
+			return ADD_PARTICLE.ParticleScaleSize > 0.0f;
 		}
 
 		bool GameFxParticle::FxParticlesAddDataset(const ParticlesDataset& ADD_PARTICLES) {

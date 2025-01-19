@@ -94,8 +94,14 @@
     <Filter Include="源文件\PSAGameFrameworkCore\LLFilesys\decode_channels">
       <UniqueIdentifier>{3da887e0-6648-46e6-ac53-780f5fba77c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\A-PSAGameFrameworkDev\psagame_demo">
-      <UniqueIdentifier>{37754b3d-3e04-4e40-a220-abd65c242972}</UniqueIdentifier>
+    <Filter Include="源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator">
+      <UniqueIdentifier>{efb04bba-a16b-4f10-ae6b-1bee3e1e5224}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\A-PSAGameFrameworkDev\GameZeroProject">
+      <UniqueIdentifier>{5990445c-8fb1-4e37-90d4-ab660edf80a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\A-PSAGameFrameworkDev\GameZeroProject\BASE">
+      <UniqueIdentifier>{a65c105c-68ad-41b6-a301-2b0dd47b86f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -279,23 +285,32 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_notify.hpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_shape.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_init.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_drift.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_points.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_shader.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn_glsl.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn_npc.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene_glsl.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -458,8 +473,17 @@
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp">
       <Filter>源文件\PSAGameFrameworkCore\LLThread</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h">
-      <Filter>源文件\A-PSAGameFrameworkDev\psagame_demo</Filter>
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.hpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\BASE</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

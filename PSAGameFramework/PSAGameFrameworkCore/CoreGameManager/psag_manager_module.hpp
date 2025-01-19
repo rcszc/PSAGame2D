@@ -9,51 +9,15 @@
 
 namespace GameManagerCore {
 	namespace GameFX {
+		namespace System = GraphicsEngineParticle;
 		StaticStrLABEL PSAGM_MANAGER_FX_LABEL = "PSAG_MANAGER_FX";
 		// ******************************** FX-Particle ********************************
 
-		namespace ParticleMode = GraphicsEngineParticle::ParticlesGenMode;
-		struct GameFxCreateParticleDESC {
-			float PariclesNumber;
-
-			Vector2T<float> ParticlesLifeRandom;
-			Vector2T<float> ParticlesSizeRandom;
-
-			Vector2T<float> ParticlesCrRandom; // color_red.
-			Vector2T<float> ParticlesCgRandom; // color_green.
-			Vector2T<float> ParticlesCbRandom; // color_blue.
-			// color: rgb draw_mode.
-			ParticleMode::ColorChannelMode ParticlesColorMode;
-
-			Vector2T<float> ParticlesVecRandom;
-			Vector2T<float> ParticlesPosRandom;
-			Vector2T<float> ParticlesPosOffset;
-
-			ParticleMode::EmittersMode ParticlesLaunchMode;
-
-			GameFxCreateParticleDESC() :
-				ParticlesColorMode (ParticleMode::ChannelsRGB),
-				ParticlesLaunchMode(ParticleMode::PrtcPoints),
-				PariclesNumber     (10.0f),
-
-				ParticlesLifeRandom(Vector2T<float>(128.0f, 256.0f)),
-				ParticlesSizeRandom(Vector2T<float>(1.0f, 2.0f)),
-
-				ParticlesCrRandom(Vector2T<float>(0.0f, 0.0f)),
-				ParticlesCgRandom(Vector2T<float>(0.0f, 0.0f)),
-				ParticlesCbRandom(Vector2T<float>(0.0f, 0.0f)),
-
-				ParticlesVecRandom(Vector2T<float>(-1.0f, 1.0f)),
-				ParticlesPosRandom(Vector2T<float>(-1.0f, 1.0f)),
-				ParticlesPosOffset(Vector2T<float>( 0.0f, 0.0f))
-			{}
-		};
-
-		// value = 'GraphicsEngineParticle::ParticleCalcMode'
+		// particle computing mode type.
 		enum ParticleUpdateMode {
-			CALC_DEFAULT  = 1 << 1, // Ĭ ϼ   ģʽ.
-			CALC_PARALLEL = 1 << 2, //    м   ģʽ.
-			CALC_NO_CALC  = 1 << 3  //  ޼   ģʽ.
+			CALC_DEFAULT  = 1 << 1, // main thread.
+			CALC_PARALLEL = 1 << 2, // multi thread.
+			CALC_NO_CALC  = 1 << 3  // not calc.
 		};
 
 		struct GameFxParticleDESC {
@@ -73,7 +37,7 @@ namespace GameManagerCore {
 		};
 
 		using ParticleAttributes = GraphicsEngineParticle::ParticleAttributes;
-		using ParticlesDataset = std::vector<ParticleAttributes>;
+		using ParticlesDataset   = std::vector<ParticleAttributes>;
 
 		class GameFxParticle {
 		protected:
@@ -82,8 +46,10 @@ namespace GameManagerCore {
 			GameFxParticle(const GameFxParticleDESC& INIT_DESC);
 			~GameFxParticle();
 
-			bool FxParticlesGroupCreate(const GameFxCreateParticleDESC& CREATE_DESC);
-
+			// generator object destroyed by particle systems.
+			bool FxParticlesGroupCreate(
+				GraphicsEngineParticle::ParticleGeneratorBase* Generator
+			);
 			bool FxParticlesAdd       (const ParticleAttributes& ADD_PARTICLE);
 			bool FxParticlesAddDataset(const ParticlesDataset& ADD_PARTICLES);
 

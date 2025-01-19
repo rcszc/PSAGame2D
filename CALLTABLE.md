@@ -1,7 +1,7 @@
 # 上层(模块)调用表
 > ©PomeloStar Studio 2024-2025
 
-__Developer(s):__ ```RCSZ``` __Update:__ ```2024.12.26```
+__Developer(s):__ ```RCSZ``` __Update:__ ```2025.01.19```
 
 __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编号 `01` 组内编号
 
@@ -71,17 +71,23 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 ---
 
-## PsagManager (21)
+## PsagManager (24)
 
 `P-M2001` ```PsagManager::Fx::ParticleDESC```
 
-`P-M2002` ```PsagManager::Fx::ParticleGenDESC```
+`P-M2002` ```PsagManager::Fx::Particle```
 
 `P-M2003` ```PsagManager::Fx::ParticleCalcMode```
 
-`P-M2004` ```PsagManager::Fx::ParticleSrcAttri```
+`P-M2004` ```PsagManager::Fx::ParticleSrcAttrib```
 
 `P-M2005` ```PsagManager::Fx::ParticleSrcArray```
+
+`P-M2006` ```PsagManager::Fx::ParticleGenPoints```
+
+`P-M2007` ```PsagManager::Fx::ParticleGenShape```
+
+`P-M2008` ```PsagManager::Fx::ParticleGenDrift```
 
 > M20
 

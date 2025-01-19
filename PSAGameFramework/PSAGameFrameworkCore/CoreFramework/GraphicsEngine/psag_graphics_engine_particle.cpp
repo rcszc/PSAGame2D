@@ -18,40 +18,46 @@ constexpr float STD_PARTICLES_Z = 75.0f;
 
 inline float RandomTimeSeedFP32(float value_min, float value_max) {
 	// seed: time(microseconds) => MT19937.
-	mt19937 MtGen((uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now().time_since_epoch()).count());
+	mt19937 MtGen((uint32_t)chrono::duration_cast<chrono::microseconds>(
+		chrono::system_clock::now().time_since_epoch()
+	).count());
 	uniform_real_distribution<float> Distr(value_min, value_max);
 	return Distr(MtGen);
 }
 
-inline void ParticleDispPosition(GraphicsEngineParticle::ParticleAttributes& ptc, const Vector2T<float>& pos, const Vector3T<float>& off) {
+inline void ParticleDispPosition(
+	GraphicsEngineParticle::ParticleAttributes& PARTC, 
+	const Vector2T<float>& pos, const Vector3T<float>& offset
+) {
 	// position dispersion.
-	ptc.ParticlePosition.vector_x = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + off.vector_x;
-	ptc.ParticlePosition.vector_y = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + off.vector_y;
-	ptc.ParticlePosition.vector_z = STD_PARTICLES_Z + off.vector_z;
+	PARTC.ParticlePosition.vector_x = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + offset.vector_x;
+	PARTC.ParticlePosition.vector_y = RandomTimeSeedFP32(pos.vector_x, pos.vector_y) + offset.vector_y;
+	PARTC.ParticlePosition.vector_z = STD_PARTICLES_Z + offset.vector_z;
 }
 
-inline void ParticleDispVector(GraphicsEngineParticle::ParticleAttributes& ptc, Vector2T<float>& vec) {
+inline void ParticleDispVector(
+	GraphicsEngineParticle::ParticleAttributes& PARTC, Vector2T<float>& vec
+) {
 	// vector dispersion.
-	ptc.ParticleVector.vector_x = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
-	ptc.ParticleVector.vector_y = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
-	// ptc.ParticleVector.vector_z = RandomTimeSeedFP32(vec.vector_x, vec.vector_y); // z-non-speed [20240819]
-	ptc.ParticleVector.vector_z = 0.0f;
+	PARTC.ParticleVector.vector_x = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
+	PARTC.ParticleVector.vector_y = RandomTimeSeedFP32(vec.vector_x, vec.vector_y);
+	PARTC.ParticleVector.vector_z = 0.0f;
 }
 
 inline void ParticleColorsys(
-	GraphicsEngineParticle::ParticleAttributes& ptc, const Vector3T<Vector2T<float>>& color_system,
-	bool gray_enable
+	GraphicsEngineParticle::ParticleAttributes& PARTC, 
+	const Vector3T<Vector2T<float>>& color_system, bool gray_enable
 ) {
 	float ColorAhpla = float(rand() % (1500 - 500 + 1) + 500) / 1000.0f;
 	if (gray_enable) {
 		float ColorGray = RandomTimeSeedFP32(color_system.vector_x.vector_x, color_system.vector_x.vector_y);
-		ptc.ParticleColor = Vector4T<float>(ColorGray, ColorGray, ColorGray, ColorAhpla);
+		PARTC.ParticleColor = Vector4T<float>(ColorGray, ColorGray, ColorGray, ColorAhpla);
 		return;
 	}
-	ptc.ParticleColor.vector_x = RandomTimeSeedFP32(color_system.vector_x.vector_x, color_system.vector_x.vector_y);
-	ptc.ParticleColor.vector_y = RandomTimeSeedFP32(color_system.vector_y.vector_x, color_system.vector_y.vector_y);
-	ptc.ParticleColor.vector_z = RandomTimeSeedFP32(color_system.vector_z.vector_x, color_system.vector_z.vector_y);
-	ptc.ParticleColor.vector_w = ColorAhpla;
+	PARTC.ParticleColor.vector_x = RandomTimeSeedFP32(color_system.vector_x.vector_x, color_system.vector_x.vector_y);
+	PARTC.ParticleColor.vector_y = RandomTimeSeedFP32(color_system.vector_y.vector_x, color_system.vector_y.vector_y);
+	PARTC.ParticleColor.vector_z = RandomTimeSeedFP32(color_system.vector_z.vector_x, color_system.vector_z.vector_y);
+	PARTC.ParticleColor.vector_w = ColorAhpla;
 }
 
 // normal.x = particles.life value.
@@ -77,163 +83,110 @@ inline vector<float> ParticleBaseElement(
 }
 
 namespace GraphicsEngineParticle {
-
-	bool ParticleGenerator::ConfigCreateNumber(float number) {
-		// generator particles < 8.
-		if (number < 8.0f)
-			return false;
-		ParticlesNumber = (size_t)number;
-		return true;
-	}
-
-	void ParticleGenerator::ConfigCreateMode(ParticlesGenMode::EmittersMode mode) {
-		ParticlesModeType = mode;
-	}
-
-	void ParticleGenerator::ConfigLifeDispersion(Vector2T<float> rand_limit_life) {
-		// particle rand limit: [0.0,n].
-		rand_limit_life.vector_x = rand_limit_life.vector_x <= 0.0f ? 0.0f : rand_limit_life.vector_x;
-		rand_limit_life.vector_y = rand_limit_life.vector_y <= 0.0f ? 0.0f : rand_limit_life.vector_y;
-		RandomLimitLife = Vector2T<uint32_t>((uint32_t)rand_limit_life.vector_x, (uint32_t)rand_limit_life.vector_y);
-	}
-
-	void ParticleGenerator::ConfigSizeDispersion(Vector2T<float> rand_limit_size) {
-		// particle rand size: [0.0,n].
-		rand_limit_size.vector_x = rand_limit_size.vector_x <= 0.0f ? 0.0f : rand_limit_size.vector_x;
-		rand_limit_size.vector_y = rand_limit_size.vector_y <= 0.0f ? 0.0f : rand_limit_size.vector_y;
-		RandomScaleSize = rand_limit_size;
-	}
-
-	void ParticleGenerator::ConfigRandomColorSystem(
-		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b, 
-		ParticlesGenMode::ColorChannelMode mode
+	// color channels filter.
+	Vector3T<Vector2T<float>> __COLOR_SYSTEM_TYPE(
+		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
+		ParticlesGenMode::ColorChannelMode mode,
+		bool* gray_switch
 	) {
 		switch (mode) {
-		case(ParticlesGenMode::Grayscale):   { EnableGrayscale = true; break; }
-		case(ParticlesGenMode::ChannelsRG):  { b = Vector2T<float>();  break; }
-		case(ParticlesGenMode::ChannelsRB):  { g = Vector2T<float>();  break; }
-		case(ParticlesGenMode::ChannelsGB):  { r = Vector2T<float>();  break; }
+		case(ParticlesGenMode::ChannelsRG):  { b = Vector2T<float>(); break; }
+		case(ParticlesGenMode::ChannelsRB):  { g = Vector2T<float>(); break; }
+		case(ParticlesGenMode::ChannelsGB):  { r = Vector2T<float>(); break; }
+		case(ParticlesGenMode::Grayscale):   { *gray_switch = true;   break; }
 		case(ParticlesGenMode::ChannelsRGB): { break; }
 		}
-		RandomColorSystem = Vector3T<Vector2T<float>>(r, g, b);
+		return Vector3T<Vector2T<float>>(r, g, b);
 	}
 
-	void ParticleGenerator::ConfigRandomDispersion(
-		Vector2T<float> rand_limit_vector, Vector2T<float> rand_limit_position, Vector3T<float> offset_position
-	) {
-		RandomLimitVector   = rand_limit_vector;
-		RandomLimitPosition = rand_limit_position;
-		PositionOffset      = offset_position;
+	void GeneratorPointsDiffu::CreateAddParticleDataset(vector<ParticleAttributes>& data) {
+		for (size_t i = 0; i < ParticlesNumber; ++i) {
+			ParticleAttributes ParticleTemp = {};
+
+			ParticleDispPosition(ParticleTemp, RandomPosition, OffsetPosition);
+			ParticleDispVector  (ParticleTemp, RandomSpeed);
+			ParticleColorsys    (ParticleTemp, RandomColorSystem, EnableGrayscale);
+
+			ParticleTemp.ParticleLife      = RandomTimeSeedFP32(RandomLimitLife.vector_x, RandomLimitLife.vector_y);
+			ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
+			GeneratorCache.push_back(ParticleTemp);
+		}
+		// particles cache data => out(insert).
+		data.insert(data.end(), GeneratorCache.begin(), GeneratorCache.end());
 	}
 
-	void ParticleGenerator::CreateAddParticleDataset(vector<ParticleAttributes>& data) {
-		switch (ParticlesModeType) {
-		// rand_limit vec2 x,y [speed]
-		case(ParticlesGenMode::PrtcPoints): {
+	void GeneratorShape::CreateAddParticleDataset(vector<ParticleAttributes>& data) {
+		switch (ParticlesMode) {
+		case(1):
 			for (size_t i = 0; i < ParticlesNumber; ++i) {
 				ParticleAttributes ParticleTemp = {};
 
-				ParticleDispPosition(ParticleTemp, RandomLimitPosition, PositionOffset);
-				ParticleDispVector(ParticleTemp, RandomLimitVector);
+				ParticleDispPosition(ParticleTemp, RandomPosition, OffsetPosition);
 				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
 
-				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
+				ParticleTemp.ParticleVector = Vector3T<float>(
+					PTCMS_SIN(i * 3.8f) * RandomSpeed.vector_x,
+					PTCMS_COS(i * 3.8f) * RandomSpeed.vector_y,
+					0.0f
+				);
+				ParticleTemp.ParticleLife      = RandomTimeSeedFP32(RandomLimitLife.vector_x, RandomLimitLife.vector_y);
 				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
-				ParticlesGenCache.push_back(ParticleTemp);
+				GeneratorCache.push_back(ParticleTemp);
 			}
 			break;
-		}
-		// rand_limit vec2 x:cricle_x_scale, y:cricle_y_scale [speed]
-		case(ParticlesGenMode::PrtcCircle): {
-			for (size_t i = 0; i < ParticlesNumber; ++i) {
-				ParticleAttributes ParticleTemp = {};
-
-				ParticleDispPosition(ParticleTemp, RandomLimitPosition, PositionOffset);
-				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
-
-				ParticleTemp.ParticleVector =
-					Vector3T<float>(PTCMS_SIN(i * 3.8f) * RandomLimitVector.vector_x, PTCMS_COS(i * 3.8f) * RandomLimitVector.vector_y, 0.0f);
-
-				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
-				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
-				ParticlesGenCache.push_back(ParticleTemp);
-			}
-			break;
-		}
-		// rand_limit vec2 x:square_side, y:null [speed] 
-		case(ParticlesGenMode::PrtcSquare): {
+		case(2):
 			const float CenterX = 0.0f, CenterY = 0.0f;
 			vector<Vector3T<float>> PointsSample = {};
 
-			float SideLength = RandomLimitVector.vector_x;
+			float SideLength = RandomSpeed.vector_x;
 			float SampleStep = SideLength / (float)ParticlesNumber * 4.0f;
 
 			for (int i = 0; i < ParticlesNumber / 4; ++i) {
 				PointsSample.push_back(Vector3T<float>(-(SideLength / 2.0f) + (float)i * SampleStep, -(SideLength / 2.0f), 0.0f));
-				PointsSample.push_back(Vector3T<float>(SideLength / 2.0f, -(SideLength / 2.0f) + (float)i * SampleStep, 0.0f));
+				PointsSample.push_back(Vector3T<float>(SideLength / 2.0f, - (SideLength / 2.0f) + (float)i * SampleStep, 0.0f));
 				PointsSample.push_back(Vector3T<float>(-(SideLength / 2.0f) + (float)i * SampleStep, SideLength / 2.0f, 0.0f));
-				PointsSample.push_back(Vector3T<float>(-(SideLength / 2.0f), -(SideLength / 2.0f) + (float)i * SampleStep, 0.0f));
+				PointsSample.push_back(Vector3T<float>(-(SideLength / 2.0f), - (SideLength / 2.0f) + (float)i * SampleStep, 0.0f));
 			}
 
 			for (const auto& Item : PointsSample) {
 				ParticleAttributes ParticleTemp = {};
 
-				ParticleDispPosition(ParticleTemp, RandomLimitPosition, PositionOffset);
-				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
+				ParticleDispPosition(ParticleTemp, RandomPosition, OffsetPosition);
+				ParticleColorsys    (ParticleTemp, RandomColorSystem, EnableGrayscale);
 
 				ParticleTemp.ParticleVector = Item;
 
-				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
+				ParticleTemp.ParticleLife      = RandomTimeSeedFP32(RandomLimitLife.vector_x, RandomLimitLife.vector_y);
 				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
-				ParticlesGenCache.push_back(ParticleTemp);
+				GeneratorCache.push_back(ParticleTemp);
 			}
 			break;
 		}
-		// rand_limit vec2 x,y [speed]
-		// vector vec2 length * vec.
-		case(ParticlesGenMode::PrtcPoly): {
-			for (size_t i = 0; i < ParticlesNumber; ++i) {
-				ParticleAttributes ParticleTemp = {};
+		// particles cache data => out(insert).
+		data.insert(data.end(), GeneratorCache.begin(), GeneratorCache.end());
+	}
 
-				ParticleDispPosition(ParticleTemp, RandomLimitPosition, PositionOffset);
-				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
-				
-				float Speed = RandomTimeSeedFP32(RandomLimitVector.vector_x, RandomLimitVector.vector_y);
+	void GeneratorDriftDown::CreateAddParticleDataset(vector<ParticleAttributes>& data) {
+		for (size_t i = 0; i < ParticlesNumber; ++i) {
+			ParticleAttributes ParticleTemp = {};
 
-				ParticleTemp.ParticleVector.vector_x 
-					= (PositionOffset.vector_x - ParticleTemp.ParticlePosition.vector_x) * 0.02f * Speed;
-				ParticleTemp.ParticleVector.vector_y 
-					= (PositionOffset.vector_y - ParticleTemp.ParticlePosition.vector_y) * 0.02f * Speed;
+			ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
 
-				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
-				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
-				ParticlesGenCache.push_back(ParticleTemp);
-			}
-			break;
+			ParticleTemp.ParticlePosition.vector_y = RandomTimeSeedFP32(-700.0f, -300.0f) + OffsetPosition.vector_y;
+			ParticleTemp.ParticlePosition.vector_x = RandomTimeSeedFP32(
+				OffsetPosition.vector_x - ParticleWidth, OffsetPosition.vector_x + ParticleWidth
+			);
+			ParticleTemp.ParticlePosition.vector_z = 0.0f;
+
+			Vector2T<float> RandomVector(1.0f * ParticleSpeed, 2.0f * ParticleSpeed);
+			ParticleDispVector(ParticleTemp, RandomVector);
+
+			ParticleTemp.ParticleLife      = RandomTimeSeedFP32(RandomLimitLife.vector_x, RandomLimitLife.vector_y);
+			ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
+			GeneratorCache.push_back(ParticleTemp);
 		}
-		// rand_limit vec2 x:abs(y_scale), y [speed]
-		// offset pos vec2 x,y: high(offset)
-		case(ParticlesGenMode::PrtcDrift): {
-			for (size_t i = 0; i < ParticlesNumber; ++i) {
-				ParticleAttributes ParticleTemp = {};
-
-				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
-
-				ParticleTemp.ParticlePosition.vector_y = RandomTimeSeedFP32(-700.0f, -300.0f) + PositionOffset.vector_y;
-				ParticleTemp.ParticlePosition.vector_x = RandomTimeSeedFP32(RandomLimitPosition.vector_x, RandomLimitPosition.vector_y) + PositionOffset.vector_x;
-				ParticleTemp.ParticlePosition.vector_z = RandomTimeSeedFP32(RandomLimitPosition.vector_x, RandomLimitPosition.vector_y) + PositionOffset.vector_z;
-
-				ParticleDispVector(ParticleTemp, RandomLimitVector);
-				ParticleTemp.ParticleVector.vector_y = abs(RandomLimitVector.vector_x);
-
-				ParticleTemp.ParticleLife      = RandomTimeSeedFP32((float)RandomLimitLife.vector_x, (float)RandomLimitLife.vector_y);
-				ParticleTemp.ParticleScaleSize = RandomTimeSeedFP32(RandomScaleSize.vector_x, RandomScaleSize.vector_y);
-				ParticlesGenCache.push_back(ParticleTemp);
-			}
-			break;
-		}}
-		// create particles dataset.
-		data.insert(data.end(), ParticlesGenCache.begin(), ParticlesGenCache.end());
+		// particles cache data => out(insert).
+		data.insert(data.end(), GeneratorCache.begin(), GeneratorCache.end());
 	}
 
 	// ************************************************ PARTICLE SYSTEM ************************************************
@@ -278,10 +231,11 @@ namespace GraphicsEngineParticle {
 			vector<ParticleAttributes> BlockCreateTemp(IndexEnd - IndexStart);
 			// particles dataset memory_block copy.
 			copy(particles.begin() + IndexStart, particles.begin() + IndexEnd, BlockCreateTemp.begin());
-
-			ResultObject[i] = ThreadsParallel->PushTask<ParticleSystemDataCalc>(BlockCreateTemp, speed, lifesub);
+			// thread pool => particles calc task.
+			ResultObject[i] = ThreadsParallel->PushTask<ParticleSystemDataCalc>(
+				BlockCreateTemp, speed, lifesub
+			);
 		}
-		
 		// clear data => get task result.
 		particles.clear();
 		for (size_t i = 0; i < TasksNumber; ++i) {

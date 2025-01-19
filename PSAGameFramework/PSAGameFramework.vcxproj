@@ -161,6 +161,9 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_tables.cpp" />
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp" />
     <ClCompile Include="PSAGameFramework.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_shape.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_drift.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_points.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_data.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_fx.cpp" />
@@ -211,12 +214,12 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_init.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_npc.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game_shader.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_bullet.cpp" />
-    <ClCompile Include="PSAGameFrameworkDev\psagame_v1_demo\vi1demo_game_fx.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn_glsl.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn_npc.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene_glsl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
@@ -274,7 +277,10 @@
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
-    <ClInclude Include="PSAGameFrameworkDev\psagame_v1_demo\v1demo_game.h" />
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.hpp" />
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.h" />
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.h" />
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

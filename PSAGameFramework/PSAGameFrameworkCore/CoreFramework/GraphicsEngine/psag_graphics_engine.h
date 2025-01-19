@@ -442,14 +442,6 @@ namespace GraphicsEngineParticle {
 	StaticStrLABEL PSAGM_GLENGINE_PARTICLE_LABEL = "PSAG_GL_PARTICLE";
 
 	namespace ParticlesGenMode {
-		enum EmittersMode {
-			PrtcPoints = 1 << 1, // 点云 [扩散]
-			PrtcCircle = 1 << 2, // 圆形 [扩散]
-			PrtcSquare = 1 << 3, // 矩形 [扩散]
-			PrtcPoly   = 1 << 4, // 汇聚 [聚合]
-			PrtcDrift  = 1 << 5  // 飘落 [定向]
-		};
-
 		enum ColorChannelMode {
 			Grayscale   = 1 << 1, // 灰度(单通道R-RGB)
 			ChannelsRG  = 1 << 2, // R,G 通道
@@ -488,65 +480,136 @@ namespace GraphicsEngineParticle {
 		size_t DarwDatasetSize;
 	};
 
-	// 创建例子效果(使用[均匀分布]随机数模型).
+	// 粒子生成器(使用均匀分布随机数模型).
 	class ParticleGeneratorBase {
 	public:
 		// particle generation number[n > 8].
 		virtual bool ConfigCreateNumber(float number) = 0;
 
-		virtual void ConfigCreateMode(ParticlesGenMode::EmittersMode mode) = 0; // 运算模式.
-		virtual void ConfigLifeDispersion(Vector2T<float> rand_limit_life) = 0; // 随机生命.
-		virtual void ConfigSizeDispersion(Vector2T<float> rand_limit_size) = 0; // 随机大小.
+		virtual void ConfigLifeDispersion(const Vector2T<float>& rand_life) = 0; // 随机生命.
+		virtual void ConfigSizeDispersion(const Vector2T<float>& rand_size) = 0; // 随机大小.
 
 		virtual void ConfigRandomColorSystem(
-			Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
+			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
 			ParticlesGenMode::ColorChannelMode mode
 		) = 0;
-		// 粒子空间: vector.xy scale[min,max], position.xy scale[min,max].
-		// "OffsetPosition" 创建偏移位置(中心偏移).
-		virtual void ConfigRandomDispersion(
-			Vector2T<float> rand_limit_vector,
-			Vector2T<float> rand_limit_position,
-			Vector3T<float> offset_position
-		) = 0;
-
 		virtual void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) = 0;
 	};
 
-	class ParticleGenerator :public ParticleGeneratorBase {
+	// mode => color channels filter.
+	Vector3T<Vector2T<float>> __COLOR_SYSTEM_TYPE(
+		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
+		ParticlesGenMode::ColorChannelMode mode,
+		bool* gray_switch
+	);
+
+	// 点云粒子生成器 [扩散].
+	class GeneratorPointsDiffu :public ParticleGeneratorBase {
 	protected:
-		std::vector<ParticleAttributes> ParticlesGenCache = {};
-
-		ParticlesGenMode::EmittersMode ParticlesModeType = {};
-		size_t ParticlesNumber = 8;
-
+		std::vector<ParticleAttributes> GeneratorCache = {};
 		bool EnableGrayscale = false;
+
 		Vector3T<Vector2T<float>> RandomColorSystem = {};
-		Vector2T<uint32_t>        RandomLimitLife   = {};
+		Vector2T<float>           RandomLimitLife   = {};
 		Vector2T<float>           RandomScaleSize   = Vector2T<float>(1.0f, 1.0f);
 
-		Vector3T<float> PositionOffset = {};
-		Vector2T<float> RandomLimitPosition = {}, RandomLimitVector = {};
+		Vector3T<float> OffsetPosition = {};
+		Vector2T<float> RandomPosition = {};
+		Vector2T<float> RandomSpeed    = {};
 
+		size_t ParticlesNumber = 8;
 	public:
 		bool ConfigCreateNumber(float number) override;
-		void ConfigCreateMode(ParticlesGenMode::EmittersMode mode) override;
-		void ConfigLifeDispersion(Vector2T<float> rand_limit_life) override;
-		void ConfigSizeDispersion(Vector2T<float> rand_limit_size) override;
 
-		// color system(random) channels[0.0,1.0].
+		void ConfigLifeDispersion(const Vector2T<float>& rand_life) override;
+		void ConfigSizeDispersion(const Vector2T<float>& rand_size) override;
+
+		void ConfigGenPos    (const Vector2T<float>& position);
+		void ConfigGenPosRand(const Vector2T<float>& position_rand);
+		void ConfigGenVector (const Vector2T<float>& speed);
+
 		void ConfigRandomColorSystem(
-			Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-			ParticlesGenMode::ColorChannelMode mode = ParticlesGenMode::Grayscale
-		) override;
-		void ConfigRandomDispersion(
-			// randomly distributed parameters.
-			Vector2T<float> rand_limit_vector,   // vec random[min,max] pos += vec * speed.
-			Vector2T<float> rand_limit_position, // pos random[min,max].
-			Vector3T<float> offset_position = Vector3T<float>()
+			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
+			ParticlesGenMode::ColorChannelMode mode
 		) override;
 
-		void CreateAddParticleDataset(std::vector<ParticleAttributes>& Data) override;
+	    // particle_system call
+		// file: psag_graphics_engine_particle.cpp
+		void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) override;
+	};
+
+	// 形状粒子生成器 [扩散]. [圆形, 矩形]
+	class GeneratorShape :public ParticleGeneratorBase {
+	protected:
+		std::vector<ParticleAttributes> GeneratorCache = {};
+		bool EnableGrayscale = false;
+
+		Vector3T<Vector2T<float>> RandomColorSystem = {};
+		Vector2T<float>           RandomLimitLife   = {};
+		Vector2T<float>           RandomScaleSize   = Vector2T<float>(1.0f, 1.0f);
+
+		Vector3T<float> OffsetPosition = {};
+		Vector2T<float> RandomPosition = {};
+		Vector2T<float> RandomSpeed    = {};
+
+		size_t   ParticlesNumber = 8;
+		uint32_t ParticlesMode   = 0;
+	public:
+		bool ConfigCreateNumber(float number) override;
+
+		void ConfigLifeDispersion(const Vector2T<float>& rand_life) override;
+		void ConfigSizeDispersion(const Vector2T<float>& rand_size) override;
+
+		void ConfigGenPos    (const Vector2T<float>& position);
+		void ConfigGenPosRand(const Vector2T<float>& position_rand);
+		void ConfigGenVector (const Vector2T<float>& speed);
+
+		// mode_code: 1: circle, 2: square(rect).
+		void SettingShape(uint32_t mode) { ParticlesMode = mode; }
+
+		void ConfigRandomColorSystem(
+			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
+			ParticlesGenMode::ColorChannelMode mode
+		) override;
+
+		// particle_system call
+		// file: psag_graphics_engine_particle.cpp
+		void CreateAddParticleDataset( std::vector<ParticleAttributes>& data) override;
+	};
+
+	// 飘落氛围粒子生成器 [向下].
+	class GeneratorDriftDown :public ParticleGeneratorBase {
+	protected:
+		std::vector<ParticleAttributes> GeneratorCache = {};
+		bool EnableGrayscale = false;
+
+		Vector3T<Vector2T<float>> RandomColorSystem = {};
+		Vector2T<float>           RandomLimitLife = {};
+		Vector2T<float>           RandomScaleSize = Vector2T<float>(1.0f, 1.0f);
+
+		Vector3T<float> OffsetPosition = {};
+		float ParticleWidth = 0.0f, ParticleSpeed = 1.0f;
+
+		size_t ParticlesNumber = 8;
+	public:
+		bool ConfigCreateNumber(float number) override;
+
+		void ConfigLifeDispersion(const Vector2T<float>& rand_life) override;
+		void ConfigSizeDispersion(const Vector2T<float>& rand_size) override;
+
+		void ConfigGenPos(const Vector2T<float>& position);
+		void ConfigGenWidthSpeed(float width, float drift_speed) {
+			ParticleWidth = width;
+			ParticleSpeed = drift_speed;
+		}
+		void ConfigRandomColorSystem(
+			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
+			ParticlesGenMode::ColorChannelMode mode
+		) override;
+
+		// particle_system call
+		// file: psag_graphics_engine_particle.cpp
+		void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) override;
 	};
 
 	enum ParticleCalcMode {

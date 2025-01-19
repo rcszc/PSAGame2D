@@ -7,16 +7,17 @@
 
 namespace PsagManager {
 	namespace Fx {
-		namespace GenMode = GameManagerCore::GameFX::ParticleMode;
-
-		using ParticleDESC    = GameManagerCore::GameFX::GameFxParticleDESC;
-		using ParticleGenDESC = GameManagerCore::GameFX::GameFxCreateParticleDESC;
-		using Particle        = GameManagerCore::GameFX::GameFxParticle;
+		using ParticleDESC = GameManagerCore::GameFX::GameFxParticleDESC;
+		using Particle     = GameManagerCore::GameFX::GameFxParticle;
 
 		using ParticleCalcMode = GameManagerCore::GameFX::ParticleUpdateMode;
 
-		using ParticleSrcAttri = GameManagerCore::GameFX::ParticleAttributes;
-		using ParticleSrcArray = GameManagerCore::GameFX::ParticlesDataset;
+		using ParticleSrcAttrib = GameManagerCore::GameFX::ParticleAttributes;
+		using ParticleSrcArray  = GameManagerCore::GameFX::ParticlesDataset;
+
+		using ParticleGenPoints = GameManagerCore::GameFX::System::GeneratorPointsDiffu;
+		using ParticleGenShape  = GameManagerCore::GameFX::System::GeneratorShape;
+		using ParticleGenDrift  = GameManagerCore::GameFX::System::GeneratorDriftDown;
 
 		using SpriteSheetDESC = GameManagerCore::GameFX::GameFxSpriteSheetDESC;
 		using SpriteSheet     = GameManagerCore::GameFX::GameFxSpriteSheet;
