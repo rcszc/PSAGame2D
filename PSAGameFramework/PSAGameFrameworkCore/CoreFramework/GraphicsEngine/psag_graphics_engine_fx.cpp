@@ -161,14 +161,14 @@ namespace GraphicsEnginePVFX {
 			ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix", RenderMatrix);
 			ShaderUniform.UniformFloat(ShaderTemp, "RenderTime", RenderTimer);
 
-			ShaderUniform.UniformVec2(ShaderTemp, "RenderMove",  Vector2T<float>(0.0f, 0.0f));
+			ShaderUniform.UniformVec4(ShaderTemp, "RenderColorBlend", blend_color);
+			ShaderUniform.UniformVec2(ShaderTemp, "RenderMove", Vector2T<float>(0.0f, 0.0f));
 			ShaderUniform.UniformVec2(ShaderTemp, "RenderScale", Vector2T<float>(1.0f, 1.0f));
 			// player sequence frame.
 			ShaderUniform.UniformVec2(ShaderTemp, "RenderUvSize",
 				Vector2T<float>(1.0f / PlayerParams.UaxisFrameNumber, 1.0f / PlayerParams.VaxisFrameNumber)
 			);
-			ShaderUniform.UniformVec2(ShaderTemp, "RenderUvOffset",   PlayerPosition);
-			ShaderUniform.UniformVec4(ShaderTemp, "RenderColorBlend", blend_color);
+			ShaderUniform.UniformVec2(ShaderTemp, "RenderUvOffset", PlayerPosition);
 
 			// player size & offset uv.
 			if (PlayerTimer * PlayerParams.PlayerSpeedScale >= 1.0f) {

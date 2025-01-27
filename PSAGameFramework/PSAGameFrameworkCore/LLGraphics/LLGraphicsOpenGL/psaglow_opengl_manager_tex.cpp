@@ -50,9 +50,9 @@ namespace PSAG_OGL_MAG {
 	}
 	// anisotropic filtering.
 	inline void FuncAnisotropicFiltering(GLenum TYPE) {
-		GLfloat MaxAnisotropy;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropy);
-		glTexParameterf(TYPE, GL_TEXTURE_MAX_ANISOTROPY_EXT, MaxAnisotropy);
+		float MaxTextureAniso = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &MaxTextureAniso);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, MaxTextureAniso);
 	}
 	// generate mipmaps.
 	inline void FuncGenerateMipmaps(GLenum TYPE) {
@@ -101,9 +101,9 @@ namespace PSAG_OGL_MAG {
 		// internal_format RGBA12  (HDR12), pixel_format RGBA8888. [20240717]
 		// internal_format RGBA16F (HDR16), pixel_format RGBA8888. [20241030]
 		if (ModeType == GL_TEXTURE_2D_ARRAY)
-			glTexImage3D(ModeType, NULL, GL_RGBA16F, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage3D(ModeType, NULL, CONST_FMT, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
 		if (ModeType == GL_TEXTURE_2D)
-			glTexImage2D(ModeType, NULL, GL_RGBA16F, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(ModeType, NULL, CONST_FMT, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// config texture2d. surround,filter.
@@ -333,7 +333,10 @@ namespace PSAG_OGL_MAG {
 	bool PsagTextureViewOGL::CreateTexViewEmpty(uint32_t width, uint32_t height, TextureFilterMode mode) {
 		if (CreateBindTextureView(TextureViewCreate.Texture)) {
 			// create texture2d view.
-			if (!ConfigCreateTexture(1, width, height, DEF_IMG_CHANNEL_RGBA, nullptr, mode, NULL, GL_TEXTURE_2D)) {
+			if (!ConfigCreateTexture(
+				1, width, height, DEF_IMG_CHANNEL_RGBA, nullptr, 
+				mode, false, NULL, GL_TEXTURE_2D
+			)) {
 				PsagLowLog(LogError, PSAG_OGLMAG_TEXTURE, "texture_view create, opengl_api err.");
 				return DEF_PSAGSTAT_FAILED;
 			}
@@ -356,8 +359,8 @@ namespace PSAG_OGL_MAG {
 			}
 			// create texture2d view.
 			if (!ConfigCreateTexture(
-				1, image_data.Width, image_data.Height, image_data.Channels, image_data.ImagePixels.data(), mode, 
-				NULL, GL_TEXTURE_2D
+				1, image_data.Width, image_data.Height, image_data.Channels, image_data.ImagePixels.data(), mode,
+				false, NULL, GL_TEXTURE_2D
 			)) {
 				PsagLowLog(LogError, PSAG_OGLMAG_TEXTURE, "texture_view create, opengl_api err.");
 				return DEF_PSAGSTAT_FAILED;

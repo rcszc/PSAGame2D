@@ -19,6 +19,7 @@ namespace GameManagerCore {
 			CALC_PARALLEL = 1 << 2, // multi thread.
 			CALC_NO_CALC  = 1 << 3  // not calc.
 		};
+		using ParticleColorMode = GraphicsEngineParticle::ColorChannelMode;
 
 		struct GameFxParticleDESC {
 			Vector2T<uint32_t> ParticleRenderResolution;
@@ -214,6 +215,8 @@ namespace GameManagerCore {
 	}
 
 	namespace GameMathsTools {
+		float CalcDirection(const Vector2T<float>& vector);
+
 		float           CalcFuncPointsDistance    (Vector2T<float> point0, Vector2T<float> point1);
 		float           CalcFuncPointsAngle       (Vector2T<float> basic_point, Vector2T<float> point);
 		Vector2T<float> CalcFuncPointAngleDistance(Vector2T<float> basic_point, float angle_deg, float distance);
@@ -222,7 +225,9 @@ namespace GameManagerCore {
 		void CalcFuncLerpVec2(Vector2T<float>* ahpla, Vector2T<float>* target, float speed);
 		void CalcFuncLerpVec4(Vector4T<float>* ahpla, Vector4T<float>* target, float speed);
 
-		//            , return 'force'. ChatGPT.4O, RCSZ 20241110.
+		float CalcFuncAvgDiffeVec4(const Vector4T<float>& a, const Vector4T<float>& b);
+
+		// 引力轨道环绕, return 'force'. ChatGPT.4O, RCSZ 20241110.
 		Vector2T<float> SurroundingOrbit(
 			Vector2T<float> point_a, Vector2T<float> point_b, float r, float force_scale = 1.0f
 		);

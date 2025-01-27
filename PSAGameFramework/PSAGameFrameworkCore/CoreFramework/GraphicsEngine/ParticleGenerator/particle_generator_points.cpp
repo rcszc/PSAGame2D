@@ -6,8 +6,8 @@ using namespace PSAG_LOGGER;
 
 namespace GraphicsEngineParticle {
 	bool GeneratorPointsDiffu::ConfigCreateNumber(float number) {
-		// generator particles >= 4.
-		if (number < 4.0f) return false;
+		// generator particles >= 1.
+		if (number < 1.0f) return false;
 		ParticlesNumber = (size_t)number;
 		return true;
 	}
@@ -41,7 +41,7 @@ namespace GraphicsEngineParticle {
 
 	void GeneratorPointsDiffu::ConfigRandomColorSystem(
 		const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
-		ParticlesGenMode::ColorChannelMode mode
+		ColorChannelMode mode
 	) {
 		RandomColorSystem = __COLOR_SYSTEM_TYPE(r, g, b, mode, &EnableGrayscale);
 	}

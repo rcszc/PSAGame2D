@@ -8,6 +8,7 @@ namespace GameCoreManager {
 	// ******************************** game actor_shaders ********************************
 
 	GameActorShaderManager::~GameActorShaderManager() {
+		// free valid objects.
 		for (auto& ShaderItem : GameShaderDataset) {
 			if (ShaderItem.second == nullptr) {
 				PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "actor_shader manager: %s nullptr!",
@@ -18,6 +19,8 @@ namespace GameCoreManager {
 			delete ShaderItem.second;
 		}
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "actor_shader manager system delete.");
+		// ATOMIC ENTITIES COUNTER.
+		--ActorSystemAtomic::GLOBAL_PARAMS_M_SHADERS;
 	}
 
 	bool GameActorShaderManager::CreateActorShader(
@@ -57,10 +60,13 @@ namespace GameCoreManager {
 	// ******************************** game actor_actuator ********************************
 
 	GameActorExecutorManager::~GameActorExecutorManager() {
+		// free valid objects.
 		for (auto& ActorItem : GameActorDataset)
 			if (ActorItem.second != nullptr)
 				delete ActorItem.second;
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_actor manager system delete.");
+		// ATOMIC ENTITIES COUNTER.
+		--ActorSystemAtomic::GLOBAL_PARAMS_M_ACTORS;
 	}
 
 	size_t GameActorExecutorManager::CreateGameActor(
@@ -116,10 +122,13 @@ namespace GameCoreManager {
 	// ******************************** game brick_actuator ********************************
 
 	GameBrickExecutorManager::~GameBrickExecutorManager() {
+		// free valid objects.
 		for (auto& BrickItem : GameBrickDataset)
 			if (BrickItem.second != nullptr)
 				delete BrickItem.second;
 		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_brick manager system delete.");
+		// ATOMIC ENTITIES COUNTER.
+		--ActorSystemAtomic::GLOBAL_PARAMS_M_EVNS;
 	}
 
 	size_t GameBrickExecutorManager::CreateGameBrick(const GameBrickCore::GameBrickExecutorDESC& brick_desc) {

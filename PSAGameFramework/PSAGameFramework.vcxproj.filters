@@ -103,6 +103,9 @@
     <Filter Include="源文件\A-PSAGameFrameworkDev\GameZeroProject\BASE">
       <UniqueIdentifier>{a65c105c-68ad-41b6-a301-2b0dd47b86f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\ImGui\ImGuiCore\freetype">
+      <UniqueIdentifier>{65c56eb5-b028-4392-9f16-77c546c70e58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -147,13 +150,13 @@
     <ClCompile Include="PSAGameFramework.cpp">
       <Filter>源文件\PSAGameFrameworkCore</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_core.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_spport.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_regobj.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_registry.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp">
@@ -162,7 +165,7 @@
     <ClCompile Include="PSAGameFrameworkCore\framework_init_register.cpp">
       <Filter>源文件\DevSupport</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_class.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_class.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_system.cpp">
@@ -312,6 +315,24 @@
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene_glsl.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_anim.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet_fx.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\BASE</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.cpp">
+      <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -398,7 +419,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLLogger\framework_logger.hpp">
       <Filter>源文件\PSAGameFrameworkCore\LLLogger</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.h">
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h">
@@ -484,6 +505,15 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.hpp">
       <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\BASE</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.h">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.h">
+      <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

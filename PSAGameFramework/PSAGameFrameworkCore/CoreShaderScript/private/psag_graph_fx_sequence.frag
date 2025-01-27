@@ -3,10 +3,10 @@ uniform int   SequeVirTexLayer;
 uniform vec2  SequeVirTexCropping;
 uniform vec2  SequeVirTexSize;
 
+uniform float RenderTime;
+uniform vec4  RenderColorBlend;
 uniform vec2  RenderUvSize;
 uniform vec2  RenderUvOffset;
-uniform vec4  RenderColorBlend;
-uniform float RenderTime;
 
 void main()
 {

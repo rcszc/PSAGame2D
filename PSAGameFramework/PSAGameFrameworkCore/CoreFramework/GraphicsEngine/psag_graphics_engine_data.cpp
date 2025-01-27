@@ -46,7 +46,7 @@ vector<float> ShaderTemplateCircleDep(float zlayer) {
 		vector<float> VertexGroup = {
 			// pos: vec3, color: vec4, uv: vec2, normal: vec3
 			Vertex[i].vector_x, Vertex[i].vector_y, zlayer,
-			 1.0f, 0.0f, 1.0f, 1.0f,
+			 1.0f, 1.0f, 1.0f, 1.0f,
 			UV[i].vector_x, UV[i].vector_y,
 			0.0f, 0.0f, 0.0f
 		};

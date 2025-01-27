@@ -76,19 +76,35 @@ bool ZPGameSceneMain::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	PsagActor::PresetScript ShaderScript = {};
 
 	// boundary wall [h] shader.
-	PsagActor::ActorShader* RenderBH = new PsagActor::ActorShader(ShaderScript.TmpScriptBrickImage(), WinSize);
+	PsagActor::ActorShader* RenderBH = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage(), WinSize);
 	RenderBH->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(ImgBoundaryH));
 
 	// boundary wall [v] shader.
-	PsagActor::ActorShader* RenderBV = new PsagActor::ActorShader(ShaderScript.TmpScriptBrickImage(), WinSize);
+	PsagActor::ActorShader* RenderBV = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage(), WinSize);
 	RenderBV->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(ImgBoundaryV));
 
 	SceneShaders.Get()->CreateActorShader("Background", RenderBackground);
 
 	SceneShaders.Get()->CreateActorShader("BoundaryH", RenderBH);
 	SceneShaders.Get()->CreateActorShader("BoundaryV", RenderBV);
+	/*
+	PsagManager::StartAnimLOAD SALoader = {};
 
+	SALoader.SettingPlayTime(1.75f);
+	SALoader.SettingLerpSpeed(0.85f);
+
+	auto SAI1 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData(SYSPATH_REF("psagame2d/PSAGame2D0.png"));
+	auto SAI2 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData(SYSPATH_REF("psagame2d/PSAGame2D1.png"));
+	auto SAI3 = PsagManager::SyncLoader::FSLD::EasyFileReadRawData(SYSPATH_REF("psagame2d/PSAGame2D2.png"));
+
+	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI1));
+	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI2));
+	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI3));
+	*/
 	CreateSceneStatic();
+
+	// create game global notify system.
+	GLO_Notify.CreatePointer("ZPGameNotify");
 	return true;
 }
 
@@ -97,6 +113,8 @@ void ZPGameSceneMain::LogicCloseFree() {
 	SceneStatic.DeletePointer();
 	SceneShaders.DeletePointer();
 	SceneFinal.DeletePointer();
+
+	GLO_Notify.DeletePointer();
 }
 
 bool ZPGameSceneMain::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
@@ -104,7 +122,7 @@ bool ZPGameSceneMain::LogicEventLoopGame(GameLogic::FrameworkParams& RunningStat
 	RunningState.ShaderParamsFinal->GameSceneBloomRadius = 12;
 	RunningState.ShaderParamsFinal->GameSceneFilterAVG   = 0.2f;
 	RunningState.ShaderParamsFinal->GameSceneOutVignette = Vector2T<float>(0.7f, 0.28f);
-	RunningState.ShaderParamsFinal->GameSceneBloomBlend  = Vector2T<float>(0.92f, 1.28f);
+	RunningState.ShaderParamsFinal->GameSceneBloomBlend  = Vector2T<float>(0.92f, 1.54f);
 	RunningState.ShaderParamsFinal->GameSceneOutContrast = 1.032f;
 	
 	SceneFinal.Get()->GetFinalParamsPonter(RunningState.ShaderParamsFinal);

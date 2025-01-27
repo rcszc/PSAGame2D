@@ -3,7 +3,7 @@
 
 #ifndef __FRAMEWORK_DEV_ACTOR_H
 #define __FRAMEWORK_DEV_ACTOR_H
-#include "../PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.h"
+#include "../PSAGameFrameworkCore/CoreFramework/psag_core_drivers.h"
 
 namespace PsagActorType = GameActorCore::Type;
 namespace PsagActor {

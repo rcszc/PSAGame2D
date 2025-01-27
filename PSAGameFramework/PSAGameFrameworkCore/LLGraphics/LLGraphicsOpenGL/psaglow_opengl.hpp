@@ -193,6 +193,7 @@ namespace PSAG_OGL_MAG {
 		PsagTextureAttribute _MS_GETRES(ResourceFlag& flag) override;
 	};
 
+	const TextureFilterMode DEFAULT_FMODE = LinearFiltering | MipmapFiltering;
 	// psag texture view, texture2d. non "LLRES" manager.
 	class PsagTextureViewOGL :public PsagOGLsystemLogger, public PsagGLmanagerTextureView {
 	private:
@@ -200,8 +201,8 @@ namespace PSAG_OGL_MAG {
 
 		bool CreateBindTextureView(PsagTexture& texture);
 	public:
-		bool CreateTexViewEmpty(uint32_t width, uint32_t height, TextureFilterMode mode = LinearFiltering);
-		bool CreateTexViewData(const ImageRawData& image_data, TextureFilterMode mode = LinearFiltering);
+		bool CreateTexViewEmpty(uint32_t width, uint32_t height, TextureFilterMode mode = DEFAULT_FMODE);
+		bool CreateTexViewData(const ImageRawData& image_data, TextureFilterMode mode = DEFAULT_FMODE);
 
 		PsagTextureView CreateTexture();
 	};

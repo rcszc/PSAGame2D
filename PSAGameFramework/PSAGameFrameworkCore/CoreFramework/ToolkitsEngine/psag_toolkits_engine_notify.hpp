@@ -137,11 +137,12 @@ namespace ToolkitsEngineNotify {
 			ReceiveInformation.NotifyCodeFlags = notify.NotifyCodeFlags;
 
 			// data exist: object data & type_info copy.
-			if (ReceiveInformation.NotifyDataMode != NotifyDataMode_None)
+			if (notify.NotifyDataMode != NotifyDataMode_None)
 				ReceiveInformation.NotifyDataBytes = notify.NotifyDataBytes;
 			ReceiveInformation.NotifyDataMode = notify.NotifyDataMode;
 
 			std::pair<std::string, std::string> NamePair = notify.StationUniqueNamePair;
+
 			PSAG_LOGGER::PushLogger(
 				LogInfo, PSAGM_TOOLKITS_NOTFIY_LABEL, "station receive pair: %s/%s, data_size: %u bytes",
 				NamePair.first.c_str(), NamePair.second.c_str(), notify.NotifyDataBytes.SerRawData.size()
@@ -162,7 +163,7 @@ namespace ToolkitsEngineNotify {
 			return false;
 		}
 	public:
-		//NotifyStationSystem(const std::string& u_name) : NotifySystemName(u_name) {}
+		NotifyStationSystem(const std::string& u_name) : NotifySystemName(u_name) {}
 
 		bool REC_InfoStatusGet() { return StationStatusFlag; }
 		// clear cache & reset status flag.

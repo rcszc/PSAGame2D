@@ -1,10 +1,8 @@
 // psag_actor_module. RCSZ. [middle_level_module]
-
+// => "psag_actor_global_atomic.h"
 #ifndef __PSAG_ACTOR_MODULE_HPP
 #define __PSAG_ACTOR_MODULE_HPP
-// graphics & physics engine => actor_module.
-#include "../CoreFramework/GraphicsEngine/psag_graphics_engine.h"
-#include "../CoreFramework/PhysicsEngine/psag_physics_engine.h"
+#include "psag_actor_global_atomic.h"
 
 class __ACTOR_MODULES_TIMESTEP {
 protected:
@@ -111,15 +109,15 @@ namespace GameComponents {
 		// position: x,y. scale: w,h. rotate: angle. layer: z.
 		Vector2T<float> RenderPosition;
 		Vector2T<float> RenderScale;
-		float           RenderRotate;
+		float           RenderAngle;
 		float           RenderLayerHeight;
 
 		// render color: uniform"FxColor". [20240825]
 		Vector4T<float> RenderColorBlend = Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f);
 
-		RenderingParams() : RenderPosition({}), RenderScale({}), RenderRotate(0.0f), RenderLayerHeight(-1.0f) {}
+		RenderingParams() : RenderPosition({}), RenderScale({}), RenderAngle(0.0f), RenderLayerHeight(-1.0f) {}
 		RenderingParams(const Vector2T<float>& rp, const Vector2T<float>& rs, float rr, float rz, const Vector4T<float>& rc) :
-			RenderPosition(rp), RenderScale(rs), RenderRotate(rr), RenderLayerHeight(rz), RenderColorBlend(rc)
+			RenderPosition(rp), RenderScale(rs), RenderAngle(rr), RenderLayerHeight(rz), RenderColorBlend(rc)
 		{}
 	};
 
@@ -221,7 +219,7 @@ namespace GameActorCore {
 	// game_actor render system_preset shader script.
 	class GameActorPresetScript {
 	public:
-		SScript TmpScriptBrickImage(bool HDR = false) {
+		SScript TmpScriptDrawImage(bool HDR = false) {
 			// shader "main" code nor / hdr. 
 			if (HDR) return GameActorScript::psag_shader_private_frag_brick_hdr;
 			return GameActorScript::psag_shader_private_frag_brick_nor;
@@ -369,12 +367,16 @@ namespace GameActorCore {
 
 		ActorPhyGroup10 = 1 << 10, ActorPhyGroup11 = 1 << 11,
 		ActorPhyGroup12 = 1 << 12, ActorPhyGroup13 = 1 << 13,
-		ActorPhyGroup14 = 1 << 14, ActorPhyGroup15 = 1 << 15,
-
+		ActorPhyGroup14 = 1 << 14, 
+		// group15 system default: brick. 
+		// ActorPhyGroup15 = 1 << 15,
 		ActorPhyGroupALL = 0b1111'1111'1111'1111
 	};
 	ActorCollisionGroup  operator| (ActorCollisionGroup  a, ActorCollisionGroup b);
 	ActorCollisionGroup& operator|=(ActorCollisionGroup& a, ActorCollisionGroup b);
+
+	ActorCollisionGroup operator&(ActorCollisionGroup a, ActorCollisionGroup b);
+	ActorCollisionGroup operator~(ActorCollisionGroup v);
 
 	enum ActorPhyMode {
 		ActorPhysicsFixed = 1 << 1,
@@ -398,7 +400,7 @@ namespace GameActorCore {
 		float           InitialAngle;
 		float           InitialRenderLayer;
 
-		Vector4T<float> InitialVertexColor;
+		Vector4T<float> VertexColor;
 
 		std::function<void(GameActorExecutor*)> CollisionCallbackFunc =
 			[](GameActorExecutor*) {};
@@ -430,7 +432,7 @@ namespace GameActorCore {
 			InitialAngle      (0.0f),
 			InitialRenderLayer(50.0f),
 
-			InitialVertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
+			VertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),
 
 			ActorCollisionThis  ((ActorCollisionGroup)0x0001),
 			ActorCollisionFilter((ActorCollisionGroup)0xFFFF),
@@ -482,13 +484,23 @@ namespace GameActorCore {
 		float ActorGetHealth(size_t count) {
 #if PSAG_DEBUG_MODE
 			if (count < ActorCompHealthTrans->ActorHealthStateOut.size())
-				return ActorCompHealthTrans == nullptr ? 0.0f : ActorCompHealthTrans->ActorHealthStateOut[count];
+				return ActorCompHealthTrans == nullptr ? 
+				0.0f : ActorCompHealthTrans->ActorHealthStateOut[count];
 			return 0.0f;
 #else
 			return ActorCompHealthTrans->ActorHealthStateOut[count];
 #endif
 		}
-
+		float ActorGetHealthMax(size_t count) {
+#if PSAG_DEBUG_MODE
+			if (count < ActorCompHealthTrans->ActorHealthStateOut.size())
+				return ActorCompHealthTrans == nullptr ? 
+				0.0f : ActorCompHealthTrans->ActorHealthState[count].HealthMAX;
+			return 0.0f;
+#else
+			return ActorCompHealthTrans->ActorHealthState[count].HealthMAX;
+#endif
+		}
 		void ActorModifyHealth(size_t count, float value) {
 			ActorCompHealthTrans->SetActorHealth(count, value);
 		}
@@ -498,7 +510,7 @@ namespace GameActorCore {
 		// actor get_state: position & scale & rotate.
 		Vector2T<float> ActorGetPosition() { return ActorRenderParams.RenderPosition; };
 		Vector2T<float> ActorGetScale()    { return ActorRenderParams.RenderScale; }
-		float           ActorGetRotate()   { return ActorRenderParams.RenderRotate; };
+		float           ActorGetAngle()    { return ActorRenderParams.RenderAngle; };
 
 		Vector2T<float> ActorGetMoveSpeed()   { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
 		float           ActorGetRotateSpeed() { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
@@ -541,8 +553,8 @@ namespace GameActorCore {
 			SensorPhysicsWorld("SYSTEM_PHY_WORLD"),
 
 			InitialPosition(Vector2T<float>(0.0f, 0.0f)),
-			InitialRadius(10.0f),
-			InitialScale (1.0f)
+			InitialRadius  (10.0f),
+			InitialScale   (1.0f)
 		{}
 	};
 
@@ -585,7 +597,7 @@ namespace GameBrickCore {
 		float           InitialAngle;
 		float           InitialRenderLayer;
 
-		Vector4T<float> InitialVertexColor;
+		Vector4T<float> VertexColor;
 
 		// system core comp switch_flags.
 		bool EnableRendering = true;
@@ -602,7 +614,7 @@ namespace GameBrickCore {
 			InitialScale      (Vector2T<float>(1.0f, 1.0f)),
 			InitialAngle      (0.0f),
 			InitialRenderLayer(1.0f),
-			InitialVertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f))
+			VertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f))
 		{}
 	};
 
@@ -637,7 +649,7 @@ namespace GameBrickCore {
 		size_t          BrickGetUniqueID() { return BrickUniqueID; }
 		Vector2T<float> BrickGetPosition() { return BrickRenderParams.RenderPosition; }
 		Vector2T<float> BrickGetScale()    { return BrickRenderParams.RenderScale; }
-		float           BrickGetRotate()   { return BrickRenderParams.RenderRotate; }
+		float           BrickGetRotate()   { return BrickRenderParams.RenderAngle; }
 
 		void BrickRendering();
 	};
@@ -650,7 +662,10 @@ namespace GameCoreManager {
 	protected:
 		std::unordered_map<std::string, GameActorCore::GameActorShader*> GameShaderDataset = {};
 	public:
-		GameActorShaderManager() {};
+		GameActorShaderManager() {
+			// ATOMIC ENTITIES COUNTER.
+			++ActorSystemAtomic::GLOBAL_PARAMS_M_SHADERS;
+		};
 		~GameActorShaderManager();
 
 		// call shader"CreateShaderResource" => storage.
@@ -666,7 +681,10 @@ namespace GameCoreManager {
 		std::unordered_map<size_t, GameActorCore::GameActorExecutor*> GameActorDataset = {};
 		std::vector<size_t> GameActorFreeList = {};
 	public:
-		GameActorExecutorManager() {};
+		GameActorExecutorManager() {
+			// ATOMIC ENTITIES COUNTER.
+			++ActorSystemAtomic::GLOBAL_PARAMS_M_ACTORS;
+		};
 		~GameActorExecutorManager();
 
 		// get_source data(hash_map), pointer.
@@ -690,7 +708,10 @@ namespace GameCoreManager {
 		std::unordered_map<size_t, GameBrickCore::GameBrickExecutor*> GameBrickDataset = {};
 		std::vector<size_t> GameBrickFreeList = {};
 	public:
-		GameBrickExecutorManager() {};
+		GameBrickExecutorManager() {
+			// ATOMIC ENTITIES COUNTER.
+			++ActorSystemAtomic::GLOBAL_PARAMS_M_EVNS;
+		};
 		~GameBrickExecutorManager();
 
 		// get_source data(hash_map), pointer.
@@ -712,20 +733,30 @@ namespace GameDebugGuiWindow {
 	// debug window [panel], actor_manager(actors). 
 	void DebugWindowGuiActors(const char* name, std::unordered_map<size_t, GameActorCore::GameActorExecutor*>* actors);
 
-	// debug window [panel], framerate_info.
-	class DebugWindowGuiFPS {
+	class DebugGamePanel {
 	protected:
+		// info view window 0:fps, 1:ppactor.
+		const float DebugWindowHeight[3] = { 184.0f, 192.0f, 112.0f };
 		const char* DebugWindowName = {};
 		std::chrono::steady_clock::time_point DebugFpsTimer = std::chrono::steady_clock::now();
+		// player pawn actor ref(ptr).
+		GameActorCore::GameActorExecutor* AEREF = nullptr;
 
-		// params: run, avg, max, min(500ms).
+		// params: run, avg, max, min(2.5s).
 		float FramerateParams[4] = {};
-		int   FramerateCount     = NULL;
 		float FramerateLimitMax  = 0.0f;
+		// sync frame counter.
+		int FrameCounter = NULL;
+
+		void GameInfoViewFPS    (float width);
+		void GameInfoViewPPActor(float width);
+		void GameInfoViewGlobal (float width);
 	public:
-		DebugWindowGuiFPS(const char* name, float max_fps) : 
+		DebugGamePanel(const char* name, float max_fps) :
 			DebugWindowName(name), FramerateLimitMax(max_fps)
 		{};
+		void SettingPPActorRef(GameActorCore::GameActorExecutor* actor);
+
 		void RenderingWindowGui();
 	};
 }

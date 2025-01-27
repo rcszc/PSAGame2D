@@ -41,7 +41,7 @@ namespace GraphicsEngineParticle {
 
 	void GeneratorShape::ConfigRandomColorSystem(
 		const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
-		ParticlesGenMode::ColorChannelMode mode
+		ColorChannelMode mode
 	) {
 		RandomColorSystem = __COLOR_SYSTEM_TYPE(r, g, b, mode, &EnableGrayscale);
 	}

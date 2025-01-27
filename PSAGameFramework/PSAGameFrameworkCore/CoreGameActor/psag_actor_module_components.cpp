@@ -32,6 +32,7 @@ namespace GameComponents {
 			return;
 		}
 		delete ActionLogicObject;
+		ActionLogicObject = nullptr;
 	}
 
 	ActorSpaceTrans::ActorSpaceTrans(const string& phy_world, PhyBodyKey phy_body, bool enable_force) :
@@ -123,7 +124,7 @@ namespace GameComponents {
 		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",       time_count);
 
 		ShaderUniform.UniformVec2 (ShaderTemp, "ActorPos",    params.RenderPosition);
-		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", PSAG_M_DEGRAD(params.RenderRotate));
+		ShaderUniform.UniformFloat(ShaderTemp, "ActorRotate", PSAG_M_DEGRAD(params.RenderAngle));
 		ShaderUniform.UniformVec2 (ShaderTemp, "ActorSize",   params.RenderScale);
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",      params.RenderLayerHeight);
 		ShaderUniform.UniformVec4 (ShaderTemp, "ActorColor",  params.RenderColorBlend);

@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>ExternalLibrary/GraphicsLibrary/glfw_library/include/;ExternalLibrary/GraphicsLibrary/glew_library/include/;ExternalLibrary/GraphicsLibrary/glm_library/include/;ExternalLibrary/GraphicsLibrary/image_loader/;ExternalLibrary/GuiimguiLibrary/;ExternalLibrary/FiletoolsLibrary/RapidJSON/include/;ExternalLibrary/FiletoolsLibrary/OpenAL/include/;ExternalLibrary/FiletoolsLibrary/Zlib/include/;ExternalLibrary/FiletoolsLibrary/Base64/;ExternalLibrary/PhysicalLibray/include/;$(IncludePath)</IncludePath>
+    <IncludePath>ExternalLibrary/GraphicsLibrary/glfw_library/include/;ExternalLibrary/GraphicsLibrary/glew_library/include/;ExternalLibrary/GraphicsLibrary/glm_library/include/;ExternalLibrary/GraphicsLibrary/image_loader/;ExternalLibrary/GuiimguiLibrary/imgui_glfw3/;ExternalLibrary/FiletoolsLibrary/RapidJSON/include/;ExternalLibrary/FiletoolsLibrary/OpenAL/include/;ExternalLibrary/FiletoolsLibrary/Zlib/include/;ExternalLibrary/FiletoolsLibrary/Base64/;ExternalLibrary/PhysicalLibray/include/;$(IncludePath)</IncludePath>
     <LibraryPath>ExternalLibrary/GraphicsLibrary/glfw_library/lib-vc2019/;ExternalLibrary/GraphicsLibrary/glew_library/lib/Release/x64/;ExternalLibrary/FiletoolsLibrary/OpenAL/libs/Win64/;ExternalLibrary/FiletoolsLibrary/Zlib/lib/;ExternalLibrary/PhysicalLibray/lib/debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>ExternalLibrary/GraphicsLibrary/glew_library/include/;ExternalLibrary/GraphicsLibrary/glfw_library/include/;ExternalLibrary/GraphicsLibrary/glm_library/include/;ExternalLibrary/GraphicsLibrary/image_loader/;ExternalLibrary/GuiimguiLibrary/;ExternalLibrary/FiletoolsLibrary/RapidJSON/include/;ExternalLibrary/FiletoolsLibrary/OpenAL/include/;ExternalLibrary/FiletoolsLibrary/Zlib/include/;ExternalLibrary/FiletoolsLibrary/Base64/;ExternalLibrary/PhysicalLibray/include/;$(IncludePath)</IncludePath>
+    <IncludePath>ExternalLibrary/GraphicsLibrary/glew_library/include/;ExternalLibrary/GraphicsLibrary/glfw_library/include/;ExternalLibrary/GraphicsLibrary/glm_library/include/;ExternalLibrary/GraphicsLibrary/image_loader/;ExternalLibrary/GuiimguiLibrary/imgui_glfw3/;ExternalLibrary/FiletoolsLibrary/RapidJSON/include/;ExternalLibrary/FiletoolsLibrary/OpenAL/include/;ExternalLibrary/FiletoolsLibrary/Zlib/include/;ExternalLibrary/FiletoolsLibrary/Base64/;ExternalLibrary/PhysicalLibray/include/;$(IncludePath)</IncludePath>
     <LibraryPath>ExternalLibrary/GraphicsLibrary/glfw_library/lib-vc2019/;ExternalLibrary/GraphicsLibrary/glew_library/lib/Release/x64/;ExternalLibrary/FiletoolsLibrary/OpenAL/libs/Win64/;ExternalLibrary/FiletoolsLibrary/Zlib/lib/;ExternalLibrary/PhysicalLibray/lib/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -134,7 +134,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -160,6 +160,7 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_tables.cpp" />
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp" />
+    <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.cpp" />
     <ClCompile Include="PSAGameFramework.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_shape.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\ParticleGenerator\particle_generator_drift.cpp" />
@@ -170,10 +171,11 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_particle.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_script.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\PhysicsEngine\psag_physics_engine.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_core.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_class.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support_regobj.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_anim.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_spport.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_class.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_registry.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_camera.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_ext.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_comp.cpp" />
@@ -182,6 +184,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_random.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_sound.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_timer.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_actor.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_components.cpp" />
@@ -214,7 +217,10 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet_fx.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn_glsl.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn_npc.cpp" />
@@ -251,11 +257,13 @@
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_rectpack.h" />
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_textedit.h" />
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imstb_truetype.h" />
+    <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\PhysicsEngine\psag_physics_engine.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h" />
-    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_mainevent_support.h" />
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine.h" />
+    <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug.hpp" />
@@ -279,6 +287,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.hpp" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.h" />
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_scene.h" />
   </ItemGroup>

@@ -3,14 +3,15 @@
 
 #ifndef __FRAMEWORK_DEV_MANAGER_H
 #define __FRAMEWORK_DEV_MANAGER_H
-#include "../PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.h"
+#include "../PSAGameFrameworkCore/CoreFramework/psag_core_drivers.h"
 
 namespace PsagManager {
 	namespace Fx {
 		using ParticleDESC = GameManagerCore::GameFX::GameFxParticleDESC;
 		using Particle     = GameManagerCore::GameFX::GameFxParticle;
 
-		using ParticleCalcMode = GameManagerCore::GameFX::ParticleUpdateMode;
+		using ParticleCalcMode  = GameManagerCore::GameFX::ParticleUpdateMode;
+		using ParticleColorMode = GameManagerCore::GameFX::ParticleColorMode;
 
 		using ParticleSrcAttrib = GameManagerCore::GameFX::ParticleAttributes;
 		using ParticleSrcArray  = GameManagerCore::GameFX::ParticlesDataset;
@@ -23,8 +24,8 @@ namespace PsagManager {
 		using SpriteSheet     = GameManagerCore::GameFX::GameFxSpriteSheet;
 	}
 
-	namespace SceneFinal = GameManagerCore::GameSceneForFinal;
 	using FINAL_PARAMS = GameManagerCore::GameSceneForFinal::SceneFinalParams;
+	namespace SceneFinal = GameManagerCore::GameSceneForFinal;
 
 	namespace FxView     = GameManagerCore::GameView;
 	namespace Maths      = GameManagerCore::GameMathsTools;
@@ -44,6 +45,9 @@ namespace PsagManager {
 	namespace GuiTools = ToolkitsEngineGuiExt;
 	// platform(windows) api tools.
 	namespace Win32Tools = PsagLow::WindowsTools;
+
+	// framework start anim loader.
+	using StartAnimLOAD = PsagFrameworkAnim::PsagStartAnimLoad;
 
 #define AudioConvert PsagSupAudioRawCVT
 }

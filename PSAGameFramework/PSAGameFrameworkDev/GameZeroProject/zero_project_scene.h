@@ -7,7 +7,8 @@
 
 extern ShaderCode SceneBackground;
 
-class ZPGameSceneMain :public GameLogic::INTERFACE_DEVCLASS_GAME {
+class ZPGameSceneMain :public GameLogic::INTERFACE_DEVCLASS_GAME,
+    public ZPGameGlobale {
 protected:
     Mptr::DefinePointer<PsagActor::ShaderManager> SceneShaders = {};
     Mptr::DefinePointer<PsagActor::BricksManager> SceneStatic  = {};

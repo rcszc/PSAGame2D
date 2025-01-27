@@ -86,15 +86,15 @@ namespace GraphicsEngineParticle {
 	// color channels filter.
 	Vector3T<Vector2T<float>> __COLOR_SYSTEM_TYPE(
 		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-		ParticlesGenMode::ColorChannelMode mode,
+		ColorChannelMode mode,
 		bool* gray_switch
 	) {
 		switch (mode) {
-		case(ParticlesGenMode::ChannelsRG):  { b = Vector2T<float>(); break; }
-		case(ParticlesGenMode::ChannelsRB):  { g = Vector2T<float>(); break; }
-		case(ParticlesGenMode::ChannelsGB):  { r = Vector2T<float>(); break; }
-		case(ParticlesGenMode::Grayscale):   { *gray_switch = true;   break; }
-		case(ParticlesGenMode::ChannelsRGB): { break; }
+		case(ChannelsRG):  { b = Vector2T<float>(); break; }
+		case(ChannelsRB):  { g = Vector2T<float>(); break; }
+		case(ChannelsGB):  { r = Vector2T<float>(); break; }
+		case(Grayscale):   { *gray_switch = true;   break; }
+		case(ChannelsRGB): { break; }
 		}
 		return Vector3T<Vector2T<float>>(r, g, b);
 	}
@@ -116,6 +116,7 @@ namespace GraphicsEngineParticle {
 	}
 
 	void GeneratorShape::CreateAddParticleDataset(vector<ParticleAttributes>& data) {
+		float STEP = 360.0f / ParticlesNumber;
 		switch (ParticlesMode) {
 		case(1):
 			for (size_t i = 0; i < ParticlesNumber; ++i) {
@@ -125,8 +126,8 @@ namespace GraphicsEngineParticle {
 				ParticleColorsys(ParticleTemp, RandomColorSystem, EnableGrayscale);
 
 				ParticleTemp.ParticleVector = Vector3T<float>(
-					PTCMS_SIN(i * 3.8f) * RandomSpeed.vector_x,
-					PTCMS_COS(i * 3.8f) * RandomSpeed.vector_y,
+					PTCMS_SIN(i * STEP) * RandomSpeed.vector_x,
+					PTCMS_COS(i * STEP) * RandomSpeed.vector_y,
 					0.0f
 				);
 				ParticleTemp.ParticleLife      = RandomTimeSeedFP32(RandomLimitLife.vector_x, RandomLimitLife.vector_y);
@@ -347,7 +348,7 @@ namespace GraphicsEngineParticle {
 		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",   RenderTimer);
 		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",   RenderMove);
 		ShaderUniform.UniformVec2 (ShaderTemp, "RenderScale",  RenderScale);
-		ShaderUniform.UniformFloat(ShaderTemp, "RenderRotate", RenderRotate);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderRotate", RenderAngle);
 		ShaderUniform.UniformFloat(ShaderTemp, "RenderTwist",  RenderTwist);
 
 		// draw virtual texture.

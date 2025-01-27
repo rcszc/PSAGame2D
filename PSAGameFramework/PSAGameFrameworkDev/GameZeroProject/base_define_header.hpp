@@ -17,4 +17,23 @@ namespace Mptr = PsagManager::PtrMAG;
 
 using ShaderCode = const char*;
 
+class ZPGameGlobale {
+protected:
+	// scene module: create, delete ptr.
+	static Mptr::DefinePointer<PsagManager::Notify::NotifySystem> GLO_Notify;
+	static Mptr::DefinePointer<PsagActor::ActorsManager>* GLO_NpcActorsRef;
+	static size_t GLO_PlayerBullets;
+	static float GLO_PlayerDamageCount;
+};
+
+struct PPActorBulletFire {
+	float Angle = 0.0f;
+	Vector2T<float> Position = {};
+};
+
+struct QueryHitNpcActor {
+	ResUnique UniqueCode = NULL;
+	float BulletDamage = 0.0f;
+};
+
 #endif

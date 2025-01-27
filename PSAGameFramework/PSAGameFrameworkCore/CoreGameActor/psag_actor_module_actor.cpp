@@ -25,6 +25,12 @@ namespace GameActorCore {
 		a = static_cast<ActorCollisionGroup>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b));
 		return a;
 	}
+	ActorCollisionGroup operator&(ActorCollisionGroup a, ActorCollisionGroup b) {
+		return static_cast<ActorCollisionGroup>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b));
+	}
+	ActorCollisionGroup operator~(ActorCollisionGroup v) {
+		return static_cast<ActorCollisionGroup>(~static_cast<uint16_t>(v));
+	}
 	// game actor type_bind object.
 	namespace Type {
 		uint32_t GameActorTypeBind::ActorTypeIs(const string& type_name) {
@@ -161,22 +167,21 @@ namespace GameActorCore {
 		// config space_trans. ture: non-fixed.
 		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.ActorComponentConifg & ActorEnableTransform) {
 			ActorCompSpaceTrans = new GameComponents::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem, INIT_DESC.VectorCalcIsForce);
-			// init move(speed_vec), rotate, scale.
-			ActorCompSpaceTrans->ActorTransMoveValue   = INIT_DESC.InitialSpeed;
-			ActorCompSpaceTrans->ActorTransRotateValue = INIT_DESC.InitialAngle;
+			// init move speed_vector. non-rotate vector 20250124 RCSZ.
+			ActorCompSpaceTrans->ActorTransMoveValue = INIT_DESC.InitialSpeed;
 		}
 		else {
 			// comp(empty_object): space_trans.
 			ActorCompSpaceTrans = new 
 				GameComponents::null::ActorSpaceTransNULL(ActorPhysicsWorld, ActorPhysicsItem);
 		}
-
-		ActorRenderParams.RenderColorBlend = INIT_DESC.InitialVertexColor;
-
+		// init render params.
+		ActorRenderParams.RenderColorBlend  = INIT_DESC.VertexColor;
 		ActorRenderParams.RenderPosition    = INIT_DESC.InitialPosition;
 		ActorRenderParams.RenderScale       = INIT_DESC.InitialScale;
-		ActorRenderParams.RenderRotate      = INIT_DESC.InitialAngle;
+		ActorRenderParams.RenderAngle      = INIT_DESC.InitialAngle;
 		ActorRenderParams.RenderLayerHeight = INIT_DESC.InitialRenderLayer;
+
 		// actor space_z value_clamp.
 		ActorRenderParams.RenderLayerHeight = 
 			PsagClamp(ActorRenderParams.RenderLayerHeight, -SystemRenderingOrthoSpace, SystemRenderingOrthoSpace);
@@ -210,6 +215,9 @@ namespace GameActorCore {
 		ActorCompConvert = new GameComponents::ActorCoordConvert();
 		// create-success => print_log.
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor entity create: %u", ActorUniqueInfo.ActorUniqueCode);
+
+		// ATOMIC ENTITIES COUNTER.
+		++ActorSystemAtomic::GLOBAL_PARAMS_ACTORS;
 	}
 
 	GameActorExecutor::~GameActorExecutor() {
@@ -223,6 +231,9 @@ namespace GameActorCore {
 		// free: physics system item.
 		PhyBodyItemFree(ActorPhysicsWorld, ActorPhysicsItem);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor entity delete: %u", ActorUniqueInfo.ActorUniqueCode);
+
+		// ATOMIC ENTITIES COUNTER.
+		--ActorSystemAtomic::GLOBAL_PARAMS_ACTORS;
 	}
 
 	float GameActorExecutor::ActorGetLifeTime() {
@@ -246,7 +257,7 @@ namespace GameActorCore {
 	}
 
 	void GameActorExecutor::ActorUpdate() {
-		ActorCompSpaceTrans->UpdateActorTrans(ActorRenderParams.RenderPosition, ActorRenderParams.RenderRotate);
+		ActorCompSpaceTrans->UpdateActorTrans(ActorRenderParams.RenderPosition, ActorRenderParams.RenderAngle);
 
 		GameComponents::ActorPrivateINFO CollisionItem = {};
 		// update collision info.
@@ -292,7 +303,6 @@ namespace GameActorCore {
 			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor(sensor): radius <= 0.0f | scale <= 0.0f");
 			return;
 		}
-
 		SensorPhyConfig.PhyBoxRotate         = 0.0f;
 		SensorPhyConfig.PhysicsCollisionFlag = true;
 		SensorPhyConfig.PhyBoxCollisionSize  = Vector2T<float>(INIT_DESC.InitialRadius * INIT_DESC.InitialScale, 0.0f);

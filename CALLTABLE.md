@@ -71,7 +71,7 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 ---
 
-## PsagManager (24)
+## PsagManager (25)
 
 `P-M2001` ```PsagManager::Fx::ParticleDESC```
 
@@ -79,15 +79,17 @@ __编号说明:__ `P-` `A` 模块簇首字母 `1` 命名空间/类型 `0` 组编
 
 `P-M2003` ```PsagManager::Fx::ParticleCalcMode```
 
-`P-M2004` ```PsagManager::Fx::ParticleSrcAttrib```
+`P-M2004` ```PsagManager::Fx::ParticleColorMode```
 
-`P-M2005` ```PsagManager::Fx::ParticleSrcArray```
+`P-M2005` ```PsagManager::Fx::ParticleSrcAttrib```
 
-`P-M2006` ```PsagManager::Fx::ParticleGenPoints```
+`P-M2006` ```PsagManager::Fx::ParticleSrcArray```
 
-`P-M2007` ```PsagManager::Fx::ParticleGenShape```
+`P-M2007` ```PsagManager::Fx::ParticleGenPoints```
 
-`P-M2008` ```PsagManager::Fx::ParticleGenDrift```
+`P-M2008` ```PsagManager::Fx::ParticleGenShape```
+
+`P-M2009` ```PsagManager::Fx::ParticleGenDrift```
 
 > M20
 

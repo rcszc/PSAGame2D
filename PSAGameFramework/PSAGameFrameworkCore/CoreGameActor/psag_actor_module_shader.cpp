@@ -29,6 +29,9 @@ namespace GameActorCore {
 
 		__RENDER_RESOLUTION = RESOLUTION;
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader create: %u x %u", RESOLUTION.vector_x, RESOLUTION.vector_y);
+
+		// ATOMIC ENTITIES COUNTER.
+		++ActorSystemAtomic::GLOBAL_PARAMS_SHADERS;
 	}
 
 	GameActorShader::~GameActorShader() {
@@ -42,6 +45,9 @@ namespace GameActorCore {
 		// delete opengl shader.
 		GraphicShaders->ResourceDelete(__ACTOR_SHADER_ITEM);
 		PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor shader delete.");
+
+		// ATOMIC ENTITIES COUNTER.
+		--ActorSystemAtomic::GLOBAL_PARAMS_SHADERS;
 	}
 
 	bool GameActorShader::CreateShaderResource(bool default_is_circle) {

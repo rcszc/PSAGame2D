@@ -70,11 +70,11 @@ namespace GameBrickCore {
 		}
 		BrickPhysicsWorld = INIT_DESC.BrickPhysicsWorld;
 
-		BrickRenderParams.RenderColorBlend = INIT_DESC.InitialVertexColor;
+		BrickRenderParams.RenderColorBlend = INIT_DESC.VertexColor;
 
 		BrickRenderParams.RenderPosition    = INIT_DESC.InitialPosition;
 		BrickRenderParams.RenderScale       = INIT_DESC.InitialScale;
-		BrickRenderParams.RenderRotate      = INIT_DESC.InitialAngle;
+		BrickRenderParams.RenderAngle      = INIT_DESC.InitialAngle;
 		BrickRenderParams.RenderLayerHeight = INIT_DESC.InitialRenderLayer;
 		// actor space_z value_clamp.
 		BrickRenderParams.RenderLayerHeight = 
@@ -82,8 +82,8 @@ namespace GameBrickCore {
 
 		// create physics body.
 		PhysicsEngine::PhysicsBodyConfig ActorPhyConfig;
-		ActorPhyConfig.IndexUniqueCode     = BrickUniqueID;
-		ActorPhyConfig.CollVertexGroup     = PhysicsEngine::PresetVertexGroupRECT(); // default vertex_group.
+		ActorPhyConfig.IndexUniqueCode = BrickUniqueID;
+		ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupRECT(); // default vertex_group.
 
 		if (INIT_DESC.CollisionBoxIsCircle)
 			ActorPhyConfig.CollVertexGroup = PhysicsEngine::PresetVertexGroupCIRCLE(INIT_DESC.InitialScale, 20);
@@ -93,8 +93,8 @@ namespace GameBrickCore {
 		ActorPhyConfig.PhysicalShapeType   = PhysicsEngine::POLYGON_TYPE;
 		ActorPhyConfig.PhysicsIsSensorFlag = false;
 
-		ActorPhyConfig.PhysicsCollisionThis   = GameActorCore::ActorCollisionGroup::ActorPhyGroup15;
-		ActorPhyConfig.PhysicsCollisionFilter = GameActorCore::ActorCollisionGroup::ActorPhyGroup0;
+		ActorPhyConfig.PhysicsCollisionThis   = GameActorCore::ActorCollisionGroup(1 << 15);
+		ActorPhyConfig.PhysicsCollisionFilter = GameActorCore::ActorCollisionGroup::ActorPhyGroupALL;
 
 		if (INIT_DESC.BrickShaderResource != nullptr &&
 			INIT_DESC.BrickShaderResource->__GET_VERTICES_RES() != nullptr
@@ -114,6 +114,9 @@ namespace GameBrickCore {
 		// BcickPhysicsItem(PhyBodyKey) 由物理引擎分配.
 		PhyBodyItemAlloc(BrickPhysicsWorld, &BcickPhysicsItem, ActorPhyConfig);
 		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item create: %u", BrickUniqueID);
+
+		// ATOMIC ENTITIES COUNTER.
+		++ActorSystemAtomic::GLOBAL_PARAMS_EVNS;
 	}
 
 	GameBrickExecutor::~GameBrickExecutor() {
@@ -123,6 +126,9 @@ namespace GameBrickCore {
 		// free: physics system item.
 		PhyBodyItemFree(BrickPhysicsWorld, BcickPhysicsItem);
 		PushLogger(LogInfo, PSAGM_BRICK_CORE_LABEL, "game_brick item delete: %u", BrickUniqueID);
+
+		// ATOMIC ENTITIES COUNTER.
+		--ActorSystemAtomic::GLOBAL_PARAMS_EVNS;
 	}
 
 	void GameBrickExecutor::BrickRendering() {

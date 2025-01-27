@@ -13,9 +13,9 @@ ShaderCode SceneBackground = R"(
 
 #define zoom  0.928
 #define tile  0.860
-#define speed 0.00015
+#define speed 0.0005
 
-#define brightness 0.0025
+#define brightness 0.0016
 #define darkmatter 0.100
 #define distfading 0.720
 #define saturation 1.222

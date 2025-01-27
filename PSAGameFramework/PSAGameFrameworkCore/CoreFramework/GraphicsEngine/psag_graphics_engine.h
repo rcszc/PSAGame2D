@@ -441,15 +441,13 @@ namespace GraphicsEngineBackground {
 namespace GraphicsEngineParticle {
 	StaticStrLABEL PSAGM_GLENGINE_PARTICLE_LABEL = "PSAG_GL_PARTICLE";
 
-	namespace ParticlesGenMode {
-		enum ColorChannelMode {
-			Grayscale   = 1 << 1, // 灰度(单通道R-RGB)
-			ChannelsRG  = 1 << 2, // R,G 通道
-			ChannelsRB  = 1 << 3, // R,B 通道
-			ChannelsGB  = 1 << 4, // G,B 通道
-			ChannelsRGB = 1 << 5  // R,G,B 通道
-		};
-	}
+	enum ColorChannelMode {
+		Grayscale   = 1 << 1, // 灰度(单通道R-RGB)
+		ChannelsRG  = 1 << 2, // R,G 通道
+		ChannelsRB  = 1 << 3, // R,B 通道
+		ChannelsGB  = 1 << 4, // G,B 通道
+		ChannelsRGB = 1 << 5  // R,G,B 通道
+	};
 
 	struct ParticleAttributes {
 		Vector3T<float> ParticleVector;
@@ -461,7 +459,7 @@ namespace GraphicsEngineParticle {
 		bool  ParticleLifeSwitch;
 
 		// particle color(system) channels draw_type mode.
-		ParticlesGenMode::ColorChannelMode ParticleModeType;
+		ColorChannelMode ParticleModeType;
 
 		constexpr ParticleAttributes() :
 			ParticleVector    ({}),
@@ -470,7 +468,7 @@ namespace GraphicsEngineParticle {
 			ParticleScaleSize (1.0f),
 			ParticleLife      (0.0f),
 			ParticleLifeSwitch(true),
-			ParticleModeType  (ParticlesGenMode::Grayscale)
+			ParticleModeType  (Grayscale)
 		{}
 	};
 
@@ -491,7 +489,7 @@ namespace GraphicsEngineParticle {
 
 		virtual void ConfigRandomColorSystem(
 			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
-			ParticlesGenMode::ColorChannelMode mode
+			ColorChannelMode mode
 		) = 0;
 		virtual void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) = 0;
 	};
@@ -499,7 +497,7 @@ namespace GraphicsEngineParticle {
 	// mode => color channels filter.
 	Vector3T<Vector2T<float>> __COLOR_SYSTEM_TYPE(
 		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-		ParticlesGenMode::ColorChannelMode mode,
+		ColorChannelMode mode,
 		bool* gray_switch
 	);
 
@@ -530,7 +528,7 @@ namespace GraphicsEngineParticle {
 
 		void ConfigRandomColorSystem(
 			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
-			ParticlesGenMode::ColorChannelMode mode
+			ColorChannelMode mode
 		) override;
 
 	    // particle_system call
@@ -569,7 +567,7 @@ namespace GraphicsEngineParticle {
 
 		void ConfigRandomColorSystem(
 			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
-			ParticlesGenMode::ColorChannelMode mode
+			ColorChannelMode mode
 		) override;
 
 		// particle_system call
@@ -604,7 +602,7 @@ namespace GraphicsEngineParticle {
 		}
 		void ConfigRandomColorSystem(
 			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
-			ParticlesGenMode::ColorChannelMode mode
+			ColorChannelMode mode
 		) override;
 
 		// particle_system call
@@ -647,7 +645,7 @@ namespace GraphicsEngineParticle {
 		float           RenderTimer  = 0.0f;
 		Vector2T<float> RenderMove   = {};
 		Vector2T<float> RenderScale  = Vector2T<float>(1.0f, 1.0f);
-		float           RenderRotate = 0.0f;
+		float           RenderAngle = 0.0f;
 		float           RenderTwist  = 0.0f;
 
 		VirTextureUnqiue VirTextureItem = {};
@@ -668,7 +666,7 @@ namespace GraphicsEngineParticle {
 		ParticleSystemState				 GetParticleState();
 
 		void SetParticleTwisted    (float value) { RenderTwist  = value > 0.0f ? value : 0.0f; }
-		void SetParticleRotateSpeed(float value) { RenderRotate = value > 0.0f ? value : 0.0f; }
+		void SetParticleRotateSpeed(float value) { RenderAngle = value > 0.0f ? value : 0.0f; }
 
 		Vector2T<float> ParticlesCoordCenter = {};
 

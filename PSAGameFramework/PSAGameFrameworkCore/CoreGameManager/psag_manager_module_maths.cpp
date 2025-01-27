@@ -23,6 +23,15 @@ struct MsVec2T {
 namespace GameManagerCore {
 	namespace GameMathsTools {
 
+		float CalcDirection(const Vector2T<float>& vector) {
+			float Length = sqrt(vector.vector_x * vector.vector_x + vector.vector_y * vector.vector_y);
+			if (Length == 0.0f) return 0.0f;
+
+			float AngleRadians = atan2(vector.vector_y, vector.vector_x);
+			float AngleDegrees = AngleRadians * 180.0f / PSAG_M_PI;
+			return AngleDegrees;
+		}
+
 		float CalcFuncPointsDistance(Vector2T<float> point0, Vector2T<float> point1) {
 			float Dx = point1.vector_x - point0.vector_x;
 			float Dy = point1.vector_y - point0.vector_y;
@@ -60,6 +69,15 @@ namespace GameManagerCore {
 			ahpla->vector_y += (target->vector_y - ahpla->vector_y) * speed;
 			ahpla->vector_z += (target->vector_z - ahpla->vector_z) * speed;
 			ahpla->vector_w += (target->vector_w - ahpla->vector_w) * speed;
+		}
+
+		float CalcFuncAvgDiffeVec4(const Vector4T<float>& a, const Vector4T<float>& b) {
+			// vec4 a - b => vec avg.
+			Vector4T<float> Avg = Vector4T<float>(
+				a.vector_x - b.vector_x, a.vector_y - b.vector_y, 
+				a.vector_z - b.vector_z, a.vector_w - b.vector_w
+			);
+			return (Avg.vector_x + Avg.vector_y + Avg.vector_z + Avg.vector_w) / 4.0f;
 		}
 
 		constexpr float CONST_V_G = 280.0f;

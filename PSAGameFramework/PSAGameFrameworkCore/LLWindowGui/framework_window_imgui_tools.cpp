@@ -5,6 +5,15 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 namespace ImPsag {
+	atomic<bool> DEBUG_GUI_GLOBAL_FLAG = PSAG_FALSE;
+	void DebugGuiFlagStatus() {
+		if (ImGui::IsKeyPressed(ImGuiKey_F12, false))
+			DEBUG_GUI_GLOBAL_FLAG = !DEBUG_GUI_GLOBAL_FLAG;
+	}
+	bool GetDebugGuiFlag() {
+		return DEBUG_GUI_GLOBAL_FLAG;
+	}
+
 #define IM_SCALE_CALC(high, value) high + value < 0.0f ? 0.0f : high + value && high + value > 1.0f ? 1.0f : high + value
 	ImVec4 ColorGrayscaleScale(const ImVec4& color, float value, float ahpla) {
 		return ImVec4(

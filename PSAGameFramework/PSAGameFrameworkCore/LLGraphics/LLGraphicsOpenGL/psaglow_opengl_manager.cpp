@@ -53,13 +53,13 @@ namespace PSAG_OGL_VERATT {
 namespace PSAG_OGL_MAG {
 	std::vector<float> ShaderTemplateRectDep(float zlayer) {
 		float ShaderTemplateRect[72] = {
-			-10.0f, -10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
-			 10.0f, -10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f,0.0f,
-			 10.0f,  10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
+			-10.0f, -10.0f, zlayer, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
+			 10.0f, -10.0f, zlayer, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f,0.0f,
+			 10.0f,  10.0f, zlayer, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
 
-			-10.0f, -10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
-			 10.0f,  10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
-			-10.0f,  10.0f, zlayer, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,0.0f,0.0f
+			-10.0f, -10.0f, zlayer, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,0.0f,0.0f,
+			 10.0f,  10.0f, zlayer, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,0.0f,0.0f,
+			-10.0f,  10.0f, zlayer, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,0.0f,0.0f
 		};
 		return std::vector<float>(ShaderTemplateRect, ShaderTemplateRect + 72);
 	}

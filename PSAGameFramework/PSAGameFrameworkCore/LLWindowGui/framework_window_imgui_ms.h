@@ -6,8 +6,8 @@
 #define _FRAMEWORK_WINDOW_IMMS_H
 
 #define IMGUI_ENABLE_FREETYPE
-#include "imgui_glfw3/imgui.h"
-#include "imgui_glfw3/imgui_internal.h"
+#include "imgui.h"
+#include "imgui_internal.h"
 
 #define PSAG_IMVEC_CLAMP(value, min, max) ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
 #define PSAG_IMVEC_PI 3.14159265f
@@ -15,10 +15,11 @@
 
 #define IMVEC2_DISTANCE(pos1, pos2) std::sqrt((pos1.x - pos2.x) * (pos1.x - pos2.x) + (pos1.y - pos2.y) * (pos1.y - pos2.y))
 
+#define UI32TOFP32(V) ImU32((V) * 255.0f)
 #define IMFP32_CVT_COLU32(R, G, B, A) IM_COL32(ImU32(R * 255.0f), ImU32(G * 255.0f), ImU32(B * 255.0f), ImU32(A * 255.0f))
-#define COLOR_FMT_FP32(V)             ImU32((V) * 255.0f)
-#define IMVEC4_CVT_COLU32(COL)        IM_COL32(COLOR_FMT_FP32((COL).x), COLOR_FMT_FP32((COL).y), COLOR_FMT_FP32((COL).z), COLOR_FMT_FP32((COL).w))
+#define IMVEC4_CVT_COLU32(COL) IM_COL32(UI32TOFP32((COL).x), UI32TOFP32((COL).y), UI32TOFP32((COL).z), UI32TOFP32((COL).w))
 
+#define IMGUI_TEXTURE_ID (ImTextureID)(intptr_t)
 // ImGui 全局控件间距(单位量).
 #define IMGUI_ITEM_SPAC ImGui::GetStyle().ItemSpacing.x
 #ifdef PSAG_IMGUI_CONTROL_MATHS

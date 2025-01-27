@@ -15,7 +15,7 @@ namespace ToolkitsEngineRandom {
 		// params: max >= min, seed = 0 => default: time.
 		template<typename T>
 		T GenerateRandomFuncBase(T max, T min, uint64_t seed) {
-			uint64_t SEED_CODE = (uint64_t)GetTimeNowCount<chrono::milliseconds>();
+			uint64_t SEED_CODE = (uint64_t)GetTimeNowCount<chrono::nanoseconds>();
 			if (seed != 0) SEED_CODE = seed;
 			// const seed: milliseconds_time, set_value.
 			mt19937_64 MtGenerator(SEED_CODE);
