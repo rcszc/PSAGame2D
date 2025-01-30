@@ -7,15 +7,11 @@
 #include "../PSAGameFrameworkDev/GameZeroProject/zero_project_bullet.h"
 #include "../PSAGameFrameworkDev/GameZeroProject/zero_project_gui.h"
 
-#include "../PSAGameFrameworkDev/GameZeroProject/NewYearFireworks/special_project.h"
-
 // register_class: 'PSAGCLASS()'
 PSAGCLASS(ZPGameSceneMain);
 PSAGCLASS(ZPGamePawnActor);
 PSAGCLASS(ZPGameBulletSystem);
 PSAGCLASS(ZPGameGuiMain);
-
-PSAGCLASS(FireworksSystem);
 
 namespace PsagFrameworkCore {
 	void PSAGame2DFramework::InitializeRegistrationDev() {
@@ -23,10 +19,8 @@ namespace PsagFrameworkCore {
 		// register,create class,object...
 
 		RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGameSceneMain",    "ZPGameScene");
-		//RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGamePawnActor",    "ZPGamePActor");
-		//RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGameBulletSystem", "ZPGameBullet");
-		//RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGameGuiMain",      "ZPGameGui");
-
-		RegisterDevClass::GAMEREF.ReflectionObjectCreate("FireworksSystem", "EXT");
+		RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGamePawnActor",    "ZPGamePActor");
+		RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGameBulletSystem", "ZPGameBullet");
+		RegisterDevClass::GAMEREF.ReflectionObjectCreate("ZPGameGuiMain",      "ZPGameGui");
 	}
 }

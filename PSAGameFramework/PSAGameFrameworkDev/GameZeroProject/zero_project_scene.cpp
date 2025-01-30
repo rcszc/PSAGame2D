@@ -132,6 +132,6 @@ bool ZPGameSceneMain::LogicEventLoopGame(GameLogic::FrameworkParams& RunningStat
 
 	SceneMouseScaleLerp(RunningState.GameRunTimeSTEP, 1.0f);
 	RunningState.CameraParams->MatrixScale 
-		= Vector2T<float>(2.8f/*SceneScaleTrans.y*/, 2.8f/*SceneScaleTrans.y*/);
+		= Vector2T<float>(SceneScaleTrans.y, SceneScaleTrans.y);
 	return true;
 }
