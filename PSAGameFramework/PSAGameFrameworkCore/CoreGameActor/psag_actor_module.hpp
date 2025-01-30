@@ -398,6 +398,7 @@ namespace GameActorCore {
 		Vector2T<float> InitialScale;
 		Vector2T<float> InitialSpeed;
 		float           InitialAngle;
+		float           InitialAngleSpeed;
 		float           InitialRenderLayer;
 
 		Vector4T<float> VertexColor;
@@ -430,6 +431,7 @@ namespace GameActorCore {
 			InitialScale      (Vector2T<float>(1.0f, 1.0f)),
 			InitialSpeed      (Vector2T<float>(0.0f, 0.0f)),
 			InitialAngle      (0.0f),
+			InitialAngleSpeed (0.0f),
 			InitialRenderLayer(50.0f),
 
 			VertexColor(Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f)),

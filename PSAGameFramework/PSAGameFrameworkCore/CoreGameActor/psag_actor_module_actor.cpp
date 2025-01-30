@@ -167,8 +167,9 @@ namespace GameActorCore {
 		// config space_trans. ture: non-fixed.
 		if (ActorPhyConfig.PhysicsModeTypeFlag && INIT_DESC.ActorComponentConifg & ActorEnableTransform) {
 			ActorCompSpaceTrans = new GameComponents::ActorSpaceTrans(ActorPhysicsWorld, ActorPhysicsItem, INIT_DESC.VectorCalcIsForce);
-			// init move speed_vector. non-rotate vector 20250124 RCSZ.
-			ActorCompSpaceTrans->ActorTransMoveValue = INIT_DESC.InitialSpeed;
+			// init move speed_vector. rotate_vector 20250124 RCSZ.
+			ActorCompSpaceTrans->ActorTransMoveValue   = INIT_DESC.InitialSpeed;
+			ActorCompSpaceTrans->ActorTransRotateValue = INIT_DESC.InitialAngleSpeed;
 		}
 		else {
 			// comp(empty_object): space_trans.

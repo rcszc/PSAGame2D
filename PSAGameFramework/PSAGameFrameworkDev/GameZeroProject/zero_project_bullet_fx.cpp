@@ -36,7 +36,7 @@ void BulletParticle::CreateParticleFly(const Vector2T<float>& position, float nu
 	ParticleSystem.Get()->FxParticlesGroupCreate(CreateParticleOBJ);
 }
 
-void BulletParticle::CreateParticleFree(const Vector2T<float>& position, float number) {
+void BulletParticle::CreateParticleFreeB(const Vector2T<float>& position, float number) {
 	PsagManager::Fx::ParticleGenShape* CreateFree0 = new PsagManager::Fx::ParticleGenShape();
 
 	CreateFree0->ConfigCreateNumber(number);

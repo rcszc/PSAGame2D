@@ -51,7 +51,7 @@ void ZPGameSceneMain::SceneMouseScaleLerp(float timestep, float scale) {
 	// mouse wheel scale => lerp.
 	SceneScaleTrans.x -= ImGui::GetIO().MouseWheel * 0.12f;
 	SceneScaleTrans.y += (SceneScaleTrans.x - SceneScaleTrans.y) * 0.032f * timestep * scale;
-	SceneScaleTrans.x = PSAG_IMVEC_CLAMP(SceneScaleTrans.x, 0.48f, 2.16f);
+	SceneScaleTrans.x = PSAG_IMVEC_CLAMP(SceneScaleTrans.x, 0.48f, 5.16f);
 	// mouse middle click => normal scale.
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle))
 		SceneScaleTrans.x = 1.0f;
@@ -125,13 +125,13 @@ bool ZPGameSceneMain::LogicEventLoopGame(GameLogic::FrameworkParams& RunningStat
 	RunningState.ShaderParamsFinal->GameSceneBloomBlend  = Vector2T<float>(0.92f, 1.54f);
 	RunningState.ShaderParamsFinal->GameSceneOutContrast = 1.032f;
 	
-	SceneFinal.Get()->GetFinalParamsPonter(RunningState.ShaderParamsFinal);
-	SceneFinal.Get()->RenderDebugParamsPanel("GameFINAL");
+	//SceneFinal.Get()->GetFinalParamsPonter(RunningState.ShaderParamsFinal);
+	//SceneFinal.Get()->RenderDebugParamsPanel("GameFINAL");
 
 	SceneStatic.Get()->RunAllGameBrick();
 
 	SceneMouseScaleLerp(RunningState.GameRunTimeSTEP, 1.0f);
 	RunningState.CameraParams->MatrixScale 
-		= Vector2T<float>(SceneScaleTrans.y, SceneScaleTrans.y);
+		= Vector2T<float>(2.8f/*SceneScaleTrans.y*/, 2.8f/*SceneScaleTrans.y*/);
 	return true;
 }

@@ -23,8 +23,8 @@ string __get_timestamp(const chrono::system_clock::time_point& time_point) {
 	auto TimeMs = std::chrono::duration_cast<chrono::milliseconds>(time_point.time_since_epoch()) % 1000;
 	// format time stamp.
 	stringstream SStream;
-	SStream << put_time(localtime(&Time), "[%Y.%m.%d %H:%M:%S") << ".";
-	SStream << setfill('0') << setw(3) << TimeMs.count() << " ms]";
+	SStream << put_time(localtime(&Time), "%Y.%m.%d %H:%M:%S") << ".";
+	SStream << setfill('0') << setw(3) << TimeMs.count() << " ms";
 	// windows / linux time stamp.
 	return SStream.str();
 }
@@ -72,11 +72,12 @@ namespace PSAG_LOGGER {
 		case(LogPerfmac): { LogLEVEL = "[PERF]";    break; }
 		}
 		string FmtModuleName = "[" + module_name + "]: ";
-		string FmtLog = __get_timestamp(chrono::system_clock::now()) + ":" + LogLEVEL + ":" + FmtModuleName + logstr_text;
+		string FmtModuleLog  = "[" + __get_timestamp(chrono::system_clock::now()) + "]"
+			+ ":" + LogLEVEL + ":" + FmtModuleName + logstr_text;
 
 		// => read logger chache & logger process(print).
-		LogMessageCache.push_back(PRLC::LogCache(FmtLog, module_name, label));
-		LogWriteQueue.push(PRLC::LogCache(FmtLog, module_name, label));
+		LogMessageCache.push_back(PRLC::LogCache(FmtModuleLog, module_name, label));
+		LogWriteQueue.push(PRLC::LogCache(FmtModuleLog, module_name, label));
 	}
 
 #define LOGGER_BUFFER_LEN 2048

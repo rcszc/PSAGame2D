@@ -2,7 +2,7 @@
 // game: [ZeroProject] base define header_file.
 // @pomelo_star studio "PSAGame2D Framework"
 // game version:
-#define GAME_VERSION_ZPRO "1.0.0.20250117"
+#define GAME_VERSION_ZPRO "1.0.0.20250127"
 // developer(s): RCSZ.
 
 #ifndef __BASE_DEFINE_HEADER_HPP

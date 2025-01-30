@@ -11,7 +11,7 @@ protected:
     void InitParticleSystem(const Vector2T<uint32_t>& window_size);
 
     void CreateParticleFly (const Vector2T<float>& position, float number);
-    void CreateParticleFree(const Vector2T<float>& position, float number);
+    void CreateParticleFreeB(const Vector2T<float>& position, float number);
 public:
     ~BulletParticle();
 };

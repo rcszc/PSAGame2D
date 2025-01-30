@@ -218,6 +218,9 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project_fireworks.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project_create.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet_fx.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.cpp" />
@@ -286,6 +289,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.hpp" />
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_pawn.h" />

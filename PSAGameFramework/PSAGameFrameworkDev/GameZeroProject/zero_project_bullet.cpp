@@ -65,7 +65,7 @@ public:
 void ZPGameBulletSystem::BulletLogic_PPAB(PsagActor::Actor* ThisActor) {
     // bullet collision => free entity.
     ActorEntities.Get()->DeleteGameActor(ThisActor->ActorGetPrivate().ActorUniqueCode);
-    CreateParticleFree(ThisActor->ActorGetPosition(), 78.0f);
+    CreateParticleFreeB(ThisActor->ActorGetPosition(), 78.0f);
     // 飞行时间 < 1s 忽略.
     if (ThisActor->ActorGetLifeTime() < 1.0f) return;
 

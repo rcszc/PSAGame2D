@@ -13,7 +13,7 @@ ShaderCode SceneBackground = R"(
 
 #define zoom  0.928
 #define tile  0.860
-#define speed 0.0005
+#define speed 0.001
 
 #define brightness 0.0016
 #define darkmatter 0.100
@@ -78,6 +78,6 @@ void main()
     // color adjust
 	v = mix(vec3(length(v)), v, saturation);
 	FragColor = clamp(vec4(v * 0.01, 1.0), 0.0, 1.2);
-	FragColor *= 0.72;
+	FragColor *= 0.68;
 }
 )";

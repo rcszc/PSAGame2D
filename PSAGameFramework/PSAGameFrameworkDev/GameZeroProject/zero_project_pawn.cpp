@@ -64,7 +64,7 @@ bool ZPGamePawnActor::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	NpcActorEntities.CreatePointer();
 	GLO_NpcActorsRef = &NpcActorEntities;
 
-	DEBUG_GUI.CreatePointer("GameDebug", 1500.0f);
+	DEBUG_GUI.CreatePointer("GameDebug", 800.0f);
 	DEBUG_GUI.Get()->SettingPPActorRef(PlayerActorEntity.Get());
 
 	CreateNpcActor(10);

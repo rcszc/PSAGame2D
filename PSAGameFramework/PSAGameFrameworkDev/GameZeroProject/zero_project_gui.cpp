@@ -33,6 +33,8 @@ bool ZPGameGuiMain::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState)
 	LerpDamageView += (GLO_PlayerDamageCount - LerpDamageView)
 		* 0.025f * RunningState.GameRunTimeSTEP;
 
+	ImGui::Text(FMT_TIME_STAMP(chrono::system_clock::now()).c_str());
+
 	ImGui::SetNextWindowSize(ImVec2(330.0f, 180.0f));
 	ImGui::SetNextWindowPos(ImVec2(32.0f, ImGui::GetIO().DisplaySize.y - 160.0f));
 	ImGui::Begin("##CONTROL", (bool*)NULL, Flags);

@@ -106,6 +106,9 @@
     <Filter Include="资源文件\ImGui\ImGuiCore\freetype">
       <UniqueIdentifier>{65c56eb5-b028-4392-9f16-77c546c70e58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\A-PSAGameFrameworkDev\GameZeroProject\NewYearFireworks">
+      <UniqueIdentifier>{251f3501-fd8b-457d-a8a2-a333b5290b60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -333,6 +336,15 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.cpp">
       <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\NewYearFireworks</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project_fireworks.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\NewYearFireworks</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project_create.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\NewYearFireworks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -514,6 +526,9 @@
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.h">
       <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\NewYearFireworks\special_project.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameZeroProject\NewYearFireworks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
