@@ -40,9 +40,7 @@ int main() {
 	// FTD update: "PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.cpp"
 	// RCSZ. [20240817]
 	PSAG_LOGGER_PROCESS::StartLogProcessing("PSAGameSystemLogs/");
-#if ENABLE_DEBUG_MODE
-	FTDthread::FTDprocessingThread.CreateProcessingThread("PSAGameSystemDebug/", "PSAG2D_GAME");
-#endif
+	PsagDebugThread::FTDprocessThread.CreateProcessingThread("PSAGameSystemDebug/", "MemoryMsg");
 	{
 		// create framework object.
 		PsagFrameworkCore::PSAGame2DFramework* MainPSAGame2D = new PsagFrameworkCore::PSAGame2DFramework();
@@ -54,9 +52,7 @@ int main() {
 		// framework free exit.
 		FrameworkResult = FrameworkStarter.FreeFramework();
 	}
-#if ENABLE_DEBUG_MODE
-	FTDthread::FTDprocessingThread.DeleteProcessingThread();
-#endif
+	PsagDebugThread::FTDprocessThread.DeleteProcessingThread();
 	PSAG_LOGGER_PROCESS::FreeLogProcessing();
 
 	return FrameworkResult;

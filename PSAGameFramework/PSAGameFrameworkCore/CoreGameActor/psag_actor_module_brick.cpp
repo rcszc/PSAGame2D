@@ -10,14 +10,6 @@ namespace GameBrickCore {
 		PSAG_SYS_GENERATE_KEY GenResourceID;
 		BrickUniqueID = GenResourceID.PsagGenUniqueKey();
 
-#if ENABLE_DEBUG_MODE
-		FTDcapture::CaptureContext CapPoint;
-
-		CapPoint.CaptureSettingFilter(FTD_TagLv2);
-		CapPoint.CaptureSettingPointer(this);
-		CapPoint.CaptureSettingTagging("brick create.");
-		CapPoint.CaptureBegin();
-#endif
 		if (INIT_DESC.EnableRendering) {
 			if (INIT_DESC.BrickShaderResource == nullptr) {
 				PushLogger(LogError, PSAGM_BRICK_CORE_LABEL, "game_brick shader_resource = nullptr.");

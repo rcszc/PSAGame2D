@@ -195,8 +195,8 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_final.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_capture.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_thread.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug_capture.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug_thread.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_config.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\framework_init_register.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_json.cpp" />
@@ -266,7 +266,7 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp" />
-    <ClInclude Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug.hpp" />
+    <ClInclude Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\framework_header_actor.h" />
     <ClInclude Include="PSAGameFrameworkCore\framework_header_manager.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLDefine\framework_def_header.h" />

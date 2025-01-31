@@ -76,9 +76,6 @@
     <Filter Include="源文件\A-PSAGameFrameworkDev">
       <UniqueIdentifier>{6d0a88b2-7a52-4775-a876-8ded6652a516}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\PSAGameFrameworkCore\FTDmodule">
-      <UniqueIdentifier>{e9083aa4-28b4-4361-8f1a-c09f69804619}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\DevSupport">
       <UniqueIdentifier>{43b8c5eb-d94c-4be0-89de-2d78f2909925}</UniqueIdentifier>
     </Filter>
@@ -105,6 +102,9 @@
     </Filter>
     <Filter Include="资源文件\ImGui\ImGuiCore\freetype">
       <UniqueIdentifier>{65c56eb5-b028-4392-9f16-77c546c70e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PSAGameFrameworkCore\FrameDebug">
+      <UniqueIdentifier>{988fbf87-40b2-4ad8-bc67-245d05d78f54}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -240,12 +240,6 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_maths.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_capture.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug_thread.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_components.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
@@ -332,6 +326,12 @@
     </ClCompile>
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.cpp">
       <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug_capture.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug_thread.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -476,9 +476,6 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
     </ClInclude>
-    <ClInclude Include="PSAGameFrameworkCore\DebugFrameTime\psag_ft_debug.hpp">
-      <Filter>源文件\PSAGameFrameworkCore\FTDmodule</Filter>
-    </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClInclude>
@@ -514,6 +511,9 @@
     </ClInclude>
     <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.h">
       <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

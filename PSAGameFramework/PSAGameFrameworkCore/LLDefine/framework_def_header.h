@@ -22,10 +22,9 @@
 #include <functional>
 #include <typeinfo> // RTTI.
 
+//#define PSAG_MEMORY_DEBUG
+#include "../FrameDebug/psag_frame_debug.hpp"
 #define POMELO_STAR_GAME2D_DEF true
-#define ENABLE_FTD false
-// FrameDebug => FrameworkLow. [20240817]
-#include "../DebugFrameTime/psag_ft_debug.hpp"
 
 #if defined(_DEBUG) || defined(DEBUG)
 #define PSAG_COMPILE_MODE 1 // mode: debug(code: 1)
@@ -39,6 +38,7 @@
 #define PSAG_COMPILE_X64 0
 #endif
 
+// only one can be opened.
 #define PSAG_COLSYSTEM_RGBA12
 // #define PSAG_COLSYSTEM_RGBA16
 

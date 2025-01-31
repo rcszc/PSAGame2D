@@ -25,10 +25,10 @@ namespace PSAG_FILESYS_COMPR {
 			CompressionLevel(level), CompressionMethod(method) 
 		{}
 
-		void SetCompressLevel(int32_t level)   { CompressionLevel  = level;  }
+		void SetCompressLevel (int32_t level)  { CompressionLevel  = level;  }
 		void SetCompressMethod(int32_t method) { CompressionMethod = method; }
 
-		RawDataStream CompressRawData(const RawDataStream& input_data);
+		RawDataStream CompressRawData  (const RawDataStream& input_data);
 		RawDataStream DecompressRawData(const RawDataStream& input_data);
 
 		uint32_t GetCompressChecksum()   { return ChecksumCompress;   };

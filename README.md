@@ -2,9 +2,9 @@
 # PSAGame2D
 > PomeloStar 2D游戏开发框架.
 
-__当前版本:__ `V1.2.6.20250127` __开发文档:__ 暂无...
+__当前版本:__ `V1.2.6.20250201` __开发文档:__ 暂无...
 
-> 目前长期施工中🙂, 并且早期版本并不稳定, 主要供工作室部使用, 所以不对外提供文档.
+> 🚧 目前长期施工中🙂, 并且早期版本并不稳定, 主要供工作室部使用, 目前没有提供文档.
 
 <img src="PSAGameDesigns/PSAGame2DHeader.png"/>
 
@@ -12,12 +12,12 @@ __当前版本:__ `V1.2.6.20250127` __开发文档:__ 暂无...
 - 物理引擎基于 `Box2D`
 - 音频系统基于 `OpenAL`
 
-目前主要兼容 __WindowsX64__ 平台. 内置帧性能监控, 使用简单的控制反转(IOC), 降低游戏代码与框架的耦合度, 框架内置多级 后期处理调色&背景处理 着色器管线. 使用描述符(DESC), 描述各对象构建以及挂载组件, 简化手动配置等.
+💻 目前主要兼容 __WindowsX64__ 平台. 内置帧性能监控, 使用简单的控制反转(IOC), 降低游戏代码与框架的耦合度, 框架内置多级 后期处理调色&背景处理 着色器管线. 使用描述符(DESC), 描述各对象构建以及挂载组件, 简化手动配置等.
 
-- __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 92% __底层模块测试完善:__ `▮▮▮▮▯▯▯▯▯▯` 46%
+- __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 92% __底层模块测试完善:__ `▮▮▮▮▯▯▯▯▯▯` 48%
 
 ```
-FrameworkCore Files: 97 LoC: 14836 
+FrameworkCore Files: 97 LoC: 14833 
 FrameworkDemo Files: 15 LoC: 952
 ```
 
@@ -51,12 +51,14 @@ FrameworkDemo Files: 15 LoC: 952
   <img src="PSAGameDesigns/VertexGroupArch.png" style="width:62%;"/>
 </p>
 
-以上架构并不固定, 可能会有微调.
+⚠ 以上架构并不固定, 可能会有微调.
 
-## 框架每个版本都会带有对应 DEMO
+---
 
-[__BiliBili视频__](https://www.bilibili.com/video/BV17QfmYSENT) __Update:__ 2024.10.02
-> 动态游戏场景后期画面调色
+### 框架每个版本都会有对应 DEMO 小游戏
+
+[__📺BiliBili视频__](https://www.bilibili.com/video/BV17QfmYSENT) __Update:__ 2025.01.30
+> 🎮🎮🎮 __DemoGame:__ ZeroProject
 
 <img src="PSAGameDesigns/PSAGame2Dv20250130.png"/>
 

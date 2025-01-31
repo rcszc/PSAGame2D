@@ -42,9 +42,9 @@ namespace PsagFrameworkCore {
 
     bool PSAGame2DFramework::FrameworkRendering() {
         bool ErrorFlag = PSAG_FALSE;
-
 #if PSAG_DEBUG_MODE 
         ImPsag::DebugGuiFlagStatus();
+
         // debug window context begin.
         if (ImPsag::GetDebugGuiFlag()) {
             ImGui::SetNextWindowSize(
@@ -106,6 +106,8 @@ namespace PsagFrameworkCore {
         
         // clac_frame global time_step.
         FrameworkParams.GameRunTimeSTEP = CalcFrameTimeStepEnd(RenderingBaseFPS);
+        // system update frame memory debug data.
+        PsagDebugThread::FTDprocessThread.MainUpdateFrame();
         // glfw close_window flag & renderer error.
         return !FRAMEWORK_EXIT;
     }
