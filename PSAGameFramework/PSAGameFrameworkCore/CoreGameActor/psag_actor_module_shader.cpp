@@ -7,8 +7,8 @@ using namespace PSAG_LOGGER;
 namespace GameActorCore {
 
 	bool GameActorShader::ShaderImageTextureLoad(VirTextureUnqiue* ref_texture, const ImageRawData& image) {
-		if (!CheckRepeatTex(*ref_texture)) return false;
-
+		if (!CheckRepeatTex(*ref_texture)) 
+			return false;
 		if (!image.ImagePixels.empty()) {
 			PSAG_SYS_GENERATE_KEY GenResourceID;
 			*ref_texture = GenResourceID.PsagGenUniqueKey();

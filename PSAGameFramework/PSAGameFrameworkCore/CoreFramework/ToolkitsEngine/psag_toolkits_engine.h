@@ -94,11 +94,11 @@ namespace ToolkitsEngineCamera {
 
 	class GamePlayerCameraMP :public __TOOLKITS_ENGINE_TIMESETP {
 	protected:
-		Vector2T<float> CameraPositionTarget = {};
-		Vector2T<float> CameraPosition       = {};
-
 		Vector2T<float> WindowRectRange  = {};
 		Vector2T<float> WindowResolution = {};
+
+		Vector2T<float> CameraPositionTarget = {};
+		Vector2T<float> CameraPositionLerp   = {};
 
 		float CALC_LERP_SCALE = 1.0f;
 	public:
@@ -120,7 +120,7 @@ namespace ToolkitsEngineCamera {
 		Vector2T<Vector2T<float>> CameraPositionRectLimit = {};
 
 		Vector2T<float> CameraPositionTarget = {};
-		Vector2T<float> CameraPosition       = {};
+		Vector2T<float> CameraPositionLerp   = {};
 
 		float CALC_LERP_SCALE = 1.0f;
 	public:
@@ -153,18 +153,20 @@ namespace ToolkitsEngineTimerClock {
 
 namespace ToolkitsEngineSound {
 	StaticStrLABEL PSAGM_TOOLKITS_SOUND = "PSAG_TOOL_SOUND";
-
-	// framework low => manager.
-	class GamePlayerSound :public PsagLow::PsagSupAudioLLRES {
+	namespace system {
+		using AudioPlayerPtr = PsagLow::PsagSupAudioDataPlayer*;
+	}
+	// framework low module => manager.
+	class GameAudioSound :public PsagLow::PsagSupAudioLLRES {
 	protected:
-		PsagLow::PsagSupAudioDataPlayer* AudioPlayer = nullptr;
+		system::AudioPlayerPtr AudioPlayer = nullptr;
+		// raw resource index code.
 		ResUnique RawStreamResource = {};
-
 	public:
-		GamePlayerSound(const RawAudioStream& data);
-		~GamePlayerSound();
+		GameAudioSound(const RawAudioStream& data);
+		~GameAudioSound();
 
-		PsagLow::PsagSupAudioDataPlayer* AudioPlayerOperate();
+		system::AudioPlayerPtr AudioPlayerOperate();
 	};
 }
 
@@ -183,28 +185,36 @@ namespace ToolkitsEngineGuiExt {
 		protected:
 			ImVec4 ViewWindowColorsystem = {};
 			ImVec2 ViewWindowSize        = {};
-			ImVec2 ViewWindowYCoordLimit = ImVec2(0.0f, 3000.0f);
+			ImVec2 ViewValueAxisLimit    = ImVec2(-100.0f, 100.0f);
+			// fixed mode => invalid.
+			ImVec2 WindowSize = {}, WindowPos = {};
 
 			std::vector<ImVec4> DrawPlotColors = { ImVec4(0.0f, 1.0f, 1.0f, 1.0f) };
 
-			float DataSampleRate = 1.0f;
+			float DataSampleRate      = 1.0f;
+			float DataSampleRateScale = 1.0f;
 
-			float ViewWindowDwWidthPlots    = 2.5f;
-			float ViewWindowDwWidthRuler    = 0.0f;
+			float ViewWindowDrawWidthPlots  = 2.5f;
+			float ViewWindowDrawWidthRuler  = 0.0f;
 			float ViewWindowDrawLength      = 0.0f;
 			float ViewWindowScrollxPosition = 0.0f;
 
 			bool SettingWindowFlag = false;
 
 			PlotsDatasetSRC SampleDatasetPoints = {};
-			// render: ruler_child_window & view_child_window, [MUL-PLOT].
-			void CoreViewWindowRender(PlotsDatasetPTR data);
-			void SettingWindiwRender(bool* window_open);
+			// render: ruler_child_window & view_child_window, [mul-plots].
+			void CoreViewWindowRender(PlotsDatasetPTR data, float smp_scale);
+			void SettingWindowRender(bool* window_open);
 		public:
 			ImMegaPlotsDataView();
 			~ImMegaPlotsDataView() {
-				PSAG_LOGGER::PushLogger(LogInfo, PSAGM_TOOLKITS_GUI_EXT, "plot_comp: object: ptr[%x] delete.", this);
+				PSAG_LOGGER::PushLogger(LogInfo, PSAGM_TOOLKITS_GUI_EXT, 
+					"plot_comp: object: ptr[%x] delete.", this);
 			}
+			bool SettingValueLimit    (float min, float max);
+			void SettingColorsystem   (const ImVec4& color);
+			bool SettingWindowSize    (float width, float height);
+			void SettingWindowPosition(float x, float y);
 
 			PlotsDatasetPTR GetPlotsDatasetRef() {
 				return &SampleDatasetPoints;

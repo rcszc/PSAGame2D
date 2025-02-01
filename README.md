@@ -17,7 +17,7 @@ __当前版本:__ `V1.2.6.20250201` __开发文档:__ 暂无...
 - __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 92% __底层模块测试完善:__ `▮▮▮▮▯▯▯▯▯▯` 48%
 
 ```
-FrameworkCore Files: 97 LoC: 14833 
+FrameworkCore Files: 97 LoC: 14930
 FrameworkDemo Files: 15 LoC: 952
 ```
 

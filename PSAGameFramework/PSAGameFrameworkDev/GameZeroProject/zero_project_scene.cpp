@@ -51,7 +51,7 @@ void ZPGameSceneMain::SceneMouseScaleLerp(float timestep, float scale) {
 	// mouse wheel scale => lerp.
 	SceneScaleTrans.x -= ImGui::GetIO().MouseWheel * 0.12f;
 	SceneScaleTrans.y += (SceneScaleTrans.x - SceneScaleTrans.y) * 0.032f * timestep * scale;
-	SceneScaleTrans.x = PSAG_IMVEC_CLAMP(SceneScaleTrans.x, 0.48f, 5.16f);
+	SceneScaleTrans.x = PSAG_IMVEC_CLAMP(SceneScaleTrans.x, 0.4f, 2.0f);
 	// mouse middle click => normal scale.
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle))
 		SceneScaleTrans.x = 1.0f;
@@ -87,7 +87,7 @@ bool ZPGameSceneMain::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 
 	SceneShaders.Get()->CreateActorShader("BoundaryH", RenderBH);
 	SceneShaders.Get()->CreateActorShader("BoundaryV", RenderBV);
-	/*
+	
 	PsagManager::StartAnimLOAD SALoader = {};
 
 	SALoader.SettingPlayTime(1.75f);
@@ -100,7 +100,7 @@ bool ZPGameSceneMain::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI1));
 	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI2));
 	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI3));
-	*/
+	
 	CreateSceneStatic();
 
 	// create game global notify system.

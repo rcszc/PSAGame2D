@@ -172,13 +172,13 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\GraphicsEngine\psag_graphics_engine_script.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\PhysicsEngine\psag_physics_engine.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_anim.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_config.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_spport.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_class.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_registry.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_camera.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_ext.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_comp.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_uiext.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_notify.hpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_pawn.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_random.cpp" />

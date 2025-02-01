@@ -188,7 +188,8 @@ namespace GraphicsEngineDataset {
 
 		// virtual texture system: framework oper.
 		void VirtualTextureDataObjectCreate(
-			Vector2T<uint32_t> base_size, const VirTexturesGenParams& params = VirTexturesGenParams()
+			const Vector2T<uint32_t>& base_size, bool texture_high, bool texture_edge, 
+			const VirTexturesGenParams& params = VirTexturesGenParams()
 		);
 		void VirtualTextureDataObjectDelete();
 	};

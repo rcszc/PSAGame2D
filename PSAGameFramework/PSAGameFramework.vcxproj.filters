@@ -252,7 +252,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_camera.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_comp.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_uiext.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_pawn.cpp">
@@ -272,9 +272,6 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLFilesys\decode_channels\framework_channels_string.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLFilesys\decode_channels</Filter>
-    </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_gui_ext.cpp">
-      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp">
       <Filter>源文件\PSAGameFrameworkCore\LLWindowGui</Filter>
@@ -332,6 +329,9 @@
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug_thread.cpp">
       <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>
+    </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_config.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

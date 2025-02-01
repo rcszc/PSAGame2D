@@ -47,9 +47,11 @@ namespace PsagFrameworkCore {
 
         // debug window context begin.
         if (ImPsag::GetDebugGuiFlag()) {
-            ImGui::SetNextWindowSize(
-                ImVec2((float)RenderingWindowSize.vector_x, (float)RenderingWindowSize.vector_y)
-            );
+            // set window size & pos.
+            ImGui::SetNextWindowSize(ImVec2(
+                (float)DriversParams.RenderingWindowSize.vector_x, 
+                (float)DriversParams.RenderingWindowSize.vector_y
+            ));
             ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
             ImGuiWindowFlags Flags =
                 ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs |
@@ -89,8 +91,11 @@ namespace PsagFrameworkCore {
 
         ActorModulesTimeStep = FrameworkParams.GameRunTimeSTEP;
 
-        // calc & update global_matrix.
-        float RoatioValue = (float)RenderingWindowSize.vector_x / (float)RenderingWindowSize.vector_y;
+        // clac resolution prop.
+        float RoatioValue = 
+            (float)DriversParams.RenderingWindowSize.vector_x / 
+            (float)DriversParams.RenderingWindowSize.vector_y;
+        // calc & update global matrix.
         FrameworkParams.CameraParams = &MatrixMainCamera;
         UpdateMatrixUniform(RoatioValue);
 
@@ -119,16 +124,23 @@ namespace PsagFrameworkCore {
             PushLogger(LogError, PSAGM_DRIVE_CORE_LABEL, "core init: fatal error.");
             return false;
         }
-        RenderingWindowSize = Vector2T<uint32_t>(WindowInitConfig.WindowSizeWidth, WindowInitConfig.WindowSizeHeight);
-
+        DriversParams.RenderingWindowSize = Vector2T<uint32_t>(
+            DriversParams.InitConfigWindow.WindowSizeWidth, 
+            DriversParams.InitConfigWindow.WindowSizeHeight
+        );
         // enable opengl profile config.
         FrameworkGraphicsParams.PROFILE_CONFIG = PSAG_FALSE;
 
         PushLogger(LogTrace, PSAGM_DRIVE_CORE_LABEL, "core framework init,config...");
         // init => create => set_icon => vsync => sys_callback.
-        CoreInitErrorFlag |= !GLFWwindowInit(GLFWversionArray, RendererMSAA, FrameworkGraphicsParams.PROFILE_CONFIG, RendererWindowFixed);
-        CoreInitErrorFlag |= !GLFWwindowCreate(WindowInitConfig);
-
+        CoreInitErrorFlag |= !GLFWwindowInit(
+            GLFWversionArray, 
+            DriversParams.RendererMSAA, 
+            FrameworkGraphicsParams.PROFILE_CONFIG, 
+            DriversParams.RendererWindowFixed
+        );
+        CoreInitErrorFlag |= !GLFWwindowCreate(DriversParams.InitConfigWindow);
+        // GLFW: load icon image.
         GLFWwindowSetIcon(EngineIconImage);
 
         CoreInitErrorFlag |= !GLFWwindowVsync(PSAG_FALSE);
@@ -153,11 +165,16 @@ namespace PsagFrameworkCore {
         PsagLow::PsagSupAudioLLRES::LowLevelResourceCreate();
 
         // graphics system create.
-        // dynamic vertex, static vertex, virtual textures.
+        // child: dynamic vertex, static vertex.
         DynamicVertexDataObjectCreate();
         StaticVertexDataObjectCreate();
-        VirtualTextureDataObjectCreate(RenderingVirTexBasicSize, VirTexturesMax);
-
+        // child: create virtual textures system.
+        VirtualTextureDataObjectCreate(
+            DriversParams.RenderingVirTexBasicSize,
+            DriversParams.VirTextureFlags.vector_x,
+            DriversParams.VirTextureFlags.vector_y,
+            DriversParams.VirTexturesMax
+        );
         // create global matrix uniform_matrix.
         CreateMatrixUniform();
 
@@ -167,16 +184,15 @@ namespace PsagFrameworkCore {
         CoreInitErrorFlag |= !PhysicsWorldCreate("DEFAULT_PHY_WORLD", Vector2T<float>());
 
         // create game2d post-shader & background(null)-shader.
-        RendererPostFX = new GraphicsEngineFinal::PsagGLEngineFinal(RenderingWindowSize);
+        RendererPostFX = new GraphicsEngineFinal::PsagGLEngineFinal(DriversParams.RenderingWindowSize);
         RendererBackFX = new GraphicsEngineBackground::PsagGLEngineBackgroundNULL();
 
         // init,config imgui_context system.
-        CoreInitErrorFlag |= !ImGuiContextInit(MainWindowObject, ImGuiInitConfig);
+        CoreInitErrorFlag |= !ImGuiContextInit(MainWindowObject, DriversParams.InitConfigImGui);
 
-        // load pointer.
-        FrameworkParams.ShaderParamsFinal = RendererPostFX->GetRenderParameters();
-        FrameworkParams.WindowResolution = RenderingWindowSize;
-        // non-create using default values.
+        // load pointer. bg: non-create using default values.
+        FrameworkParams.ShaderParamsFinal      = RendererPostFX->GetRenderParameters();
+        FrameworkParams.WindowResolution       = DriversParams.RenderingWindowSize;
         FrameworkParams.ShaderParamsBackground = RendererBackFX->GetRenderParameters();
        
         // registration dev_class, objects.
@@ -184,15 +200,15 @@ namespace PsagFrameworkCore {
 
         // call: game init logic. async.
         for (auto it = GAME_CORE_CLASS.begin(); it != GAME_CORE_CLASS.end(); ++it)
-            CoreInitErrorFlag |= !it->second->LogicInitialization(RenderingWindowSize);
+            CoreInitErrorFlag |= !it->second->LogicInitialization(DriversParams.RenderingWindowSize);
 
         // render clear_buffer color(ptr).
         *RenderingFrameColorPtr = DefaultFrameColor;
 
         // create framework start anim player.
         StartAnim = new PsagFrameworkAnim::PsagStartAnimPlayer(Vector2T<float>(
-            (float)RenderingWindowSize.vector_x, 
-            (float)RenderingWindowSize.vector_y
+            (float)DriversParams.RenderingWindowSize.vector_x,
+            (float)DriversParams.RenderingWindowSize.vector_y
         ));
 
         // start anim end => render game content.

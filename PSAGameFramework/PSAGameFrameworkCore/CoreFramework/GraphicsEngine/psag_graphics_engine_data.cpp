@@ -434,20 +434,20 @@ namespace GraphicsEngineDataset {
 
 	bool GLEngineVirTextureData::VirTextureItemAlloc(ResUnique rukey, const ImageRawData& image) {
 		SamplerTextures* TextureIndex = nullptr;
-		const char* TexResLabel = "NULL";
+		const char* TexResolutionTag = "NULL";
 		
 		uint32_t SizeType = CheckResolutionType(Vector2T<uint32_t>(image.Width, image.Height));
 		switch (SizeType) {
-		case(1): { TexResLabel = "1x/1"; TextureIndex = &TexturesSize8X; break; }
-		case(2): { TexResLabel = "2x/1"; TextureIndex = &TexturesSize4X; break; }
-		case(3): { TexResLabel = "4x/1"; TextureIndex = &TexturesSize2X; break; }
-		case(4): { TexResLabel = "8x/1"; TextureIndex = &TexturesSize1X; break; }
+		case(1): { TexResolutionTag = "1x/1"; TextureIndex = &TexturesSize8X; break; }
+		case(2): { TexResolutionTag = "2x/1"; TextureIndex = &TexturesSize4X; break; }
+		case(3): { TexResolutionTag = "4x/1"; TextureIndex = &TexturesSize2X; break; }
+		case(4): { TexResolutionTag = "8x/1"; TextureIndex = &TexturesSize1X; break; }
 		}
 		if (SizeType == NULL || TextureIndex == nullptr) {
 			PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: not_size.");
 			return false;
 		}
-
+		// index items valid ?
 		auto it = TexIndexItems.find(rukey);
 		if (it != TexIndexItems.end()) {
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc duplicate_key: %u", rukey);
@@ -506,7 +506,7 @@ namespace GraphicsEngineDataset {
 		);
 
 		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: alloc key: %u, cropping: %.2f x %.2f, res: %s",
-			rukey, SmpCropping.vector_x, SmpCropping.vector_y, TexResLabel
+			rukey, SmpCropping.vector_x, SmpCropping.vector_y, TexResolutionTag
 		);
 		// add texture count.
 		++DataBytesOnlineTexture;
@@ -519,7 +519,7 @@ namespace GraphicsEngineDataset {
 		// set virtual resolution.
 		EmptyImageTemp.Width = size.vector_x; EmptyImageTemp.Height = size.vector_y;
 		EmptyImageTemp.Channels = DEF_IMG_CHANNEL_RGBA;
-		// alloc.
+		// alloc virtual texture.
 		if (!VirTextureItemAlloc(rukey, EmptyImageTemp))
 			return false;
 		// add texture count.
@@ -612,17 +612,21 @@ namespace GraphicsEngineDataset {
 		return *FindTexIndexItems(rukey);
 	}
 
-	void GLEngineVirTextureData::VirtualTextureDataObjectCreate(Vector2T<uint32_t> base_size, const VirTexturesGenParams& params) {
+	void GLEngineVirTextureData::VirtualTextureDataObjectCreate(
+		const Vector2T<uint32_t>& base_size, bool texture_high, bool texture_edge, 
+		const VirTexturesGenParams& params
+	) {
 		if (base_size.vector_x < 512 || base_size.vector_y < 512)
 			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_create texture, base_size > 512.");
 
-		base_size.vector_x = base_size.vector_x < 512 ? 512 : base_size.vector_x;
-		base_size.vector_y = base_size.vector_y < 512 ? 512 : base_size.vector_y;
+		Vector2T<uint32_t> TexBaseSize = {};
+		TexBaseSize.vector_x = base_size.vector_x < 512 ? 512 : base_size.vector_x;
+		TexBaseSize.vector_y = base_size.vector_y < 512 ? 512 : base_size.vector_y;
 
-		TexturesSize8X.TextureResolution = base_size;
-		TexturesSize4X.TextureResolution = Vector2T<uint32_t>(base_size.vector_x / 2, base_size.vector_y / 2);
-		TexturesSize2X.TextureResolution = Vector2T<uint32_t>(base_size.vector_x / 4, base_size.vector_y / 4);
-		TexturesSize1X.TextureResolution = Vector2T<uint32_t>(base_size.vector_x / 8, base_size.vector_y / 8);
+		TexturesSize8X.TextureResolution = TexBaseSize;
+		TexturesSize4X.TextureResolution = Vector2T<uint32_t>(TexBaseSize.vector_x / 2, TexBaseSize.vector_y / 2);
+		TexturesSize2X.TextureResolution = Vector2T<uint32_t>(TexBaseSize.vector_x / 4, TexBaseSize.vector_y / 4);
+		TexturesSize1X.TextureResolution = Vector2T<uint32_t>(TexBaseSize.vector_x / 8, TexBaseSize.vector_y / 8);
 
 		TexturesSize8X.ArraySize.vector_x = (uint32_t)params.Tex8Xnum;
 		TexturesSize4X.ArraySize.vector_x = (uint32_t)params.Tex4Xnum;
@@ -640,8 +644,11 @@ namespace GraphicsEngineDataset {
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture TextureCreate2X;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsTexture TextureCreate1X;
 
-		// global textures filter mode.
-		TextureFilterMode TexMode = LinearFiltering | MipmapFiltering;
+		const TextureFilterMode HIG = LinearFiltering | AnisotropicFiltering;
+		const TextureFilterMode LOW = LinearFiltering | NearestNeighborFiltering;
+		// global textures config filter mode.
+		TextureFilterMode TexMode = texture_high == true ? HIG : LOW;
+
 		TextureCreate8X.SetTextureParam(TexturesSize8X.TextureResolution.vector_x, TexturesSize8X.TextureResolution.vector_y, TexMode);
 		TextureCreate4X.SetTextureParam(TexturesSize4X.TextureResolution.vector_x, TexturesSize4X.TextureResolution.vector_y, TexMode);
 		TextureCreate2X.SetTextureParam(TexturesSize2X.TextureResolution.vector_x, TexturesSize2X.TextureResolution.vector_y, TexMode);
@@ -663,10 +670,10 @@ namespace GraphicsEngineDataset {
 		TextureCreate1X.SetTextureSamplerCount(GraphicSamplers->AllocTexMapUnitCount());
 
 		bool CreateErrorFlag = false;
-		CreateErrorFlag |= !TextureCreate8X.CreateTexture();
-		CreateErrorFlag |= !TextureCreate4X.CreateTexture();
-		CreateErrorFlag |= !TextureCreate2X.CreateTexture();
-		CreateErrorFlag |= !TextureCreate1X.CreateTexture();
+		CreateErrorFlag |= !TextureCreate8X.CreateTexture(texture_edge);
+		CreateErrorFlag |= !TextureCreate4X.CreateTexture(texture_edge);
+		CreateErrorFlag |= !TextureCreate2X.CreateTexture(texture_edge);
+		CreateErrorFlag |= !TextureCreate1X.CreateTexture(texture_edge);
 
 		// generate unique_id.
 		PSAG_SYS_GENERATE_KEY GenResourceID;

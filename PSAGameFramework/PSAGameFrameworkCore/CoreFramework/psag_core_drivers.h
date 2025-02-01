@@ -188,6 +188,28 @@ namespace PsagFrameworkCore {
         class SysBackground;
     }
 
+    // 核心驱动层初始化参数.
+    struct PSAGCoreDriversInit {
+        // window & gui core config params. 
+        PsagLow::PsagSupWindowGuiConfigWin InitConfigWindow = {};
+        PsagLow::PsagSupWindowGuiConfigGui InitConfigImGui  = {};
+
+        // virtual textures level number max.
+        GraphicsEngineDataset::VirTexturesGenParams VirTexturesMax = {};
+        // virtual textures flags: is_high, to_edge.
+        Vector2T<bool> VirTextureFlags = {};
+
+        // renderer init params.
+        Vector2T<uint32_t> RenderingWindowSize = {};
+        Vector2T<uint32_t> RenderingVirTexBasicSize = {};
+
+        std::string RendererGLversion = {};
+        uint32_t RendererMSAA = 1;
+        bool RendererWindowFixed = false;
+
+        bool DriversParamsLoader(rapidjson::Document* ConfigDoc);
+    };
+
     // @pomelo_star game2d framework core drivers class. RCSZ.
     class PSAGame2DFramework :public PsagFrameworkStart::CoreMidFrameworkBase,
         // init & free sound_system.
@@ -221,26 +243,15 @@ namespace PsagFrameworkCore {
         // graphics init parameters.
         INIT_PARAMETERS FrameworkGraphicsParams = {};
         // user registration game_logic class data.
-        std::unordered_map<std::string, GameLogic::INTERFACE_DEVCLASS_GAME*> GAME_CORE_CLASS = {};
+        std::unordered_map<std::string, GameLogic::INTERFACE_DEVCLASS_GAME*> 
+            GAME_CORE_CLASS = {};
 
-        PsagLow::PsagSupWindowGuiConfigWin WindowInitConfig = {};
-        PsagLow::PsagSupWindowGuiConfigGui ImGuiInitConfig  = {};
-
-        // virtual textures_level number max.
-        GraphicsEngineDataset::VirTexturesGenParams VirTexturesMax = {};
-
-        // renderer init params.
-        uint32_t RendererMSAA        = 1;
-        bool     RendererWindowFixed = false;
-
-        // renderer event_loop params.
+        // renderer event loop params. (buffer color)
         Vector4T<float>* RenderingFrameColorPtr = &RenderClearColor;
 
-        Vector2T<uint32_t> RenderingWindowSize      = {};
-        Vector2T<uint32_t> RenderingVirTexBasicSize = {};
+        PSAGCoreDriversInit DriversParams = {};
 
         PsagFrameworkAnim::PsagStartAnimPlayer* StartAnim = nullptr;
-
         // time step (fps)benchmark.
         float RenderingBaseFPS = 120.0f;
         // render content func.

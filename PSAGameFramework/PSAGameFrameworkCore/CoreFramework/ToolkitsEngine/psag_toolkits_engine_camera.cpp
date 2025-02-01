@@ -20,8 +20,7 @@ namespace ToolkitsEngineCamera {
 	}
 
 	void GamePlayerCameraMP::PlayerCameraLerpValue(float value) {
-		if (value < 0.0f || value > 20.0f) 
-			return;
+		if (value < 0.0f || value > 20.0f) return;
 		CALC_LERP_SCALE = value;
 	}
 
@@ -45,18 +44,19 @@ namespace ToolkitsEngineCamera {
 
 	void GamePlayerCameraMP::PlayerCameraRunFixed(const Vector2T<float>& actor_position) {
 		// camera position = actor position(world).
-		CameraPositionTarget = CameraPosition = 
+		CameraPositionTarget = CameraPositionLerp =
 			Vector2T<float>(actor_position.vector_x, -actor_position.vector_y);
 	}
 
 	Vector2T<float> GamePlayerCameraMP::GetCameraPosition(const Vector2T<float>& camera_offset) {
 		float LERP_VALUE = ToolkitsEngineTimeStep * 0.2f * CALC_LERP_SCALE;
 		// calcuate camera_position lerp.
-		CameraPosition.vector_x += (CameraPositionTarget.vector_x - CameraPosition.vector_x) * LERP_VALUE;
-		CameraPosition.vector_y += (CameraPositionTarget.vector_y - CameraPosition.vector_y) * LERP_VALUE;
+		CameraPositionLerp.vector_x += (CameraPositionTarget.vector_x - CameraPositionLerp.vector_x) * LERP_VALUE;
+		CameraPositionLerp.vector_y += (CameraPositionTarget.vector_y - CameraPositionLerp.vector_y) * LERP_VALUE;
 
 		return Vector2T<float>(
-			CameraPosition.vector_x + camera_offset.vector_x, CameraPosition.vector_y + camera_offset.vector_y
+			CameraPositionLerp.vector_x + camera_offset.vector_x, 
+			CameraPositionLerp.vector_y + camera_offset.vector_y
 		);
 	}
 
@@ -71,8 +71,7 @@ namespace ToolkitsEngineCamera {
 	}
 
 	void GamePlayerCameraGM::PlayerCameraLerpValue(float value) {
-		if (value < 0.0f || value > 20.0f) 
-			return;
+		if (value < 0.0f || value > 20.0f) return;
 		CALC_LERP_SCALE = value;
 	}
 
@@ -80,20 +79,21 @@ namespace ToolkitsEngineCamera {
 		CameraPositionTarget.vector_x -= mouse_vec_speed.vector_x * 0.25f * speed_scale;
 		CameraPositionTarget.vector_y += mouse_vec_speed.vector_y * 0.25f * speed_scale;
 
-		CameraPositionTarget.vector_x = PSAG_IMVEC_CLAMP(
-			CameraPositionTarget.vector_x, CameraPositionRectLimit.vector_x.vector_x, CameraPositionRectLimit.vector_y.vector_x);
-		CameraPositionTarget.vector_y = PSAG_IMVEC_CLAMP(
-			CameraPositionTarget.vector_y, CameraPositionRectLimit.vector_x.vector_y, CameraPositionRectLimit.vector_y.vector_y);
+		CameraPositionTarget.vector_x = PSAG_IMVEC_CLAMP(CameraPositionTarget.vector_x, 
+			CameraPositionRectLimit.vector_x.vector_x, CameraPositionRectLimit.vector_y.vector_x);
+		CameraPositionTarget.vector_y = PSAG_IMVEC_CLAMP(CameraPositionTarget.vector_y, 
+			CameraPositionRectLimit.vector_x.vector_y, CameraPositionRectLimit.vector_y.vector_y);
 	}
 
 	Vector2T<float> GamePlayerCameraGM::GetCameraPosition(const Vector2T<float>& camera_offset) {
 		float LERP_VALUE = ToolkitsEngineTimeStep * 0.1f * CALC_LERP_SCALE;
 		// calcuate camera_position lerp.
-		CameraPosition.vector_x += (CameraPositionTarget.vector_x - CameraPosition.vector_x) * LERP_VALUE;
-		CameraPosition.vector_y += (CameraPositionTarget.vector_y - CameraPosition.vector_y) * LERP_VALUE;
+		CameraPositionLerp.vector_x += (CameraPositionTarget.vector_x - CameraPositionLerp.vector_x) * LERP_VALUE;
+		CameraPositionLerp.vector_y += (CameraPositionTarget.vector_y - CameraPositionLerp.vector_y) * LERP_VALUE;
 
 		return Vector2T<float>(
-			CameraPosition.vector_x + camera_offset.vector_x, CameraPosition.vector_y + camera_offset.vector_y
+			CameraPositionLerp.vector_x + camera_offset.vector_x, 
+			CameraPositionLerp.vector_y + camera_offset.vector_y
 		);
 	}
 }

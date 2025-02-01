@@ -54,9 +54,9 @@ namespace PSAG_AUDIO_PLAYER {
 
 		bool PlayerEndedFlag();
 
-		void SoundSet3DPosition(const Vector3T<float>& position);   // 播放位置.
+		void SoundSet3DPosition (const Vector3T<float>& position);  // 播放位置.
 		void SoundSet3DDirection(const Vector3T<float>& direction); // 播放方向.
-		void SoundSet3DGain(float gain); // 播放音频增益.
+		void SoundSet3DGain     (float gain); // 播放音频增益.
 
 		// 用于模拟"Doppler"效应.
 		void SoundSet3DVelocity(const Vector3T<float>& velocity);           // 播放速度.
@@ -70,7 +70,7 @@ namespace PSAGSD_LOWLEVEL {
 	// PSA - CVT.1 func.
 	RawAudioStream AUDIO_LLRES_CONVERT_FUNC(const RawDataStream& dataset);
 
-	// PSAG framework lowlevel audio dataset.
+	// psag framework lowlevel audio dataset.
 	class PsagResAudioSourceData {
 	protected:
 		std::unordered_map<ResUnique, RawAudioStream> ResourceRawAudioMap = {};

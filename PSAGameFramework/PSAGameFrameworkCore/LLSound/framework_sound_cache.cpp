@@ -10,12 +10,12 @@ namespace PSAGSD_LOWLEVEL {
 	}
 
 	RawAudioStream* PsagResAudioSourceData::ResourceFind(ResUnique key) {
-		unique_lock<mutex> Lock(ResourceRawAudioMutex);
+		lock_guard<mutex> Lock(ResourceRawAudioMutex);
 		return (ResourceRawAudioMap.find(key) != ResourceRawAudioMap.end()) ? &ResourceRawAudioMap[key] : nullptr;
 	}
 
 	bool PsagResAudioSourceData::ResourceStorage(ResUnique key, const RawAudioStream& res) {
-		unique_lock<mutex> Lock(ResourceRawAudioMutex);
+		lock_guard<mutex> Lock(ResourceRawAudioMutex);
 
 		auto it = ResourceRawAudioMap.find(key);
 		if (it != ResourceRawAudioMap.end()) {
@@ -33,7 +33,7 @@ namespace PSAGSD_LOWLEVEL {
 	}
 
 	bool PsagResAudioSourceData::ResourceDelete(ResUnique key) {
-		unique_lock<mutex> Lock(ResourceRawAudioMutex);
+		lock_guard<mutex> Lock(ResourceRawAudioMutex);
 
 		auto it = ResourceRawAudioMap.find(key);
 		if (it != ResourceRawAudioMap.end()) {

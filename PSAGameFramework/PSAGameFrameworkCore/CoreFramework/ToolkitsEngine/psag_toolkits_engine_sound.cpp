@@ -6,7 +6,7 @@ using namespace PSAG_LOGGER;
 
 namespace ToolkitsEngineSound {
 
-	GamePlayerSound::GamePlayerSound(const RawAudioStream& data) {
+	GameAudioSound::GameAudioSound(const RawAudioStream& data) {
 		if (data.empty()) {
 			PushLogger(LogError, PSAGM_TOOLKITS_SOUND, "audio stream_data empty!");
 			return;
@@ -23,12 +23,12 @@ namespace ToolkitsEngineSound {
 		PushLogger(LogInfo, PSAGM_TOOLKITS_SOUND, "audio player create.");
 	}
 
-	GamePlayerSound::~GamePlayerSound() {
+	GameAudioSound::~GameAudioSound() {
 		delete AudioPlayer;
 		AudioResource->ResourceDelete(RawStreamResource);
 	}
 
-	PsagLow::PsagSupAudioDataPlayer* GamePlayerSound::AudioPlayerOperate() {
+	PsagLow::PsagSupAudioDataPlayer* GameAudioSound::AudioPlayerOperate() {
 		return AudioPlayer;
 	}
 }

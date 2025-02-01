@@ -39,13 +39,15 @@ namespace PSAG_OGL_MAG {
 	}
 
 	// nearest nighbor filtering.
-	inline void FuncNearestNeighborFiltering(GLenum TYPE) {
-		glTexParameteri(TYPE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	inline void FuncNearestNeighborFiltering(GLenum TYPE, bool mipmap) {
+		if (mipmap) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		else        glTexParameteri(TYPE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(TYPE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 	// linear filtering.
-	inline void FuncLinearFiltering(GLenum TYPE) {
-		glTexParameteri(TYPE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	inline void FuncLinearFiltering(GLenum TYPE, bool mipmap) {
+		if (mipmap) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		else        glTexParameteri(TYPE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(TYPE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	// anisotropic filtering.
@@ -60,11 +62,13 @@ namespace PSAG_OGL_MAG {
 	}
 
 	inline void ConfigTextureFilter(TextureFilterMode filtering_flags, GLenum type) {
+		bool GenMipmap = filtering_flags & MipmapFiltering;
+		if (GenMipmap) FuncGenerateMipmaps(type);
+
 		// opengl texture3d config.
-		if (filtering_flags & NearestNeighborFiltering) FuncNearestNeighborFiltering(type);
-		if (filtering_flags & LinearFiltering)          FuncLinearFiltering         (type);
+		if (filtering_flags & NearestNeighborFiltering) FuncNearestNeighborFiltering(type, GenMipmap);
+		if (filtering_flags & LinearFiltering)          FuncLinearFiltering         (type, GenMipmap);
 		if (filtering_flags & AnisotropicFiltering)     FuncAnisotropicFiltering    (type);
-		if (filtering_flags & MipmapFiltering)          FuncGenerateMipmaps         (type);
 	}
 
 	inline void ConfigSurroundTex2DParams(GLenum MODE_TYPE, bool T_DEGE) {
@@ -80,7 +84,7 @@ namespace PSAG_OGL_MAG {
 	inline bool ConfigCreateTexture(
 		uint32_t layers, uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, 
 		TextureFilterMode mode, bool to_edge, 
-		uint32_t border = NULL, GLenum ModeType = GL_TEXTURE_2D_ARRAY
+		uint32_t border = NULL, GLenum TEX_MODE = GL_TEXTURE_2D_ARRAY
 	) {
 		// error texture2d(array) layers = 0.
 		if (layers == NULL) return false;
@@ -100,15 +104,15 @@ namespace PSAG_OGL_MAG {
 		// internal_format = pixel_format. [20240704]
 		// internal_format RGBA12  (HDR12), pixel_format RGBA8888. [20240717]
 		// internal_format RGBA16F (HDR16), pixel_format RGBA8888. [20241030]
-		if (ModeType == GL_TEXTURE_2D_ARRAY)
-			glTexImage3D(ModeType, NULL, CONST_FMT, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
-		if (ModeType == GL_TEXTURE_2D)
-			glTexImage2D(ModeType, NULL, CONST_FMT, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		if (TEX_MODE == GL_TEXTURE_2D_ARRAY)
+			glTexImage3D(TEX_MODE, NULL, CONST_FMT, width, height, layers, border, InputFormat, GL_UNSIGNED_BYTE, data);
+		if (TEX_MODE == GL_TEXTURE_2D)
+			glTexImage2D(TEX_MODE, NULL, CONST_FMT, width, height, border, InputFormat, GL_UNSIGNED_BYTE, data);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, channels);
 
 		// config texture2d. surround,filter.
-		ConfigSurroundTex2DParams(ModeType, to_edge);
-		ConfigTextureFilter(mode, ModeType);
+		ConfigSurroundTex2DParams(TEX_MODE, to_edge);
+		ConfigTextureFilter(mode, TEX_MODE);
 		return true;
 	}
 
