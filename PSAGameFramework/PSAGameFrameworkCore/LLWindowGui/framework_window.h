@@ -98,7 +98,7 @@ namespace PSAG_WINDOW_OGLFW {
 
 		FwSysErrorMessage ErrorMessage = nullptr;
 
-		bool GLFWwindowCreate(FwWindowConfig config = {});
+		bool GLFWwindowCreate(FwWindowConfig GenNoiseConfig = {});
 		bool GLFWwindowInit(uint32_t version[2], uint32_t MSAA, bool core_mode, bool fixedsize);
 
 		void GLFWwindowSetIcon(const std::string& file);

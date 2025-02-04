@@ -19,8 +19,8 @@ namespace ToolkitsEngineRandom {
 	StaticStrLABEL PSAGM_TOOLKITS_RAND_LABEL = "PSAG_TOOL_RADNOM";
 
 	namespace Func {
-		int32_t GenerateRandomFuncINT32(int32_t max, int32_t min, uint64_t seed = 0);
-		float   GenerateRandomFuncFP32(float max, float min, uint64_t seed = 0);
+		int32_t GenerateRandomFuncINT32(int32_t min, int32_t max, uint64_t seed = 0);
+		float   GenerateRandomFuncFP32 (float min, float max, uint64_t seed = 0);
 	}
 
 	enum RandomSeed {
@@ -59,6 +59,61 @@ namespace ToolkitsEngineRandom {
 
 		bool DatasetCropCircle(const Vector2T<float>& center, float radius, bool flag = false);
 		bool DatasetCropRectangle(const Vector2T<float>& min_point, const Vector2T<float>& max_point);
+	};
+
+	using NoiseGradient = std::pair<double, double>;
+	// thread_safe cache resource.
+	struct NoiseSharedCache {
+		std::unordered_map<uint64_t, NoiseGradient> Cache = {};
+		std::shared_mutex CacheMutex = {};
+	};
+	struct GenNoiseParamsDESC {
+		NoiseSharedCache* CacheIndex = nullptr;
+		size_t BlockNumberGrids = 16;
+
+		size_t NoiseOctaves     = 1;   // 倍频数
+		double NoisePersistence = 0.6; // 振幅衰减
+		double NoiseLacunarity  = 1.2; // 频率增长倍率
+		double NoiseScale       = 1.2; // 缩放因子
+
+		bool VALIDATE() const {
+			// check grids number, num: n^2.
+			size_t GridsLength = (size_t)std::sqrt(BlockNumberGrids);
+			if ((size_t)std::pow(GridsLength, 2) != BlockNumberGrids) 
+				return false;
+			// check noise params.
+			if (NoiseOctaves < 1)        return false;
+			if (NoisePersistence <= 0.0) return false;
+			if (NoiseLacunarity <= 1.0)  return false;
+			if (NoiseScale <= 0.0001)    return false;
+			return true;
+		}
+	};
+
+	// octave perlin noise map generate.
+	// warn: high calc & memory, 20250204 RCSZ.
+	class GenNoiseOctavePerlin {
+	protected:
+		size_t BlockSize = NULL, BlockGridSpacing = NULL;
+		size_t QuadrantX = NULL, QuadrantY = NULL;
+
+		GenNoiseParamsDESC GenNoiseConfig = {};
+		NoiseSharedCache* ResourceIndex = nullptr;
+
+		static double MathsFade(double t);
+		static double MathsLerp(double a, double b, double t);
+
+		NoiseGradient GradientGenerateMap(uint64_t key);
+		double GradientGrid(size_t ix, size_t iy, double x, double y);
+
+		double CalcPerlin(double x, double y);
+		double CalcOctavePerlin(double x, double y);
+	public:
+		GenNoiseOctavePerlin(size_t rect_size, size_t quad_x, size_t quad_y, const GenNoiseParamsDESC& config);
+		ImageRawData GenGrayscaleImage(
+			std::function<double(size_t, size_t, double)> FILTER_FUNC = 
+			[](size_t, size_t, double value) { return value; }
+		);
 	};
 }
 

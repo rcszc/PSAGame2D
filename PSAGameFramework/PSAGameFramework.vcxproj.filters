@@ -106,6 +106,9 @@
     <Filter Include="源文件\PSAGameFrameworkCore\FrameDebug">
       <UniqueIdentifier>{988fbf87-40b2-4ad8-bc67-245d05d78f54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\A-PSAGameFrameworkDev\GameLab">
+      <UniqueIdentifier>{75f6ae22-6725-4d3c-a5b4-22e17be647de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSAGameFrameworkCore\LLGraphics\LLGraphicsOpenGL\psaglow_opengl_imageload.cpp">
@@ -333,6 +336,9 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers_config.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreFramework</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkDev\GameLab\psag_game_lab.cpp">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameLab</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">
@@ -514,6 +520,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug.hpp">
       <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkDev\GameLab\psag_game_lab.h">
+      <Filter>源文件\A-PSAGameFrameworkDev\GameLab</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

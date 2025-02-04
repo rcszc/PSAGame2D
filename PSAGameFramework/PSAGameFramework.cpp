@@ -34,11 +34,12 @@
 #pragma comment(lib, "box2d.lib    ")
 
 int main() {
+#ifdef _WIN64 // windows x64 crt debug.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 	int FrameworkResult = -1;
-	// start(debug) logger thread & debug thread.
-	// FTD update: "PSAGameFrameworkCore/CoreFramework/psag_mainevent_support.cpp"
-	// RCSZ. [20240817]
+	// set log print & start(debug) logger thread.
+	PSAG_LOGGER::SET_PRINTLOG_COLOR(true);
 	PSAG_LOGGER_PROCESS::StartLogProcessing("PSAGameSystemLogs/");
 	PsagDebugThread::FTDprocessThread.CreateProcessingThread("PSAGameSystemDebug/", "MemoryMsg");
 	{

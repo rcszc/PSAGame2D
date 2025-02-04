@@ -99,28 +99,28 @@ namespace PSAG_WINDOW_OGLFW {
     HWND    PsagGLFWsystemCallback::OLD_WINDOW_HWND = nullptr;
 #endif
 
-    bool PasgWindowEvent::GLFWwindowCreate(FwWindowConfig config) {
+    bool PasgWindowEvent::GLFWwindowCreate(FwWindowConfig GenNoiseConfig) {
         // glfw system error-callback.
         glfwSetErrorCallback(system_err::GLFWsys_ErrorCallback);
 
         GLFWmonitor* Monitor = {};
 
-        if (config.WindowFullFlag) {
+        if (GenNoiseConfig.WindowFullFlag) {
             // 创建全屏无框窗口.
             Monitor = glfwGetPrimaryMonitor();
             const GLFWvidmode* Mode = glfwGetVideoMode(Monitor);
-            MainWindowObject = glfwCreateWindow(Mode->width, Mode->height, config.WindowName.c_str(), Monitor, NULL);
+            MainWindowObject = glfwCreateWindow(Mode->width, Mode->height, GenNoiseConfig.WindowName.c_str(), Monitor, NULL);
             ValueWindowSize.vector_x = (float)Mode->width;
             ValueWindowSize.vector_y = (float)Mode->height;
         }
         else {
             // create window object.
             MainWindowObject = glfwCreateWindow(
-                config.WindowSizeWidth, config.WindowSizeHeight, config.WindowName.c_str(),
+                GenNoiseConfig.WindowSizeWidth, GenNoiseConfig.WindowSizeHeight, GenNoiseConfig.WindowName.c_str(),
                 Monitor, nullptr
             );
-            ValueWindowSize.vector_x = (float)config.WindowSizeWidth;
-            ValueWindowSize.vector_y = (float)config.WindowSizeHeight;
+            ValueWindowSize.vector_x = (float)GenNoiseConfig.WindowSizeWidth;
+            ValueWindowSize.vector_y = (float)GenNoiseConfig.WindowSizeHeight;
         }
 
         if (MainWindowObject == nullptr) {

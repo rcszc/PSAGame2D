@@ -3306,13 +3306,13 @@ void ImGui::RenderMouseCursor(ImVec2 base_pos, float base_scale, ImGuiMouseCurso
         if (font_atlas->GetMouseCursorTexData(mouse_cursor, &offset, &size, &uv[0], &uv[2]))
         {
             const ImVec2 pos = base_pos - offset;
-            const float scale = base_scale;
+            const float NoiseScale = base_scale;
             ImTextureID tex_id = font_atlas->TexID;
             draw_list->PushTextureID(tex_id);
-            draw_list->AddImage(tex_id, pos + ImVec2(1, 0) * scale, pos + (ImVec2(1, 0) + size) * scale, uv[2], uv[3], col_shadow);
-            draw_list->AddImage(tex_id, pos + ImVec2(2, 0) * scale, pos + (ImVec2(2, 0) + size) * scale, uv[2], uv[3], col_shadow);
-            draw_list->AddImage(tex_id, pos,                        pos + size * scale,                  uv[2], uv[3], col_border);
-            draw_list->AddImage(tex_id, pos,                        pos + size * scale,                  uv[0], uv[1], col_fill);
+            draw_list->AddImage(tex_id, pos + ImVec2(1, 0) * NoiseScale, pos + (ImVec2(1, 0) + size) * NoiseScale, uv[2], uv[3], col_shadow);
+            draw_list->AddImage(tex_id, pos + ImVec2(2, 0) * NoiseScale, pos + (ImVec2(2, 0) + size) * NoiseScale, uv[2], uv[3], col_shadow);
+            draw_list->AddImage(tex_id, pos,                        pos + size * NoiseScale,                  uv[2], uv[3], col_border);
+            draw_list->AddImage(tex_id, pos,                        pos + size * NoiseScale,                  uv[0], uv[1], col_fill);
             draw_list->PopTextureID();
         }
     }
@@ -4250,14 +4250,14 @@ void ImGui::UpdateMouseWheel()
     {
         StartLockWheelingWindow(window);
         const float new_font_scale = ImClamp(window->FontWindowScale + g.IO.MouseWheel * 0.10f, 0.50f, 2.50f);
-        const float scale = new_font_scale / window->FontWindowScale;
+        const float NoiseScale = new_font_scale / window->FontWindowScale;
         window->FontWindowScale = new_font_scale;
         if (window == window->RootWindow)
         {
-            const ImVec2 offset = window->Size * (1.0f - scale) * (g.IO.MousePos - window->Pos) / window->Size;
+            const ImVec2 offset = window->Size * (1.0f - NoiseScale) * (g.IO.MousePos - window->Pos) / window->Size;
             SetWindowPos(window, window->Pos + offset, 0);
-            window->Size = ImFloor(window->Size * scale);
-            window->SizeFull = ImFloor(window->SizeFull * scale);
+            window->Size = ImFloor(window->Size * NoiseScale);
+            window->SizeFull = ImFloor(window->SizeFull * NoiseScale);
         }
         return;
     }
@@ -7519,12 +7519,12 @@ ImVec2 ImGui::GetFontTexUvWhitePixel()
     return GImGui->DrawListSharedData.TexUvWhitePixel;
 }
 
-void ImGui::SetWindowFontScale(float scale)
+void ImGui::SetWindowFontScale(float NoiseScale)
 {
-    IM_ASSERT(scale > 0.0f);
+    IM_ASSERT(NoiseScale > 0.0f);
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
-    window->FontWindowScale = scale;
+    window->FontWindowScale = NoiseScale;
     g.FontSize = g.DrawListSharedData.FontSize = window->CalcFontSize();
 }
 
@@ -12411,8 +12411,8 @@ void ImGui::DebugRenderViewportThumbnail(ImDrawList* draw_list, ImGuiViewportP* 
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
-    ImVec2 scale = bb.GetSize() / viewport->Size;
-    ImVec2 off = bb.Min - viewport->Pos * scale;
+    ImVec2 NoiseScale = bb.GetSize() / viewport->Size;
+    ImVec2 off = bb.Min - viewport->Pos * NoiseScale;
     float alpha_mul = 1.0f;
     window->DrawList->AddRectFilled(bb.Min, bb.Max, GetColorU32(ImGuiCol_Border, alpha_mul * 0.40f));
     for (int i = 0; i != g.Windows.Size; i++)
@@ -12423,8 +12423,8 @@ void ImGui::DebugRenderViewportThumbnail(ImDrawList* draw_list, ImGuiViewportP* 
 
         ImRect thumb_r = thumb_window->Rect();
         ImRect title_r = thumb_window->TitleBarRect();
-        thumb_r = ImRect(ImFloor(off + thumb_r.Min * scale), ImFloor(off +  thumb_r.Max * scale));
-        title_r = ImRect(ImFloor(off + title_r.Min * scale), ImFloor(off +  ImVec2(title_r.Max.x, title_r.Min.y) * scale) + ImVec2(0,5)); // Exaggerate title bar height
+        thumb_r = ImRect(ImFloor(off + thumb_r.Min * NoiseScale), ImFloor(off +  thumb_r.Max * NoiseScale));
+        title_r = ImRect(ImFloor(off + title_r.Min * NoiseScale), ImFloor(off +  ImVec2(title_r.Max.x, title_r.Min.y) * NoiseScale) + ImVec2(0,5)); // Exaggerate title bar height
         thumb_r.ClipWithFull(bb);
         title_r.ClipWithFull(bb);
         const bool window_is_focused = (g.NavWindow && thumb_window->RootWindowForTitleBarHighlight == g.NavWindow->RootWindowForTitleBarHighlight);

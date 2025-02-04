@@ -2,8 +2,8 @@
 // @pomelo_star studio framework universal comp.
 #define IS_POMELO_STAR_GAME2D
 
-#ifndef _FRAMEWORK_LOG_HPP
-#define _FRAMEWORK_LOG_HPP
+#ifndef _FRAMEWORK_LOGGER_HPP
+#define _FRAMEWORK_LOGGER_HPP
 #include <iostream>
 #include <sstream>
 #include <chrono>
@@ -50,6 +50,7 @@ namespace PSAG_LOGGER {
 
 	// false: not printing on the console.
 	void SET_PRINTLOG_STATE(bool status_flag);
+	void SET_PRINTLOG_COLOR(bool colors_flag);
 	
 	// @return Vector3T<size_t> (x : lines, y : warring, z : error)
 	Vector3T<size_t> LogLinesStatistics();

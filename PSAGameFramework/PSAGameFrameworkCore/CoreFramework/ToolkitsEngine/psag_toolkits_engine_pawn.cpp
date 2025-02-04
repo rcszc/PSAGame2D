@@ -10,11 +10,11 @@ namespace ToolkitsEnginePawn {
 	// clac: (target - value) / damping * scale.
 	inline Vector2T<float> PAWN_CALC_LERP_VEC2FUNC(
 		const Vector2T<float>& target, const Vector2T<float>& value, const Vector2T<float>& damping, 
-		float scale
+		float NoiseScale
 	) {
 		return Vector2T<float>(
-			value.vector_x + (target.vector_x - value.vector_x) / damping.vector_x * scale,
-			value.vector_y + (target.vector_y - value.vector_y) / damping.vector_y * scale
+			value.vector_x + (target.vector_x - value.vector_x) / damping.vector_x * NoiseScale,
+			value.vector_y + (target.vector_y - value.vector_y) / damping.vector_y * NoiseScale
 		);
 	}
 	// pawn move_vector_list.

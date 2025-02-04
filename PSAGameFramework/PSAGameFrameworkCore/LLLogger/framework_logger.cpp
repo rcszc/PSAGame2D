@@ -55,7 +55,10 @@ string FMT_NUMBER_FILLZERO(uint32_t number, int32_t digits) {
 namespace PSAG_LOGGER {
 #include <io.h>
 #include <fcntl.h>
-	bool LOG_PRINT_SWITCH = true;
+	atomic<bool> LOG_PRINT_SWITCH = true;
+	// print color log: ANSI color.begin << message << ANSI color.end
+	function<void(const std::string&, const std::string& msg)> LOG_PRINT_FUNC = 
+		[](const std::string&, const std::string& msg) { cout << msg << endl; };
 
 	void PushLogProcess(const LOGLABEL& label, const std::string& module_name, const std::string& logstr_text) {
 		unique_lock<mutex> LogThreadLock(LogMutex);
@@ -94,10 +97,17 @@ namespace PSAG_LOGGER {
 #endif
 	}
 
-	void SET_PRINTLOG_STATE(bool status_flag) {
-		lock_guard<mutex> LogThreadLock(LogMutex);
-		LOG_PRINT_SWITCH = status_flag; 
-	};
+	void PrintColorLog(const string& color, const string& msg) {
+		cout << color << msg << " \033[0m" << endl;
+	}
+	void PrintDefaultLog(const string& color, const string& msg) {
+		cout << msg << endl;
+	}
+	// status: print log ?, print color log ? 
+	void SET_PRINTLOG_STATE(bool status_flag) { LOG_PRINT_SWITCH = status_flag; }
+	void SET_PRINTLOG_COLOR(bool colors_flag) { 
+		LOG_PRINT_FUNC = colors_flag == true ? PrintColorLog : PrintDefaultLog;
+	}
 
 	Vector3T<size_t> LogLinesStatistics() {
 		Vector3T<size_t> ReturnValue = {};
@@ -145,7 +155,7 @@ namespace PSAG_LOGGER_PROCESS {
 		// create name: folder + name(time) + extensions.
 		string FileNameTemp = 
 			folder + 
-			to_string(chrono::duration_cast<chrono::microseconds>(
+			to_string(chrono::duration_cast<chrono::nanoseconds>(
 				chrono::steady_clock::now().time_since_epoch()).count()
 			) + LOGFILE_EXTENSION;
 
@@ -161,9 +171,9 @@ namespace PSAG_LOGGER_PROCESS {
 				WriteLogFile << LogMsgTemp.LogString << endl;
 				// print color_log entry.
 #if PSAG_DEBUG_MODE
-				auto FindLevelColor = HashLogLevel.find(LogMsgTemp.LogLabel);
-				if (FindLevelColor != HashLogLevel.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
-					cout << FindLevelColor->second << LogMsgTemp.LogString << " \033[0m" << endl;
+				auto ColorsFind = HashLogLevel.find(LogMsgTemp.LogLabel);
+				if (ColorsFind != HashLogLevel.end() && PSAG_LOGGER::LOG_PRINT_SWITCH)
+					PSAG_LOGGER::LOG_PRINT_FUNC(ColorsFind->second, LogMsgTemp.LogString);
 #endif
 				// delete log_message item.
 				LogWriteQueue.pop();

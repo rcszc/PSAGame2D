@@ -12,6 +12,7 @@
 
 #include <thread>
 #include <mutex>
+#include <shared_mutex>
 #include <condition_variable>
 #include <future>
 #include <atomic>
@@ -24,7 +25,7 @@
 
 //#define PSAG_MEMORY_DEBUG
 #include "../FrameDebug/psag_frame_debug.hpp"
-#define POMELO_STAR_GAME2D_DEF true
+#define POMELO_STAR_GAME2D_DEF (bool)1
 
 #if defined(_DEBUG) || defined(DEBUG)
 #define PSAG_COMPILE_MODE 1 // mode: debug(code: 1)

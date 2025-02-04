@@ -18,7 +18,7 @@ protected:
 
     // x: mouse wheel out, y: value lerp.
     ImVec2 SceneScaleTrans = ImVec2(1.0f, 1.0f);
-    void SceneMouseScaleLerp(float timestep, float scale);
+    void SceneMouseScaleLerp(float timestep, float NoiseScale);
 public:
     // init: return flag: false:failed, true:success.
     bool LogicInitialization(const Vector2T<uint32_t>& WinSize);

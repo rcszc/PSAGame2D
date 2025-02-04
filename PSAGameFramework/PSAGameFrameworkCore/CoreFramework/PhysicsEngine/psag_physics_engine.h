@@ -32,7 +32,7 @@ namespace PhysicsEngine {
 
 	// square, length: +-10.0f.
 	std::vector<b2Vec2> PresetVertexGroupRECT();
-	std::vector<b2Vec2> PresetVertexGroupCIRCLE(const Vector2T<float>& scale, uint32_t num);
+	std::vector<b2Vec2> PresetVertexGroupCIRCLE(const Vector2T<float>& NoiseScale, uint32_t num);
 	std::vector<b2Vec2> VertexPosToBox2dVec(const std::vector<Vector2T<float>>& data);
 
 	enum BodyShapeType {
@@ -139,7 +139,7 @@ namespace PhysicsEngine {
 		// x:velocity_iterations, y:position_iterations.
 		static Vector2T<float> PhysicsIterations;
 
-		bool PhyBodyItemAlloc(std::string world, PhyBodyKey* rukey, PhysicsBodyConfig config);
+		bool PhyBodyItemAlloc(std::string world, PhyBodyKey* rukey, PhysicsBodyConfig GenNoiseConfig);
 		bool PhyBodyItemFree(std::string world, PhyBodyKey rukey);
 
 		void PhyBodyItemResetBox(std::string world, PhyBodyKey rukey, Vector2T<float> size, float density, float friction);

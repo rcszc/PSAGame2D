@@ -68,14 +68,14 @@ namespace PhysicsEngine {
 		return CreateVertGroup;
 	}
 
-	vector<b2Vec2> PresetVertexGroupCIRCLE(const Vector2T<float>& scale, uint32_t num) {
+	vector<b2Vec2> PresetVertexGroupCIRCLE(const Vector2T<float>& NoiseScale, uint32_t num) {
 		float STEP = 2.0f * PSAG_M_PI / num;
 
 		vector<b2Vec2> CreateVertGroup = {};
 		for (size_t i = 0; i < num; ++i)
 			CreateVertGroup.push_back(b2Vec2(
-				cos((float)i * STEP) * 10.0f * scale.vector_x, 
-				sin((float)i * STEP) * 10.0f * scale.vector_y
+				cos((float)i * STEP) * 10.0f * NoiseScale.vector_x, 
+				sin((float)i * STEP) * 10.0f * NoiseScale.vector_y
 			));
 		return CreateVertGroup;
 	}
@@ -87,7 +87,7 @@ namespace PhysicsEngine {
 		return DatasetTemp;
 	}
 
-	bool PhyEngineCoreDataset::PhyBodyItemAlloc(string world, PhyBodyKey* rukey, PhysicsBodyConfig config) {
+	bool PhyEngineCoreDataset::PhyBodyItemAlloc(string world, PhyBodyKey* rukey, PhysicsBodyConfig GenNoiseConfig) {
 		auto WorldPointer = PhysicsWorldFind(world);
 		if (WorldPointer == nullptr) {
 			PushLogger(LogError, PSAGM_PHYENGINE_LABEL, "body_data: unable find world.");
@@ -105,17 +105,17 @@ namespace PhysicsEngine {
 		}
 		*/
 		b2Filter FILTER;
-		FILTER.categoryBits = config.PhysicsCollisionThis;
-		FILTER.maskBits     = config.PhysicsCollisionFilter;
+		FILTER.categoryBits = GenNoiseConfig.PhysicsCollisionThis;
+		FILTER.maskBits     = GenNoiseConfig.PhysicsCollisionFilter;
 		FILTER.groupIndex   = 0; // default group.
 
 		// 创建 Actor 物理碰撞.
 		b2BodyDef DefineBody;
-		if (config.PhysicsModeTypeFlag) DefineBody.type = b2_dynamicBody;
+		if (GenNoiseConfig.PhysicsModeTypeFlag) DefineBody.type = b2_dynamicBody;
 		else                            DefineBody.type = b2_staticBody;
 
-		DefineBody.position = b2Vec2(config.PhyBoxPosition.vector_x, config.PhyBoxPosition.vector_y);
-		DefineBody.angle    = config.PhyBoxRotate;
+		DefineBody.position = b2Vec2(GenNoiseConfig.PhyBoxPosition.vector_x, GenNoiseConfig.PhyBoxPosition.vector_y);
+		DefineBody.angle    = GenNoiseConfig.PhyBoxRotate;
 		// world(global) => create body item.
 		b2Body* BodyData = WorldPointer->PhysicsWorld->CreateBody(&DefineBody);
 
@@ -123,40 +123,40 @@ namespace PhysicsEngine {
 		b2CircleShape  CollisionCircle;
 
 		b2FixtureDef DefineFixture;
-		switch (config.PhysicalShapeType) {
+		switch (GenNoiseConfig.PhysicalShapeType) {
 			// 多边形碰撞箱.
 		case(POLYGON_TYPE): {
 			// process scale.
-			for (auto& ScaleVert : config.CollVertexGroup) {
-				ScaleVert.x *= config.PhyBoxCollisionSize.vector_x;
-				ScaleVert.y *= config.PhyBoxCollisionSize.vector_y;
+			for (auto& ScaleVert : GenNoiseConfig.CollVertexGroup) {
+				ScaleVert.x *= GenNoiseConfig.PhyBoxCollisionSize.vector_x;
+				ScaleVert.y *= GenNoiseConfig.PhyBoxCollisionSize.vector_y;
 			}
-			CollisionBox.Set(config.CollVertexGroup.data(), (int32)config.CollVertexGroup.size());
+			CollisionBox.Set(GenNoiseConfig.CollVertexGroup.data(), (int32)GenNoiseConfig.CollVertexGroup.size());
 			// shape(idx) => fixture.
 			DefineFixture.shape = &CollisionBox;
 			break;
 		}
 		case(CIRCLE_TYPE): {
 			// circle position,radius.
-			CollisionCircle.m_p.Set(config.PhyBoxPosition.vector_x, config.PhyBoxPosition.vector_y);
-			CollisionCircle.m_radius = config.PhyBoxCollisionSize.vector_x;
+			CollisionCircle.m_p.Set(GenNoiseConfig.PhyBoxPosition.vector_x, GenNoiseConfig.PhyBoxPosition.vector_y);
+			CollisionCircle.m_radius = GenNoiseConfig.PhyBoxCollisionSize.vector_x;
 			// shape(idx) => fixture.
 			DefineFixture.shape = &CollisionCircle;
 			break;
 		}}
 
-		if (config.PhysicsIsSensorFlag) {
+		if (GenNoiseConfig.PhysicsIsSensorFlag) {
 			// Body 配置为传感器(无物理碰撞).
 			DefineFixture.isSensor = true;
 		}
 		else {
-			DefineFixture.density  = config.PhyBodyDensity;
-			DefineFixture.friction = config.PhyBodyFriction;
+			DefineFixture.density  = GenNoiseConfig.PhyBodyDensity;
+			DefineFixture.friction = GenNoiseConfig.PhyBodyFriction;
 			DefineFixture.filter   = FILTER;
 		}
 
 		// 关闭 Body 碰撞.
-		if (!config.PhysicsCollisionFlag)
+		if (!GenNoiseConfig.PhysicsCollisionFlag)
 			DefineFixture.filter.maskBits = NULL;
 
 		BodyData->CreateFixture(&DefineFixture);
@@ -169,10 +169,10 @@ namespace PhysicsEngine {
 		}
 		// key = body_data pointer.
 		*rukey = BodyData;
-		WorldPointer->PhysicsContact->PhysicsDataset[*rukey] = PhysicsBodyData(config.IndexUniqueCode, BodyData);
+		WorldPointer->PhysicsContact->PhysicsDataset[*rukey] = PhysicsBodyData(GenNoiseConfig.IndexUniqueCode, BodyData);
 
 		PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "phy_world => body_data, name: %s", world.c_str());
-		if (config.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %llu", rukey);
+		if (GenNoiseConfig.PhysicsModeTypeFlag) PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(dynamic) item: alloc key: %llu", rukey);
 		else                            PushLogger(LogInfo, PSAGM_PHYENGINE_LABEL, "body_data(static) item: alloc key: %llu", rukey);
 		return true;
 	}

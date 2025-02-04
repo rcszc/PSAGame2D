@@ -260,7 +260,7 @@ namespace GraphicsEngineMatrix {
 		static PsagMatrix4       MatrixDataWindow;
 
 		glm::mat4 UpdateCalcMatrix(const glm::mat4& in_matrix, const MatrixTransParams& params);
-		PsagMatrix4 UpdateEncodeMatrix(const glm::mat4& matrix, float scale);
+		PsagMatrix4 UpdateEncodeMatrix(const glm::mat4& matrix, float NoiseScale);
 
 		// framework main_event call update.
 		void CreateMatrixUniform();

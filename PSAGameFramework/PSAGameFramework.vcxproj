@@ -217,6 +217,7 @@
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_tools.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\LLWindowGui\framework_window_win32.cpp" />
+    <ClCompile Include="PSAGameFrameworkDev\GameLab\psag_game_lab.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.cpp" />
     <ClCompile Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet_fx.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="PSAGameFrameworkCore\LLThread\framework_thread_simd.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window.h" />
     <ClInclude Include="PSAGameFrameworkCore\LLWindowGui\framework_window_imgui_ms.h" />
+    <ClInclude Include="PSAGameFrameworkDev\GameLab\psag_game_lab.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\base_define_header.hpp" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_bullet.h" />
     <ClInclude Include="PSAGameFrameworkDev\GameZeroProject\zero_project_gui.h" />

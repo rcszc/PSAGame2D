@@ -5,7 +5,7 @@
   "RenderMSAA": 4,
   "RenderWindowFixed": true,
   "TextureEdge": true,
-  "TextureHigh": false,
+  "TextureHigh": true,
   "TextureBasicSize": [ 4096, 4096 ],
   "TextureGen": [ 25, 20, 10, 5 ],
   "GuiWindowRounding": 3.8,

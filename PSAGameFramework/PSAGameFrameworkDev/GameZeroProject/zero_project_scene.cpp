@@ -47,10 +47,10 @@ void ZPGameSceneMain::CreateSceneStatic() {
 	SceneStatic.Get()->CreateGameBrick(BackgroundDESC);
 }
 
-void ZPGameSceneMain::SceneMouseScaleLerp(float timestep, float scale) {
+void ZPGameSceneMain::SceneMouseScaleLerp(float timestep, float NoiseScale) {
 	// mouse wheel scale => lerp.
 	SceneScaleTrans.x -= ImGui::GetIO().MouseWheel * 0.12f;
-	SceneScaleTrans.y += (SceneScaleTrans.x - SceneScaleTrans.y) * 0.032f * timestep * scale;
+	SceneScaleTrans.y += (SceneScaleTrans.x - SceneScaleTrans.y) * 0.032f * timestep * NoiseScale;
 	SceneScaleTrans.x = PSAG_IMVEC_CLAMP(SceneScaleTrans.x, 0.4f, 2.0f);
 	// mouse middle click => normal scale.
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle))

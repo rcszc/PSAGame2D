@@ -61,6 +61,7 @@ namespace PsagFrameworkAnim {
         ) {
             LerpStatusFlag = 1;
             TimerTemp = chrono::system_clock::now();
+            PushLogger(LogInfo, PSAGM_DRIVE_ANIM_LABEL, "anim render image %u", ImagesIndexCount);
         }
         // check lerp complete. diff v < 0.05 & !flag
         if (MsTools::CalcFuncAvgDiffeVec4(

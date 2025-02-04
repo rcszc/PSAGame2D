@@ -40,10 +40,10 @@ namespace GraphicsEngineMatrix {
 		return MatrixCalcTemp;
 	}
 
-	PsagMatrix4 PsagGLEngineMatrix::UpdateEncodeMatrix(const glm::mat4& matrix, float scale) {
+	PsagMatrix4 PsagGLEngineMatrix::UpdateEncodeMatrix(const glm::mat4& matrix, float NoiseScale) {
 		PsagMatrix4 EncMatrixTemp = {};
 		// matrix_calc: porj * view.
-		glm::mat4 CameraMatrix = GetOrthoProjMatrix(scale) * glm::inverse(matrix);
+		glm::mat4 CameraMatrix = GetOrthoProjMatrix(NoiseScale) * glm::inverse(matrix);
 		// convert: glm matrix => psag matrix.
 		const float* glmmatptr = glm::value_ptr(CameraMatrix);
 		memcpy_s(EncMatrixTemp.matrix, 16 * sizeof(float), glmmatptr, 16 * sizeof(float));
