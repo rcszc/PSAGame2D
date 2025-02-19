@@ -86,12 +86,13 @@ namespace GameComponents {
 
 	// game actor_hp: [state,speed] calc: h += (s - h) * speed.
 	struct GameActorHP {
-		float HealthSTATE = 0.0f;
-		float HealthSPEED = 0.0f;
-		float HealthMAX   = 0.0f;
+		// health calc mode: lerp_trans.
+		float HealthState = 0.0f;
+		float HealthSpeed = 0.0f;
+		float HealthMax   = 0.0f;
 
 		GameActorHP(float state, float speed, float max) : 
-			HealthSTATE(state), HealthSPEED(speed), HealthMAX(max)
+			HealthState(state), HealthSpeed(speed), HealthMax(max)
 		{}
 	};
 	class ActorHealthTrans : public __ACTOR_MODULES_TIMESTEP {
@@ -121,31 +122,41 @@ namespace GameComponents {
 		{}
 	};
 
+	enum VirTextureMode {
+		VIR_TEXTURE_ROOT = 1 << 1, // 着色器持有纹理.
+		VIR_TEXTURE_REFE = 1 << 2  // 着色器引用纹理.
+	};
+	// actor shader texture params.
+	struct VirtualTextureInfo {
+		// virtual texture engine index(key).
+		VirTextureUnique VirTextureIndex;
+		std::string VirTextureName;
+		VirTextureMode VirTextureMode;
+		GraphicsEngineDataset::VirTextureUniformName VirTextureUname;
+
+		VirtualTextureInfo() :
+			VirTextureIndex(PSAG_VIR_TEXTURE_INVALID),
+			VirTextureName ({}),
+			VirTextureMode (VIR_TEXTURE_ROOT),
+			VirTextureUname({})
+		{}
+	};
 	class ActorRendering :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineVirTextureData
 	{
 	protected:
-		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER   = {};
-		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform                  ShaderUniform = {};
+		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
+		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 	public:
 		ResUnique ShaderIndex      = NULL;
 		ResUnique VertexGroupIndex = NULL;
 
 		Vector2T<float> RenderResolution = {};
+		// shader virtual textures group.
+		std::vector<VirtualTextureInfo> VirTextures = {};
 		
-		std::function<void(PsagShader)> RenderingTextureNFunc = [&](PsagShader) {};
-		std::function<void(PsagShader)> RenderingTextureHFunc = [&](PsagShader) {};
-
-		GraphicsEngineDataset::VirTextureUniformName VirTexUniform    = {};
-		GraphicsEngineDataset::VirTextureUniformName VirTexUniformHDR = {};
-
-		VirTextureUnqiue VirTexture    = NULL;
-		VirTextureUnqiue VirTextureHDR = NULL;
-
 		virtual void UpdateActorRendering(const RenderingParams& params, float time_count);
-		virtual void UpdateActorRenderingTextureN(PsagShader shader);
-		virtual void UpdateActorRenderingTextureH(PsagShader shader);
 	};
 
 	// actor coordinate_convert tool(s).
@@ -164,7 +175,9 @@ namespace GameComponents {
 		// actor_space_trans components: [NULL-OBJ].
 		class ActorSpaceTransNULL :public ActorSpaceTrans {
 		public:
-			ActorSpaceTransNULL(const std::string& phy_world, PhyBodyKey phy_body) : ActorSpaceTrans(phy_world, phy_body) {}
+			ActorSpaceTransNULL(const std::string& phy_world, PhyBodyKey phy_body) : 
+				ActorSpaceTrans(phy_world, phy_body) 
+			{}
 			void UpdateActorTrans(Vector2T<float>& position, float& rotate) override {};
 			void SetActorState(const Vector2T<float>& pos, float angle) override {};
 		};
@@ -178,20 +191,17 @@ namespace GameComponents {
 		class ActorRenderingNULL : public ActorRendering {
 		public:
 			void UpdateActorRendering(const RenderingParams& params, float time_count) override {};
-
-			void UpdateActorRenderingTextureN(PsagShader shader) override {};
-			void UpdateActorRenderingTextureH(PsagShader shader) override {};
 		};
 	}
 }
 
 namespace GameActorScript {
 	extern const char* psag_shader_public_frag_header;
-	extern const char* psag_shader_public_frag_texnor;
-	extern const char* psag_shader_public_frag_texhdr;
+	// warn: non-format shader script. 20250219.
+	extern const char* psag_shader_public_frag_texture;
 
-	extern const char* psag_shader_private_frag_brick_nor;
-	extern const char* psag_shader_private_frag_brick_hdr;
+	extern const char* psag_shader_private_frag_dfirst;
+	extern const char* psag_shader_private_frag_dlast;
 }
 
 namespace GameActorCore {
@@ -202,31 +212,32 @@ namespace GameActorCore {
 
 		class GameActorTypeBind {
 		protected:
-			std::unordered_map<std::string, uint32_t> ActorTypeINFO = {};
+			std::unordered_map<std::string, uint32_t> ActorTypeMapping = {};
 			uint32_t ActorTypeCount = ActorTypeNULL;
 		public:
 			uint32_t ActorTypeIs(const std::string& type_name);
 
-			void ActorTypeCreate(const std::string& type_name);
-			void ActorTypeDelete(const std::string& type_name);
+			bool ActorTypeCreate(const std::string& type_name);
+			bool ActorTypeDelete(const std::string& type_name);
 		};
 		// [GLOBAL.OBJECT] Actor类型分配器.
 		extern GameActorTypeBind ActorTypeAllotter;
 	}
 	class GameActorExecutor;
 
-	using SScript = const char*;
 	// game_actor render system_preset shader script.
 	class GameActorPresetScript {
 	public:
-		SScript TmpScriptDrawImage(bool HDR = false) {
-			// shader "main" code nor / hdr. 
-			if (HDR) return GameActorScript::psag_shader_private_frag_brick_hdr;
-			return GameActorScript::psag_shader_private_frag_brick_nor;
+		std::string TmpScriptDrawImage(const std::string& tex_name) {
+			if (tex_name.empty()) return "glsl gen error: tex name invalid.";
+			// shader default 1-tex draw glsl. 
+			return std::string(GameActorScript::psag_shader_private_frag_dfirst + 
+				tex_name + GameActorScript::psag_shader_private_frag_dlast);
 		};
 	};
 
 	struct GameActorShaderVerticesDESC {
+		// shader pipline vertex color.
 		Vector4T<float> ShaderDefaultColor;
 
 		// shader ver: coord & collision.
@@ -246,37 +257,19 @@ namespace GameActorCore {
 		{}
 	};
 
+	using VirTexuresGroup = std::vector<GameComponents::VirtualTextureInfo>;
+	// shader resource, shader => mul actors.
 	class GameActorShader :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineVirTextureData
 	{
 	private:
+		// t-safe, texture(vir) unique uniform name.
+		static std::unordered_set<std::string> TUUN_RegisterInfo;
+
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform U_LOADER = {};
 		PsagShader S_HANDLE = OPENGL_INVALID_HANDEL;
 	protected:
-		// 系统预设 [NOR] Virtual Texture Uniform 参数组.
-		GraphicsEngineDataset::VirTextureUniformName SystemPresetUnameN() {
-			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
-			// preset shader uniform name.
-			U_NAME.TexParamSampler  = "VirTextureNOR";
-			U_NAME.TexParamLayer    = "VirTextureNORLayer";
-			U_NAME.TexParamCropping = "VirTextureNORCropping";
-			U_NAME.TexParamSize     = "VirTextureNORSize";
-			return U_NAME;
-		}
-		// 系统预设 [HDR] Virtual Texture Uniform 参数组.
-		GraphicsEngineDataset::VirTextureUniformName SystemPresetUnameH() {
-			GraphicsEngineDataset::VirTextureUniformName U_NAME = {};
-			// preset shader uniform name.
-			U_NAME.TexParamSampler  = "VirTextureHDR";
-			U_NAME.TexParamLayer    = "VirTextureHDRLayer";
-			U_NAME.TexParamCropping = "VirTextureHDRCropping";
-			U_NAME.TexParamSize     = "VirTextureHDRSize";
-			return U_NAME;
-		}
-		bool CheckRepeatTex(VirTextureUnqiue virtex);
-		bool MappingTextureFlag = false;
-
 		Vector4T<float> ShaderDefaultColor = {};
 		// x:vert_shader, y:frag_shader.
 		Vector2T<std::string> ShaderScript = {};
@@ -284,9 +277,9 @@ namespace GameActorCore {
 		std::vector<Vector2T<float>>* VerticesPosition = nullptr;
 		std::vector<Vector2T<float>>* VerticesUvCoord  = nullptr;
 
-		bool ShaderImageTextureLoad(VirTextureUnqiue* ref_texture, const ImageRawData& image);
+		bool ShaderImageTextureLoad(VirTextureUnique* ref_texture, const ImageRawData& image);
 	public:
-		GameActorShader(const std::string& SHADER_FRAG, const Vector2T<uint32_t>& RESOLUTION);
+		GameActorShader(const std::string& shader_frag, const Vector2T<uint32_t>& size);
 		~GameActorShader();
 		// create actor shader_resource.
 		bool CreateShaderResource(bool default_is_circle = false);
@@ -294,13 +287,10 @@ namespace GameActorCore {
 		// load vertices(pos,uv) resource. (warn: ref)
 		bool ShaderVerticesLoad(GameActorShaderVerticesDESC& VER_DESC);
 
-		// referencing virtual texture(non-delete). base + hdr_blend. rgb color add.
-		bool ShaderLoadVirTexture   (VirTextureUnqiue virtex);
-		bool ShaderLoadVirTextureHDR(VirTextureUnqiue virtex);
-
-		// create virtual texture. base + hdr_blend. rgb color add.
-		bool ShaderImageLoad   (const ImageRawData& image);
-		bool ShaderImageLoadHDR(const ImageRawData& image);
+		// shader: referencing virtual texture(non-delete).
+		bool ShaderVirTextureLADD(const std::string& u_name, VirTextureUnique virtex);
+		// shader: load-add image => virtual texture.
+		bool ShaderImageLADD(const std::string& u_name, const ImageRawData& image);
 
 		// => uniform context (shader_context) => set_uniform.
 		void UniformSetContext(std::function<void()> context_func);
@@ -315,34 +305,32 @@ namespace GameActorCore {
 		void UniformVec3(const char* name, const Vector3T<float>& value);
 		void UniformVec4(const char* name, const Vector4T<float>& value);
 
-		// ================================ system params ================================
+		// ================================ shader params ================================
+		std::vector<Vector2T<float>>* __GET_VERTICES_RES() {
+			return VerticesPosition;
+		}
+		VirTexuresGroup __VIR_TEXTURES_GROUP = {};
 
-		VirTextureUnqiue __VIR_TEXTURE_ITEM     = NULL;
-		VirTextureUnqiue __VIR_TEXTURE_HDR_ITEM = NULL;
-
-		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_ITEM     = {};
-		GraphicsEngineDataset::VirTextureUniformName __VIR_UNIFORM_HDR_ITEM = {};
-		
 		ResUnique __ACTOR_SHADER_ITEM = NULL;
 		ResUnique __ACTOR_VERTEX_ITEM = NULL;
 
 		Vector2T<uint32_t> __RENDER_RESOLUTION = {};
-
-		std::vector<Vector2T<float>>* __GET_VERTICES_RES() {
-			return VerticesPosition;
-		}
 	};
 
+#define PSAG_ACTOR_HP_ERR -1.0f
 	struct GameActorHealthDESC {
 		std::vector<GameComponents::GameActorHP> InitialActorHealth;
 	};
 
 	struct GameCollisionPAIR {
+		// pair: a -> collision <- b.
 		GameComponents::ActorPrivateINFO ThisActor = {};
 		GameComponents::ActorPrivateINFO ThatActor = {};
 
-		GameCollisionPAIR(const GameComponents::ActorPrivateINFO& a_this, const GameComponents::ActorPrivateINFO& a_that) :
-			ThisActor(a_this), ThatActor(a_that)
+		GameCollisionPAIR(
+			const GameComponents::ActorPrivateINFO& a_this, 
+			const GameComponents::ActorPrivateINFO& a_that) 
+			: ThisActor(a_this), ThatActor(a_that)
 		{}
 	};
 
@@ -359,6 +347,7 @@ namespace GameActorCore {
 
 	// box2d collision filter 16bit => 1 - 32768. [20241110]
 	enum ActorCollisionGroup : uint16_t {
+		// collision groups type:[0~E]
 		ActorPhyGroup0 = 1 << 0, ActorPhyGroup1 = 1 << 1,
 		ActorPhyGroup2 = 1 << 2, ActorPhyGroup3 = 1 << 3,
 		ActorPhyGroup4 = 1 << 4, ActorPhyGroup5 = 1 << 5,
@@ -467,7 +456,7 @@ namespace GameActorCore {
 		Vector2T<float> RenderingResolution = {};
 		
 		GameComponents::RenderingParams ActorRenderParams = {};
-
+		// prev frame calc position.
 		Vector2T<float> ActorLastPosition = {};
 
 		// actor basic components.
@@ -485,23 +474,23 @@ namespace GameActorCore {
 
 		float ActorGetHealth(size_t count) {
 #if PSAG_DEBUG_MODE
-			if (count < ActorCompHealthTrans->ActorHealthStateOut.size())
-				return ActorCompHealthTrans == nullptr ? 
-				0.0f : ActorCompHealthTrans->ActorHealthStateOut[count];
-			return 0.0f;
-#else
-			return ActorCompHealthTrans->ActorHealthStateOut[count];
+			if (count >= ActorCompHealthTrans->ActorHealthStateOut.size()) {
+				PSAG_LOGGER::PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, 
+					"actor default health_out index err.");
+				return PSAG_ACTOR_HP_ERR;
+			}
 #endif
+			return ActorCompHealthTrans->ActorHealthStateOut[count];
 		}
 		float ActorGetHealthMax(size_t count) {
 #if PSAG_DEBUG_MODE
-			if (count < ActorCompHealthTrans->ActorHealthStateOut.size())
-				return ActorCompHealthTrans == nullptr ? 
-				0.0f : ActorCompHealthTrans->ActorHealthState[count].HealthMAX;
-			return 0.0f;
-#else
-			return ActorCompHealthTrans->ActorHealthState[count].HealthMAX;
+			if (count >= ActorCompHealthTrans->ActorHealthStateOut.size()) {
+				PSAG_LOGGER::PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, 
+					"actor default health_max index err.");
+				return PSAG_ACTOR_HP_ERR;
+			}
 #endif
+			return ActorCompHealthTrans->ActorHealthState[count].HealthMax;
 		}
 		void ActorModifyHealth(size_t count, float value) {
 			ActorCompHealthTrans->SetActorHealth(count, value);
@@ -510,26 +499,32 @@ namespace GameActorCore {
 		// timer: accuracy: ms, unit: s.
 		float ActorGetLifeTime();
 		// actor get_state: position & scale & rotate.
-		Vector2T<float> ActorGetPosition() { return ActorRenderParams.RenderPosition; };
-		Vector2T<float> ActorGetScale()    { return ActorRenderParams.RenderScale; }
-		float           ActorGetAngle()    { return ActorRenderParams.RenderAngle; };
+		Vector2T<float> ActorGetPosition() const { return ActorRenderParams.RenderPosition; };
+		Vector2T<float> ActorGetScale()    const { return ActorRenderParams.RenderScale; }
+		float           ActorGetAngle()    const { return ActorRenderParams.RenderAngle; };
 
-		Vector2T<float> ActorGetMoveSpeed()   { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
-		float           ActorGetRotateSpeed() { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
+		Vector2T<float> ActorGetMoveSpeed()   const { return ActorCompSpaceTrans->ActorStateMoveSpeed; }
+		float           ActorGetRotateSpeed() const { return ActorCompSpaceTrans->ActorStateRotateSpeed; }
 
 		float ActorGetSpeed() {
 			auto VecSpeed = ActorGetMoveSpeed();
 			return std::sqrt(std::pow(VecSpeed.vector_x, 2.0f) + std::pow(VecSpeed.vector_y, 2.0f));
 		}
 
+		// warn: ref render comp layer_height ptr.
 		float* ActorLayerValuePtr() { return &ActorRenderParams.RenderLayerHeight; }
 
-		void ActorApplyForceRotate(float vec)                { ActorCompSpaceTrans->ActorTransRotateValue = vec; };
-		void ActorApplyForceMove(const Vector2T<float>& vec) { ActorCompSpaceTrans->ActorTransMoveValue = vec; };
-		// not scale actor collision_box.
-		void ActorModifyScale(const Vector2T<float>& vec) { ActorRenderParams.RenderScale = vec; };
-		// set actor position & angle.
-		void ActorModifyState(const Vector2T<float>& position, float angle) {
+		void ActorApplyForceRotate(float vec) const { ActorCompSpaceTrans->ActorTransRotateValue = vec; };
+		void ActorApplyForceMove(const Vector2T<float>& vec) const { ActorCompSpaceTrans->ActorTransMoveValue = vec; };
+		
+		// "ActorModifyScale": not scale actor collision_box.
+		// "ActorModifyState": set actor position & angle.
+		// "ActorModifyColorBlend": set actor shader vtx color.
+
+		void ActorModifyScale(const Vector2T<float>& vec) { 
+			ActorRenderParams.RenderScale = vec; 
+		};
+		void ActorModifyState(const Vector2T<float>& position, float angle) { 
 			ActorCompSpaceTrans->SetActorState(position, angle);
 		}
 		void ActorModifyColorBlend(const Vector4T<float>& color) {
@@ -560,7 +555,7 @@ namespace GameActorCore {
 		{}
 	};
 
-	// 物理传感器(圆形), 用于范围探测.
+	// 物理传感器(圆形), 用于范围探测. [ALPHA]
 	class GameActorCircleSensor :public PhysicsEngine::PhyEngineCoreDataset {
 	protected:
 		size_t ActorSensorUniqueID = {};
@@ -581,13 +576,13 @@ namespace GameActorCore {
 	};
 }
 
-// 用于构建静态场景, 比静态'Actor'更加轻量, 但是使用了一些共同组件.
-namespace GameBrickCore {
-	StaticStrLABEL PSAGM_BRICK_CORE_LABEL = "PSAG_BRICK_CORE";
+// 用于构建静态场景, 比'Actor'更加轻量, 但是使用了一些共同组件.
+namespace GameEnvmtCore {
+	StaticStrLABEL PSAGM_ENVMT_CORE_LABEL = "PSAG_ENVMT_CORE";
 
-	struct GameBrickExecutorDESC {
-		GameActorCore::GameActorShader* BrickShaderResource;
-		std::string                     BrickPhysicsWorld;
+	struct GameEnvmtExecutorDESC {
+		GameActorCore::GameActorShader* EnvmtShaderResource;
+		std::string EnvmtPhysicsWorld;
 
 		// collision box preset circle(polygon: 20).
 		bool CollisionBoxIsCircle;
@@ -605,9 +600,9 @@ namespace GameBrickCore {
 		bool EnableRendering = true;
 		bool EnableCollision = true;
 
-		GameBrickExecutorDESC() :
-			BrickShaderResource(nullptr),
-			BrickPhysicsWorld  ({}),
+		GameEnvmtExecutorDESC() :
+			EnvmtShaderResource(nullptr),
+			EnvmtPhysicsWorld  ({}),
 
 			CollisionBoxIsCircle(false),
 
@@ -620,21 +615,22 @@ namespace GameBrickCore {
 		{}
 	};
 
-	class GameBrickExecutor :
+	// world static environment.
+	class GameEnvmtExecutor :
 		public GraphicsEngineDataset::GLEngineStaticVertexData,
 		public GraphicsEngineDataset::GLEngineVirTextureData,
 		public PhysicsEngine::PhyEngineCoreDataset,
 		public __ACTOR_MODULES_TIMESTEP
 	{
+	private: 
+		size_t EnvmtEntryUniqueID = NULL;
 	protected:
-		size_t                          BrickUniqueID  = NULL;
-		GameActorCore::GameActorShader* BrickRenderRes = nullptr;
-
+		GameActorCore::GameActorShader* EnvmtRenderRes = nullptr;
 		// physical collision: type:null, unique:first.
-		GameComponents::ActorPrivateINFO BrickCollisionInfo = {};
+		GameComponents::ActorPrivateINFO EnvmtCollisionInfo = {};
 
-		std::string BrickPhysicsWorld = {};
-		PhyBodyKey  BcickPhysicsItem  = {};
+		std::string EnvmtPhysicsWorld = {};
+		PhyBodyKey  EnvmtPhysicsItem  = {};
 
 		float VirTimerStepSpeed = 1.0f;
 		float VirTimerCount     = 0.0f;
@@ -642,18 +638,18 @@ namespace GameBrickCore {
 		// shader rendering size, shader_uniform param.
 		Vector2T<float> RenderingResolution = {};
 
-		GameComponents::RenderingParams BrickRenderParams = {};
-		GameComponents::ActorRendering* BirckCompRendering = nullptr;
+		GameComponents::RenderingParams EnvmtRenderParams  = {};
+		GameComponents::ActorRendering* EnvmtCompRendering = nullptr;
 	public:
-		~GameBrickExecutor();
-		GameBrickExecutor(const GameBrickExecutorDESC& INIT_DESC);
+		~GameEnvmtExecutor();
+		GameEnvmtExecutor(const GameEnvmtExecutorDESC& INIT_DESC);
 
-		size_t          BrickGetUniqueID() { return BrickUniqueID; }
-		Vector2T<float> BrickGetPosition() { return BrickRenderParams.RenderPosition; }
-		Vector2T<float> BrickGetScale()    { return BrickRenderParams.RenderScale; }
-		float           BrickGetRotate()   { return BrickRenderParams.RenderAngle; }
+		size_t          EnvmtGetUniqueID() const { return EnvmtEntryUniqueID; }
+		Vector2T<float> EnvmtGetPosition() const { return EnvmtRenderParams.RenderPosition; }
+		Vector2T<float> EnvmtGetScale()    const { return EnvmtRenderParams.RenderScale; }
+		float           EnvmtGetRotate()   const { return EnvmtRenderParams.RenderAngle; }
 
-		void BrickRendering();
+		void EnvmtRendering();
 	};
 }
 
@@ -705,42 +701,52 @@ namespace GameCoreManager {
 		void RunAllGameActor();
 	};
 
-	class GameBrickExecutorManager {
+	class GameEnvmtExecutorManager {
 	protected:
-		std::unordered_map<size_t, GameBrickCore::GameBrickExecutor*> GameBrickDataset = {};
-		std::vector<size_t> GameBrickFreeList = {};
+		std::unordered_map<size_t, GameEnvmtCore::GameEnvmtExecutor*> GameEnvmtDataset = {};
+		std::vector<size_t> GameEnvmtFreeList = {};
 	public:
-		GameBrickExecutorManager() {
+		GameEnvmtExecutorManager() {
 			// ATOMIC ENTITIES COUNTER.
 			++ActorSystemAtomic::GLOBAL_PARAMS_M_EVNS;
 		};
-		~GameBrickExecutorManager();
+		~GameEnvmtExecutorManager();
 
 		// get_source data(hash_map), pointer.
-		std::unordered_map<size_t, GameBrickCore::GameBrickExecutor*>* GetSourceData() {
-			return &GameBrickDataset;
+		std::unordered_map<size_t, GameEnvmtCore::GameEnvmtExecutor*>* GetSourceData() {
+			return &GameEnvmtDataset;
 		}
 
-		size_t CreateGameBrick(const GameBrickCore::GameBrickExecutorDESC& brick_desc);
-		bool   DeleteGameBrick(size_t unique_code);
+		size_t CreateGameEnvmt(const GameEnvmtCore::GameEnvmtExecutorDESC& brick_desc);
+		bool   DeleteGameEnvmt(size_t unique_code);
 		
-		// rendering all brick_object "BrickRendering".
-		void RunAllGameBrick();
+		// rendering all entities_object.
+		void RunAllGameEnvmt();
 	};
 }
 
 namespace GameDebugGuiWindow {
-	// debug window [panel], actor. 
-	void DebugWindowGuiActorPawn(const char* name, GameActorCore::GameActorExecutor* actor);
-	// debug window [panel], actor_manager(actors). 
-	void DebugWindowGuiActors(const char* name, std::unordered_map<size_t, GameActorCore::GameActorExecutor*>* actors);
+	using ActorEntryPtr = GameActorCore::GameActorExecutor*;
+	// debug window [panel], actor. <OLD>
+	PSAG_OLD_FUNC void DebugWindowGuiActorPawn(const char* name, ActorEntryPtr actor);
+	// debug window [panel], actor_manager(actors). <OLD>
+	PSAG_OLD_FUNC void DebugWindowGuiActors(
+		const char* name, std::unordered_map<size_t, ActorEntryPtr>* actors
+	);
+	// framereate plot values cache length.
+	constexpr size_t FrameCacheLen = 512;
 
-	class DebugGamePanel {
+	// framework debug params render panel.
+	// v0.1.2 update: 2025_02_17 RCSZ.
+	class DebugGamePANEL {
 	protected:
 		// info view window 0:fps, 1:ppactor.
 		const float DebugWindowHeight[3] = { 184.0f, 192.0f, 112.0f };
-		const char* DebugWindowName = {};
-		std::chrono::steady_clock::time_point DebugFpsTimer = std::chrono::steady_clock::now();
+		std::string DebugWindowName = {}, DebugWindowFrameName = {};
+
+		std::chrono::steady_clock::time_point 
+			DebugUpdateTimer = std::chrono::steady_clock::now(),
+			DebugCacheTimer  = std::chrono::steady_clock::now();
 		// player pawn actor ref(ptr).
 		GameActorCore::GameActorExecutor* AEREF = nullptr;
 
@@ -749,13 +755,16 @@ namespace GameDebugGuiWindow {
 		float FramerateLimitMax  = 0.0f;
 		// sync frame counter.
 		int FrameCounter = NULL;
+		
+		float FramerateCache[FrameCacheLen] = {};
 
 		void GameInfoViewFPS    (float width);
 		void GameInfoViewPPActor(float width);
 		void GameInfoViewGlobal (float width);
 	public:
-		DebugGamePanel(const char* name, float max_fps) :
-			DebugWindowName(name), FramerateLimitMax(max_fps)
+		DebugGamePANEL(const std::string& name, float max_fps) :
+			DebugWindowName(name), DebugWindowFrameName(name + "##FVIEW"), 
+			FramerateLimitMax(max_fps)
 		{};
 		void SettingPPActorRef(GameActorCore::GameActorExecutor* actor);
 

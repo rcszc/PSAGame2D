@@ -186,7 +186,7 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_timer.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_actor.cpp" />
-    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp" />
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_envmt.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_components.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_debug.cpp" />
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_manager.cpp" />
@@ -264,6 +264,7 @@
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_lowlevel_support.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\psag_core_drivers.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine.h" />
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_noise.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.h" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module.hpp" />
     <ClInclude Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module.hpp" />

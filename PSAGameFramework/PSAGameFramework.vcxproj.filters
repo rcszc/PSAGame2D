@@ -231,7 +231,7 @@
     <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\imgui_widgets.cpp">
       <Filter>资源文件\ImGui\ImGuiCore</Filter>
     </ClCompile>
-    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_brick.cpp">
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_module_envmt.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_fx.cpp">
@@ -523,6 +523,9 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkDev\GameLab\psag_game_lab.h">
       <Filter>源文件\A-PSAGameFrameworkDev\GameLab</Filter>
+    </ClInclude>
+    <ClInclude Include="PSAGameFrameworkCore\CoreFramework\ToolkitsEngine\psag_toolkits_engine_noise.hpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreFramework\ToolkitsEngine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

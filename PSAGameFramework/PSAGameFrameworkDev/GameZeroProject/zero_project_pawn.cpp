@@ -20,13 +20,13 @@ bool ZPGamePawnActor::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 		PsagManager::SyncLoader::FSLD::EasyFileReadRawData(SYSPATH_REF("zpgame_ppactor_nor.png"));
 	// create player pawn actor shader.
 	PsagActor::ActorShader* PPActorNormal = new PsagActor::ActorShader(PawnActorNormal, WinSize);
-	PPActorNormal->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(PlayerActorNOR));
+	PPActorNormal->ShaderImageLADD("PPActor", DecodeRawImage.DecodeImageRawData(PlayerActorNOR));
 
 	auto ActorNPC = PsagManager::SyncLoader::FSLD::EasyFileReadRawData(SYSPATH_REF("zpgame_npc_a.png"));
 
 	// create npc pawn actor shader.
-	PsagActor::ActorShader* RenderNPC = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage(), WinSize);
-	RenderNPC->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(ActorNPC));
+	PsagActor::ActorShader* RenderNPC = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("NPActor"), WinSize);
+	RenderNPC->ShaderImageLADD("NPActor", DecodeRawImage.DecodeImageRawData(ActorNPC));
 
 	ActorShaders.CreatePointer();
 	ActorShaders.Get()->CreateActorShader("PlayerActor.NOR", PPActorNormal);

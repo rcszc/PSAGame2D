@@ -32,7 +32,7 @@ protected:
     // npc pawn actor_entities.
     Mptr::DefinePointer<PsagActor::ActorsManager> NpcActorEntities = {};
 
-    Mptr::DefinePointer<PsagActor::DebugTools::DebugGamePanel> DEBUG_GUI = {};
+    Mptr::DefinePointer<PsagActor::DebugTools::DebugGamePANEL> DEBUG_GUI = {};
 
     void CreateNpcActor(size_t number);
     void CreateNpcActorEntity(const Vector2T<float>& position);

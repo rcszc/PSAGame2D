@@ -119,47 +119,47 @@ namespace GameCoreManager {
 		}
 	}
 
-	// ******************************** game brick_actuator ********************************
+	// ******************************** game envi_actuator ********************************
 
-	GameBrickExecutorManager::~GameBrickExecutorManager() {
+	GameEnvmtExecutorManager::~GameEnvmtExecutorManager() {
 		// free valid objects.
-		for (auto& BrickItem : GameBrickDataset)
+		for (auto& BrickItem : GameEnvmtDataset)
 			if (BrickItem.second != nullptr)
 				delete BrickItem.second;
-		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_brick manager system delete.");
+		PushLogger(LogInfo, PSAGM_CORE_MAG_LABEL, "game_envmt manager system delete.");
 		// ATOMIC ENTITIES COUNTER.
 		--ActorSystemAtomic::GLOBAL_PARAMS_M_EVNS;
 	}
 
-	size_t GameBrickExecutorManager::CreateGameBrick(const GameBrickCore::GameBrickExecutorDESC& brick_desc) {
-		GameBrickCore::GameBrickExecutor* CreateGameBrick = new GameBrickCore::GameBrickExecutor(brick_desc);
+	size_t GameEnvmtExecutorManager::CreateGameEnvmt(const GameEnvmtCore::GameEnvmtExecutorDESC& brick_desc) {
+		GameEnvmtCore::GameEnvmtExecutor* CreateGameEnvmt = new GameEnvmtCore::GameEnvmtExecutor(brick_desc);
 		// brick pointer = nullptr.
-		if (CreateGameBrick == nullptr) {
-			PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_brick(mag) item failed create.");
+		if (CreateGameEnvmt == nullptr) {
+			PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_envmt(mag) item failed create.");
 			return NULL;
 		}
-		size_t UniqueCode = CreateGameBrick->BrickGetUniqueID();
-		GameBrickDataset[UniqueCode] = CreateGameBrick;
+		size_t UniqueCode = CreateGameEnvmt->EnvmtGetUniqueID();
+		GameEnvmtDataset[UniqueCode] = CreateGameEnvmt;
 		return UniqueCode;
 	}
 
-	bool GameBrickExecutorManager::DeleteGameBrick(size_t unique_code) {
-		auto it = GameBrickDataset.find(unique_code);
-		if (it != GameBrickDataset.end()) {
+	bool GameEnvmtExecutorManager::DeleteGameEnvmt(size_t unique_code) {
+		auto it = GameEnvmtDataset.find(unique_code);
+		if (it != GameEnvmtDataset.end()) {
 			// brick_pointer null.
 			if (it->second == nullptr) {
-				PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_brick(mag) item failed delete.");
+				PushLogger(LogError, PSAGM_CORE_MAG_LABEL, "game_envmt(mag) item failed delete.");
 				return false;
 			}
 			delete it->second;
-			GameBrickDataset.erase(it);
+			GameEnvmtDataset.erase(it);
 			return true;
 		}
 		return false;
 	}
 
-	void GameBrickExecutorManager::RunAllGameBrick() {
-		for (auto& RunBrickItem : GameBrickDataset)
-			RunBrickItem.second->BrickRendering();
+	void GameEnvmtExecutorManager::RunAllGameEnvmt() {
+		for (auto& RunBrickItem : GameEnvmtDataset)
+			RunBrickItem.second->EnvmtRendering();
 	}
 }

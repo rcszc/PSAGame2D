@@ -435,7 +435,7 @@ namespace GraphicsEngineDataset {
 	bool GLEngineVirTextureData::VirTextureItemAlloc(ResUnique rukey, const ImageRawData& image) {
 		SamplerTextures* TextureIndex = nullptr;
 		const char* TexResolutionTag = "NULL";
-		
+
 		uint32_t SizeType = CheckResolutionType(Vector2T<uint32_t>(image.Width, image.Height));
 		switch (SizeType) {
 		case(1): { TexResolutionTag = "1x/1"; TextureIndex = &TexturesSize8X; break; }
@@ -450,7 +450,7 @@ namespace GraphicsEngineDataset {
 		// index items valid ?
 		auto it = TexIndexItems.find(rukey);
 		if (it != TexIndexItems.end()) {
-			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc duplicate_key: %u", rukey);
+			PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc duplicate_key: %u", rukey);
 			return false;
 		}
 		// shader: texture rendering_crop.
@@ -461,7 +461,7 @@ namespace GraphicsEngineDataset {
 
 		// err: texture count >= max.
 		if (TextureIndex->ArraySize.vector_y >= TextureIndex->ArraySize.vector_x) {
-			PushLogger(LogWarning, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc items_max.");
+			PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: failed alloc items_max.");
 			return false;
 		}
 		// texture count + 1.
@@ -471,30 +471,34 @@ namespace GraphicsEngineDataset {
 		// alloc virtual texture layer.
 		uint32_t VirTextureLayer = TextureIndex->LayerAllotter->AllocLayerCount();
 
-		if (!ImgDataTemp.ImagePixels.empty()) {
-			// pixels data process.
-			// 格式化填充纹理数据. src => fmt_size.
-			IMAGE_TOOLS::IMAGE_TOOL_FILL(
-				ImgDataTemp.ImagePixels,
-				Vector2T<uint32_t>(ImgDataTemp.Width, ImgDataTemp.Height),
-				TextureIndex->TextureResolution,
-				ImgDataTemp.Channels
-			);
-			// AHPLA 通道填充.
-			if (ImgDataTemp.Channels == DEF_IMG_CHANNEL_RGB)
-				IMAGE_TOOLS::IMAGE_TOOL_CHANNELS(ImgDataTemp.ImagePixels);
-
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: src: %u x %u, fmt_fill: %u x %u",
-				ImgDataTemp.Width, ImgDataTemp.Height, TextureIndex->TextureResolution.vector_x, TextureIndex->TextureResolution.vector_y
-			);
-			// upload texture layer_data, rgba(default).
-			OGLAPI_OPER.UploadTextureLayer(
-				GraphicTextures->ResourceFind(TextureIndex->TextureArrayIndex).Texture,
-				VirTextureLayer,
-				TextureIndex->TextureResolution,
-				ImgDataTemp.ImagePixels.data()
-			);
+		if (ImgDataTemp.ImagePixels.empty()) {
+			PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: image data is empty.");
+			return false;
 		}
+		// pixels data process.
+		// 格式化填充纹理数据. src => fmt_size.
+		IMAGE_TOOLS::IMAGE_TOOL_FILL(
+			ImgDataTemp.ImagePixels,
+			Vector2T<uint32_t>(ImgDataTemp.Width, ImgDataTemp.Height),
+			TextureIndex->TextureResolution,
+			ImgDataTemp.Channels
+		);
+		// AHPLA 通道填充.
+		if (ImgDataTemp.Channels == DEF_IMG_CHANNEL_RGB)
+			IMAGE_TOOLS::IMAGE_TOOL_CHANNELS(ImgDataTemp.ImagePixels);
+
+		PushLogger(
+			LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture: src: %u x %u, fmt_fill: %u x %u",
+			ImgDataTemp.Width, ImgDataTemp.Height,
+			TextureIndex->TextureResolution.vector_x, TextureIndex->TextureResolution.vector_y
+		);
+		// upload texture layer_data, rgba(default).
+		OGLAPI_OPER.UploadTextureLayer(
+			GraphicTextures->ResourceFind(TextureIndex->TextureArrayIndex).Texture,
+			VirTextureLayer,
+			TextureIndex->TextureResolution,
+			ImgDataTemp.ImagePixels.data()
+		);
 
 		// set_param => storage.
 		TexIndexItems[rukey] = VirTextureParam(
@@ -505,7 +509,8 @@ namespace GraphicsEngineDataset {
 			Vector2T<float>((float)image.Width, (float)image.Height)
 		);
 
-		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: alloc key: %u, cropping: %.2f x %.2f, res: %s",
+		PushLogger(
+			LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: alloc key: %u, cropping: %.2f x %.2f, res: %s",
 			rukey, SmpCropping.vector_x, SmpCropping.vector_y, TexResolutionTag
 		);
 		// add texture count.
@@ -529,7 +534,7 @@ namespace GraphicsEngineDataset {
 
 	bool GLEngineVirTextureData::VirTextureItemFree(ResUnique rukey) {
 		SamplerTextures* TextureIndex = nullptr;
-		
+
 		VirTextureParam* TexParam = FindTexIndexItems(rukey);
 		if (TexParam == nullptr) {
 			PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: failed delete, not found key.");
@@ -545,45 +550,47 @@ namespace GraphicsEngineDataset {
 			return false;
 
 		auto it = TexIndexItems.find(rukey);
-		if (it != TexIndexItems.end()) {
-			// free virtual texture layer.
-			TextureIndex->LayerAllotter->FreeLayerCount(it->second.SampleLayers);
-			// erase item param.
-			it->second = VirTextureParam();
-			TexIndexItems.erase(it);
-			// texture layers count - 1.
-			--TextureIndex->ArraySize.vector_y;
-			// texture entities count - 1;
-			--DataBytesOnlineTexture;
+		if (it == TexIndexItems.end())
+			return false;
+		// free virtual texture layer.
+		TextureIndex->LayerAllotter->FreeLayerCount(it->second.SampleLayers);
+		// erase item param.
+		it->second = VirTextureParam();
+		TexIndexItems.erase(it);
+		// texture layers count - 1.
+		--TextureIndex->ArraySize.vector_y;
+		// texture entities count - 1;
+		--DataBytesOnlineTexture;
 
-			PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: delete key: %u", rukey);
-			return true;
-		}
-		return false;
+		PushLogger(LogInfo, PSAGM_GLENGINE_DATA_LABEL, "vir_texture item: delete key: %u", rukey);
+		return true;
 	}
 
 	bool GLEngineVirTextureData::VirTextureExist(ResUnique rukey) {
 		return FindTexIndexItems(rukey) == nullptr ? false : true;
 	}
 
-	bool GLEngineVirTextureData::VirTextureItemDraw(ResUnique rukey, PsagShader shader, const VirTextureUniformName& uniform_name) {
+	bool GLEngineVirTextureData::VirTextureItemDraw(
+		ResUnique rukey, PsagShader shader, const VirTextureUniformName& u_name
+	) {
 		// find virtual texture item_idx.
 		auto TexItemTemp = FindTexIndexItems(rukey);
 		if (TexItemTemp != nullptr) {
 			// find tex => bind context => sampler => uniform(s).
-			auto TexResourceTemp = GraphicTextures->ResourceFind(TexItemTemp->Texture);
+			auto TexSampler = GraphicTextures->ResourceFind(TexItemTemp->Texture);
 #if PSAG_DEBUG_MODE
-			if (TexResourceTemp.Texture == OPENGL_INVALID_HANDEL)
+			if (TexSampler.Texture == OPENGL_INVALID_HANDEL) {
+				PushLogger(LogError, PSAGM_GLENGINE_DATA_LABEL, "vir_texture texture_unit invalid key: %u", rukey);
 				return false;
+			}
 #endif
-			OGLAPI_OPER.RenderBindTexture(TexResourceTemp);
+			OGLAPI_OPER.RenderBindTexture(TexSampler);
 
-			// bind texture context => sampler(tmu) count.
-			ShaderUniform.UniformInteger(shader, uniform_name.TexParamSampler, TexResourceTemp.TextureSamplerCount);
-			// shader uniform params.
-			ShaderUniform.UniformInteger(shader, uniform_name.TexParamLayer,    (int32_t)TexItemTemp->SampleLayers);
-			ShaderUniform.UniformVec2   (shader, uniform_name.TexParamCropping, TexItemTemp->SampleCropping);
-			ShaderUniform.UniformVec2   (shader, uniform_name.TexParamSize,     TexItemTemp->SampleSize);
+			// bind texture context => sampler(tmu) count & texture uniform params.
+			ShaderUniform.UniformInteger(shader, u_name.TexParamSampler.c_str(), (int32_t)TexSampler.TextureSamplerCount);
+			ShaderUniform.UniformInteger(shader, u_name.TexParamLayer.c_str(), (int32_t)TexItemTemp->SampleLayers);
+			ShaderUniform.UniformVec2   (shader, u_name.TexParamCropping.c_str(), TexItemTemp->SampleCropping);
+			ShaderUniform.UniformVec2   (shader, u_name.TexParamSize.c_str(), TexItemTemp->SampleSize);
 			return true;
 		}
 		return false;

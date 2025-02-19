@@ -7,7 +7,10 @@
 
 #define ENABLE_LOWMODULE_AUDIO
 #include "../psag_lowlevel_support.h"
+
+// HeaderOnly 独立模块.
 #include "psag_toolkits_engine_notify.hpp"
+#include "psag_toolkits_engine_noise.hpp"
 
 // toolkits_engine timestep, mainevent => TE.
 class __TOOLKITS_ENGINE_TIMESETP {
@@ -24,14 +27,14 @@ namespace ToolkitsEngineRandom {
 	}
 
 	enum RandomSeed {
+		// using user settings.
+		SetSeedValue = 1 << 0,
+		// chrono time count => seed.
 		TimeSeedSeconds      = 1 << 1,
 		TimeSeedMilliseconds = 1 << 2,
 		TimeSeedMicroseconds = 1 << 3,
 		TimeSeedNanoseconds  = 1 << 4,
-		// using user settings.
-		SetSeedValue = 1 << 5
 	};
-
 	class GenerateRandom1D {
 	protected:
 		std::function<int64_t(void)> GenerateSeedFunc = [&]() { return RandomSeedValue; };
@@ -59,61 +62,6 @@ namespace ToolkitsEngineRandom {
 
 		bool DatasetCropCircle(const Vector2T<float>& center, float radius, bool flag = false);
 		bool DatasetCropRectangle(const Vector2T<float>& min_point, const Vector2T<float>& max_point);
-	};
-
-	using NoiseGradient = std::pair<double, double>;
-	// thread_safe cache resource.
-	struct NoiseSharedCache {
-		std::unordered_map<uint64_t, NoiseGradient> Cache = {};
-		std::shared_mutex CacheMutex = {};
-	};
-	struct GenNoiseParamsDESC {
-		NoiseSharedCache* CacheIndex = nullptr;
-		size_t BlockNumberGrids = 16;
-
-		size_t NoiseOctaves     = 1;   // 倍频数
-		double NoisePersistence = 0.6; // 振幅衰减
-		double NoiseLacunarity  = 1.2; // 频率增长倍率
-		double NoiseScale       = 1.2; // 缩放因子
-
-		bool VALIDATE() const {
-			// check grids number, num: n^2.
-			size_t GridsLength = (size_t)std::sqrt(BlockNumberGrids);
-			if ((size_t)std::pow(GridsLength, 2) != BlockNumberGrids) 
-				return false;
-			// check noise params.
-			if (NoiseOctaves < 1)        return false;
-			if (NoisePersistence <= 0.0) return false;
-			if (NoiseLacunarity <= 1.0)  return false;
-			if (NoiseScale <= 0.0001)    return false;
-			return true;
-		}
-	};
-
-	// octave perlin noise map generate.
-	// warn: high calc & memory, 20250204 RCSZ.
-	class GenNoiseOctavePerlin {
-	protected:
-		size_t BlockSize = NULL, BlockGridSpacing = NULL;
-		size_t QuadrantX = NULL, QuadrantY = NULL;
-
-		GenNoiseParamsDESC GenNoiseConfig = {};
-		NoiseSharedCache* ResourceIndex = nullptr;
-
-		static double MathsFade(double t);
-		static double MathsLerp(double a, double b, double t);
-
-		NoiseGradient GradientGenerateMap(uint64_t key);
-		double GradientGrid(size_t ix, size_t iy, double x, double y);
-
-		double CalcPerlin(double x, double y);
-		double CalcOctavePerlin(double x, double y);
-	public:
-		GenNoiseOctavePerlin(size_t rect_size, size_t quad_x, size_t quad_y, const GenNoiseParamsDESC& config);
-		ImageRawData GenGrayscaleImage(
-			std::function<double(size_t, size_t, double)> FILTER_FUNC = 
-			[](size_t, size_t, double value) { return value; }
-		);
 	};
 }
 

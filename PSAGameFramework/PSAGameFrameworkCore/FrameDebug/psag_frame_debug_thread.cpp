@@ -178,7 +178,6 @@ namespace PsagDebugThread {
         // frame.sampler data => dadaset queue.
         GLOBAL_FRAMES_CACHE.push(data);
     }
-
     // define: system global object.
     ProcessThread FTDprocessThread = {};
 }

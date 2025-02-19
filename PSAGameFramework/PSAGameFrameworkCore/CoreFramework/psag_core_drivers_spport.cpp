@@ -22,7 +22,7 @@ namespace PsagFrameworkCore {
     void PSAGame2DFramework::FrameworkRendererLowinit(const string& gl_version) {
         PsagLow::PsagSupGraphicsOper::PsagGraphicsSystemInit GLINIT;
         // in_logger funcptr => init.
-        GLINIT.LoggerFunction(PushLogger);
+        GLINIT.LoggerFunction(PushLoggerLLFPN);
         GLINIT.RendererInit(FrameworkGraphicsParams, gl_version);
     }
 
@@ -159,8 +159,9 @@ namespace PsagFrameworkCore {
         GLINFO.InfoGetTextureUnitsMax();
         GLINFO.InfoGetShaderUniform();
 
+        using LLRES_VERT = GraphicsEngineDataset::GLEngineStaticVertexData;
         // init create(alloc) OGL[LLRES], ver_system(s). 
-        GraphicsEngineDataset::GLEngineStaticVertexData::LowLevelResourceCreate(PushLogger, 30);
+        LLRES_VERT::LowLevelResourceCreate(PushLoggerLLFPN, 30);
         // init craete(alloc) OAL[LLRES].
         PsagLow::PsagSupAudioLLRES::LowLevelResourceCreate();
 

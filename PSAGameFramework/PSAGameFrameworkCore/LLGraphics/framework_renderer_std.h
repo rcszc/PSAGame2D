@@ -49,7 +49,7 @@ struct PsagTextureAttribute {
 	uint32_t TextureSamplerCount;
 
 	PsagTextureAttribute() :
-		Texture{}, LayersParams({}), 
+		Texture{}, LayersParams(), 
 		FilterModeType(LinearFiltering | AnisotropicFiltering), 
 		TextureSamplerCount(0),
 		Layers(0), Width(0), Height(0), Channels(0)

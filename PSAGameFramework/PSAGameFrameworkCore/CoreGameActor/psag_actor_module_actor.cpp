@@ -34,24 +34,31 @@ namespace GameActorCore {
 	// game actor type_bind object.
 	namespace Type {
 		uint32_t GameActorTypeBind::ActorTypeIs(const string& type_name) {
-			return (ActorTypeINFO.find(type_name) != ActorTypeINFO.end()) ? ActorTypeINFO[type_name] : ActorTypeNULL;
+			return (ActorTypeMapping.find(type_name) != ActorTypeMapping.end()) ? ActorTypeMapping[type_name] : ActorTypeNULL;
 		}
+#define ACTOR_TYPE_REG(name) PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "AType: register key: %s", type_name.c_str())
+#define ACTOR_TYPE_DEL(name) PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "AType: delete key: %s", type_name.c_str())
 
-		void GameActorTypeBind::ActorTypeCreate(const string& type_name) {
+		bool GameActorTypeBind::ActorTypeCreate(const string& type_name) {
 			// type_code count, duplicate key not err & warn.
-			if (ActorTypeIs(type_name) == ActorTypeNULL) {
+			bool NameValidFlag = ActorTypeIs(type_name) == ActorTypeNULL;
+			if (NameValidFlag) {
 				ActorTypeCount += 1 << 1;
-				ActorTypeINFO[type_name] = ActorTypeCount;
-				PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "actor_type: register key: %s", type_name.c_str());
+				ActorTypeMapping[type_name] = ActorTypeCount;
+				ACTOR_TYPE_REG(type_name.c_str());
 			}
+			return NameValidFlag;
 		}
 
-		void GameActorTypeBind::ActorTypeDelete(const string& type_name) {
-			auto it = ActorTypeINFO.find(type_name);
-			if (it != ActorTypeINFO.end()) {
-				ActorTypeINFO.erase(it);
-				PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "actor_type: delete key: %s", type_name.c_str());
+		bool GameActorTypeBind::ActorTypeDelete(const string& type_name) {
+			auto it = ActorTypeMapping.find(type_name);
+			bool NameValidFlag = it != ActorTypeMapping.end();
+			if (NameValidFlag) {
+				ActorTypeMapping.erase(it);
+				ACTOR_TYPE_DEL(type_name.c_str());
+				return ActorTypeCount;
 			}
+			return NameValidFlag;
 		}
 		GameActorTypeBind ActorTypeAllotter = {};
 	}
@@ -76,7 +83,7 @@ namespace GameActorCore {
 		RenderingResolution = Vector2T<float>((float)ResTemp.vector_x, (float)ResTemp.vector_y);
 		// actor自身留有shader资源指针, 目前无操作. 2024_06_04.
 		ActorRenderRes = INIT_DESC.ActorShaderResource;
-
+		
 		if (INIT_DESC.ActorComponentConifg & ActorEnableRender) {
 			ActorCompRendering = new GameComponents::ActorRendering();
 
@@ -84,30 +91,14 @@ namespace GameActorCore {
 			ActorCompRendering->ShaderIndex      = ActorRenderRes->__ACTOR_SHADER_ITEM;
 			ActorCompRendering->VertexGroupIndex = ActorRenderRes->__ACTOR_VERTEX_ITEM;
 			
-			// load rendering texture.
-			if (VirTextureExist(ActorRenderRes->__VIR_TEXTURE_ITEM)) {
-				// rendering texture(s) func.
-				ActorCompRendering->RenderingTextureNFunc = 
-					[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTextureN(shader); };
+			// read load shader => render comp params.
+			if (!ActorRenderRes->__VIR_TEXTURES_GROUP.empty()) {
+				ActorCompRendering->VirTextures = ActorRenderRes->__VIR_TEXTURES_GROUP;
 
-				// virtual texture_unqiue, uniform.
-				ActorCompRendering->VirTexture    = ActorRenderRes->__VIR_TEXTURE_ITEM;
-				ActorCompRendering->VirTexUniform = ActorRenderRes->__VIR_UNIFORM_ITEM;
-
-				bool HDRTEX_FLAG = false;
-				// load hdr_blend texture.
-				if (ActorRenderRes->__VIR_TEXTURE_HDR_ITEM != NULL && ActorCompRendering->VirTexture != NULL) {
-					// load render_tex function.
-					ActorCompRendering->RenderingTextureHFunc =
-						[this](PsagShader shader) { ActorCompRendering->UpdateActorRenderingTextureH(shader); };
-
-					ActorCompRendering->VirTextureHDR    = ActorRenderRes->__VIR_TEXTURE_HDR_ITEM;
-					ActorCompRendering->VirTexUniformHDR = ActorRenderRes->__VIR_UNIFORM_HDR_ITEM;
-					HDRTEX_FLAG = true;
-				}
-				PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor texture loading_completed, hdr: %d",
-					(uint32_t)HDRTEX_FLAG);
+				PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor get textures: %u",
+					ActorCompRendering->VirTextures.size());
 			}
+			PushLogger(LogInfo, PSAGM_ACTOR_CORE_LABEL, "game_actor render_comp init.");
 		}
 		else {
 			// comp(empty_object): rendering.
@@ -115,7 +106,8 @@ namespace GameActorCore {
 		}
 		// actor => load physics world_item.
 		if (PhysicsWorldFind(INIT_DESC.ActorPhysicsWorld) == nullptr) {
-			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", INIT_DESC.ActorPhysicsWorld.c_str());
+			PushLogger(LogError, PSAGM_ACTOR_CORE_LABEL, "game_actor unable find world: %s", 
+				INIT_DESC.ActorPhysicsWorld.c_str());
 			return;
 		}
 		ActorPhysicsWorld = INIT_DESC.ActorPhysicsWorld;
@@ -172,7 +164,7 @@ namespace GameActorCore {
 		ActorRenderParams.RenderColorBlend  = INIT_DESC.VertexColor;
 		ActorRenderParams.RenderPosition    = INIT_DESC.InitialPosition;
 		ActorRenderParams.RenderScale       = INIT_DESC.InitialScale;
-		ActorRenderParams.RenderAngle      = INIT_DESC.InitialAngle;
+		ActorRenderParams.RenderAngle       = INIT_DESC.InitialAngle;
 		ActorRenderParams.RenderLayerHeight = INIT_DESC.InitialRenderLayer;
 
 		// actor space_z value_clamp.
@@ -186,7 +178,7 @@ namespace GameActorCore {
 			ActorCompHealthTrans->ActorHealthState = INIT_DESC.ActorHealthSystem.InitialActorHealth;
 			// config health system.
 			for (const auto& state : ActorCompHealthTrans->ActorHealthState)
-				ActorCompHealthTrans->ActorHealthStateOut.push_back(state.HealthSTATE);
+				ActorCompHealthTrans->ActorHealthStateOut.push_back(state.HealthState);
 		}
 		else {
 			// comp(empty_object): health_trans.
@@ -201,7 +193,6 @@ namespace GameActorCore {
 			// comp(empty_object): action_logic.
 			ActorCompActionLogic = new GameComponents::null::ActorActionLogicNULL();
 		}
-
 		// collision event callback_function.
 		ActorCollision = INIT_DESC.CollisionCallbackFunc;
 		// create coord_convert comp.
@@ -250,6 +241,7 @@ namespace GameActorCore {
 	}
 
 	void GameActorExecutor::ActorUpdate() {
+		ActorLastPosition = ActorRenderParams.RenderPosition;
 		ActorCompSpaceTrans->UpdateActorTrans(ActorRenderParams.RenderPosition, ActorRenderParams.RenderAngle);
 
 		GameComponents::ActorPrivateINFO CollisionItem = {};
@@ -278,7 +270,7 @@ namespace GameActorCore {
 		SensorPhyConfig.IndexUniqueCode = ActorSensorUniqueID;
 		SensorPhyConfig.CollVertexGroup = {}; // sensor: null.
 
-		SensorPhyConfig.PhysicalShapeType        = PhysicsEngine::CIRCLE_TYPE;
+		SensorPhyConfig.PhysicalShapeType   = PhysicsEngine::CIRCLE_TYPE;
 		SensorPhyConfig.PhysicsIsSensorFlag = true;
 		SensorPhyConfig.PhysicsModeTypeFlag = true;
 
@@ -312,7 +304,7 @@ namespace GameActorCore {
 	void GameActorCircleSensor::SensorUpdate() {
 		GameComponents::ActorPrivateINFO CollisionItem = {};
 		// update collision info.
-		CollisionItem.ActorTypeCode = Type::ActorTypeNULL;
+		CollisionItem.ActorTypeCode   = Type::ActorTypeNULL;
 		CollisionItem.ActorUniqueCode = PhyBodyItemGetCollisionFirst(SensorPhysicsWorld, SensorPhysicsItem);
 		SensorCollisionInfo = CollisionItem;
 	}

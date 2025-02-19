@@ -138,9 +138,8 @@ bool ZPGameBulletSystem::LogicInitialization(const Vector2T<uint32_t>& WinSize) 
     auto ImgBullet = PsagManager::SyncLoader::FSLD::EasyFileReadRawData(SYSPATH_REF("zpgame_bullet.png"));
     PsagActor::PresetScript ShaderScript = {};
 
-    PsagActor::ActorShader* RenderBullet = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage(), WinSize);
-    RenderBullet->ShaderImageLoad   (DecodeRawImage.DecodeImageRawData(ImgBullet));
-    RenderBullet->ShaderImageLoadHDR(DecodeRawImage.DecodeImageRawData(ImgBullet));
+    PsagActor::ActorShader* RenderBullet = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("Bullet"), WinSize);
+    RenderBullet->ShaderImageLADD("Bullet", DecodeRawImage.DecodeImageRawData(ImgBullet));
 
     ActorShaders.Get()->CreateActorShader("BulletActor", RenderBullet);
 

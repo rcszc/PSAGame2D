@@ -68,7 +68,6 @@ namespace PsagDebugCapture {
 		DatasetPointADD(DataTemp);
 		PointsCountADD();
 	}
-
 	// define: system global object.
 	DebugCaptureMem CAPinfoMemory = {};
 }

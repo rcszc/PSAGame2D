@@ -98,7 +98,6 @@ namespace PSAG_OGL_MAG {
 		bool CheckFrameBuffer(PsagFrameBuffer& framebuf, ResourceFlag& flag);
 		// texture & depth_texture bind, dep_flag: false: std, true: dep.
 		bool TextureBaseBind(const PsagTextureAttribute& texture, uint32_t attachment, bool dep_flag);
-
 	public:
 		bool CreateFrameBuffer() override;
 
@@ -272,8 +271,8 @@ namespace RenderingSupport {
 		void RenderUnbindTexture();
 		void RenderUnbindFrameBuffer();
 
-		OLD_FUNCTION void SwitchRenderModeLINES();
-		OLD_FUNCTION void SwitchRenderModeFILL();
+		PSAG_OLD_FUNC void SwitchRenderModeLINES();
+		PSAG_OLD_FUNC void SwitchRenderModeFILL();
 
 		// global state: opengl context. (non-thread-safe)
 		OpenGLApiContext GET_THIS_CONTEXT() { return ApiThisStateContext; };

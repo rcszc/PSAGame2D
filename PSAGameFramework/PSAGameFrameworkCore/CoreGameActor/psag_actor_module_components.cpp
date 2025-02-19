@@ -95,11 +95,11 @@ namespace GameComponents {
 	void ActorHealthTrans::UpdateActorHealthTrans() {
 		// state lerp_calc. out += (stat - out) * speed * s.
 		for (size_t i = 0; i < ActorHealthState.size(); ++i) {
-			ActorHealthState[i].HealthSTATE = 
-				PsagClamp(ActorHealthState[i].HealthSTATE, 0.0f, ActorHealthState[i].HealthMAX);
+			ActorHealthState[i].HealthState = 
+				PsagClamp(ActorHealthState[i].HealthState, 0.0f, ActorHealthState[i].HealthMax);
 			// calc health_lerp.
-			ActorHealthStateOut[i] += (ActorHealthState[i].HealthSTATE - ActorHealthStateOut[i]) * PSAGM_ACTOR_INTER 
-				* ActorHealthState[i].HealthSPEED * ActorModulesTimeStep;
+			ActorHealthStateOut[i] += (ActorHealthState[i].HealthState - ActorHealthStateOut[i]) * PSAGM_ACTOR_INTER 
+				* ActorHealthState[i].HealthSpeed * ActorModulesTimeStep;
 		}
 	}
 
@@ -109,9 +109,9 @@ namespace GameComponents {
 			PushLogger(LogError, PSAGM_ACTOR_COMP_LABEL, "cmop_health count >= size.");
 			return;
 		}
-		ActorHealthState[count].HealthSTATE = value;
+		ActorHealthState[count].HealthState = value;
 #else
-		ActorHealthState[count].HealthSTATE = value;
+		ActorHealthState[count].HealthState = value;
 #endif
 	}
 
@@ -129,20 +129,12 @@ namespace GameComponents {
 		ShaderUniform.UniformFloat(ShaderTemp, "ActorZ",      params.RenderLayerHeight);
 		ShaderUniform.UniformVec4 (ShaderTemp, "ActorColor",  params.RenderColorBlend);
 
-		RenderingTextureNFunc(ShaderTemp);
-		RenderingTextureHFunc(ShaderTemp);
-
+		// render virtual textures(layers).
+		for (const auto& RenderTexture : VirTextures)
+			VirTextureItemDraw(RenderTexture.VirTextureIndex, ShaderTemp, RenderTexture.VirTextureUname);
+		
 		VerStcOperFrameDraw(VertexGroupIndex);
 		OGLAPI_OPER.RenderUnbindShader();
-	}
-
-	void ActorRendering::UpdateActorRenderingTextureN(PsagShader shader) {
-		// draw virtual normal texture.
-		VirTextureItemDraw(VirTexture, shader, VirTexUniform);
-	}
-	void ActorRendering::UpdateActorRenderingTextureH(PsagShader shader) {
-		// draw virtual height texture.
-		VirTextureItemDraw(VirTextureHDR, shader, VirTexUniformHDR);
 	}
 
 	Vector2T<float> ActorCoordConvert::ConvertSceneToWindow(Vector2T<uint32_t> window_size, Vector2T<float> position) {

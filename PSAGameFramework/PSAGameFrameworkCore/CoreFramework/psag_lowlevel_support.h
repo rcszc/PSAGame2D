@@ -20,6 +20,9 @@
 #include "../LLThread/framework_thread.hpp"
 #include "../LLWindowGui/framework_window.h"
 
+#ifdef PSAG_DEBUG_EXT_MODE
+#define new new(_CLIENT_BLOCK, __FILE__, __LINE__)
+#endif
 namespace PsagLow {
 	// low_module 'graphics' support.
 #ifdef ENABLE_LOWMODULE_GRAPHICS

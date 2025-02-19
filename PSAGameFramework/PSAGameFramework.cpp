@@ -20,7 +20,6 @@
 * 附加说明:
 * [2024.03.31] 部分底层模块来自: ImProFX: https://github.com/rcszc/ImProFX
 */
-#include <cstdlib>
 #include "PSAGameFrameworkCore/CoreFramework/psag_core_drivers.h"
 // 无丝竹之乱耳~
 #pragma warning(disable: 4819)
@@ -33,15 +32,23 @@
 #pragma comment(lib, "zlibwapi.lib ")
 #pragma comment(lib, "box2d.lib    ")
 
+// windows x64 crt debug.
+#if defined(PSAG_DEBUG_EXT_MODE)
+#define _CRTDBG_MAP_ALLOC  
+#include <cstdlib>
+#include <crtdbg.h>
+#endif
 int main() {
-#ifdef _WIN64 // windows x64 crt debug.
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#ifdef PSAG_DEBUG_EXT_MODE
+	_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 #endif
 	int FrameworkResult = -1;
 	// set log print & start(debug) logger thread.
-	PSAG_LOGGER::SET_PRINTLOG_COLOR(true);
+	PSAG_LOGGER::SET_PRINTLOG_COLOR(STAT_ON);
 	PSAG_LOGGER_PROCESS::StartLogProcessing("PSAGameSystemLogs/");
+#ifdef PSAG_DEBUG_EXT_MODE
 	PsagDebugThread::FTDprocessThread.CreateProcessingThread("PSAGameSystemDebug/", "MemoryMsg");
+#endif
 	{
 		// create framework object.
 		PsagFrameworkCore::PSAGame2DFramework* MainPSAGame2D = new PsagFrameworkCore::PSAGame2DFramework();
@@ -53,8 +60,12 @@ int main() {
 		// framework free exit.
 		FrameworkResult = FrameworkStarter.FreeFramework();
 	}
+#ifdef PSAG_DEBUG_EXT_MODE
 	PsagDebugThread::FTDprocessThread.DeleteProcessingThread();
+#endif
 	PSAG_LOGGER_PROCESS::FreeLogProcessing();
-
+#ifdef PSAG_DEBUG_EXT_MODE
+	_CrtDumpMemoryLeaks();
+#endif
 	return FrameworkResult;
 }

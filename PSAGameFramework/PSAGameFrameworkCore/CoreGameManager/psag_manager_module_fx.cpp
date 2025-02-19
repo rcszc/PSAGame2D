@@ -92,7 +92,7 @@ namespace GameManagerCore {
 			FxSpriteSheetObject->DrawFxSequence(BackgroundColorBlend);
 		}
 
-		VirTextureUnqiue GameFxSpriteSheet::FxSpriteSheetTexture() {
+		VirTextureUnique GameFxSpriteSheet::FxSpriteSheetTexture() {
 			return FxSpriteSheetObject->GetFxSequenceTexture();
 		}
 	}

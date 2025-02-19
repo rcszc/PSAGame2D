@@ -8,22 +8,22 @@ namespace PsagMainEvent {
 
     void MainAsyncTask::AsyncEventStart() {
         for (const auto& EventItem : EventsArray)
-            FutureEvent.push_back(async(launch::async, EventItem.EventTask));
+            FutureEvent.push_back(async(launch::async, EventItem.TaskProcFunction));
         EventsArray.clear();
         EventsArray.shrink_to_fit();
         // async main drivers event(s).
         while (RunningFlag) {
-            for (auto Event = FutureEvent.begin(); Event != FutureEvent.end();) {
-                if (Event->wait_for(chrono::seconds(NULL)) == future_status::ready) {
+            for (auto DriversEvent = FutureEvent.begin(); DriversEvent != FutureEvent.end();) {
+                if (DriversEvent->wait_for(chrono::seconds(0)) == future_status::ready) {
                     // execution end.
-                    EventsResults.push(Event->get());
-                    Event = FutureEvent.erase(Event);
+                    EventsResults.push(DriversEvent->get());
+                    DriversEvent = FutureEvent.erase(DriversEvent);
                 }
                 else
-                    ++Event;
+                    ++DriversEvent;
             }
             this_thread::sleep_for(chrono::milliseconds((long long)CYCLES_SLEEP_TIME));
-            if (EventsArray.empty()) {
+            if (EventsArray.empty() && FutureEvent.empty()) {
                 RunningFlag = false;
                 PushLogger(LogTrace, PSAGM_MAIN_EVENT_LABEL, "async_events execution end.");
             }
@@ -32,17 +32,18 @@ namespace PsagMainEvent {
 
     void MainAsyncTask::TasksStart() {
         RunningFlag = true;
-        AsyncEventStart();
         PushLogger(LogInfo, PSAGM_MAIN_EVENT_LABEL, "async_events executing...");
+        // framework global async events start.
+        AsyncEventStart();
     }
 
     void MainAsyncTask::AsyncTaskADD(string name, function<int()> event) {
-        Event CreateTaskEvent = {};
+        DriversEvent CreateTaskEvent = {};
+        CreateTaskEvent.TaskProcFunction = event;
 
         CreateTaskEvent.EventUniqueID = SystemGenUID.PsagGenUniqueKey();
         CreateTaskEvent.EventName     = name;
-        CreateTaskEvent.EventTask     = event;
-
+        // event task => events(array).
         EventsArray.push_back(CreateTaskEvent);
         PushLogger(LogTrace, PSAGM_MAIN_EVENT_LABEL, "async_event add item_id: %s", name.c_str());
     }
@@ -66,9 +67,9 @@ namespace PsagFrameworkStart {
                 ExitFlag = !CoreFramewokObj->CoreFrameworkEvent();
             }
             bool ResultTemp = CoreFramewokObj->CoreFrameworkCloseFree() == true ?
-                PSAGM_FLAG_FRAMEWORK :
-                PSAGM_FLAG_FRAMEWORK + 1;
+                PSAGM_FLAG_FRAMEWORK : PSAGM_FLAG_FRAMEWORK + 1;
             delete CoreFramewokObj;
+            CoreFramewokObj = nullptr;
             return ResultTemp;
         };
         System::GLOBAL_FMC_OBJECT = CoreFramewokObj;
@@ -86,8 +87,7 @@ namespace PsagFrameworkStart {
                     ObjectPointer->CoreFrameworkDataEvent();
                 }
                 bool ResultTemp = ObjectPointer->CoreFrameworkCloseFree() == true ?
-                    PSAGM_FLAG_NETWORK :
-                    PSAGM_FLAG_NETWORK + 1;
+                    PSAGM_FLAG_NETWORK : PSAGM_FLAG_NETWORK + 1;
                 delete ObjectPointer;
                 return ResultTemp;
             };
@@ -106,21 +106,19 @@ namespace PsagFrameworkStart {
                     ObjectPointer->CoreFrameworkDataEvent();
                 }
                 bool ResultTemp = ObjectPointer->CoreFrameworkCloseFree() == true ?
-                    PSAGM_FLAG_EXTMODULE :
-                    PSAGM_FLAG_EXTMODULE + 1;
+                    PSAGM_FLAG_EXTMODULE : PSAGM_FLAG_EXTMODULE + 1;
                 delete ObjectPointer;
                 return ResultTemp;
             };
             StartEventsLoop->AsyncTaskADD(to_string((size_t)&FuncObjTemp), FuncObjTemp);
         }
-        // start all event_tasks.
+        // start all event tasks.
         StartEventsLoop->TasksStart();
     }
 
-    void CorePsagMainStart::StartPsaGame(FrameworkSysVersion version, uint32_t cyctiem) {
-        StartEventsLoop = new PsagMainEvent::MainAsyncTask(cyctiem);
-        if (StartEventsLoop == nullptr)
-            return;
+    void CorePsagMainStart::StartPsaGame(FrameworkSysVersion version, uint32_t cyctime) {
+        StartEventsLoop = new PsagMainEvent::MainAsyncTask(cyctime);
+        if (StartEventsLoop == nullptr) return;
         StartCoreObjectsRes(version);
     }
 
@@ -131,8 +129,7 @@ namespace PsagFrameworkStart {
             PushLogger(LogInfo, PSAGM_DRIVE_START_LABEL, "free framework ret_code: %i", Results->front());
             Results->pop();
         }
-        if (StartEventsLoop == nullptr)
-            return -2;
+        if (StartEventsLoop == nullptr) return -2;
         delete StartEventsLoop;
         return NULL;
     }

@@ -14,7 +14,7 @@ namespace GameDebugGuiWindow {
 	constexpr ImVec4 L_COLOR = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	constexpr ImVec4 H_COLOR = ImVec4(0.0f, 1.0f, 0.9f, 1.0f);
 
-	void DebugWindowGuiActorPawn(const char* name, GameActorCore::GameActorExecutor* actor) {
+	void DebugWindowGuiActorPawn(const char* name, ActorEntryPtr actor) {
 #if PSAG_DEBUG_MODE
 		ImGui::Begin(name);
 		{
@@ -38,17 +38,19 @@ namespace GameDebugGuiWindow {
 #endif
 	}
 
-	void DebugWindowGuiActors(const char* name, unordered_map<size_t, GameActorCore::GameActorExecutor*>* actors) {
+	void DebugWindowGuiActors(const char* name, unordered_map<size_t, ActorEntryPtr>* actors) {
 #if PSAG_DEBUG_MODE
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.16f, 0.0f, 0.16f, 0.92f));
 		ImGui::Begin(name, (bool*)NULL, ImGuiWindowFlags_NoScrollbar);
 		ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 0.92f), "Actors Number: %u", actors->size());
-
-		int CountItemID = NULL;
+		// imgui components context unique ids.
+		int32_t CountItemID = NULL;
 		for (const auto& ActorItem : *actors) {
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.16f, 0.0f, 0.16f, 0.92f));
 			ImGui::PushID(CountItemID);
-			ImGui::BeginChild("INFO", ImVec2(ImGui::GetWindowSize().x - IMGUI_ITEM_SPAC * 2.0f, 64.0f), true);
-
+			ImGui::BeginChild("ACTOR_INFO", 
+				ImVec2(ImGui::GetWindowSize().x - IMGUI_ITEM_SPAC * 2.0f, 64.0f), 
+			true);
+			// actor info: type_code, unqiue, pos, life.
 			ImGui::TextColored(
 				ImVec4(0.0f, 1.0f, 1.0f, 0.92f), "actor: type: %u unique: %u",
 				ActorItem.second->ActorGetPrivate().ActorTypeCode,
@@ -60,22 +62,29 @@ namespace GameDebugGuiWindow {
 				ActorItem.second->ActorGetPosition().vector_y,
 				ActorItem.second->ActorGetLifeTime()
 			);
-
 			++CountItemID;
 			ImGui::EndChild(); ImGui::PopID();
-			ImGui::PopStyleColor();
 		}
 		ImGui::End();
+		ImGui::PopStyleColor();
 #endif
 	}
 
-	void DebugGamePanel::GameInfoViewFPS(float width) {
+	inline void CachePushValue(float* cache, size_t length, float value) {
+		for (size_t i = length - 1; i > 0; --i)
+			cache[i] = cache[i - 1];
+		cache[0] = value;
+	}
+
+	void DebugGamePANEL::GameInfoViewFPS(float width) {
 		// 2500(ms) sample min_fps.
-		if (chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - DebugFpsTimer).count() > 2500) {
+		if (chrono::duration_cast<chrono::milliseconds>(
+			chrono::steady_clock::now() - DebugUpdateTimer
+		).count() > 2500) {
 			FramerateParams[2] = 0.0f;
 			FramerateParams[3] = 32768.0f;
 			FrameCounter = NULL;
-			DebugFpsTimer = chrono::steady_clock::now();
+			DebugUpdateTimer = chrono::steady_clock::now();
 		}
 		if (FramerateParams[0] < FramerateParams[3]) FramerateParams[3] = FramerateParams[0];
 		if (FramerateParams[0] > FramerateParams[2]) FramerateParams[2] = FramerateParams[0];
@@ -83,6 +92,13 @@ namespace GameDebugGuiWindow {
 		FramerateParams[0] = ImGui::GetIO().Framerate;
 		FramerateParams[1] = (FramerateParams[1] * FrameCounter + FramerateParams[0]) / (FrameCounter + 1.0f);
 
+		// framerate plot cache.
+		if (chrono::duration_cast<chrono::milliseconds>(
+			chrono::steady_clock::now() - DebugCacheTimer
+		).count() > 50) {
+			CachePushValue(FramerateCache, FrameCacheLen, FramerateParams[0]);
+			DebugCacheTimer = chrono::steady_clock::now();
+		}
 		const ImVec2 WindowSize(width, DebugWindowHeight[0]);
 		// draw params_view child_window.
 		ImGui::BeginChild("##DEBUG_VIEW_FPS", WindowSize);
@@ -106,7 +122,7 @@ namespace GameDebugGuiWindow {
 		++FrameCounter;
 	}
 
-	void DebugGamePanel::GameInfoViewPPActor(float width) {
+	void DebugGamePANEL::GameInfoViewPPActor(float width) {
 		const ImVec2 WindowSize(width, DebugWindowHeight[1]);
 		// draw params_view child_window.
 		ImGui::BeginChild("##DEBUG_VIEW_PPACTOR", WindowSize);
@@ -136,7 +152,7 @@ namespace GameDebugGuiWindow {
 		ImGui::EndChild();
 	}
 
-	void DebugGamePanel::GameInfoViewGlobal(float width) {
+	void DebugGamePANEL::GameInfoViewGlobal(float width) {
 		const ImVec2 WindowSize(width, DebugWindowHeight[2]);
 		// draw params_view child_window.
 		ImGui::BeginChild("##DEBUG_VIEW_GLOBAL", WindowSize);
@@ -156,28 +172,52 @@ namespace GameDebugGuiWindow {
 		ImGui::EndChild();
 	}
 
-	void DebugGamePanel::SettingPPActorRef(GameActorCore::GameActorExecutor* actor) {
+	void DebugGamePANEL::SettingPPActorRef(GameActorCore::GameActorExecutor* actor) {
 		AEREF = actor;
 	}
 
-	void DebugGamePanel::RenderingWindowGui() {
+	void DebugGamePANEL::RenderingWindowGui() {
 #if PSAG_DEBUG_MODE 
 		if (ImPsag::GetDebugGuiFlag()) {
 			// set window draw style.
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.28f, 0.0f, 0.58f, 0.38f));
-			ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.18f, 0.0f, 0.38f, 0.72f));
+			ImGui::PushStyleColor(ImGuiCol_ChildBg,       ImVec4(0.28f, 0.0f, 0.58f, 0.38f));
+			ImGui::PushStyleColor(ImGuiCol_TitleBg,       ImVec4(0.18f, 0.0f, 0.38f, 0.72f));
 			ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.18f, 0.0f, 0.38f, 0.72f));
 
+			ImGui::BeginTooltip();
+			ImGui::Text("mouse: %.0f,%.0f", ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+			ImGui::EndTooltip();
+
 			ImGuiWindowFlags Flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse |
-				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground;
-			ImGui::SetNextWindowSize(ImVec2(335.0f, 550.0f));
-			ImGui::Begin(DebugWindowName, (bool*)NULL, Flags);
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground;
+			// fixed window size & position.
+			ImGui::SetNextWindowSize(ImVec2(340.0f, 550.0f));
+			ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 340.0f, 0.0f));
+			ImGui::Begin(DebugWindowName.c_str(), (bool*)NULL, Flags);
 			ImGui::SetWindowFontScale(1.08f);
 			{
 				float WIDTH = ImGui::GetWindowWidth() - IMGUI_ITEM_SPAC * 2.0f;
 				GameInfoViewFPS(WIDTH);
 				if (AEREF != nullptr) GameInfoViewPPActor(WIDTH);
 				GameInfoViewGlobal(WIDTH);
+			}
+			ImGui::End();
+			float WindowWdith = ImGui::GetIO().DisplaySize.x - 340.0f - IMGUI_ITEM_SPAC;
+			// fixed window size & position.
+			ImGui::SetNextWindowSize(ImVec2(WindowWdith, 132.0f));
+			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+			Flags |= ImGuiWindowFlags_NoTitleBar;
+			ImGui::Begin(DebugWindowFrameName.c_str(), (bool*)NULL, Flags);
+			{
+				ImGui::Text("FrameCounter: %d", ImGui::GetFrameCount());
+				ImGui::PushStyleColor(ImGuiCol_PlotLines, ImVec4(0.0f, 1.0f, 1.0f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_FrameBg,   ImVec4(0.28f, 0.0f, 0.58f, 0.38f));
+				ImGui::PlotLines(
+					"##FPS", FramerateCache, FrameCacheLen,
+					0, (const char*)NULL, 0.0f, FramerateLimitMax,
+					ImVec2(WindowWdith - IMGUI_ITEM_SPAC * 2.0f, 42.0f)
+				);
+				ImGui::PopStyleColor(2);
 			}
 			ImGui::End();
 			ImGui::PopStyleColor(3);

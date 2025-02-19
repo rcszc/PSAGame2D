@@ -1,15 +1,20 @@
-// framework_logger. RCSZ 2023_10_11.
+// framework_logger. RCSZ 2023_10_11. CXX17.
 // @pomelo_star studio framework universal comp.
 #define IS_POMELO_STAR_GAME2D
 
 #ifndef _FRAMEWORK_LOGGER_HPP
 #define _FRAMEWORK_LOGGER_HPP
 #include <iostream>
-#include <sstream>
 #include <chrono>
 #include <cstdarg>
 
 #ifndef IS_POMELO_STAR_GAME2D
+#include <vector>
+#include <string>
+#include <sstream>
+#include <thread>
+#include <mutex>
+#include <atomic>
 #define PSAG_DEBUG_MODE true
 #define StaticStrLABEL constexpr const char*
 // core framework logger label.
@@ -42,12 +47,29 @@ std::string FMT_NUMBER_FILLZERO(uint32_t number, int32_t digits);
 // format time_point: "[xxxx.xx.xx.xx:xx:xx:xx ms]".
 std::string FMT_TIME_STAMP(const std::chrono::system_clock::time_point& time_point);
 
-namespace PSAG_LOGGER {
-	// @param "label" (level label), "module_name" (module), "logstr_text" (log information)
-	void PushLogProcess(const LOGLABEL& label, const std::string&  module_name, const std::string& logstr_text);
-	// @param label, module_label, text, params. [20231205]
-	void PushLogger(const LOGLABEL& label, const char* module_label, const char* log_text, ...);
+constexpr bool STAT_OFF = 0;
+constexpr bool STAT_ON  = 1;
 
+namespace PSAG_LOGGER {
+	// @param "filelines" (message) "label" (level label), "module_name" (module), "logstr_text" (log message)
+	void PushLogProcess(
+		const std::string& filemessage,
+		const LOGLABEL& level, const std::string&  module_name, 
+		const std::string& logstring
+	);
+	// @param level, module_label, module_message, params. [20231205]
+	// @param file_lines_message. [20250214]
+	void PushLoggerImpl(
+		const std::string& file_lines_message,
+		const LOGLABEL& level, const char* module_label,
+		const char* module_message, ...
+	);
+	// ºÊ»›"impl": LL_LOG_FPN. [20250214]
+	void PushLoggerLLFPN(
+		const LOGLABEL& level, const char* module_label,
+		const char* module_message, ...
+	);
+#define PushLogger(...) PushLoggerImpl(PSAG_FILE_LINE, __VA_ARGS__)
 	// false: not printing on the console.
 	void SET_PRINTLOG_STATE(bool status_flag);
 	void SET_PRINTLOG_COLOR(bool colors_flag);

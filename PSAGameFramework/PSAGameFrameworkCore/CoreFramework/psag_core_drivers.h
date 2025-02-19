@@ -42,19 +42,19 @@ namespace GameLogic {
 
 namespace PsagMainEvent {
     StaticStrLABEL PSAGM_MAIN_EVENT_LABEL = "PSAG_M_MAINEVENT";
-
-    struct Event {
-        std::string          EventName;
-        size_t               EventUniqueID;
-        std::function<int()> EventTask;
+    // core dirvers event, v.20250207 RCSZ.
+    struct DriversEvent {
+        size_t      EventUniqueID;
+        std::string EventName;
+        std::function<int()> TaskProcFunction;
     };
-
+    // main drivers layer async_tasks.
     class MainAsyncTask {
     protected:
         // generate event.task unique_id.
         PSAG_SYS_GENERATE_KEY SystemGenUID;
         
-        std::vector<Event>            EventsArray   = {};
+        std::vector<DriversEvent>     EventsArray   = {};
         std::queue<int>               EventsResults = {};
         std::vector<std::future<int>> FutureEvent   = {};
 

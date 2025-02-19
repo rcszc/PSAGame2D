@@ -3,7 +3,9 @@
 #ifndef _FRAMEWORK_DEFINE_HPP
 #define _FRAMEWORK_DEFINE_HPP
 #include <string>
+#include <sstream>
 #include <vector>
+#include <array>
 #include <any>
 #include <queue>
 #include <unordered_map>
@@ -25,29 +27,39 @@
 
 //#define PSAG_MEMORY_DEBUG
 #include "../FrameDebug/psag_frame_debug.hpp"
-#define POMELO_STAR_GAME2D_DEF (bool)1
+#define POMELO_STAR_GAME2D_DEF 1
 
+// system define debug mode flag.
 #if defined(_DEBUG) || defined(DEBUG)
-#define PSAG_COMPILE_MODE 1 // mode: debug(code: 1)
+#define PSAG_COMPILE_MODE 1 // MODE: DBG(code: 1)
 #else
-#define PSAG_COMPILE_MODE 0 // mode: release(code: 0)
+#define PSAG_COMPILE_MODE 0 // MODE: REL(code: 0)
 #endif
-
+// PSAG: windows64 CRT À©Õ¹ÄÚ´æµ÷ÊÔ.
+#if defined(PSAG_COMPILE_MODE) && defined(_WIN64) && false
+#define PSAG_DEBUG_EXT_MODE
+#endif
+// PSAG: platform cpu arch. x86 64bit.
 #if defined(_WIN64) || defined(__x86_64__) || defined(__ppc64__)
-#define PSAG_COMPILE_X64 1 // 64bit.
+#define PSAG_COMPILE_X64 1
 #else
 #define PSAG_COMPILE_X64 0
 #endif
 
-// only one can be opened.
+#define PSAG_STRINGIFY(x) #x
+#define PSAG_STEXT(x) PSAG_STRINGIFY(x)
+#define PSAG_FILE_LINE (__FILE__ ":" PSAG_STRINGIFY(__LINE__))
+
+// warn: only one can be opened.
 #define PSAG_COLSYSTEM_RGBA12
 // #define PSAG_COLSYSTEM_RGBA16
 
-// warring old_function.
-#if defined(_MSC_VER) // MSVC.
-#define OLD_FUNCTION __declspec(deprecated)
-#else                 // GCC.
-#define OLD_FUNCTION __attribute__((deprecated))
+#define PSAG_DEPRECATED deprecated
+// warring old_function. msvc & gcc.
+#if defined(_MSC_VER) 
+#define PSAG_OLD_FUNC __declspec(PSAG_DEPRECATED)
+#else
+#define PSAG_OLD_FUNC __attribute__((PSAG_DEPRECATED))
 #endif
 
 #define STAGE_EXIT_INIT -2
@@ -116,6 +128,7 @@ public:
 };
 using ResUnique = unsigned long long;
 // virtual texture unique_key. (not llres key)
-using VirTextureUnqiue = unsigned long long;
+using VirTextureUnique = unsigned long long;
+#define PSAG_VIR_TEXTURE_INVALID (VirTextureUnique)0
 
 #endif

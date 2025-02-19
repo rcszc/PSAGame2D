@@ -16,10 +16,16 @@ namespace PSAGGL_LOWLEVEL {
 	RendererLogger PSAG_GRAPHICS_LLRES::LLRESLoggerFunction = {};
 
 	size_t PSAG_GRAPHICS_LLRES::LLRES_GET_ALLSIZE() {
+		size_t ResourceTotal = NULL;
+		ResourceTotal += GraphicShaders->ResourceSize();
+		ResourceTotal += GraphicTextures->ResourceSize();
+		ResourceTotal += GraphicVertexBuffers->ResourceSize();
+		ResourceTotal += GraphicVertexAttributes->ResourceSize();
+		ResourceTotal += GraphicFrameBuffers->ResourceSize();
+		ResourceTotal += GraphicRenderBuffers->ResourceSize();
+		ResourceTotal += GraphicUniformBuffers->ResourceSize();
 		// 不包含纹理采样器(TMU)资源.
-		return GraphicShaders->ResourceSize() + GraphicTextures->ResourceSize() + 
-			GraphicVertexBuffers->ResourceSize() + GraphicVertexAttributes->ResourceSize() + 
-			GraphicFrameBuffers->ResourceSize() + GraphicRenderBuffers->ResourceSize() + GraphicUniformBuffers->ResourceSize();
+		return ResourceTotal;
 	}
 
 	void PSAG_GRAPHICS_LLRES::LowLevelResourceCreate(RendererLogger LogFunc, uint32_t ResTMU) {
@@ -34,7 +40,7 @@ namespace PSAGGL_LOWLEVEL {
 		GraphicUniformBuffers   = new PSAG_OGL_RES::PsagResUniformBufferOGL();
 		// LLRES LOGGER FUNCTION GET.
 		LLRESLoggerFunction = LogFunc;
-		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "LLRES static_object(graphics) create.");
+		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "graph static_object(graphics) create.");
 	}
 
 	bool PSAG_GRAPHICS_LLRES::LowLevelResourceFree() {
@@ -48,7 +54,7 @@ namespace PSAGGL_LOWLEVEL {
 		ReturnFlag |= !LLRES_RES_FREE(LLRESLoggerFunction, GraphicRenderBuffers,    "RENDER_BUFFER" );
 		ReturnFlag |= !LLRES_RES_FREE(LLRESLoggerFunction, GraphicUniformBuffers,   "UNIFORM_BUFFER");
 
-		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "LLRES static_object(graphics) delete.");
+		LLRESLoggerFunction(LogInfo, PSAG_LLRES_LABEL, "graph static_object(graphics) delete.");
 		// llres free status_flag.
 		return !ReturnFlag;
 	}

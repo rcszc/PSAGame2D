@@ -15,7 +15,7 @@ PSAGCLASS(ZPGamePawnActor);
 PSAGCLASS(ZPGameBulletSystem);
 PSAGCLASS(ZPGameGuiMain);
 
-PSAGCLASS(PSAGameFrameworkLab);
+//PSAGCLASS(PSAGameFrameworkLab);
 
 namespace PsagFrameworkCore {
 	void PSAGame2DFramework::InitializeRegistrationDev() {

@@ -12,6 +12,6 @@ void main()
     float Wave = sin(WAVE_FREQUENCY * FxCoord.y + RenderTime) * WAVE_AMPLITUDE;
     vec2 DistTexCoord = vec2(FxCoord.x + Wave, FxCoord.y);
 
-    FragColor = SampleTextureNOR(DistTexCoord);
+    FragColor = SampleTexturePPActor(DistTexCoord);
 }
 )";

@@ -12,18 +12,18 @@ namespace PsagActor {
 	using VertexDESC      = GameActorCore::GameActorShaderVerticesDESC;
 	using ActorHpDESC     = GameActorCore::GameActorHealthDESC;
 	using ActorDESC       = GameActorCore::GameActorExecutorDESC;
-	using BrickDESC       = GameBrickCore::GameBrickExecutorDESC;
+	using EnvmtDESC       = GameEnvmtCore::GameEnvmtExecutorDESC;
 	using ActorSensorDESC = GameActorCore::GameActorCircleSensorDESC;
 
 	using ActorUnique = GameComponents::ActorPrivateINFO;
-	using BirckUnique = size_t;
+	using EnvmtUnique = size_t;
 
 	using ActorFlagsComp = GameActorCore::ActorComponentFlags;
 	using ActorFlagsPhy  = GameActorCore::ActorCollisionGroup;
 
 	using ActorShader = GameActorCore::GameActorShader;
 	using Actor       = GameActorCore::GameActorExecutor;
-	using Brick       = GameBrickCore::GameBrickExecutor;
+	using Envmt       = GameEnvmtCore::GameEnvmtExecutor;
 	using ActorSensor = GameActorCore::GameActorCircleSensor;
 
 	using ActorHP        = GameComponents::GameActorHP;
@@ -32,7 +32,7 @@ namespace PsagActor {
 
 	using ShaderManager = GameCoreManager::GameActorShaderManager;
 	using ActorsManager = GameCoreManager::GameActorExecutorManager;
-	using BricksManager = GameCoreManager::GameBrickExecutorManager;
+	using EnvmtsManager = GameCoreManager::GameEnvmtExecutorManager;
 
 	// physical_world operate: create, delete. 
 	using OperPhysicalWorld = GamePhysicsOper::GamePhysicalWorld;

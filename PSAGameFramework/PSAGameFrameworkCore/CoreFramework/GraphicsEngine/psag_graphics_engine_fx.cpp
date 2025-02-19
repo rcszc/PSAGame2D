@@ -200,7 +200,7 @@ namespace GraphicsEnginePVFX {
 		return true;
 	}
 
-	VirTextureUnqiue PsagGLEngineFxSequence::GetFxSequenceTexture() {
+	VirTextureUnique PsagGLEngineFxSequence::GetFxSequenceTexture() {
 		return CaptureVirTexture;
 	}
 }

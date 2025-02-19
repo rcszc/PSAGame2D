@@ -138,10 +138,10 @@ namespace GraphicsEngineDataset {
 	};
 
 	struct VirTextureUniformName {
-		const char* TexParamSampler;  // uniform_type: "sampler2DArray"
-		const char* TexParamLayer;    // uniform_type: "int"
-		const char* TexParamCropping; // uniform_type: "vec2"
-		const char* TexParamSize;     // uniform_type: "vec2"
+		std::string TexParamSampler;  // uniform_type: "sampler2DArray"
+		std::string TexParamLayer;    // uniform_type: "int"
+		std::string TexParamCropping; // uniform_type: "vec2"
+		std::string TexParamSize;     // uniform_type: "vec2"
 	};
 
 	// global textures generate numbers.
@@ -649,7 +649,7 @@ namespace GraphicsEngineParticle {
 		float           RenderAngle = 0.0f;
 		float           RenderTwist  = 0.0f;
 
-		VirTextureUnqiue VirTextureItem = {};
+		VirTextureUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
 		void VertexDataConvert(
@@ -739,7 +739,7 @@ namespace GraphicsEnginePVFX {
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
 		// rendering => capture => virtual_texture.
-		VirTextureUnqiue CaptureVirTexture = {};
+		VirTextureUnique CaptureVirTexture = {};
 		ResUnique CaptureFrameBuffer = {};
 	public:
 		PsagGLEngineFxSequence(const ImageRawData& image, const SequencePlayer& params);

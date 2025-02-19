@@ -62,7 +62,7 @@ namespace PSAGGL_LOWLEVEL {
 		using PsagGraphicsImageLoader = PSAG_OGL_IMG::PsagIOImageFileSTB;
 		using PsagGraphicsImageRawDat = PSAG_OGL_IMG::PsagIOImageRawDataSTB;
 		
-		// NST CLASS.
+		// device information.
 		using GraphicsINFO = SysPsagInformationOGL;
 	}
 }

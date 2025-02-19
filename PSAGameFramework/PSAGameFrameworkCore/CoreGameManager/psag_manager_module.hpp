@@ -99,7 +99,7 @@ namespace GameManagerCore {
 			Vector4T<float> BackgroundColorBlend = Vector4T<float>(1.0f, 1.0f, 1.0f, 1.0f);
 			void FxSpriteSheetRendering();
 
-			VirTextureUnqiue FxSpriteSheetTexture();
+			VirTextureUnique FxSpriteSheetTexture();
 		};
 	}
 
@@ -208,10 +208,17 @@ namespace GameManagerCore {
 		namespace GameDataSER = ToolkitsEngineNotify::NotifySER;
 
 		using SerRawData = ToolkitsEngineNotify::SerializeData;
-		using DataMode   = ToolkitsEngineNotify::MSG_DATA_MODE;
+		using DataMode = ToolkitsEngineNotify::MSG_DATA_MODE;
 
 		using StationSystem = ToolkitsEngineNotify::NotifyStationSystem;
 		using NotifySystem  = ToolkitsEngineNotify::NotifySystem;
+	}
+
+	namespace GameNoiseMap {
+		using SharedCache = ToolkitsEngineNoise::NoiseSharedCache;
+
+		using NoiseBlockDESC = ToolkitsEngineNoise::GenNoiseParamsDESC;
+		using NoiseBlock = ToolkitsEngineNoise::GenNoiseOctavePerlin;
 	}
 
 	namespace GameMathsTools {
@@ -233,5 +240,4 @@ namespace GameManagerCore {
 		);
 	}
 }
-
 #endif

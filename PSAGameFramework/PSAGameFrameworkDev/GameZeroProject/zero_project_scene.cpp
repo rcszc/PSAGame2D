@@ -5,46 +5,46 @@ using namespace std;
 using namespace PSAG_LOGGER;
 
 void ZPGameSceneMain::CreateSceneStatic() {
-	PsagActor::BrickDESC BricksDESC;
-	BricksDESC.BrickPhysicsWorld = "ZPGamePhysics";
+	PsagActor::EnvmtDESC EnvmtsDESC;
+	EnvmtsDESC.EnvmtPhysicsWorld = "ZPGamePhysics";
 
-	BricksDESC.InitialRenderLayer  = 2.0f;
-	BricksDESC.BrickShaderResource = SceneShaders.Get()->FindActorShader("BoundaryH");
+	EnvmtsDESC.InitialRenderLayer  = 2.0f;
+	EnvmtsDESC.EnvmtShaderResource = SceneShaders.Get()->FindActorShader("BoundaryH");
 
-	BricksDESC.InitialScale    = Vector2T<float>(50.0f, 2.5f);
-	BricksDESC.InitialPosition = Vector2T<float>(0.0f, -525.0f);
+	EnvmtsDESC.InitialScale    = Vector2T<float>(50.0f, 2.5f);
+	EnvmtsDESC.InitialPosition = Vector2T<float>(0.0f, -525.0f);
 	// create boundary.[y+]
-	SceneStatic.Get()->CreateGameBrick(BricksDESC);
+	SceneStatic.Get()->CreateGameEnvmt(EnvmtsDESC);
 
-	BricksDESC.InitialScale    = Vector2T<float>(50.0f, 2.5f);
-	BricksDESC.InitialPosition = Vector2T<float>(0.0f, 525.0f);
+	EnvmtsDESC.InitialScale    = Vector2T<float>(50.0f, 2.5f);
+	EnvmtsDESC.InitialPosition = Vector2T<float>(0.0f, 525.0f);
 	// create boundary.[y-]
-	SceneStatic.Get()->CreateGameBrick(BricksDESC);
+	SceneStatic.Get()->CreateGameEnvmt(EnvmtsDESC);
 
-	BricksDESC.BrickShaderResource = SceneShaders.Get()->FindActorShader("BoundaryV");
+	EnvmtsDESC.EnvmtShaderResource = SceneShaders.Get()->FindActorShader("BoundaryV");
 
-	BricksDESC.InitialScale    = Vector2T<float>(2.5f, 50.0f);
-	BricksDESC.InitialPosition = Vector2T<float>(-525.0f, 0.0f);
+	EnvmtsDESC.InitialScale    = Vector2T<float>(2.5f, 50.0f);
+	EnvmtsDESC.InitialPosition = Vector2T<float>(-525.0f, 0.0f);
 	// create boundary.[x+]
-	SceneStatic.Get()->CreateGameBrick(BricksDESC);
+	SceneStatic.Get()->CreateGameEnvmt(EnvmtsDESC);
 
-	BricksDESC.InitialScale    = Vector2T<float>(2.5f, 50.0f);
-	BricksDESC.InitialPosition = Vector2T<float>(525.0f, 0.0f);
+	EnvmtsDESC.InitialScale    = Vector2T<float>(2.5f, 50.0f);
+	EnvmtsDESC.InitialPosition = Vector2T<float>(525.0f, 0.0f);
 	// create boundary.[x+]
-	SceneStatic.Get()->CreateGameBrick(BricksDESC);
+	SceneStatic.Get()->CreateGameEnvmt(EnvmtsDESC);
 
-	PsagActor::BrickDESC BackgroundDESC;
-	BackgroundDESC.BrickPhysicsWorld = "ZPGamePhysics";
+	PsagActor::EnvmtDESC BackgroundDESC;
+	BackgroundDESC.EnvmtPhysicsWorld = "ZPGamePhysics";
 
 	BackgroundDESC.InitialRenderLayer  = 2.0f;
-	BackgroundDESC.BrickShaderResource = SceneShaders.Get()->FindActorShader("Background");
+	BackgroundDESC.EnvmtShaderResource = SceneShaders.Get()->FindActorShader("Background");
 	// close phy_collision system.
 	BackgroundDESC.EnableCollision = false;
 
 	BackgroundDESC.InitialScale    = Vector2T<float>(100.0f, 100.0f);
 	BackgroundDESC.InitialPosition = Vector2T<float>(0.0f, 0.0f);
 	// create background.
-	SceneStatic.Get()->CreateGameBrick(BackgroundDESC);
+	SceneStatic.Get()->CreateGameEnvmt(BackgroundDESC);
 }
 
 void ZPGameSceneMain::SceneMouseScaleLerp(float timestep, float NoiseScale) {
@@ -76,18 +76,18 @@ bool ZPGameSceneMain::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	PsagActor::PresetScript ShaderScript = {};
 
 	// boundary wall [h] shader.
-	PsagActor::ActorShader* RenderBH = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage(), WinSize);
-	RenderBH->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(ImgBoundaryH));
+	PsagActor::ActorShader* RenderBH = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("WallH"), WinSize);
+	RenderBH->ShaderImageLADD("WallH", DecodeRawImage.DecodeImageRawData(ImgBoundaryH));
 
 	// boundary wall [v] shader.
-	PsagActor::ActorShader* RenderBV = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage(), WinSize);
-	RenderBV->ShaderImageLoad(DecodeRawImage.DecodeImageRawData(ImgBoundaryV));
+	PsagActor::ActorShader* RenderBV = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("WallV"), WinSize);
+	RenderBV->ShaderImageLADD("WallV", DecodeRawImage.DecodeImageRawData(ImgBoundaryV));
 
 	SceneShaders.Get()->CreateActorShader("Background", RenderBackground);
 
 	SceneShaders.Get()->CreateActorShader("BoundaryH", RenderBH);
 	SceneShaders.Get()->CreateActorShader("BoundaryV", RenderBV);
-	
+	/*
 	PsagManager::StartAnimLOAD SALoader = {};
 
 	SALoader.SettingPlayTime(1.75f);
@@ -100,7 +100,7 @@ bool ZPGameSceneMain::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI1));
 	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI2));
 	SALoader.AnimImageADD(DecodeRawImage.DecodeImageRawData(SAI3));
-	
+	*/
 	CreateSceneStatic();
 
 	// create game global notify system.
@@ -120,15 +120,15 @@ void ZPGameSceneMain::LogicCloseFree() {
 bool ZPGameSceneMain::LogicEventLoopGame(GameLogic::FrameworkParams& RunningState) {
 	// setting final proc_params.
 	RunningState.ShaderParamsFinal->GameSceneBloomRadius = 12;
-	RunningState.ShaderParamsFinal->GameSceneFilterAVG   = 0.2f;
+	RunningState.ShaderParamsFinal->GameSceneFilterAVG   = 0.22f;
 	RunningState.ShaderParamsFinal->GameSceneOutVignette = Vector2T<float>(0.7f, 0.28f);
-	RunningState.ShaderParamsFinal->GameSceneBloomBlend  = Vector2T<float>(0.92f, 1.54f);
+	RunningState.ShaderParamsFinal->GameSceneBloomBlend  = Vector2T<float>(0.92f, 1.72f);
 	RunningState.ShaderParamsFinal->GameSceneOutContrast = 1.032f;
 	
 	//SceneFinal.Get()->GetFinalParamsPonter(RunningState.ShaderParamsFinal);
 	//SceneFinal.Get()->RenderDebugParamsPanel("GameFINAL");
 
-	SceneStatic.Get()->RunAllGameBrick();
+	SceneStatic.Get()->RunAllGameEnvmt();
 
 	SceneMouseScaleLerp(RunningState.GameRunTimeSTEP, 1.0f);
 	RunningState.CameraParams->MatrixScale 

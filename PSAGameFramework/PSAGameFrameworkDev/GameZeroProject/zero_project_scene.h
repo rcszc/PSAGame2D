@@ -11,7 +11,7 @@ class ZPGameSceneMain :public GameLogic::INTERFACE_DEVCLASS_GAME,
     public ZPGameGlobale {
 protected:
     Mptr::DefinePointer<PsagActor::ShaderManager> SceneShaders = {};
-    Mptr::DefinePointer<PsagActor::BricksManager> SceneStatic  = {};
+    Mptr::DefinePointer<PsagActor::EnvmtsManager> SceneStatic  = {};
 
     Mptr::DefinePointer<PsagManager::SceneFinal::GameFinalProcessing> SceneFinal = {};
     void CreateSceneStatic();

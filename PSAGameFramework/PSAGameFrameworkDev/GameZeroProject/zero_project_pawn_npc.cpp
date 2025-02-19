@@ -41,19 +41,19 @@ public:
 		ImGui::SetNextWindowSize(ImVec2(160.0f, 78.0f));
 		ImGuiWindowFlags Flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoInputs;
-		ImGui::Begin(
-			to_string(actor_object->ActorGetPrivate().ActorUniqueCode).c_str(),
-			(bool*)NULL, Flags
-		);
-		ImGui::ProgressBar(
-			actor_object->ActorGetHealth(0) / actor_object->ActorGetHealthMax(0),
-			ImVec2(-(1.1754944E-38F), 20.0f)
-		);
-
-		const ImVec4 TextColor(0.0f, 1.0f, 0.72f, 0.92f);
-		// debug display value.
-		if (ImPsag::GetDebugGuiFlag())
-			ImGui::TextColored(TextColor, "HP: %.2f", actor_object->ActorGetHealth(0));
+		// actor unique code => window name.
+		string WindowName = to_string(actor_object->ActorGetPrivate().ActorUniqueCode);
+		ImGui::Begin(WindowName.c_str(),(bool*)NULL, Flags);
+		{
+			ImGui::ProgressBar(
+				actor_object->ActorGetHealth(0) / actor_object->ActorGetHealthMax(0),
+				ImVec2(-(1.1754944E-38F), 20.0f)
+			);
+			const ImVec4 TextColor(0.0f, 1.0f, 0.72f, 0.92f);
+			// debug display value.
+			if (ImPsag::GetDebugGuiFlag())
+				ImGui::TextColored(TextColor, "HP: %.2f", actor_object->ActorGetHealth(0));
+		}
 		ImGui::End();
 		ImGui::PopStyleColor();
 	}
