@@ -15,6 +15,11 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+
+#define PSAG_STRINGIFY(x) #x
+#define PSAG_STEXT(x) PSAG_STRINGIFY(x)
+#define PSAG_FILE_LINE (__FILE__ ":" PSAG_STRINGIFY(__LINE__))
+
 #define PSAG_DEBUG_MODE true
 #define StaticStrLABEL constexpr const char*
 // core framework logger label.

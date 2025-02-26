@@ -10,12 +10,8 @@ namespace GameManagerCore {
 		GameFxParticle::GameFxParticle(const GameFxParticleDESC& INIT_DESC) {
 			// create new particle_system.
 			FxParticleObject = new GraphicsEngineParticle::PsagGLEngineParticle(
-				INIT_DESC.ParticleRenderResolution, 
+				INIT_DESC.ParticleRenderSize, 
 				INIT_DESC.ParticleRenderTexture
-			);
-			// set particle calc mode.
-			FxParticleObject->ParticleClacMode(
-				(GraphicsEngineParticle::ParticleCalcMode)INIT_DESC.ParticleUpdateCalcMode
 			);
 			FxParticleObject->SetParticleTwisted(INIT_DESC.ParticlesDisturbance);
 			PushLogger(LogInfo, PSAGM_MANAGER_FX_LABEL, "manager fx_particle init.");
@@ -37,23 +33,26 @@ namespace GameManagerCore {
 			return true;
 		}
 
-		bool GameFxParticle::FxParticlesAdd(const ParticleAttributes& ADD_PARTICLE) {
-			FxParticleObject->GetParticleDataset()->push_back(ADD_PARTICLE);
-			return ADD_PARTICLE.ParticleScaleSize > 0.0f;
+		void GameFxParticle::FxParticlesAdd(const ParticleAttributes& ADD_PARTICLE) {
+			ParticlesDataset DataTemp = { ADD_PARTICLE };
+
+			GraphicsEngineParticle::GeneratorDataset GenParticle = {};
+			GenParticle.DataPtr = &DataTemp;
+			FxParticleObject->ParticleCreate(&GenParticle);
 		}
 
 		bool GameFxParticle::FxParticlesAddDataset(const ParticlesDataset& ADD_PARTICLES) {
-			if (ADD_PARTICLES.empty())
-				return false;
-			FxParticleObject->GetParticleDataset()->insert(
-				FxParticleObject->GetParticleDataset()->end(), ADD_PARTICLES.begin(), ADD_PARTICLES.end()
-			);
+			if (ADD_PARTICLES.empty()) return false;
+
+			GraphicsEngineParticle::GeneratorDataset GenParticle = {};
+			GenParticle.DataPtr = &ADD_PARTICLES;
+			FxParticleObject->ParticleCreate(&GenParticle);
 			return true;
 		}
 
 		void GameFxParticle::SetFxParticlesCenter(const Vector2T<float>& coord) {
 			// particles calc center_coord.
-			FxParticleObject->ParticlesCoordCenter = coord;
+			FxParticleObject->SetParticleCenter(coord);
 		}
 
 		void GameFxParticle::SetFxParticlesRandRotate(bool rot_switch) {

@@ -13,27 +13,19 @@ namespace GameManagerCore {
 		StaticStrLABEL PSAGM_MANAGER_FX_LABEL = "PSAG_MANAGER_FX";
 		// ******************************** FX-Particle ********************************
 
-		// particle computing mode type.
-		enum ParticleUpdateMode {
-			CALC_DEFAULT  = 1 << 1, // main thread.
-			CALC_PARALLEL = 1 << 2, // multi thread.
-			CALC_NO_CALC  = 1 << 3  // not calc.
-		};
 		using ParticleColorMode = GraphicsEngineParticle::ColorChannelMode;
 
 		struct GameFxParticleDESC {
-			Vector2T<uint32_t> ParticleRenderResolution;
+			Vector2T<uint32_t> ParticleRenderSize;
 			ImageRawData       ParticleRenderTexture;
 
-			ParticleUpdateMode ParticleUpdateCalcMode;
 			// particles texture_coord disturbance.
 			float ParticlesDisturbance;
 
 			GameFxParticleDESC() :
-				ParticleRenderResolution(Vector2T<uint32_t>(1080, 1920)),
-				ParticleRenderTexture   ({}),
-				ParticleUpdateCalcMode  (CALC_DEFAULT),
-				ParticlesDisturbance    (0.0f)
+				ParticleRenderSize   (Vector2T<uint32_t>(256, 256)),
+				ParticleRenderTexture({}),
+				ParticlesDisturbance (0.0f)
 			{}
 		};
 
@@ -51,19 +43,20 @@ namespace GameManagerCore {
 			bool FxParticlesGroupCreate(
 				GraphicsEngineParticle::ParticleGeneratorBase* Generator
 			);
-			bool FxParticlesAdd       (const ParticleAttributes& ADD_PARTICLE);
+			void FxParticlesAdd       (const ParticleAttributes& ADD_PARTICLE);
 			bool FxParticlesAddDataset(const ParticlesDataset& ADD_PARTICLES);
 
-			size_t GetFxParticlesNumber()    { return FxParticleObject->GetParticleState().DarwParticlesNumber; }
-			size_t GetFxParticlesDataCount() { return FxParticleObject->GetParticleState().DarwDatasetSize; }
-
+			// particle system state params.
+			GraphicsEngineParticle::ParticleSystemState GetFxParticlesState() const {
+				return FxParticleObject->GetParticleState();
+			}
 			void SetFxParticlesCenter(const Vector2T<float>& coord);
 			// particle random_angle rotate(speed), false => 0.0deg.
 			void SetFxParticlesRandRotate(bool rot_switch);
 
-			ParticlesDataset* FxParticleSourceData() {
-				// particle system src_dataset (attributes_struct) ptr.
-				return FxParticleObject->GetParticleDataset();
+			ParticlesDataset FxParticleSourceData() {
+				// warn: particle system src_dataset copy (attributes_struct).
+				return FxParticleObject->GetParticleDataCopy();
 			}
 			void FxParticleRendering();
 		};
@@ -111,7 +104,7 @@ namespace GameManagerCore {
 		class DefinePointer {
 		private:
 			T* PointerDefine;
-			std::string PointerInfo = {};
+			std::string ObjectInfo = {};
 		public:
 			DefinePointer() : PointerDefine(nullptr) {}
 			~DefinePointer() {
@@ -123,6 +116,8 @@ namespace GameManagerCore {
 			template <typename... Args>
 			size_t CreatePointer(Args&&... args) {
 				PointerDefine = new T(std::forward<Args>(args)...);
+				// rtti: get new object info.
+				ObjectInfo = typeid(T).name();
 				return (size_t)PointerDefine;
 			}
 			// delete ptr, return address.
@@ -135,11 +130,28 @@ namespace GameManagerCore {
 			}
 			T* Get() { return PointerDefine; }
 			// RTTI: object info string.
-			std::string GetObjectINFO() {
-				// rtti get object info.
-				PointerInfo = typeid(T).name();
-				return PointerInfo;
+			std::string GetObjectINFO() const { 
+				return ObjectInfo; 
 			};
+			const char* PtrRemarks = {};
+		};
+	}
+
+	namespace GameFileSystemPath {
+		StaticStrLABEL PSAGM_MANAGER_FINAL_LABEL = "PSAG_MANAGER_FILES";
+
+		class GamePackgaeResourcePath {
+		protected:
+			std::shared_mutex ResourcePathMutex = {};
+			std::unordered_map<std::string, std::string> ResourcePath = {};
+		public:
+			bool ADD_SystemResPath(
+				const std::string& name, const std::string& res_path
+			);
+			bool DELETE_SystemResPath(const std::string& name);
+			std::string FIND_SystemResPath(const std::string& name);
+			// get resource path hash code, type: uint64_t.
+			uint64_t FIND_SystemResPHash(const std::string& name);
 		};
 	}
 

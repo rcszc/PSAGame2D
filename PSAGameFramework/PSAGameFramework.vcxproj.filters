@@ -339,6 +339,9 @@
     <ClCompile Include="PSAGameFrameworkDev\GameLab\psag_game_lab.cpp">
       <Filter>源文件\A-PSAGameFrameworkDev\GameLab</Filter>
     </ClCompile>
+    <ClCompile Include="PSAGameFrameworkCore\CoreGameManager\psag_manager_module_files.cpp">
+      <Filter>源文件\PSAGameFrameworkCore\CoreGameManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PSAGameSystemFiles\ExternalModulePathlist.json">

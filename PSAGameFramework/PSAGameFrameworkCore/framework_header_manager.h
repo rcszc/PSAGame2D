@@ -9,8 +9,7 @@ namespace PsagManager {
 	namespace Fx {
 		using ParticleDESC = GameManagerCore::GameFX::GameFxParticleDESC;
 		using Particle     = GameManagerCore::GameFX::GameFxParticle;
-
-		using ParticleCalcMode  = GameManagerCore::GameFX::ParticleUpdateMode;
+		
 		using ParticleColorMode = GameManagerCore::GameFX::ParticleColorMode;
 
 		using ParticleSrcAttrib = GameManagerCore::GameFX::ParticleAttributes;
@@ -26,6 +25,7 @@ namespace PsagManager {
 
 	using FINAL_PARAMS = GameManagerCore::GameSceneForFinal::SceneFinalParams;
 	namespace SceneFinal = GameManagerCore::GameSceneForFinal;
+	namespace ResPathSystem = GameManagerCore::GameFileSystemPath;
 
 	namespace FxView     = GameManagerCore::GameView;
 	namespace Maths      = GameManagerCore::GameMathsTools;

@@ -7,7 +7,7 @@ using namespace PSAG_LOGGER;
 namespace ImPsag {
 	atomic<bool> DEBUG_GUI_GLOBAL_FLAG = PSAG_FALSE;
 	void DebugGuiFlagStatus() {
-		if (ImGui::IsKeyPressed(ImGuiKey_F12, false))
+		if (ImGui::IsKeyPressed(ImGuiKey_F10, false))
 			DEBUG_GUI_GLOBAL_FLAG = !DEBUG_GUI_GLOBAL_FLAG;
 	}
 	bool GetDebugGuiFlag() {

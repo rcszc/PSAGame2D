@@ -86,8 +86,7 @@ namespace GraphicsEngineParticle {
 	// color channels filter.
 	Vector3T<Vector2T<float>> __COLOR_SYSTEM_TYPE(
 		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-		ColorChannelMode mode,
-		bool* gray_switch
+		ColorChannelMode mode, bool* gray_switch
 	) {
 		switch (mode) {
 		case(ChannelsRG):  { b = Vector2T<float>(); break; }
@@ -192,98 +191,172 @@ namespace GraphicsEngineParticle {
 
 	// ************************************************ PARTICLE SYSTEM ************************************************
 	// particles calc vec,pos,life,color. mode: main_thread, parallel_threads(pool).
-
-#define DEFAULT_SPEED 1.0f
-	class ParticleSystemDataCalc {
-	protected:
-		vector<ParticleAttributes> ParticlesCalcCache = {};
-	public:
-		ParticleSystemDataCalc(vector<ParticleAttributes> block_particles, float speed, float lifesub) {
-			// calc particles position.
-			for (size_t i = 0; i < block_particles.size(); ++i) {
-				// update position.
-				block_particles[i].ParticlePosition.vector_x += block_particles[i].ParticleVector.vector_x * DEFAULT_SPEED * speed;
-				block_particles[i].ParticlePosition.vector_y += block_particles[i].ParticleVector.vector_y * DEFAULT_SPEED * speed;
-				block_particles[i].ParticlePosition.vector_z += block_particles[i].ParticleVector.vector_z * DEFAULT_SPEED * speed;
-
-				block_particles[i].ParticleLife -= DEFAULT_SPEED * lifesub * (float)block_particles[i].ParticleLifeSwitch;
-				// delete particle.
-				if (block_particles[i].ParticleLife <= 0.0f)
-					block_particles.erase(block_particles.begin() + i);
-			}
-			// copy result particles_data.
-			ParticlesCalcCache = block_particles;
-		}
-		vector<ParticleAttributes> GetDataset() {
-			return move(ParticlesCalcCache);
-		}
-	};
-
-	void PsagGLEngineParticle::CalcUpdateParticlesPARA(vector<ParticleAttributes>& particles, float speed, float lifesub) {
-		size_t TasksNumber = particles.size() / DataBlockSize + 1;
-		// tasks object future.
-		vector<future<shared_ptr<ParticleSystemDataCalc>>> ResultObject(TasksNumber);
-		
-		// craete task => parallel.
-		for (size_t i = 0; i < TasksNumber; ++i) {
-			size_t IndexStart = i * DataBlockSize;
-			size_t IndexEnd = __psag_bit_min(IndexStart + DataBlockSize, particles.size());
-
-			vector<ParticleAttributes> BlockCreateTemp(IndexEnd - IndexStart);
-			// particles dataset memory_block copy.
-			copy(particles.begin() + IndexStart, particles.begin() + IndexEnd, BlockCreateTemp.begin());
-			// thread pool => particles calc task.
-			ResultObject[i] = ThreadsParallel->PushTask<ParticleSystemDataCalc>(
-				BlockCreateTemp, speed, lifesub
-			);
-		}
-		// clear data => get task result.
-		particles.clear();
-		for (size_t i = 0; i < TasksNumber; ++i) {
-			// read parallel threads data.
-			auto DataResultPtr = ResultObject[i].get()->GetDataset();
-			particles.insert(particles.end(), DataResultPtr.begin(), DataResultPtr.end());
-		}
-	}
-
-	void PsagGLEngineParticle::CalcUpdateParticles(vector<ParticleAttributes>& particles, float speed, float lifesub) {
-		// calc particles position & life.
-		for (size_t i = 0; i < particles.size(); ++i) {
-			// update position.
-			particles[i].ParticlePosition.vector_x += particles[i].ParticleVector.vector_x * DEFAULT_SPEED * speed;
-			particles[i].ParticlePosition.vector_y += particles[i].ParticleVector.vector_y * DEFAULT_SPEED * speed;
-			particles[i].ParticlePosition.vector_z += particles[i].ParticleVector.vector_z * DEFAULT_SPEED * speed;
-
-			particles[i].ParticleLife -= DEFAULT_SPEED * lifesub * (float)particles[i].ParticleLifeSwitch;
-			// delete particle.
-			if (particles[i].ParticleLife <= 0.0f)
-				particles.erase(particles.begin() + i);
-		}
-	}
-
-	void PsagGLEngineParticle::VertexDataConvert(
-		const vector<ParticleAttributes>& src, vector<float>& dst, const Vector2T<float>& center
+#define DEFAULT_SPEED 1.2
+	 
+	void PsagGLEngineThread::ParticlesCalcuate(
+		vector<ParticleAttributes>* pptc, double timestep
 	) {
-		// clear vertex srcdata_cache => convert.
-		dst.clear();
+		const float FlySpeed = float(DEFAULT_SPEED * timestep);
+		// calc particles position & life.
+		for (auto it = pptc->begin(); it != pptc->end();) {
+			// update position.
+			it->ParticlePosition.vector_x += it->ParticleVector.vector_x * FlySpeed * 0.72f;
+			it->ParticlePosition.vector_y += it->ParticleVector.vector_y * FlySpeed * 0.72f;
+			it->ParticlePosition.vector_z += it->ParticleVector.vector_z * FlySpeed * 0.72f;
+			// particle life calcuate: - std_speed * value * sw[ 0.0,1.0 ].
+			it->ParticleLife -= FlySpeed * (float)it->ParticleLifeSwitch;
+			// life > 0.0 : continue(check next).
+			if (it->ParticleLife > 0.0f) { ++it; continue; }
+			// delete particles entities.
+			it = pptc->erase(it);
+		}
+	}
+
+	void PsagGLEngineThread::ParticlesConvertData(
+		const vector<ParticleAttributes>& src, vector<float>* dst,
+		const Vector2T<float>& center
+	) {
+		// clear vertex src data_cache => convert.
+		dst->clear();
 		for (const auto& Item : src) {
-			// format: vertex[vec3], color[vec4], uv(coord)[vec2], normal[vec3].
-			auto PTC_TEMP = ParticleBaseElement(
+			// format: vertex[vec3], color[vec4], uv[vec2], normal[vec3].
+			auto DataTemp = ParticleBaseElement(
 				Vector3T<float>(
-					Item.ParticlePosition.vector_x + center.vector_x, 
+					Item.ParticlePosition.vector_x + center.vector_x,
 					Item.ParticlePosition.vector_y + center.vector_y,
 					Item.ParticlePosition.vector_z
-				), 
+				),
+				// normal: first vec(x) is particle life value.
 				Item.ParticleColor, Item.ParticleScaleSize, Item.ParticleLife
 			);
 			// (add)push_back partiel.
-			dst.insert(dst.end(), PTC_TEMP.begin(), PTC_TEMP.end());
+			dst->insert(dst->end(), DataTemp.begin(), DataTemp.end());
 		}
 	}
 
-	PsagGLEngineParticle::PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image) {
+	void PsagGLEngineThread::CalcThisContextFramerateStep(double base_fps) {
+		int64_t TimerCountI64 = chrono::duration_cast<chrono::microseconds>(
+			chrono::system_clock::now() - FramerateTimer
+		).count();
+		// calcuate framerate time step(scale).
+		FramerateStep = (double)TimerCountI64 / 1000000.0 * base_fps;
+		// frame context end => reset timer.
+		FramerateTimer = chrono::system_clock::now();
+	}
+
+	void PsagGLEngineThread::PPTS_ParticleGeneratorTask(ParticleGeneratorBase* ptr) {
+		vector<ParticleAttributes> ParticleEntities = {};
+		ptr->CreateAddParticleDataset(ParticleEntities);
+		// generator => gen particles => push queue => proc thread.
+		lock_guard<mutex> Lock(GenParticleMutex);
+		GenParticle.push(ParticleEntities);
+	}
+
+	void PsagGLEngineThread::PPTS_SetDataReadStatus() {
+		// swap data buffer status => pawn proc thread.
+		VertexDataReadStatus = true;
+	}
+
+	const vector<float>* PsagGLEngineThread::PPTS_GetVertexData() const {
+		// double buffer, pawn: index, read: !(index).
+		return &VertexDataDBuffer[(size_t)(!VertexDataDBufferIndex)];
+	}
+
+	array<size_t, 4> PsagGLEngineThread::PPTS_GetBackRunParams() {
+		const size_t VertDataBytes = 
+			VertexDataDBuffer[(size_t)(!VertexDataDBufferIndex)].size() * sizeof(float);
+		size_t GenTempBytes = 0;
+		{
+			lock_guard<mutex> Lock(GenParticleMutex);
+			GenTempBytes = GenParticle.size() * sizeof(ParticleAttributes);
+		}
+		// frame step => calc 1000x framerate.
+		size_t KxFrame = size_t(60.0 / FramerateStep * 1000.0);
+		KxFrame = KxFrame > (size_t)99999999 ? (size_t)100000000 : KxFrame;
+		// buffer bytes * double + entities bytes + entities temp bytes.
+		size_t MemoryUsage = VertDataBytes * 2 + 
+			ParticlesData.size() * sizeof(ParticleAttributes) + GenTempBytes;
+		return { ParticlesDataSize, VertDataBytes, KxFrame, MemoryUsage };
+	}
+
+	vector<ParticleAttributes> PsagGLEngineThread::PPTS_GetCurrentEntities() {
+		lock_guard<mutex> Lock(ParticlesDataMutex);
+		return ParticlesData;
+	}
+
+	PsagGLEngineThread::PsagGLEngineThread() {
+		ParticleTaskProcFlag = true;
+		// particle calc => convert => buffer.
+		auto TASK_PROC_FUNC = [&]() {
+			while (ParticleTaskProcFlag) {
+				std::vector<ParticleAttributes> DataTemp = {};
+				{
+					lock_guard<mutex> Lock(GenParticleMutex);
+					if (!GenParticle.empty()) {
+						DataTemp = GenParticle.front();
+						GenParticle.pop();
+					}
+				}
+				lock_guard<mutex> Lock(ParticlesDataMutex);
+				// insert gen particle entities. group(vector) / frame. [均衡负载]
+				ParticlesData.insert(ParticlesData.end(), DataTemp.begin(), DataTemp.end());
+				// particles attribute(entities) calcuate.
+				ParticlesCalcuate(&ParticlesData, FramerateStep);
+				ParticlesDataSize = ParticlesData.size();
+
+				// PARTCILE SYSTEM BASE_FPS: 60.0 FPS. 2025_02_22 RCSZ.
+				CalcThisContextFramerateStep(60.0);
+
+				// 前台未读取完成, 后台不进行 convert & swap 操作.
+				if (VertexDataReadStatus == false) continue;
+				// particls attribute => vertex data.
+				ParticlesConvertData(
+					ParticlesData,
+					&VertexDataDBuffer[(size_t)VertexDataDBufferIndex],
+					Vector2T<float>(CoordCenterX, CoordCenterY)
+				);
+				// swap double data_buffer. pawn: proc thread.
+				VertexDataDBufferIndex = !VertexDataDBufferIndex;
+				VertexDataReadStatus = false;
+			}
+		};
+		ParticleTaskProc = new thread(TASK_PROC_FUNC);
+		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system proc thread init.");
+	}
+
+	PsagGLEngineThread::~PsagGLEngineThread() {
+		ParticleTaskProcFlag = false;
+		ParticleTaskProc->join();
+		delete ParticleTaskProc;
+	}
+
+	void PsagGLEngineParticle::ParticleSystemSample(int64_t sample_time) {
+		int64_t TimerCountI64 = chrono::duration_cast<chrono::milliseconds>(
+			chrono::system_clock::now() - BackInfoSampleTimer
+		).count();
+		if (TimerCountI64 > sample_time) {
+			BackInfoSampleTimer = chrono::system_clock::now();
+			auto SrcStateParams = PPTS_GetBackRunParams();
+			
+			SystemStateTemp.DarwParticlesNumber = SrcStateParams[0];
+			SystemStateTemp.DarwDatasetBytes    = SrcStateParams[1];
+
+			SystemStateTemp.BPT_RunFramerate   = (float)SrcStateParams[2] / 1000.0f;
+			SystemStateTemp.BPT_BackMemoryUsed = (float)SrcStateParams[3] / 1048576.0f;
+		}
+	}
+
+	size_t PsagGLEngineParticle::ParticleSystemCount = 0;
+	PsagGLEngineParticle::PsagGLEngineParticle(const Vector2T<uint32_t>& render_size, const ImageRawData& image) {
 		PSAG_SYS_GENERATE_KEY GenResourceID;
-		
+
+		// 粒子系统(实体对象)数量限制.
+		if (ParticleSystemCount == PSAG_PARTICLE_SYSTEM_LIMIT) {
+			PushLogger(LogError, PSAGM_GLENGINE_PARTICLE_LABEL, 
+				"particle system invalid, number > %u.", PSAG_PARTICLE_SYSTEM_LIMIT);
+			return;
+		}
+		ParticleSystemValid = true;
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsShader ShaderProcess;
 		ShaderProcess.ShaderLoaderPushVS(GLOBALRES.Get().PublicShaders.ShaderVertTemplate, StringScript);
 
@@ -296,7 +369,6 @@ namespace GraphicsEngineParticle {
 			ShaderProcessFinal = GenResourceID.PsagGenUniqueKey();
 			GraphicShaders->ResourceStorage(ShaderProcessFinal, &ShaderProcess);
 		}
-
 		// => mag"GraphicsEngineDataset::GLEngineStcVertexData".
 		DyVertexSysItem = GenResourceID.PsagGenUniqueKey();
 		VerDyDataItemAlloc(DyVertexSysItem);
@@ -313,10 +385,10 @@ namespace GraphicsEngineParticle {
 		VirTextureUniform.TexParamCropping = "ParticleVirTexCropping";
 		VirTextureUniform.TexParamSize     = "ParticleVirTexSize";
 
-		UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f) { CalcUpdateParticles(p, s, f); };
-
 		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system init.");
-		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system render_resolution: %u x %u", render_resolution.vector_x, render_resolution.vector_y);
+		PushLogger(LogInfo, PSAGM_GLENGINE_PARTICLE_LABEL, "particle system render_size: %u x %u", 
+			render_size.vector_x, render_size.vector_y);
+		++ParticleSystemCount;
 	}
 
 	PsagGLEngineParticle::~PsagGLEngineParticle() {
@@ -324,18 +396,17 @@ namespace GraphicsEngineParticle {
 		VirTextureItemFree(VirTextureItem);
 		VerDyDataItemFree(DyVertexSysItem);
 		GraphicShaders->ResourceDelete(ShaderProcessFinal);
-
-		if (ThreadsParallel != nullptr)
-			delete ThreadsParallel;
+		// particle system valid => sub counter.
+		if (ParticleSystemValid) --ParticleSystemCount;
 	}
 
+#define PARTICLE_SYSTEM_STATE_SMP 250
 	void PsagGLEngineParticle::UpdateParticleData() {
-		// calculate particles coord.
-		UPDATE_CALC_FUNC(DataParticles, 0.72f * GraphicsEngineTimeStep, GraphicsEngineTimeStep);
-		// "particle_attributes" => float
-		VertexDataConvert(DataParticles, DataVertices, ParticlesCoordCenter);
-		// particles_data => data cache. 
-		VerDyOperFramePushData(DyVertexSysItem, DataVertices);
+		// particle vertex_data => graph data cache. 
+		VerDyOperFramePushData(DyVertexSysItem, *PPTS_GetVertexData());
+		// vertex_data reading completed.
+		PPTS_SetDataReadStatus();
+		ParticleSystemSample(PARTICLE_SYSTEM_STATE_SMP);
 	}
 
 	void PsagGLEngineParticle::RenderParticleFX() {
@@ -345,11 +416,11 @@ namespace GraphicsEngineParticle {
 		// system parset uniform.
 		ShaderUniform.UniformMatrix4x4(ShaderTemp, "MvpMatrix",  MatrixDataWindow);
 
-		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",   RenderTimer);
-		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",   RenderMove);
-		ShaderUniform.UniformVec2 (ShaderTemp, "RenderScale",  RenderScale);
-		ShaderUniform.UniformFloat(ShaderTemp, "RenderRotate", RenderAngle);
-		ShaderUniform.UniformFloat(ShaderTemp, "RenderTwist",  RenderTwist);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTime",  RenderTimer);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderMove",  RenderMove);
+		ShaderUniform.UniformVec2 (ShaderTemp, "RenderScale", RenderScale);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderAngle", RenderAngle);
+		ShaderUniform.UniformFloat(ShaderTemp, "RenderTwist", RenderTwist);
 
 		// draw virtual texture.
 		VirTextureItemDraw(VirTextureItem, ShaderTemp, VirTextureUniform);
@@ -360,48 +431,18 @@ namespace GraphicsEngineParticle {
 		RenderTimer += PSAGM_VIR_TICKSTEP_GL * GraphicsEngineTimeStep;
 	}
 
-	ParticleSystemState PsagGLEngineParticle::GetParticleState() {
-		ParticleSystemState ResultState = {};
-
-		ResultState.DarwParticlesNumber = DataParticles.size();
-		ResultState.DarwDatasetSize     = DataVertices.size();
-
-		return ResultState;
+	ParticleSystemState PsagGLEngineParticle::GetParticleState() const {
+		// return particle system state sample temp. 
+		return SystemStateTemp;
 	}
 
 	void PsagGLEngineParticle::ParticleCreate(ParticleGeneratorBase* generator) {
-		// generator => particle_system.
-		generator->CreateAddParticleDataset(DataParticles);
+		// generator call particle system.
+		PPTS_ParticleGeneratorTask(generator);
 	}
 
-	void PsagGLEngineParticle::ParticleClacMode(ParticleCalcMode mode, size_t block_size, uint32_t threads) {
-		// parallel mode ? => failed.
-		if (ThreadsParallel != nullptr) return;
-		// particles calc(update) func_load.
-		switch (mode) {
-		case(CALC_DEFAULT): { 
-			UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f)
-				{ CalcUpdateParticles(p, s, f); };
-			break; 
-		}
-		case(CALC_PARALLEL): { 
-			UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f)
-				{ CalcUpdateParticlesPARA(p, s, f); };
-			// block default(min) size = 1000.
-			DataBlockSize = block_size > 1000 ? block_size : 1000;
-			// create threads_pool.
-			ThreadsParallel = new PSAG_THREAD_POOL::PsagThreadTasks(threads);
-			break;
-		}
-		case(CALC_NO_CALC): { 
-			UPDATE_CALC_FUNC = [&](vector<ParticleAttributes>& p, float s, float f)
-				{ CalcUpdateParticlesNULL(p, s, f); }; 
-			break; 
-		}}
-	}
-
-	vector<ParticleAttributes>* PsagGLEngineParticle::GetParticleDataset() {
-		// particle_system data pointer.
-		return &DataParticles;
+	vector<ParticleAttributes> PsagGLEngineParticle::GetParticleDataCopy() {
+		// copy background data. thread safe.
+		return PPTS_GetCurrentEntities();
 	}
 }

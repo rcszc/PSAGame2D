@@ -476,7 +476,10 @@ namespace GraphicsEngineParticle {
 	struct ParticleSystemState {
 		// real-time status.
 		size_t DarwParticlesNumber;
-		size_t DarwDatasetSize;
+		size_t DarwDatasetBytes;
+		
+		float BPT_RunFramerate;
+		float BPT_BackMemoryUsed; // Mib
 	};
 
 	// 粒子生成器(使用均匀分布随机数模型).
@@ -495,11 +498,31 @@ namespace GraphicsEngineParticle {
 		virtual void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) = 0;
 	};
 
+	// 源粒子数据生成器 [COPY].
+	class GeneratorDataset :public ParticleGeneratorBase {
+	public:
+		bool ConfigCreateNumber(float number) override { 
+			return true; 
+		};
+		void ConfigLifeDispersion(const Vector2T<float>& rand_life) override {};
+		void ConfigSizeDispersion(const Vector2T<float>& rand_size) override {};
+
+		void ConfigRandomColorSystem(
+			const Vector2T<float>& r, const Vector2T<float>& g, const Vector2T<float>& b,
+			ColorChannelMode mode
+		) override {};
+
+		const std::vector<ParticleAttributes>* DataPtr = nullptr;
+		void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) {
+			// src dataset => particle system.
+			data.insert(data.end(), DataPtr->begin(), DataPtr->end());
+		}
+	};
+
 	// mode => color channels filter.
 	Vector3T<Vector2T<float>> __COLOR_SYSTEM_TYPE(
 		Vector2T<float> r, Vector2T<float> g, Vector2T<float> b,
-		ColorChannelMode mode,
-		bool* gray_switch
+		ColorChannelMode mode, bool* gray_switch
 	);
 
 	// 点云粒子生成器 [扩散].
@@ -611,66 +634,101 @@ namespace GraphicsEngineParticle {
 		void CreateAddParticleDataset(std::vector<ParticleAttributes>& data) override;
 	};
 
-	enum ParticleCalcMode {
-		CALC_DEFAULT  = 1 << 1, // 默认计算模式.
-		CALC_PARALLEL = 1 << 2, // 并行计算模式.
-		CALC_NO_CALC  = 1 << 3  // 无计算模式.
+	class PsagGLEngineThread {
+	private:
+		std::vector<ParticleAttributes> ParticlesData = {};
+		std::mutex ParticlesDataMutex = {};
+		std::atomic<size_t> ParticlesDataSize = {};
+
+		std::atomic<bool> ParticleTaskProcFlag = {};
+		std::thread*      ParticleTaskProc     = {};
+
+		// thread_safe particle gen_dataset queue.
+		std::queue<std::vector<ParticleAttributes>> GenParticle = {};
+		std::mutex GenParticleMutex = {};
+
+		// thread_safe double buffer swap data.
+		// status: true: proc thread write. false: draw thread read.
+		std::atomic<bool>  VertexDataReadStatus   = false;
+		std::atomic<bool>  VertexDataDBufferIndex = false;
+		std::vector<float> VertexDataDBuffer[2]   = {};
+
+		void ParticlesCalcuate(
+			std::vector<ParticleAttributes>* particles, double timestep
+		);
+		void ParticlesConvertData(
+			const std::vector<ParticleAttributes>& src, std::vector<float>* dst,
+			const Vector2T<float>& center
+		);
+		std::chrono::system_clock::time_point FramerateTimer 
+			= std::chrono::system_clock::now();
+		double FramerateStep = 0.0;
+		void CalcThisContextFramerateStep(double base_fps);
+	protected:
+		std::atomic<float> CoordCenterX = 0.0f, CoordCenterY = 0.0f;
+		// generate particle entities data.
+		void PPTS_ParticleGeneratorTask(ParticleGeneratorBase* ptr);
+		void PPTS_SetDataReadStatus();
+
+		// get format vertex data.
+		const std::vector<float>* PPTS_GetVertexData() const;
+		// 0: entities number, 1: buffer bytes 2: 1000x fps, 3: mem usage.
+		std::array<size_t, 4> PPTS_GetBackRunParams();
+		// warn: copy entities data.
+		std::vector<ParticleAttributes> PPTS_GetCurrentEntities();
+	public:
+		PsagGLEngineThread();
+		~PsagGLEngineThread();
 	};
 
-	class PsagGLEngineParticle :
+	// UPDATE: 2025_02_23 RCSZ. [128 ENT(S)]
+#define PSAG_PARTICLE_SYSTEM_LIMIT 128
+	// particle system and back proc thread.
+	class PsagGLEngineParticle : public PsagGLEngineThread,
+		public __GRAPHICS_ENGINE_TIMESETP,
 		public GraphicsEngineDataset::GLEngineDynamicVertexData,
 		public GraphicsEngineDataset::GLEngineVirTextureData,
-		public GraphicsEngineMatrix::PsagGLEngineMatrix,
-		public __GRAPHICS_ENGINE_TIMESETP
+		public GraphicsEngineMatrix::PsagGLEngineMatrix
 	{
 	private:
-		// clac_mode: CALC_PARALLEL => create thread_pool.
-		PSAG_THREAD_POOL::PsagThreadTasks* ThreadsParallel = nullptr;
-		size_t DataBlockSize = NULL;
-
-		void CalcUpdateParticlesNULL(std::vector<ParticleAttributes>& particles, float speed, float lifesub) {};
-		void CalcUpdateParticlesPARA(std::vector<ParticleAttributes>& particles, float speed, float lifesub);
-		void CalcUpdateParticles    (std::vector<ParticleAttributes>& particles, float speed, float lifesub);
-
-		std::function<void(std::vector<ParticleAttributes>&, float, float)> UPDATE_CALC_FUNC = {};
+		static size_t ParticleSystemCount;
+		bool ParticleSystemValid = false;
 	protected:
 		PsagLow::PsagSupGraphicsOper::PsagRender::PsagOpenGLApiRenderState OGLAPI_OPER = {};
 		PsagLow::PsagSupGraphicsOper::PsagGraphicsUniform ShaderUniform = {};
 
-		std::vector<ParticleAttributes> DataParticles = {};
-		std::vector<float>              DataVertices  = {};
-
 		ResUnique ShaderProcessFinal = {};
-		ResUnique DyVertexSysItem   = {};
+		ResUnique DyVertexSysItem    = {};
 
-		float           RenderTimer  = 0.0f;
-		Vector2T<float> RenderMove   = {};
-		Vector2T<float> RenderScale  = Vector2T<float>(1.0f, 1.0f);
+		float           RenderTimer = 0.0f;
+		Vector2T<float> RenderMove  = {};
+		Vector2T<float> RenderScale = Vector2T<float>(1.0f, 1.0f);
 		float           RenderAngle = 0.0f;
-		float           RenderTwist  = 0.0f;
+		float           RenderTwist = 0.0f;
 
 		VirTextureUnique VirTextureItem = {};
 		GraphicsEngineDataset::VirTextureUniformName VirTextureUniform = {};
 
-		void VertexDataConvert(
-			const std::vector<ParticleAttributes>& src, std::vector<float>& dst, 
-			const Vector2T<float>& center
-		);
+		ParticleSystemState SystemStateTemp = {};
+		std::chrono::system_clock::time_point BackInfoSampleTimer
+			= std::chrono::system_clock::now();
+
+		void ParticleSystemSample(int64_t sample_time);
 	public:
-		PsagGLEngineParticle(const Vector2T<uint32_t>& render_resolution, const ImageRawData& image = {});
+		PsagGLEngineParticle(const Vector2T<uint32_t>& render_size, const ImageRawData& image = {});
 		~PsagGLEngineParticle();
 
 		void ParticleCreate(ParticleGeneratorBase* generator);
-		void ParticleClacMode(ParticleCalcMode mode, size_t block_size = 2000, uint32_t threads = 8);
 
-		std::vector<ParticleAttributes>* GetParticleDataset();
-		ParticleSystemState				 GetParticleState();
+		std::vector<ParticleAttributes> GetParticleDataCopy();
+		ParticleSystemState				GetParticleState() const;
 
-		void SetParticleTwisted    (float value) { RenderTwist  = value > 0.0f ? value : 0.0f; }
+		void SetParticleTwisted    (float value) { RenderTwist = value > 0.0f ? value : 0.0f; }
 		void SetParticleRotateSpeed(float value) { RenderAngle = value > 0.0f ? value : 0.0f; }
-
-		Vector2T<float> ParticlesCoordCenter = {};
-
+		// shader calcuate coord center.
+		void SetParticleCenter(const Vector2T<float>& value) { 
+			CoordCenterX = value.vector_x; CoordCenterY = value.vector_y;
+		}
 		void UpdateParticleData();
 		void RenderParticleFX();
 	};

@@ -10,8 +10,10 @@ protected:
     Mptr::DefinePointer<PsagManager::Fx::Particle> ParticleSystem = {};
     void InitParticleSystem(const Vector2T<uint32_t>& window_size);
 
-    void CreateParticleFly (const Vector2T<float>& position, float number);
+    void CreateParticleFly  (const Vector2T<float>& position, float number);
     void CreateParticleFreeB(const Vector2T<float>& position, float number);
+
+    void DebugParticleSystem();
 public:
     ~BulletParticle();
 };

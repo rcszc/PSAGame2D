@@ -4,7 +4,7 @@ uniform vec2  ParticleVirTexCropping;
 uniform vec2  ParticleVirTexSize;
 
 uniform float RenderTime;
-uniform float RenderRotate;
+uniform float RenderAngle;
 uniform float RenderTwist;
 
 const vec2 Pivot = vec2(0.5, 0.5);
@@ -19,9 +19,9 @@ void main()
 {
 	float RandomValue = RandomFloat(FxColor.r + FxColor.g + FxColor.b + FxColor.a);
 
-	// rotate_stop => "RenderRotate" = 0.0f.
+	// rotate_stop => "RenderAngle" = 0.0f.
 	// rotate angle * time_step.
-	float Angle = (RenderTime * 0.2 + RandomValue * 5.0) * RenderRotate;
+	float Angle = (RenderTime * 0.2 + RandomValue * 5.0) * RenderAngle;
 	mat2 Rotation = mat2(cos(Angle), -sin(Angle), sin(Angle), cos(Angle));
 
 	vec2 RotatedTexCoord = Rotation * (FxCoord - Pivot) + Pivot;

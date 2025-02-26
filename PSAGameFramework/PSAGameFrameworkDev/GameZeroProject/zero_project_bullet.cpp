@@ -9,6 +9,7 @@ class ActorLogicBullet :public PsagActor::ActorLogicBase {
 protected:
     PsagManager::Tools::Timer::GameCycleTimer Timer = {};
     CreatePTC ParticleFunc = {};
+    Vector2T<float> ThisPosition = {};
 public:
     ActorLogicBullet(CreatePTC func) :
         ParticleFunc(func) 
@@ -18,9 +19,10 @@ public:
             actor_object->ActorModifyColorBlend(Vector4T<float>(0.0f, 1.0f, 0.92f, 1.0f));
         // 10 ms create particles fx.
         if (Timer.CycleTimerGetFlag()) {
-            ParticleFunc(actor_object->ActorGetPosition(), 3);
-            Timer.CycleTimerClearReset(10.0f);
+            Timer.CycleTimerClearReset(16.0f);
+            ParticleFunc(ThisPosition, 5);
         }
+        ThisPosition = actor_object->ActorGetPosition();
         // bullet actor => mouse_pos => rotate.
         float ActorAngle = PsagManager::Maths::CalcFuncPointsAngle(
             actor_object->ActorMappingWindowCoord(),
@@ -28,8 +30,8 @@ public:
         );
         // 相对屏幕鼠标位置施加方向力.
         actor_object->ActorApplyForceMove(Vector2T<float>(
-            sin(PSAG_M_DEGRAD(-ActorAngle - 90.0f)) * 10.0f,
-            cos(PSAG_M_DEGRAD(-ActorAngle - 90.0f)) * 10.0f
+            sin(PSAG_M_DEGRAD(-ActorAngle - 90.0f)) * 8.0f,
+            cos(PSAG_M_DEGRAD(-ActorAngle - 90.0f)) * 8.0f
         ));
         actor_object->ActorModifyState(
             actor_object->ActorGetPosition(),
@@ -65,7 +67,7 @@ public:
 void ZPGameBulletSystem::BulletLogic_PPAB(PsagActor::Actor* ThisActor) {
     // bullet collision => free entity.
     ActorEntities.Get()->DeleteGameActor(ThisActor->ActorGetPrivate().ActorUniqueCode);
-    CreateParticleFreeB(ThisActor->ActorGetPosition(), 78.0f);
+    CreateParticleFreeB(ThisActor->ActorGetPosition(), 128.0f);
     // 飞行时间 < 1s 忽略.
     if (ThisActor->ActorGetLifeTime() < 1.0f) return;
 
@@ -167,6 +169,8 @@ bool ZPGameBulletSystem::LogicEventLoopGame(GameLogic::FrameworkParams& RunningS
     
     // bullet particle_system run render.
     ParticleSystem.Get()->FxParticleRendering();
+
+    DebugParticleSystem();
 
     if (BulletStationPPActor.Get()->REC_InfoStatusGet()) {
         PPActorBulletFire FireParams = {};
