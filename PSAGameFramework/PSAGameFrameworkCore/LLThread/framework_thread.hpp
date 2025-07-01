@@ -104,20 +104,18 @@ namespace PSAG_THREAD_POOL {
             // create object => get object_info.
             OBJECT_INFO = _OBJECT_RTTI(TaskObject);
 
-            std::future<std::shared_ptr<InClass>> ResultAsync = TaskObject->get_future();
+            std::future<std::shared_ptr<InClass>> ResultFuture = TaskObject->get_future();
             {
                 std::unique_lock<std::mutex> Lock(PoolMutex);
                 if (PauseFlag) {
                     // disable push task.
                     throw Error::TPerror("failed thread pool stop.", ThisThreadID(), "CREATE_OBJ");
-                    return ResultAsync;
+                    return ResultFuture;
                 }
-                else
-                    PoolTasks.emplace([TaskObject]() { (*TaskObject)(); });
+                PoolTasks.emplace([TaskObject]() { (*TaskObject)(); });
             }
             WorkersCondition.notify_one();
-
-            return ResultAsync;
+            return ResultFuture;
         }
 
         RTTI_OBJECT_INFO GetCreateObjectInfo() {

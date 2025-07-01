@@ -729,6 +729,9 @@ namespace GraphicsEngineParticle {
 		void SetParticleCenter(const Vector2T<float>& value) { 
 			CoordCenterX = value.vector_x; CoordCenterY = value.vector_y;
 		}
+		void SetParticleScale(const Vector2T<float>& value) {
+			RenderScale = value;
+		}
 		void UpdateParticleData();
 		void RenderParticleFX();
 	};

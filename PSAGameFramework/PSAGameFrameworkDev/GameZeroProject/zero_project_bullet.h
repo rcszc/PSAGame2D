@@ -11,7 +11,10 @@ protected:
     void InitParticleSystem(const Vector2T<uint32_t>& window_size);
 
     void CreateParticleFly  (const Vector2T<float>& position, float number);
-    void CreateParticleFreeB(const Vector2T<float>& position, float number);
+    void CreateParticleGuide(const Vector2T<float>& position);
+
+    void CreateParticleFree0(const Vector2T<float>& position, float number);
+    void CreateParticleFree1(const Vector2T<float>& position);
 
     void DebugParticleSystem();
 public:
@@ -22,13 +25,16 @@ class ZPGameBulletSystem :public GameLogic::INTERFACE_DEVCLASS_GAME,
     public BulletParticle, public ZPGameGlobale {
 protected:
     Mptr::DefinePointer<PsagActor::ShaderManager> ActorShaders  = {};
-    Mptr::DefinePointer<PsagActor::ActorsManager> ActorEntities = {};
+    Mptr::DefinePointer<PsagActor::ActorsManager> SharpEntities = {};
+    Mptr::DefinePointer<PsagActor::ActorsManager> GuideEntities = {};
 
     Mptr::DefinePointer<PsagManager::Notify::StationSystem> BulletStationPPActor = {};
 
-    void BulletLogic_PPAB(PsagActor::Actor* ThisActor);
+    void SharpBullet_PPAB(PsagActor::Actor* ThisActor);
+    void GuideBullet_PPAB(PsagActor::Actor* ThisActor);
 
-    void CreateBullet(const Vector2T<float>& position, float angle);
+    void CreateSharpBullet(const Vector2T<float>& pos, float angle);
+    void CreateGuideBullet(const Vector2T<float>& pos, float angle);
 public:
     // init: return flag: false:failed, true:success.
     bool LogicInitialization(const Vector2T<uint32_t>& WinSize);

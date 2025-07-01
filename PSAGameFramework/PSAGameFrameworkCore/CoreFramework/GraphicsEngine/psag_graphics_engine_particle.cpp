@@ -284,6 +284,7 @@ namespace GraphicsEngineParticle {
 		return ParticlesData;
 	}
 
+#define FRAME_LOAD_GROUPS_NUM 4
 	PsagGLEngineThread::PsagGLEngineThread() {
 		ParticleTaskProcFlag = true;
 		// particle calc => convert => buffer.
@@ -292,9 +293,14 @@ namespace GraphicsEngineParticle {
 				std::vector<ParticleAttributes> DataTemp = {};
 				{
 					lock_guard<mutex> Lock(GenParticleMutex);
-					if (!GenParticle.empty()) {
-						DataTemp = GenParticle.front();
+					size_t MaxSizeCount = 0;
+					while (!GenParticle.empty()) {
+						if (MaxSizeCount > FRAME_LOAD_GROUPS_NUM) 
+							break;
+						DataTemp.insert(DataTemp.end(), 
+							GenParticle.front().begin(), GenParticle.front().end());
 						GenParticle.pop();
+						++MaxSizeCount;
 					}
 				}
 				lock_guard<mutex> Lock(ParticlesDataMutex);

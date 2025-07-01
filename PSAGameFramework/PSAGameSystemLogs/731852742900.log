@@ -1,0 +1,946 @@
+[2025.06.20 16:23:21.081 ms]:[INFO]:[PSAG_LOGGER]: start thread success.
+[2025.06.20 16:23:21.082 ms]:[INFO]:[PSAG_M_START]: core_start objects(frm) total: only
+[2025.06.20 16:23:21.082 ms]:[INFO]:[PSAG_M_START]: core_start objects(net) total: 0
+[2025.06.20 16:23:21.082 ms]:[INFO]:[PSAG_M_START]: core_start objects(ext) total: 0
+[2025.06.20 16:23:21.083 ms]:[TRACE]:[PSAG_M_MAINEVENT]: async_event add item_id: 830337511712
+[2025.06.20 16:23:21.083 ms]:[INFO]:[PSAG_M_MAINEVENT]: async_events executing...
+[2025.06.20 16:23:21.083 ms]:[INFO]:[PSAG_LOGGER]: create log_file: PSAGameSystemLogs/731852742900.log
+[2025.06.20 16:23:21.083 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/framework_config.json read_size: 463
+[2025.06.20 16:23:21.084 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/framework_config_shaders.json read_size: 1329
+[2025.06.20 16:23:21.084 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_template_actor.vert read_size: 984
+[2025.06.20 16:23:21.084 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_template.vert read_size: 737
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_tools.frag read_size: 933
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/public/psag_graph_header.frag read_size: 202
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_vollight.frag read_size: 1670
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_multfilter.frag read_size: 356
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_blurh.frag read_size: 783
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final_blurv.frag read_size: 778
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_final.frag read_size: 1243
+[2025.06.20 16:23:21.085 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_background.frag read_size: 1107
+[2025.06.20 16:23:21.086 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_particle.frag read_size: 1255
+[2025.06.20 16:23:21.086 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkCore/CoreShaderScript/private/psag_graph_fx_sequence.frag read_size: 543
+[2025.06.20 16:23:21.086 ms]:[INFO]:[PSAG_GL_GLSL]: graphics_engine config system_glsl.
+[2025.06.20 16:23:21.086 ms]:[TRACE]:[PSAG_M_CORE]: core framework init,config...
+[2025.06.20 16:23:21.153 ms]:[INFO]:[PSAG_WINDOW]: init opengl_glfw.
+[2025.06.20 16:23:21.880 ms]:[WARNING]:[PSAG_WINDOW]: <F:\PSAFrameworkProject\PSAGameFramework\PSAGameFramework\PSAGameFrameworkCore\LLWindowGui\framework_window_system.cpp:__LINE__> failed fw_window load: icon_image.
+[2025.06.20 16:23:21.958 ms]:[INFO]:[PSAG_OGL_INIT]: framework_graphics logger function_ptr: b2269698
+[2025.06.20 16:23:21.959 ms]:[INFO]:[PSAG_OGL_INIT]: framework_graphics shader gl_version: 
+[2025.06.20 16:23:21.965 ms]:[TRACE]:[PSAG_OGL_INIT]: framework_graphics config init...
+[2025.06.20 16:23:21.965 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device gpu supplier: NVIDIA Corporation
+[2025.06.20 16:23:21.965 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device gpu model: NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2
+[2025.06.20 16:23:21.965 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device version opengl: 4.6.0 NVIDIA 576.57
+[2025.06.20 16:23:21.965 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device version glsl: 4.60 NVIDIA
+[2025.06.20 16:23:21.965 ms]:[PERF]:[PSAG_OGL_INFORMATION]: device memory[capacity]: 8188.00 mib
+[2025.06.20 16:23:21.965 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device (vao)attribs_max units: 16 entry
+[2025.06.20 16:23:21.965 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device (vbo)buffer_max units: 4096 entry
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device [tmu]texture_max units: 32 entry
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device (vert)uniform_max items: 4096
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_OGL_INFORMATION]: device (frag)uniform_max items: 4096
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_LLRES]: graph static_object(graphics) create.
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_AUDIO_DATA]: LLRES static_object() create.
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_OGL_RES]: vao: storage key: 4
+[2025.06.20 16:23:21.966 ms]:[INFO]:[PSAG_OGL_RES]: vbo: storage key: 6
+[2025.06.20 16:23:21.966 ms]:[TRACE]:[PSAG_GL_DATASET]: dynamic vertex data manager_create.
+[2025.06.20 16:23:21.970 ms]:[INFO]:[PSAG_OGL_RES]: vao: storage key: 8
+[2025.06.20 16:23:21.971 ms]:[INFO]:[PSAG_OGL_RES]: vbo: storage key: 10
+[2025.06.20 16:23:21.971 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(stc) upload gpu_data: 72 bytes
+[2025.06.20 16:23:21.971 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(stc) item: alloc key: 12
+[2025.06.20 16:23:21.972 ms]:[INFO]:[PSAG_GL_DATASET]: preset craete: rectangle.
+[2025.06.20 16:23:21.973 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(stc) upload gpu_data: 2868 bytes
+[2025.06.20 16:23:21.973 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(stc) item: alloc key: 14
+[2025.06.20 16:23:21.973 ms]:[INFO]:[PSAG_GL_DATASET]: preset craete: circle.
+[2025.06.20 16:23:21.973 ms]:[TRACE]:[PSAG_GL_DATASET]: static vertex data manager_create.
+[2025.06.20 16:23:21.973 ms]:[TRACE]:[PSAG_OGL_RES]: tmu alloc u: 1
+[2025.06.20 16:23:21.973 ms]:[TRACE]:[PSAG_OGL_RES]: tmu alloc u: 2
+[2025.06.20 16:23:21.973 ms]:[TRACE]:[PSAG_OGL_RES]: tmu alloc u: 3
+[2025.06.20 16:23:21.974 ms]:[TRACE]:[PSAG_OGL_RES]: tmu alloc u: 4
+[2025.06.20 16:23:21.974 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(array) object create.
+[2025.06.20 16:23:21.974 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture create, succ: size: 4096 x 4096, layers: 5.
+[2025.06.20 16:23:21.974 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(array) object create.
+[2025.06.20 16:23:21.974 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture create, succ: size: 2048 x 2048, layers: 10.
+[2025.06.20 16:23:21.974 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(array) object create.
+[2025.06.20 16:23:21.974 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture create, succ: size: 1024 x 1024, layers: 20.
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(array) object create.
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture create, succ: size: 512 x 512, layers: 25.
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_RES]: texture: storage key: 16
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_RES]: texture: storage key: 18
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_RES]: texture: storage key: 20
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_RES]: texture: storage key: 22
+[2025.06.20 16:23:21.975 ms]:[TRACE]:[PSAG_GL_DATASET]: vir_create texture[8x] size: 4096 x 4096
+[2025.06.20 16:23:21.975 ms]:[TRACE]:[PSAG_GL_DATASET]: vir_create texture[4x] size: 2048 x 2048
+[2025.06.20 16:23:21.975 ms]:[TRACE]:[PSAG_GL_DATASET]: vir_create texture[2x] size: 1024 x 1024
+[2025.06.20 16:23:21.975 ms]:[TRACE]:[PSAG_GL_DATASET]: vir_create texture[1x] size: 512 x 512
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_UNIFORM]: uniform_buffer.gen create.
+[2025.06.20 16:23:21.975 ms]:[INFO]:[PSAG_OGL_RES]: ubo: storage key: 24
+[2025.06.20 16:23:21.976 ms]:[INFO]:[PSAG_GL_MATRIX]: graphics_engine create matrix ubo.
+[2025.06.20 16:23:23.276 ms]:[TRACE]:[PSAG_AUDIO]: audio(openal) global create device & context.
+[2025.06.20 16:23:23.276 ms]:[INFO]:[PSAG_PHYSICS]: physics_world item: alloc key: DEFAULT_PHY_WORLD
+[2025.06.20 16:23:23.276 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.276 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.276 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 2
+[2025.06.20 16:23:23.277 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.277 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.277 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 26
+[2025.06.20 16:23:23.277 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.277 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.278 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 2
+[2025.06.20 16:23:23.278 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.278 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.278 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 28
+[2025.06.20 16:23:23.279 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.279 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.279 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.279 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.279 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.279 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 30
+[2025.06.20 16:23:23.280 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.280 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.280 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.280 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.280 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 32
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.281 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 34
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(stc) upload gpu_data: 2940 bytes
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(stc) item: alloc key: 36
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_OGL_RENDER]: render_buffer object create.
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_OGL_RENDER]: render_buffer config depth.
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_OGL_RENDER]: alloc render_buffer 1680 x 945, size: 6.056 mib.
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_OGL_RES]: rbo: storage key: 38
+[2025.06.20 16:23:23.282 ms]:[TRACE]:[PSAG_OGL_RES]: tmu alloc u: 5
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(array) object create.
+[2025.06.20 16:23:23.282 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture create, succ: size: 1680 x 945, layers: 5.
+[2025.06.20 16:23:23.283 ms]:[INFO]:[PSAG_OGL_RES]: texture: storage key: 40
+[2025.06.20 16:23:23.283 ms]:[INFO]:[PSAG_OGL_FRAME]: frame_buffer object create.
+[2025.06.20 16:23:23.288 ms]:[INFO]:[PSAG_OGL_RES]: fbo: storage key: 42
+[2025.06.20 16:23:23.288 ms]:[INFO]:[PSAG_OGL_FRAME]: frame_buffer object create.
+[2025.06.20 16:23:23.288 ms]:[INFO]:[PSAG_OGL_RES]: fbo: storage key: 44
+[2025.06.20 16:23:23.288 ms]:[INFO]:[PSAG_OGL_FRAME]: frame_buffer object create.
+[2025.06.20 16:23:23.289 ms]:[INFO]:[PSAG_OGL_RES]: fbo: storage key: 46
+[2025.06.20 16:23:23.289 ms]:[INFO]:[PSAG_OGL_FRAME]: frame_buffer object create.
+[2025.06.20 16:23:23.289 ms]:[INFO]:[PSAG_OGL_RES]: fbo: storage key: 48
+[2025.06.20 16:23:23.289 ms]:[INFO]:[PSAG_OGL_FRAME]: frame_buffer object create.
+[2025.06.20 16:23:23.289 ms]:[INFO]:[PSAG_OGL_RES]: fbo: storage key: 50
+[2025.06.20 16:23:23.289 ms]:[INFO]:[PSAG_GL_POST]: graphics_engine create final_shader(system).
+[2025.06.20 16:23:23.290 ms]:[INFO]:[PSAG_IMGUI]: imgui_read: fonts file: PSAGameSystemFiles/JetBrainsMonoBold.ttf
+[2025.06.20 16:23:23.294 ms]:[INFO]:[PSAG_IMGUI]: imgui_init: imgui_opengl3 context.
+[2025.06.20 16:23:23.294 ms]:[TRACE]:[PSAG_M_CORE]: registration ref_object name: ZPGameScene
+[2025.06.20 16:23:23.294 ms]:[TRACE]:[PSAG_M_CORE]: registration ref_object name: ZPGamePActor
+[2025.06.20 16:23:23.294 ms]:[TRACE]:[PSAG_M_CORE]: registration ref_object name: ZPGameBullet
+[2025.06.20 16:23:23.294 ms]:[TRACE]:[PSAG_M_CORE]: registration ref_object name: ZPGameGui
+[2025.06.20 16:23:23.294 ms]:[INFO]:[PSAG_PHYSICS]: physics_world item: alloc key: ZPGamePhysics
+[2025.06.20 16:23:23.294 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_wall_h.png read_size: 22012
+[2025.06.20 16:23:23.294 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_wall_v.png read_size: 44017
+[2025.06.20 16:23:23.295 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader create: 1680 x 945
+[2025.06.20 16:23:23.295 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader create: 1680 x 945
+[2025.06.20 16:23:23.313 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 4096 x 208, color_channel: 4
+[2025.06.20 16:23:23.315 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager alloc_count: 0
+[2025.06.20 16:23:23.393 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture: src: 4096 x 208, fmt_fill: 4096 x 4096
+[2025.06.20 16:23:23.433 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: alloc key: 52, cropping: 1.00 x 0.05, res: 1x/1
+[2025.06.20 16:23:23.442 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader texture add, name: WallH
+[2025.06.20 16:23:23.443 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader create: 1680 x 945
+[2025.06.20 16:23:23.465 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 208 x 4096, color_channel: 4
+[2025.06.20 16:23:23.466 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager alloc_count: 1
+[2025.06.20 16:23:23.538 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture: src: 208 x 4096, fmt_fill: 4096 x 4096
+[2025.06.20 16:23:23.584 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: alloc key: 54, cropping: 0.05 x 1.00, res: 1x/1
+[2025.06.20 16:23:23.594 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader texture add, name: WallV
+[2025.06.20 16:23:23.599 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader load textures: 0
+[2025.06.20 16:23:23.599 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.599 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.600 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 2
+[2025.06.20 16:23:23.600 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.600 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.600 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 56
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader default_res create.
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader load textures: 1
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 60
+[2025.06.20 16:23:23.601 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader default_res create.
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader load textures: 1
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 64
+[2025.06.20 16:23:23.602 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader default_res create.
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt get textures: 1
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt render_comp init.
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_PHYSICS]: body_data(static) item: alloc key: 2906891666176
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item create: 68
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt get textures: 1
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt render_comp init.
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_PHYSICS]: body_data(static) item: alloc key: 2906891665280
+[2025.06.20 16:23:23.603 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item create: 70
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt get textures: 1
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt render_comp init.
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_PHYSICS]: body_data(static) item: alloc key: 2906891666400
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item create: 72
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt get textures: 1
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt render_comp init.
+[2025.06.20 16:23:23.604 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_PHYSICS]: body_data(static) item: alloc key: 2906891664832
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item create: 74
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt render_comp init.
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_PHYSICS]: body_data(static) item: alloc key: 2906891658560
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item create: 76
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_ACTOR_CORE]: AType: register key: ActorPAWN
+[2025.06.20 16:23:23.605 ms]:[INFO]:[PSAG_ACTOR_CORE]: AType: register key: ActorNPC
+[2025.06.20 16:23:23.607 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_ppactor_nor.png read_size: 405375
+[2025.06.20 16:23:23.607 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader create: 1680 x 945
+[2025.06.20 16:23:23.666 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 1024, color_channel: 4
+[2025.06.20 16:23:23.668 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager alloc_count: 0
+[2025.06.20 16:23:23.668 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture: src: 1024 x 1024, fmt_fill: 1024 x 1024
+[2025.06.20 16:23:23.671 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: alloc key: 78, cropping: 1.00 x 1.00, res: 4x/1
+[2025.06.20 16:23:23.672 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader texture add, name: PPActor
+[2025.06.20 16:23:23.673 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_npc_a.png read_size: 177392
+[2025.06.20 16:23:23.673 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader create: 1680 x 945
+[2025.06.20 16:23:23.718 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 1024, color_channel: 4
+[2025.06.20 16:23:23.720 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager alloc_count: 1
+[2025.06.20 16:23:23.720 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture: src: 1024 x 1024, fmt_fill: 1024 x 1024
+[2025.06.20 16:23:23.723 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: alloc key: 80, cropping: 1.00 x 1.00, res: 4x/1
+[2025.06.20 16:23:23.723 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader texture add, name: NPActor
+[2025.06.20 16:23:23.724 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader load textures: 1
+[2025.06.20 16:23:23.724 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.731 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.731 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.731 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 82
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader default_res create.
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader load textures: 1
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.732 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 86
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader default_res create.
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884583184
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 90
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station register n: PPActor, ptr d04330d0
+[2025.06.20 16:23:23.733 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884585200
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 92
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884585872
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 94
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581168
+[2025.06.20 16:23:23.734 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 96
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581504
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 98
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884585536
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 100
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582848
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 102
+[2025.06.20 16:23:23.735 ms]:[INFO]:[PSAG_ACTOR_CORE]: AType: register key: ActorBULLET
+[2025.06.20 16:23:23.736 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_bullet.png read_size: 54094
+[2025.06.20 16:23:23.736 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader create: 1680 x 945
+[2025.06.20 16:23:23.792 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 2048, color_channel: 4
+[2025.06.20 16:23:23.796 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager alloc_count: 0
+[2025.06.20 16:23:23.927 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture: src: 1024 x 2048, fmt_fill: 2048 x 2048
+[2025.06.20 16:23:23.943 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: alloc key: 104, cropping: 0.50 x 1.00, res: 2x/1
+[2025.06.20 16:23:23.946 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader texture add, name: Bullet
+[2025.06.20 16:23:23.947 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader load textures: 1
+[2025.06.20 16:23:23.947 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.948 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.948 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.948 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.948 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.948 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 106
+[2025.06.20 16:23:23.948 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader default_res create.
+[2025.06.20 16:23:23.949 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_particle_a.png read_size: 21686
+[2025.06.20 16:23:23.969 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 512 x 512, color_channel: 4
+[2025.06.20 16:23:23.969 ms]:[INFO]:[PSAG_GL_PARTICLE]: particle system proc thread init.
+[2025.06.20 16:23:23.969 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex_shader source script num: 1
+[2025.06.20 16:23:23.970 ms]:[INFO]:[PSAG_OGL_SHADER]: vertex compilation succeeded.
+[2025.06.20 16:23:23.970 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment_shader source script num: 3
+[2025.06.20 16:23:23.970 ms]:[INFO]:[PSAG_OGL_SHADER]: fragment compilation succeeded.
+[2025.06.20 16:23:23.971 ms]:[INFO]:[PSAG_OGL_SHADER]: shader_program link succeeded.
+[2025.06.20 16:23:23.971 ms]:[INFO]:[PSAG_OGL_RES]: shader: storage key: 110
+[2025.06.20 16:23:23.971 ms]:[INFO]:[PSAG_GL_DATASET]: ver_data(dy) item: alloc key: 112
+[2025.06.20 16:23:23.972 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager alloc_count: 0
+[2025.06.20 16:23:23.972 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture: src: 512 x 512, fmt_fill: 512 x 512
+[2025.06.20 16:23:23.973 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: alloc key: 114, cropping: 1.00 x 1.00, res: 8x/1
+[2025.06.20 16:23:23.973 ms]:[INFO]:[PSAG_GL_PARTICLE]: particle system init.
+[2025.06.20 16:23:23.973 ms]:[INFO]:[PSAG_GL_PARTICLE]: particle system render_size: 1680 x 945
+[2025.06.20 16:23:23.973 ms]:[INFO]:[PSAG_MANAGER_FX]: manager fx_particle init.
+[2025.06.20 16:23:23.973 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station register n: PPActorBullet, ptr d04330d0
+[2025.06.20 16:23:23.974 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_gui/zpgame_gui_b0.png read_size: 10743
+[2025.06.20 16:23:23.988 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 278, color_channel: 4
+[2025.06.20 16:23:23.988 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(view) object create.
+[2025.06.20 16:23:23.992 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture_view create, succ: size: 1024 x 278
+[2025.06.20 16:23:23.992 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system, create: 1024 x 278
+[2025.06.20 16:23:23.993 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_gui/zpgame_gui_b1.png read_size: 22199
+[2025.06.20 16:23:24.008 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 278, color_channel: 4
+[2025.06.20 16:23:24.012 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(view) object create.
+[2025.06.20 16:23:24.014 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture_view create, succ: size: 1024 x 278
+[2025.06.20 16:23:24.014 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system, create: 1024 x 278
+[2025.06.20 16:23:24.015 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_gui/zpgame_gui_b2.png read_size: 22716
+[2025.06.20 16:23:24.029 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 278, color_channel: 4
+[2025.06.20 16:23:24.033 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(view) object create.
+[2025.06.20 16:23:24.034 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture_view create, succ: size: 1024 x 278
+[2025.06.20 16:23:24.034 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system, create: 1024 x 278
+[2025.06.20 16:23:24.034 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_gui/zpgame_gui_b3.png read_size: 23026
+[2025.06.20 16:23:24.048 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 278, color_channel: 4
+[2025.06.20 16:23:24.057 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(view) object create.
+[2025.06.20 16:23:24.059 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture_view create, succ: size: 1024 x 278
+[2025.06.20 16:23:24.059 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system, create: 1024 x 278
+[2025.06.20 16:23:24.060 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_gui/zpgame_gui_b4.png read_size: 23655
+[2025.06.20 16:23:24.073 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 278, color_channel: 4
+[2025.06.20 16:23:24.077 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(view) object create.
+[2025.06.20 16:23:24.079 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture_view create, succ: size: 1024 x 278
+[2025.06.20 16:23:24.079 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system, create: 1024 x 278
+[2025.06.20 16:23:24.080 ms]:[INFO]:[PSAG_FILESYS_LOAD]: load(src) read_file: PSAGameFrameworkDev/GameZeroProject/GameMaterial/zpgame_gui/zpgame_gui_b5.png read_size: 23922
+[2025.06.20 16:23:24.093 ms]:[INFO]:[PSAG_OGL_IMG]: success decode image: size: 1024 x 278, color_channel: 4
+[2025.06.20 16:23:24.096 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture.2d(view) object create.
+[2025.06.20 16:23:24.096 ms]:[INFO]:[PSAG_OGL_TEXTURE]: texture_view create, succ: size: 1024 x 278
+[2025.06.20 16:23:24.097 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system, create: 1024 x 278
+[2025.06.20 16:23:24.097 ms]:[INFO]:[PSAG_M_START_ANIM]: create start_anim player.
+[2025.06.20 16:23:24.097 ms]:[TRACE]:[PSAG_M_CORE]: pomelo_star game2d version: 12.20250127
+[2025.06.20 16:23:24.166 ms]:[INFO]:[PSAG_M_START_ANIM]: start_anim playback complete, time(s): 0.000
+[2025.06.20 16:23:24.166 ms]:[INFO]:[PSAG_M_START_ANIM]: free textures resource.
+[2025.06.20 16:23:25.408 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:25.409 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:25.409 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:25.409 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:25.409 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:23:25.409 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 116
+[2025.06.20 16:23:28.421 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:28.422 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:28.422 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:28.422 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:28.422 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:23:28.423 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 118
+[2025.06.20 16:23:28.637 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:28.638 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:28.638 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:28.638 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:28.638 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:23:28.639 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 120
+[2025.06.20 16:23:28.883 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:28.885 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:28.886 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:28.886 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:28.886 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586880
+[2025.06.20 16:23:28.886 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 122
+[2025.06.20 16:23:31.426 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:31.426 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:31.426 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 122
+[2025.06.20 16:23:35.816 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:35.816 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:23:35.816 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 116
+[2025.06.20 16:23:36.260 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:36.260 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:23:36.260 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 120
+[2025.06.20 16:23:36.530 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:36.530 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:23:36.530 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 118
+[2025.06.20 16:23:37.339 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:37.340 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:37.340 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:37.340 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:37.340 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:23:37.341 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 124
+[2025.06.20 16:23:37.670 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:37.671 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:37.671 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:37.671 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:37.671 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580160
+[2025.06.20 16:23:37.671 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 126
+[2025.06.20 16:23:38.118 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:38.119 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:38.119 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:38.119 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:38.119 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584864
+[2025.06.20 16:23:38.119 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 128
+[2025.06.20 16:23:38.389 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:38.392 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:38.392 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:38.392 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:38.392 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:23:38.392 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 130
+[2025.06.20 16:23:38.800 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:38.801 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:38.801 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:38.802 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:38.802 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:23:38.802 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 132
+[2025.06.20 16:23:39.383 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:39.383 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:23:39.384 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 132
+[2025.06.20 16:23:39.407 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:39.407 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:39.407 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:39.407 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 130
+[2025.06.20 16:23:39.410 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:39.410 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:39.410 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:39.410 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584528
+[2025.06.20 16:23:39.410 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 134
+[2025.06.20 16:23:39.439 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:39.439 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:23:39.439 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 128
+[2025.06.20 16:23:39.443 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:39.444 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:39.444 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:39.444 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:39.444 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:23:39.444 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 136
+[2025.06.20 16:23:39.494 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:39.495 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:39.495 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:39.495 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:39.495 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584864
+[2025.06.20 16:23:39.496 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 138
+[2025.06.20 16:23:40.084 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.084 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:23:40.084 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 126
+[2025.06.20 16:23:40.097 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:40.099 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:40.099 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:40.099 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.099 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884583520
+[2025.06.20 16:23:40.099 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 140
+[2025.06.20 16:23:40.250 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.250 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:40.251 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 134
+[2025.06.20 16:23:40.292 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:40.293 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:40.293 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:40.293 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.293 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582512
+[2025.06.20 16:23:40.293 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 142
+[2025.06.20 16:23:40.328 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.328 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:23:40.328 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 136
+[2025.06.20 16:23:40.342 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:40.344 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:40.344 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:40.344 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.344 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:23:40.344 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 144
+[2025.06.20 16:23:40.455 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.455 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:23:40.455 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 138
+[2025.06.20 16:23:40.493 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:40.495 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:40.495 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:40.495 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:40.496 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582176
+[2025.06.20 16:23:40.496 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 146
+[2025.06.20 16:23:41.348 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:41.349 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:23:41.349 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 124
+[2025.06.20 16:23:41.391 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:41.392 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:41.392 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:41.393 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:41.393 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584192
+[2025.06.20 16:23:41.393 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 148
+[2025.06.20 16:23:43.870 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:43.875 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:23:43.876 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 146
+[2025.06.20 16:23:43.891 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:43.894 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:43.895 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:43.895 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:43.895 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584528
+[2025.06.20 16:23:43.895 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 150
+[2025.06.20 16:23:44.259 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:44.259 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:44.259 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 142
+[2025.06.20 16:23:44.292 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:44.293 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:44.293 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:44.293 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:44.293 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:23:44.293 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 152
+[2025.06.20 16:23:46.703 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:46.703 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:23:46.703 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 144
+[2025.06.20 16:23:47.160 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.160 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:23:47.160 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 148
+[2025.06.20 16:23:47.200 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:47.201 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:47.201 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:47.201 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.201 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586544
+[2025.06.20 16:23:47.201 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 154
+[2025.06.20 16:23:47.458 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.458 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:23:47.458 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 140
+[2025.06.20 16:23:47.476 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:47.477 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:47.477 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:47.477 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.477 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586880
+[2025.06.20 16:23:47.477 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 156
+[2025.06.20 16:23:47.528 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:47.529 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:47.529 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:47.529 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.529 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:23:47.529 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 158
+[2025.06.20 16:23:47.701 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.701 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:47.701 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 152
+[2025.06.20 16:23:47.726 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:47.726 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:47.726 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:47.726 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:47.726 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884587216
+[2025.06.20 16:23:47.726 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 160
+[2025.06.20 16:23:50.267 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:50.267 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:50.267 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 160
+[2025.06.20 16:23:50.485 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:50.485 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:23:50.485 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 158
+[2025.06.20 16:23:50.555 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:50.555 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:23:50.555 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 156
+[2025.06.20 16:23:51.851 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:51.851 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:23:51.851 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 154
+[2025.06.20 16:23:52.366 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:52.366 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:52.366 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:52.366 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:52.366 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586880
+[2025.06.20 16:23:52.366 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 162
+[2025.06.20 16:23:52.642 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:52.643 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:52.643 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:52.643 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:52.643 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884579488
+[2025.06.20 16:23:52.643 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 164
+[2025.06.20 16:23:52.692 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:52.692 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:52.692 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:52.692 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:52.692 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582512
+[2025.06.20 16:23:52.692 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 166
+[2025.06.20 16:23:52.741 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:52.741 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:52.741 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:52.741 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:52.741 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:23:52.741 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 168
+[2025.06.20 16:23:53.144 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:53.144 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:23:53.144 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 150
+[2025.06.20 16:23:53.191 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:53.192 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:53.192 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:53.192 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:53.192 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884579824
+[2025.06.20 16:23:53.192 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 170
+[2025.06.20 16:23:53.571 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:53.571 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:23:53.571 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 162
+[2025.06.20 16:23:53.864 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:53.864 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:23:53.864 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 164
+[2025.06.20 16:23:53.897 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:53.898 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:53.898 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:53.898 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:53.898 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580160
+[2025.06.20 16:23:53.898 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 172
+[2025.06.20 16:23:53.954 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:53.954 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:23:53.954 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 166
+[2025.06.20 16:23:54.035 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:54.035 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:23:54.035 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 168
+[2025.06.20 16:23:54.174 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:54.175 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:54.175 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:54.175 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:54.175 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884579488
+[2025.06.20 16:23:54.175 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 174
+[2025.06.20 16:23:54.223 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:54.224 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:54.224 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:54.224 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:54.224 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:23:54.224 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 176
+[2025.06.20 16:23:54.274 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:54.276 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:54.276 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:54.276 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:54.276 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:23:54.276 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 178
+[2025.06.20 16:23:55.831 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:55.831 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:23:55.831 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 170
+[2025.06.20 16:23:55.873 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:23:55.874 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:23:55.874 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:23:55.874 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:23:55.874 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884579824
+[2025.06.20 16:23:55.874 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 180
+[2025.06.20 16:24:02.791 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:02.791 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:24:02.791 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 178
+[2025.06.20 16:24:02.824 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:02.825 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:02.825 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:02.825 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:02.825 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:24:02.825 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 182
+[2025.06.20 16:24:02.892 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:02.892 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:24:02.892 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 176
+[2025.06.20 16:24:02.924 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:02.925 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:02.925 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:02.925 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:02.925 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582176
+[2025.06.20 16:24:02.925 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 184
+[2025.06.20 16:24:02.983 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:02.983 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:24:02.983 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 174
+[2025.06.20 16:24:03.025 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:03.025 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:03.025 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:03.025 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:03.025 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582512
+[2025.06.20 16:24:03.025 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 186
+[2025.06.20 16:24:03.081 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:03.081 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:03.081 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 180
+[2025.06.20 16:24:03.123 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:03.124 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:03.124 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:03.124 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:03.124 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584864
+[2025.06.20 16:24:03.124 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 188
+[2025.06.20 16:24:03.323 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:03.323 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:24:03.323 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 172
+[2025.06.20 16:24:03.374 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:03.375 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:03.375 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:03.375 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:03.375 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884579824
+[2025.06.20 16:24:03.375 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 190
+[2025.06.20 16:24:06.388 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:06.388 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:24:06.388 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 190
+[2025.06.20 16:24:06.423 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:06.425 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:06.425 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:06.425 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:06.425 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580160
+[2025.06.20 16:24:06.425 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 192
+[2025.06.20 16:24:08.687 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.687 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:24:08.687 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 192
+[2025.06.20 16:24:08.725 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:08.725 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:08.725 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:08.725 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.725 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584528
+[2025.06.20 16:24:08.725 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 194
+[2025.06.20 16:24:08.736 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.736 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:24:08.736 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 194
+[2025.06.20 16:24:08.747 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.747 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:24:08.747 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 184
+[2025.06.20 16:24:08.759 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.759 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:24:08.759 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 182
+[2025.06.20 16:24:08.775 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:08.776 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:08.776 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:08.776 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.776 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:24:08.776 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 196
+[2025.06.20 16:24:08.786 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.786 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:24:08.786 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 196
+[2025.06.20 16:24:08.796 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.796 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:24:08.796 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 186
+[2025.06.20 16:24:08.823 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:08.824 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:08.824 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:08.824 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.824 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:24:08.824 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 198
+[2025.06.20 16:24:08.835 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.835 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:24:08.835 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 198
+[2025.06.20 16:24:08.852 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.852 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:08.852 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 188
+[2025.06.20 16:24:08.874 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:08.876 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:08.876 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:08.876 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.876 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884582512
+[2025.06.20 16:24:08.876 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 200
+[2025.06.20 16:24:08.888 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.888 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:08.888 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 200
+[2025.06.20 16:24:08.923 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:08.923 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:08.923 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:08.924 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.924 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586880
+[2025.06.20 16:24:08.924 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 202
+[2025.06.20 16:24:08.934 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.934 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:08.934 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 202
+[2025.06.20 16:24:08.974 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:08.974 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:08.974 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:08.974 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.974 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:24:08.974 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 204
+[2025.06.20 16:24:08.985 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:08.985 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:08.985 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 204
+[2025.06.20 16:24:09.025 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.025 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.025 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.025 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.025 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:24:09.025 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 206
+[2025.06.20 16:24:09.036 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.036 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.036 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 206
+[2025.06.20 16:24:09.073 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.073 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.073 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.073 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.073 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884583520
+[2025.06.20 16:24:09.073 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 208
+[2025.06.20 16:24:09.083 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.083 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.083 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 208
+[2025.06.20 16:24:09.125 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.125 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.125 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.125 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.125 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884584192
+[2025.06.20 16:24:09.125 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 210
+[2025.06.20 16:24:09.136 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.136 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.136 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 210
+[2025.06.20 16:24:09.175 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.175 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.175 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.175 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.175 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:24:09.175 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 212
+[2025.06.20 16:24:09.185 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.185 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.185 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 212
+[2025.06.20 16:24:09.223 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.223 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.223 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.223 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.223 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:24:09.224 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 214
+[2025.06.20 16:24:09.234 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.234 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.234 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 214
+[2025.06.20 16:24:09.273 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.273 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.273 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.273 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.273 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:24:09.273 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 216
+[2025.06.20 16:24:09.284 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.284 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.284 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 216
+[2025.06.20 16:24:09.323 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.324 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.324 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.324 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.324 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884579824
+[2025.06.20 16:24:09.324 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 218
+[2025.06.20 16:24:09.335 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.335 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.335 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 218
+[2025.06.20 16:24:09.375 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.375 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.375 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.376 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.376 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:24:09.376 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 220
+[2025.06.20 16:24:09.386 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.386 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:09.386 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 220
+[2025.06.20 16:24:09.423 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.424 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.424 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.424 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.424 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884580832
+[2025.06.20 16:24:09.424 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 222
+[2025.06.20 16:24:09.475 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.475 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.476 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.476 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.476 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586208
+[2025.06.20 16:24:09.476 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 224
+[2025.06.20 16:24:09.524 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.525 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.525 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.525 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.525 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586544
+[2025.06.20 16:24:09.525 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 226
+[2025.06.20 16:24:09.574 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.575 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.575 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.575 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.575 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884586880
+[2025.06.20 16:24:09.575 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 228
+[2025.06.20 16:24:09.623 ms]:[INFO]:[PSAG_TOOL_NOTFIY]: station receive pair: PPActor/PPActorBullet, data_size: 12 bytes
+[2025.06.20 16:24:09.624 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor get textures: 1
+[2025.06.20 16:24:09.624 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor render_comp init.
+[2025.06.20 16:24:09.624 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:09.624 ms]:[INFO]:[PSAG_PHYSICS]: body_data(dynamic) item: alloc key: 2906884581840
+[2025.06.20 16:24:09.625 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity create: 230
+[2025.06.20 16:24:13.194 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.194 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902176
+[2025.06.20 16:24:13.194 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 230
+[2025.06.20 16:24:13.218 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.218 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901792
+[2025.06.20 16:24:13.218 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 228
+[2025.06.20 16:24:13.237 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.237 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902368
+[2025.06.20 16:24:13.237 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 224
+[2025.06.20 16:24:13.237 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.237 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889901984
+[2025.06.20 16:24:13.237 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 226
+[2025.06.20 16:24:13.274 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.274 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889902560
+[2025.06.20 16:24:13.274 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 222
+[2025.06.20 16:24:13.767 ms]:[INFO]:[PSAG_OGL_RES]: rbo: delete key: 38
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: fbo: delete key: 48
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: fbo: delete key: 50
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: fbo: delete key: 46
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: fbo: delete key: 42
+[2025.06.20 16:24:13.768 ms]:[TRACE]:[PSAG_OGL_RES]: tmu delete(space): 5
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: texture: delete key: 40
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 30
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 32
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 34
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 26
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_GL_POST]: graphics_engine free post_shader(system).
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889900256
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item delete: 76
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889899488
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item delete: 68
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889899680
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item delete: 70
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889899872
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item delete: 72
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889900064
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_ENVMT_CORE]: game_envmt item delete: 74
+[2025.06.20 16:24:13.768 ms]:[INFO]:[PSAG_GAMECORE_MAG]: game_envmt manager system delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager delete_count(space): 0
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: delete key: 52
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 60
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 56
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager delete_count(space): 1
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: delete key: 54
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 64
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GAMECORE_MAG]: actor_shader manager system delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_PHYSICS]: phy_world => body_data, name: ZPGamePhysics
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_PHYSICS]: body_data item: delete key: 2906889900448
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor entity delete: 90
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager delete_count(space): 0
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: delete key: 78
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 82
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager delete_count(space): 1
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: delete key: 80
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 86
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader delete.
+[2025.06.20 16:24:13.769 ms]:[INFO]:[PSAG_GAMECORE_MAG]: actor_shader manager system delete.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_DATASET]: layers_manager delete_count(space): 0
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_DATASET]: vir_texture item: delete key: 104
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_OGL_RES]: shader: delete key: 106
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_ACTOR_CORE]: game_actor shader delete.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GAMECORE_MAG]: actor_shader manager system delete.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GAMECORE_MAG]: game_actor manager system delete.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system free.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system free.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system free.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system free.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system free.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_GL_PVFX]: psag_fx image_view system free.
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_OGL_RES]: vao: delete key: 4
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_OGL_RES]: vbo: delete key: 6
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_OGL_RES]: vao: delete key: 8
+[2025.06.20 16:24:13.770 ms]:[INFO]:[PSAG_OGL_RES]: vbo: delete key: 10
+[2025.06.20 16:24:13.770 ms]:[TRACE]:[PSAG_OGL_RES]: tmu delete(space): 1
+[2025.06.20 16:24:13.770 ms]:[TRACE]:[PSAG_OGL_RES]: tmu delete(space): 2
+[2025.06.20 16:24:13.770 ms]:[TRACE]:[PSAG_OGL_RES]: tmu delete(space): 3
+[2025.06.20 16:24:13.770 ms]:[TRACE]:[PSAG_OGL_RES]: tmu delete(space): 4
+[2025.06.20 16:24:13.800 ms]:[INFO]:[PSAG_OGL_RES]: texture: delete key: 16
+[2025.06.20 16:24:13.813 ms]:[INFO]:[PSAG_OGL_RES]: texture: delete key: 18
+[2025.06.20 16:24:13.820 ms]:[INFO]:[PSAG_OGL_RES]: texture: delete key: 20
+[2025.06.20 16:24:13.821 ms]:[INFO]:[PSAG_OGL_RES]: texture: delete key: 22
+[2025.06.20 16:24:14.037 ms]:[TRACE]:[PSAG_AUDIO]: audio(openal) global free_context & close_device.
+[2025.06.20 16:24:14.037 ms]:[INFO]:[PSAG_PHYSICS]: physics_world item: free_bodies: 0, delete key: DEFAULT_PHY_WORLD
+[2025.06.20 16:24:14.041 ms]:[INFO]:[PSAG_IMGUI]: imgui_free: imgui_opengl3 context.
+[2025.06.20 16:24:14.041 ms]:[TRACE]:[PSAG_AUDIO_DATA]: free resource(raw_audio): 0 bytes
+[2025.06.20 16:24:14.041 ms]:[INFO]:[PSAG_AUDIO_DATA]: LLRES static_object() delete.
+[2025.06.20 16:24:14.041 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(shader): 2 items
+[2025.06.20 16:24:14.041 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(texture): 0 items
+[2025.06.20 16:24:14.041 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(vertex_buffer): 0 items
+[2025.06.20 16:24:14.041 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(vertex_attribute): 0 items
+[2025.06.20 16:24:14.042 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(frame_buffer): 1 items
+[2025.06.20 16:24:14.043 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(render_buffer): 0 items
+[2025.06.20 16:24:14.043 ms]:[TRACE]:[PSAG_OGL_RES]: free resource(uniform_buffer): 1 items
+[2025.06.20 16:24:14.043 ms]:[INFO]:[PSAG_LLRES]: graph static_object(graphics) delete.
+[2025.06.20 16:24:14.076 ms]:[INFO]:[PSAG_WINDOW]: fw_window free: glfw context.
+[2025.06.20 16:24:14.315 ms]:[TRACE]:[PSAG_M_MAINEVENT]: async_events execution end.
+[2025.06.20 16:24:14.315 ms]:[INFO]:[PSAG_M_START]: free framework ret_code: 1

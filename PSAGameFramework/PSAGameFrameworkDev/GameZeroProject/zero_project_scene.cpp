@@ -76,11 +76,13 @@ bool ZPGameSceneMain::LogicInitialization(const Vector2T<uint32_t>& WinSize) {
 	PsagActor::PresetScript ShaderScript = {};
 
 	// boundary wall [h] shader.
-	PsagActor::ActorShader* RenderBH = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("WallH"), WinSize);
+	PsagActor::ActorShader* RenderBH = 
+		new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("WallH"), WinSize);
 	RenderBH->ShaderImageLADD("WallH", DecodeRawImage.DecodeImageRawData(ImgBoundaryH));
 
 	// boundary wall [v] shader.
-	PsagActor::ActorShader* RenderBV = new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("WallV"), WinSize);
+	PsagActor::ActorShader* RenderBV = 
+		new PsagActor::ActorShader(ShaderScript.TmpScriptDrawImage("WallV"), WinSize);
 	RenderBV->ShaderImageLADD("WallV", DecodeRawImage.DecodeImageRawData(ImgBoundaryV));
 
 	SceneShaders.Get()->CreateActorShader("Background", RenderBackground);

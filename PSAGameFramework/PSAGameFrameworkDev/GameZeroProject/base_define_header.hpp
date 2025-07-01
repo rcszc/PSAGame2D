@@ -27,6 +27,7 @@ protected:
 };
 
 struct PPActorBulletFire {
+	uint32_t FireBulletType = 0;
 	float Angle = 0.0f;
 	Vector2T<float> Position = {};
 };

@@ -100,9 +100,6 @@
     <Filter Include="源文件\A-PSAGameFrameworkDev\GameZeroProject\BASE">
       <UniqueIdentifier>{a65c105c-68ad-41b6-a301-2b0dd47b86f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="资源文件\ImGui\ImGuiCore\freetype">
-      <UniqueIdentifier>{65c56eb5-b028-4392-9f16-77c546c70e58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\PSAGameFrameworkCore\FrameDebug">
       <UniqueIdentifier>{988fbf87-40b2-4ad8-bc67-245d05d78f54}</UniqueIdentifier>
     </Filter>
@@ -324,9 +321,6 @@
     <ClCompile Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.cpp">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
     </ClCompile>
-    <ClCompile Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.cpp">
-      <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
-    </ClCompile>
     <ClCompile Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug_capture.cpp">
       <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>
     </ClCompile>
@@ -517,9 +511,6 @@
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\CoreGameActor\psag_actor_global_atomic.h">
       <Filter>源文件\PSAGameFrameworkCore\CoreGameActor</Filter>
-    </ClInclude>
-    <ClInclude Include="ExternalLibrary\GuiimguiLibrary\imgui_glfw3\misc\freetype\imgui_freetype.h">
-      <Filter>资源文件\ImGui\ImGuiCore\freetype</Filter>
     </ClInclude>
     <ClInclude Include="PSAGameFrameworkCore\FrameDebug\psag_frame_debug.hpp">
       <Filter>源文件\PSAGameFrameworkCore\FrameDebug</Filter>

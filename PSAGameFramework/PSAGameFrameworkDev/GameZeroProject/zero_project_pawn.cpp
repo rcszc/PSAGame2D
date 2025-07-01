@@ -91,8 +91,13 @@ bool ZPGamePawnActor::LogicEventLoopGame(GameLogic::FrameworkParams& RunningStat
 	NpcActorEntities.Get()->RunAllGameActor();
 
 	// ÓÎÏ·²Ù×÷: Êó±ê×ó¼üÉä»÷.
-	if (PlayerActorPawn.Get()->MouseButtonPressed_L() && GLO_PlayerBullets < 5) {
+	if ((PlayerActorPawn.Get()->MouseButtonPressed_L() ||
+		PlayerActorPawn.Get()->KeyboardPressed_F())
+		&& GLO_PlayerBullets < 5
+	) {
 		PPActorBulletFire FireParams = {};
+		FireParams.FireBulletType =
+			(uint32_t)PlayerActorPawn.Get()->KeyboardPressed_F();
 
 		FireParams.Position = PlayerActorEntity.Get()->ActorGetPosition();
 		FireParams.Angle    = PlayerActorEntity.Get()->ActorGetAngle();

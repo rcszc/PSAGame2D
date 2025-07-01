@@ -2,7 +2,7 @@
 # PSAGame2D
 > PomeloStar 2D游戏开发框架.
 
-__当前版本:__ `V1.2.7.20250227` __开发文档:__ 编写中...
+__当前版本:__ `V1.2.9.20250702` __开发文档:__ 暂停中...
 
 > 🚧 目前长期施工中🙂, 并且早期版本并不稳定.
 
@@ -14,11 +14,11 @@ __当前版本:__ `V1.2.7.20250227` __开发文档:__ 编写中...
 
 💻 目前主要兼容 __WindowsX64__ 平台. 内置帧性能监控, 使用简单的控制反转(IOC), 降低游戏代码与框架的耦合度, 框架内置多级 后期处理调色&背景处理 着色器管线. 使用描述符(DESC), 描述各对象构建以及挂载组件, 简化手动配置等.
 
-- __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 92% __底层模块测试完善:__ `▮▮▮▮▮▯▯▯▯▯` 58%
+- __开发进度__ __V1:__ `▮▮▮▮▮▮▮▮▮▯` 92% __底层模块测试完善:__ `▮▮▮▮▮▮▯▯▯▯` 62%
 
 ```
-FrameworkCore Files: 97 LoC: 15550
-FrameworkDemo Files: 15 LoC: 952
+FrameworkCore Files: 98 LoC: 15557
+FrameworkDemo Files: 16 LoC: 1117
 ```
 
 ---
@@ -57,13 +57,14 @@ FrameworkDemo Files: 15 LoC: 952
 
 ### 框架每个版本都会有对应 DEMO 小游戏
 
-[__📺BiliBili视频__](https://www.bilibili.com/video/BV17QfmYSENT) __Update:__ 2025.01.30
+[__📺BiliBili视频__](https://www.bilibili.com/video/BV17QfmYSENT) __Update:__ 2025.01.30 __Image:__ 2025.07.02
+
 > 🎮🎮🎮 __DemoGame:__ ZeroProject
 
 <p align="center">
-  <img src="PSAGameDesigns/PSAGame2Dv20250130.png" style="width:49%;"/>
+  <img src="PSAGameDesigns/PSAGame2Dv20250224.png" style="width:49%;"/>
    <span style="display:inline-block; width:0%;"></span>
-  <img src="PSAGameDesigns/PSAGame2Dv20250224.png" style="width:49%"/>
+  <img src="PSAGameDesigns/PSAGame2Dv20250702.png" style="width:49%"/>
 </p>
 
 ---
